@@ -49,11 +49,42 @@ type Package struct {
 	Requires   []string
 	Provides   []string
 	Recommends []string
+	// Repo is the id of the repository the package comes from.
+	Repo string
+	// Priority is the priority of that repository (see [Repo.Priority]): of
+	// two packages with the same name the lower number wins, whatever the
+	// versions.
+	Priority int
+
+	// repo carries the settings a download needs (proxy, gpgcheck, gpgkey).
+	// It is nil for a Package not built by [Client.Load].
+	repo *Repo
 }
 
-// EVR renders "epoch:version-release", the form [rpm.Vercmp] compares.
+// EVR renders "epoch:version-release". It is for display: the string is not
+// comparable with [rpm.Vercmp], which would run the version into the release
+// ("1.0-5" would sort after "1.0.1-1"); use [Package.Compare].
 func (p *Package) EVR() string {
 	return strconv.FormatUint(uint64(p.Epoch), 10) + ":" + p.Version + "-" + p.Release
+}
+
+// Compare orders the versions of two packages the way rpm does: the epoch
+// numerically, then the version and then the release with [rpm.Vercmp], each
+// on its own. It returns -1 if p is older than other, 1 if it is newer, and 0
+// if the versions are the same.
+func (p *Package) Compare(other *Package) int {
+	switch {
+	case p.Epoch < other.Epoch:
+		return -1
+	case p.Epoch > other.Epoch:
+		return 1
+	}
+
+	if c := rpm.Vercmp(p.Version, other.Version); c != 0 {
+		return c
+	}
+
+	return rpm.Vercmp(p.Release, other.Release)
 }
 
 // Index is an in-memory view of the primary metadata of the repositories,
@@ -105,13 +136,27 @@ func (ix *Index) ResolveVirtual(name string) string {
 	return name
 }
 
-// pickProvider chooses the best concrete provider of a capability: the host
-// architecture, then noarch, then whatever comes first. This keeps a foreign
-// architecture (i686 on x86_64) from being pulled in by a capability lookup.
+// pickProvider chooses the best concrete provider of a capability: among the
+// providers of the best repository priority, the host architecture, then
+// noarch, then whatever comes first. This keeps a foreign architecture (i686
+// on x86_64) from being pulled in by a capability lookup.
 func (ix *Index) pickProvider(providers []*Package) *Package {
-	var noarch *Package
+	best := providers[0].Priority
+	for _, p := range providers[1:] {
+		best = min(best, p.Priority)
+	}
+
+	var noarch, first *Package
 
 	for _, p := range providers {
+		if p.Priority != best {
+			continue
+		}
+
+		if first == nil {
+			first = p
+		}
+
 		if p.Arch == ix.arch {
 			return p
 		}
@@ -125,16 +170,21 @@ func (ix *Index) pickProvider(providers []*Package) *Package {
 		return noarch
 	}
 
-	return providers[0]
+	return first
 }
 
 // shouldReplace reports whether candidate should take the place of existing as
-// the package of its name: downloadable beats not, the host architecture beats
-// another, noarch beats a foreign architecture, and on the same architecture
-// the higher version wins.
+// the package of its name: downloadable beats not, a repository with a lower
+// priority number beats any other, the host architecture beats another, noarch
+// beats a foreign architecture, and on the same architecture the higher version
+// wins.
 func (ix *Index) shouldReplace(existing, candidate *Package) bool {
 	if existing.Location == "" && candidate.Location != "" {
 		return true
+	}
+
+	if existing.Priority != candidate.Priority {
+		return candidate.Priority < existing.Priority
 	}
 
 	if existing.Arch != candidate.Arch {
@@ -145,7 +195,7 @@ func (ix *Index) shouldReplace(existing, candidate *Package) bool {
 		return candidate.Arch == archNoarch && existing.Arch != ix.arch
 	}
 
-	return rpm.Vercmp(candidate.EVR(), existing.EVR()) > 0
+	return candidate.Compare(existing) > 0
 }
 
 // add inserts p, unless it belongs to a non-default module stream, and indexes
@@ -370,6 +420,10 @@ func (c *Client) readPrimary(src *repoSource) ([]*Package, error) {
 			return nil
 		}
 
+		if src.repo.excludes(pp) {
+			return nil
+		}
+
 		pkgs = append(pkgs, newPackage(pp, src))
 
 		return nil
@@ -393,6 +447,9 @@ func newPackage(pp *repodata.PrimaryPackage, src *repoSource) *Package {
 		Checksum:     pp.Checksum,
 		ChecksumType: pp.ChecksumType,
 		Size:         pp.PackageSize,
+		Repo:         src.repo.ID,
+		Priority:     src.repo.Priority,
+		repo:         src.repo,
 		BaseURL:      src.baseURL,
 		MirrorList:   src.mirrorList,
 		Requires:     depNames(pp.Requires, true),

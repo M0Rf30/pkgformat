@@ -27,7 +27,7 @@ func TestResolveMirrorsPlainList(t *testing.T) {
 	srv := serveText(t, "# comment\nhttp://plain.example/os\nhttps://one.example//os/\n\nftp://x/\nhttps://two.example/os\n")
 	c := New(Options{})
 
-	got, err := c.resolveMirrors(context.Background(), srv.URL)
+	got, err := mirrorsOf(c, context.Background(), srv.URL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func TestResolveMirrorsPlainHTTPOnly(t *testing.T) {
 	srv := serveText(t, "http://a.example/os\nhttp://b.example/os\n")
 	c := New(Options{})
 
-	got, err := c.resolveMirrors(context.Background(), srv.URL)
+	got, err := mirrorsOf(c, context.Background(), srv.URL)
 	if err != nil || len(got) != 2 {
 		t.Errorf("got %v, %v", got, err)
 	}
@@ -59,7 +59,7 @@ func TestResolveMirrorsMetalink(t *testing.T) {
 </resources></file></files></metalink>`)
 	c := New(Options{})
 
-	got, err := c.resolveMirrors(context.Background(), srv.URL)
+	got, err := mirrorsOf(c, context.Background(), srv.URL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,7 +76,7 @@ func TestResolveMirrorsCapped(t *testing.T) {
 		fmt.Fprintf(&b, "https://m%d.example/os\n", i)
 	}
 
-	got, err := New(Options{}).resolveMirrors(context.Background(), serveText(t, b.String()).URL)
+	got, err := mirrorsOf(New(Options{}), context.Background(), serveText(t, b.String()).URL)
 	if err != nil || len(got) != maxMirrors || got[0] != "https://m0.example/os" {
 		t.Errorf("got %v, %v", got, err)
 	}
@@ -91,7 +91,7 @@ func TestResolveMirrorsEmpty(t *testing.T) {
 		"not a mirror": "<html>mirror manager is down</html>",
 	} {
 		t.Run(name, func(t *testing.T) {
-			_, err := New(Options{}).resolveMirrors(context.Background(), serveText(t, body).URL)
+			_, err := mirrorsOf(New(Options{}), context.Background(), serveText(t, body).URL)
 			if !errors.Is(err, ErrNoMirror) {
 				t.Errorf("err = %v", err)
 			}
@@ -117,7 +117,7 @@ func TestResolveMirrorsRetriesMajorVersion(t *testing.T) {
 
 	c := New(Options{Releasever: "9.4"})
 
-	got, err := c.resolveMirrors(context.Background(), srv.URL+"/list?release=9.4")
+	got, err := mirrorsOf(c, context.Background(), srv.URL+"/list?release=9.4")
 	if err != nil || !reflect.DeepEqual(got, []string{"https://major.example/os"}) {
 		t.Errorf("got %v, %v", got, err)
 	}
@@ -137,7 +137,7 @@ func TestResolveMirrorsNoRetryWithoutDottedRelease(t *testing.T) {
 	defer srv.Close()
 
 	c := New(Options{Releasever: "9"})
-	if _, err := c.resolveMirrors(context.Background(), srv.URL+"/list?release=9"); err == nil {
+	if _, err := mirrorsOf(c, context.Background(), srv.URL+"/list?release=9"); err == nil {
 		t.Error("a 404 list resolved")
 	}
 
@@ -155,7 +155,7 @@ func TestCandidates(t *testing.T) {
 			"https://d/", "https://e/", "https://f/",
 		}}
 
-		got, err := c.candidates(context.Background(), repo)
+		got, err := candidatesOf(c, repo)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -169,14 +169,14 @@ func TestCandidates(t *testing.T) {
 	t.Run("mirror list when there is no baseurl", func(t *testing.T) {
 		srv := serveText(t, "https://m.example/os/\n")
 
-		got, err := c.candidates(context.Background(), &Repo{ID: "r", MirrorList: srv.URL})
+		got, err := candidatesOf(c, &Repo{ID: "r", MirrorList: srv.URL})
 		if err != nil || !reflect.DeepEqual(got, []string{"https://m.example/os"}) {
 			t.Errorf("got %v, %v", got, err)
 		}
 	})
 
 	t.Run("nothing usable", func(t *testing.T) {
-		_, err := c.candidates(context.Background(), &Repo{ID: "r", BaseURLs: []string{"ftp://x/"}})
+		_, err := candidatesOf(c, &Repo{ID: "r", BaseURLs: []string{"ftp://x/"}})
 		if !errors.Is(err, ErrNoMirror) {
 			t.Errorf("err = %v", err)
 		}
@@ -196,4 +196,18 @@ func TestMirrorURL(t *testing.T) {
 			t.Errorf("mirrorURL(%q) = %q, want %q", line, got, want)
 		}
 	}
+}
+
+// mirrorsOf resolves a mirror list over the client's own HTTP client.
+func mirrorsOf(c *Client, ctx context.Context, listURL string) ([]string, error) {
+	mirrors, _, err := c.resolveMirrors(ctx, c.opts.HTTP, listURL)
+
+	return mirrors, err
+}
+
+// candidatesOf lists the candidate mirrors of a repository.
+func candidatesOf(c *Client, repo *Repo) ([]string, error) {
+	bases, _, err := c.candidates(context.Background(), c.opts.HTTP, repo)
+
+	return bases, err
 }

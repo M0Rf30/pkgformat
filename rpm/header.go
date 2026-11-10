@@ -599,12 +599,17 @@ func (hdr *rpmHeader) GetFiles() ([]FileInfo, error) {
 	if err != nil {
 		inodes = make([]uint32, len(paths))
 	}
+	// optional: only present when the package holds device nodes
+	rdevs, err := hdr.GetUint32s(tag.FILERDEVS)
+	if err != nil {
+		rdevs = make([]uint32, len(paths))
+	}
 
 	n := len(paths)
 	for _, l := range []int{
 		len(fileSizes), len(fileUserName), len(fileGroupName), len(fileFlags),
 		len(fileMtimes), len(fileDigests), len(fileModes), len(linkTos),
-		len(devices), len(inodes),
+		len(devices), len(inodes), len(rdevs),
 	} {
 		if l < n {
 			return nil, errors.New("file attribute tags are shorter than the file list")
@@ -625,6 +630,7 @@ func (hdr *rpmHeader) GetFiles() ([]FileInfo, error) {
 			linkName:  linkTos[i],
 			device:    devices[i],
 			inode:     inodes[i],
+			rdev:      rdevs[i],
 		}
 	}
 

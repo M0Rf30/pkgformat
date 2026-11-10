@@ -13,17 +13,23 @@ func TestShouldReplace(t *testing.T) {
 		existing, candidate Package
 		want                bool
 	}{
-		"downloadable beats not":     {Package{Arch: "x86_64"}, Package{Arch: "x86_64", Location: "p"}, true},
-		"not downloadable loses":     {Package{Arch: "x86_64", Location: "p"}, Package{Arch: "x86_64"}, false},
-		"host arch beats foreign":    {Package{Arch: "i686", Location: "p"}, Package{Arch: "x86_64", Location: "p"}, true},
-		"foreign loses to host":      {Package{Arch: "x86_64", Location: "p"}, Package{Arch: "i686", Location: "p"}, false},
-		"noarch beats foreign":       {Package{Arch: "i686", Location: "p"}, Package{Arch: "noarch", Location: "p"}, true},
-		"noarch loses to host":       {Package{Arch: "x86_64", Location: "p"}, Package{Arch: "noarch", Location: "p"}, false},
-		"newer version wins":         {Package{Arch: "x86_64", Version: "1.9", Location: "p"}, Package{Arch: "x86_64", Version: "1.10", Location: "p"}, true},
-		"older version loses":        {Package{Arch: "x86_64", Version: "1.10", Location: "p"}, Package{Arch: "x86_64", Version: "1.9", Location: "p"}, false},
-		"epoch outranks version":     {Package{Arch: "x86_64", Version: "9", Location: "p"}, Package{Arch: "x86_64", Version: "1", Epoch: 1, Location: "p"}, true},
-		"same release does not swap": {Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, false},
-		"newer release wins":         {Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, Package{Arch: "x86_64", Version: "1", Release: "2", Location: "p"}, true},
+		"downloadable beats not":            {Package{Arch: "x86_64"}, Package{Arch: "x86_64", Location: "p"}, true},
+		"not downloadable loses":            {Package{Arch: "x86_64", Location: "p"}, Package{Arch: "x86_64"}, false},
+		"host arch beats foreign":           {Package{Arch: "i686", Location: "p"}, Package{Arch: "x86_64", Location: "p"}, true},
+		"foreign loses to host":             {Package{Arch: "x86_64", Location: "p"}, Package{Arch: "i686", Location: "p"}, false},
+		"noarch beats foreign":              {Package{Arch: "i686", Location: "p"}, Package{Arch: "noarch", Location: "p"}, true},
+		"noarch loses to host":              {Package{Arch: "x86_64", Location: "p"}, Package{Arch: "noarch", Location: "p"}, false},
+		"newer version wins":                {Package{Arch: "x86_64", Version: "1.9", Location: "p"}, Package{Arch: "x86_64", Version: "1.10", Location: "p"}, true},
+		"older version loses":               {Package{Arch: "x86_64", Version: "1.10", Location: "p"}, Package{Arch: "x86_64", Version: "1.9", Location: "p"}, false},
+		"epoch outranks version":            {Package{Arch: "x86_64", Version: "9", Location: "p"}, Package{Arch: "x86_64", Version: "1", Epoch: 1, Location: "p"}, true},
+		"version is not fused with release": {Package{Arch: "x86_64", Version: "1.0", Release: "5", Location: "p"}, Package{Arch: "x86_64", Version: "1.0.1", Release: "1", Location: "p"}, true},
+		"older version, newer release":      {Package{Arch: "x86_64", Version: "1.0.1", Release: "1", Location: "p"}, Package{Arch: "x86_64", Version: "1.0", Release: "5", Location: "p"}, false},
+		"epoch 10 beats epoch 9":            {Package{Arch: "x86_64", Version: "1", Epoch: 9, Location: "p"}, Package{Arch: "x86_64", Version: "1", Epoch: 10, Location: "p"}, true},
+		"missing epoch is zero":             {Package{Arch: "x86_64", Version: "2", Location: "p"}, Package{Arch: "x86_64", Version: "1", Epoch: 0, Location: "p"}, false},
+		"caret release is newer":            {Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, Package{Arch: "x86_64", Version: "1", Release: "1^git1", Location: "p"}, true},
+		"tilde release is older":            {Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, Package{Arch: "x86_64", Version: "1", Release: "1~rc1", Location: "p"}, false},
+		"same release does not swap":        {Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, false},
+		"newer release wins":                {Package{Arch: "x86_64", Version: "1", Release: "1", Location: "p"}, Package{Arch: "x86_64", Version: "1", Release: "2", Location: "p"}, true},
 	} {
 		if got := ix.shouldReplace(&tc.existing, &tc.candidate); got != tc.want {
 			t.Errorf("%s: got %v, want %v", name, got, tc.want)
@@ -204,5 +210,25 @@ func TestLoadIndexesFilesAndDropsRPMLib(t *testing.T) {
 func TestPackageEVR(t *testing.T) {
 	if got := (&Package{Epoch: 2, Version: "1.0", Release: "3"}).EVR(); got != "2:1.0-3" {
 		t.Errorf("EVR = %q", got)
+	}
+}
+
+func TestPackageCompare(t *testing.T) {
+	for name, tc := range map[string]struct {
+		a, b Package
+		want int
+	}{
+		"equal":                  {Package{Version: "1", Release: "1"}, Package{Version: "1", Release: "1"}, 0},
+		"epoch first":            {Package{Version: "9", Epoch: 1}, Package{Version: "1", Epoch: 2}, -1},
+		"version before release": {Package{Version: "1.0", Release: "5"}, Package{Version: "1.0.1", Release: "1"}, -1},
+		"release last":           {Package{Version: "1", Release: "2"}, Package{Version: "1", Release: "1"}, 1},
+	} {
+		if got := tc.a.Compare(&tc.b); got != tc.want {
+			t.Errorf("%s: Compare = %d, want %d", name, got, tc.want)
+		}
+
+		if got := tc.b.Compare(&tc.a); got != -tc.want {
+			t.Errorf("%s: reverse Compare = %d, want %d", name, got, -tc.want)
+		}
 	}
 }

@@ -66,6 +66,35 @@ func ExampleReadRpm() {
 	// true
 }
 
+func ExampleRpm_ExpandPayloadWithOptions() {
+	f, err := os.Open("testdata/extract/extract-v6.rpm")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	pkg, err := rpm.ReadRpm(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	dest, err := os.MkdirTemp("", "rpm-example")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(dest)
+	defer func() { _ = os.Chmod(filepath.Join(dest, "opt/extract-test/ro"), 0o755) }()
+
+	// Drop the set-uid, set-gid and sticky bits and group/other write access.
+	if err := pkg.ExpandPayloadWithOptions(dest, &rpm.ExpandOptions{Umask: 07022}); err != nil {
+		log.Fatal(err)
+	}
+	fi, err := os.Stat(filepath.Join(dest, "opt/extract-test/bin/suid"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(fi.Mode())
+	// Output: -rwxr-xr-x
+}
+
 func ExampleVerify() {
 	f, err := os.Open("testdata/v6/ref-v6s.rpm")
 	if err != nil {
@@ -137,4 +166,19 @@ func ExampleSignRpmStream() {
 	// An unsigned package verifies with no signatures: check len(sigs).
 	fmt.Println(len(sigs), "signatures")
 	// Output: 2 signatures
+}
+
+func ExampleVerifyWithOptions() {
+	f, err := os.Open("testdata/v6/ref-v6.rpm") // an unsigned package
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	key, err := openpgp.NewEntity("example", "", "example@example.com", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, _, err = rpm.VerifyWithOptions(f, openpgp.EntityList{key}, &rpm.VerifyOptions{RequireSigned: true})
+	fmt.Println(err)
+	// Output: rpm: package is not signed
 }

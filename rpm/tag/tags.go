@@ -283,4 +283,6 @@ const (
 	HASH_SHA384      = 9
 	HASH_SHA512      = 10
 	HASH_SHA224      = 11
+	HASH_SHA3_256    = 12
+	HASH_SHA3_512    = 14
 )

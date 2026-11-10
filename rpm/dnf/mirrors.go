@@ -4,14 +4,20 @@ import (
 	"context"
 	"fmt"
 	"strings"
+
+	"github.com/M0Rf30/pkgformat/httpclient"
 )
 
 // candidates returns the ordered base URLs of a repository, without a trailing
 // slash: every baseurl with its variables expanded, or, when there is none, the
 // mirrors of its mirror list or metalink. Only http(s) URLs are kept and at
-// most maxMirrors are returned.
-func (c *Client) candidates(ctx context.Context, repo *Repo) ([]string, error) {
-	var out []string
+// most maxMirrors are returned. When the list is a metalink, what it says about
+// repomd.xml comes back too, for the caller to verify the file with.
+func (c *Client) candidates(ctx context.Context, hc *httpclient.Client, repo *Repo) ([]string, *metalinkInfo, error) {
+	var (
+		out  []string
+		info *metalinkInfo
+	)
 
 	for _, raw := range repo.BaseURLs {
 		if u := c.expandVars(raw); isHTTP(u) {
@@ -20,9 +26,14 @@ func (c *Client) candidates(ctx context.Context, repo *Repo) ([]string, error) {
 	}
 
 	if len(out) == 0 && repo.MirrorList != "" {
-		mirrors, err := c.resolveMirrors(ctx, c.expandVars(repo.MirrorList))
+		var (
+			mirrors []string
+			err     error
+		)
+
+		mirrors, info, err = c.resolveMirrors(ctx, hc, c.expandVars(repo.MirrorList))
 		if err != nil {
-			return nil, fmt.Errorf("dnf: repository %s: %w", repo.ID, err)
+			return nil, nil, fmt.Errorf("dnf: repository %s: %w", repo.ID, err)
 		}
 
 		for _, m := range mirrors {
@@ -31,10 +42,10 @@ func (c *Client) candidates(ctx context.Context, repo *Repo) ([]string, error) {
 	}
 
 	if len(out) == 0 {
-		return nil, fmt.Errorf("dnf: repository %s: %w", repo.ID, ErrNoMirror)
+		return nil, nil, fmt.Errorf("dnf: repository %s: %w", repo.ID, ErrNoMirror)
 	}
 
-	return out[:min(len(out), maxMirrors)], nil
+	return out[:min(len(out), maxMirrors)], info, nil
 }
 
 func isHTTP(u string) bool {
@@ -46,35 +57,41 @@ func isHTTP(u string) bool {
 //
 // A plain list holds one URL per line, "#" lines are comments. A metalink is
 // XML whose <url> elements point at repomd.xml files; the trailing
-// /repodata/repomd.xml is stripped to get the base URL.
+// /repodata/repomd.xml is stripped to get the base URL. The size and hashes it
+// publishes for repomd.xml are returned as well; nil for a plain list.
 //
 // A 404 on a URL that holds the dotted release (8.10) is retried with the
 // major release (8): some mirror managers register the major version only.
-func (c *Client) resolveMirrors(ctx context.Context, listURL string) ([]string, error) {
-	data, err := c.opts.HTTP.FetchBytes(ctx, listURL, maxMirrorListBytes)
+func (c *Client) resolveMirrors(
+	ctx context.Context, hc *httpclient.Client, listURL string,
+) ([]string, *metalinkInfo, error) {
+	data, err := hc.FetchBytes(ctx, listURL, maxMirrorListBytes)
 	if err != nil {
-		data, err = c.retryMajorVersion(ctx, listURL, err)
+		data, err = c.retryMajorVersion(ctx, hc, listURL, err)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	body := strings.TrimSpace(string(data))
 
-	var secure, plain []string
+	var (
+		secure, plain []string
+		info          *metalinkInfo
+	)
 
 	if strings.HasPrefix(body, "<") {
-		secure, plain = metalinkMirrors(body)
+		secure, plain, info = metalinkMirrors(body)
 	} else {
 		secure, plain = listMirrors(body)
 	}
 
 	mirrors := c.preferHTTPS(secure, plain, listURL)
 	if len(mirrors) == 0 {
-		return nil, fmt.Errorf("%w in %s", ErrNoMirror, listURL)
+		return nil, nil, fmt.Errorf("%w in %s", ErrNoMirror, listURL)
 	}
 
-	return mirrors[:min(len(mirrors), maxMirrors)], nil
+	return mirrors[:min(len(mirrors), maxMirrors)], info, nil
 }
 
 // preferHTTPS returns the secure mirrors when there are any. Plain-http mirrors
@@ -95,7 +112,9 @@ func (c *Client) preferHTTPS(secure, plain []string, source string) []string {
 // retryMajorVersion retries a mirror list with the dotted release replaced by
 // its major part. It returns the original error when that does not apply or
 // fails too.
-func (c *Client) retryMajorVersion(ctx context.Context, listURL string, origErr error) ([]byte, error) {
+func (c *Client) retryMajorVersion(
+	ctx context.Context, hc *httpclient.Client, listURL string, origErr error,
+) ([]byte, error) {
 	rel := c.opts.Releasever
 
 	major, _, dotted := strings.Cut(rel, ".")
@@ -103,7 +122,7 @@ func (c *Client) retryMajorVersion(ctx context.Context, listURL string, origErr 
 		return nil, origErr
 	}
 
-	data, err := c.opts.HTTP.FetchBytes(ctx, strings.ReplaceAll(listURL, rel, major), maxMirrorListBytes)
+	data, err := hc.FetchBytes(ctx, strings.ReplaceAll(listURL, rel, major), maxMirrorListBytes)
 	if err != nil {
 		return nil, origErr
 	}
@@ -130,9 +149,16 @@ func listMirrors(body string) (secure, plain []string) {
 	return secure, plain
 }
 
-// metalinkMirrors reads the mirror URLs of a metalink, line by line.
-func metalinkMirrors(body string) (secure, plain []string) {
-	for line := range strings.SplitSeq(body, "\n") {
+// metalinkMirrors reads the mirror URLs of a metalink and what it states about
+// repomd.xml. A document that does not parse as a metalink is read line by
+// line for URLs, with nothing to verify against.
+func metalinkMirrors(body string) (secure, plain []string, info *metalinkInfo) {
+	lines, info, ok := parseMetalink(body)
+	if !ok {
+		lines = strings.Split(body, "\n")
+	}
+
+	for _, line := range lines {
 		u, https := mirrorURL(strings.TrimSpace(line))
 		if u == "" {
 			continue
@@ -146,7 +172,7 @@ func metalinkMirrors(body string) (secure, plain []string) {
 		}
 	}
 
-	return secure, plain
+	return secure, plain, info
 }
 
 // mirrorURL pulls an http(s) URL out of a metalink line and turns it into a

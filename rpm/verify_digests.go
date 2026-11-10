@@ -11,7 +11,6 @@ import (
 	"io"
 
 	"github.com/M0Rf30/pkgformat/rpm/tag"
-	"github.com/ProtonMail/go-crypto/openpgp"
 	_ "golang.org/x/crypto/sha3" // registers crypto.SHA3_256
 )
 
@@ -23,19 +22,19 @@ var payloadSigTags = []int{
 
 // Try to parse a PGP signature with the given tag and return its metadata and
 // hash function.
-func setupDigester(sigHeader *rpmHeader, id int, knownKeys openpgp.EntityList) (*Signature, error) {
+func setupDigester(sigHeader *rpmHeader, id int, vf *verifier) (*Signature, error) {
 	blob, err := sigHeader.GetBytes(id)
 	if errors.As(err, &NoSuchTagError{}) {
 		return nil, nil
 	} else if err != nil {
 		return nil, err
 	}
-	return parseSignature(blob, knownKeys)
+	return parseSignature(blob, vf)
 }
 
 // Parse the RPM v6 OPENPGP signature array. Each element is a base64 encoded
 // binary OpenPGP signature over the general header.
-func setupOpenPGPDigesters(sigHeader, genHeader *rpmHeader, knownKeys openpgp.EntityList) ([]*Signature, []hash.Hash, error) {
+func setupOpenPGPDigesters(sigHeader, genHeader *rpmHeader, vf *verifier) ([]*Signature, []hash.Hash, error) {
 	encoded, err := sigHeader.GetStrings(tag.SIG_OPENPGP)
 	if err != nil {
 		return nil, nil, err
@@ -47,7 +46,7 @@ func setupOpenPGPDigesters(sigHeader, genHeader *rpmHeader, knownKeys openpgp.En
 		if err != nil {
 			return nil, nil, fmt.Errorf("invalid OpenPGP signature encoding: %w", err)
 		}
-		sig, err := parseSignature(blob, knownKeys)
+		sig, err := parseSignature(blob, vf)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -63,14 +62,14 @@ func setupOpenPGPDigesters(sigHeader, genHeader *rpmHeader, knownKeys openpgp.En
 // Parse signatures from the header and determine which hash functions are
 // needed to digest the RPM. The caller must write the payload to the returned
 // WriteCloser, then call Close to check if the payload digest matches.
-func digestAndVerify(sigHeader, genHeader *rpmHeader, payloadReader io.Reader, knownKeys openpgp.EntityList) ([]*Signature, []hash.Hash, error) {
+func digestAndVerify(sigHeader, genHeader *rpmHeader, payloadReader io.Reader, vf *verifier) ([]*Signature, []hash.Hash, error) {
 	var sigs []*Signature
 	var hashes []hash.Hash
 	// RPM v6 signatures: base64 OpenPGP packets over the general header alone.
 	// When present they supersede the legacy signature tags.
 	if sigHeader.HasTag(tag.SIG_OPENPGP) {
 		var err error
-		sigs, hashes, err = setupOpenPGPDigesters(sigHeader, genHeader, knownKeys)
+		sigs, hashes, err = setupOpenPGPDigesters(sigHeader, genHeader, vf)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -79,7 +78,7 @@ func digestAndVerify(sigHeader, genHeader *rpmHeader, payloadReader io.Reader, k
 	}
 	// signatures over the general header alone
 	for _, id := range headerSigTags {
-		sig, err := setupDigester(sigHeader, id, knownKeys)
+		sig, err := setupDigester(sigHeader, id, vf)
 		if err != nil {
 			return nil, nil, err
 		} else if sig == nil {
@@ -94,7 +93,7 @@ func digestAndVerify(sigHeader, genHeader *rpmHeader, payloadReader io.Reader, k
 	// signatures over the general header + payload
 	var payloadWriters []io.Writer
 	for _, id := range payloadSigTags {
-		sig, err := setupDigester(sigHeader, id, knownKeys)
+		sig, err := setupDigester(sigHeader, id, vf)
 		if err != nil {
 			return nil, nil, err
 		} else if sig == nil {

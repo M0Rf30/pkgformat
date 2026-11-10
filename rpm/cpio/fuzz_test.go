@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -68,6 +69,15 @@ func FuzzExtract(f *testing.F) {
 	addSeedCpios(f)
 	f.Fuzz(func(t *testing.T, data []byte) {
 		base := t.TempDir()
+		t.Cleanup(func() {
+			// the archive may give directories modes that prevent removing them
+			_ = filepath.WalkDir(base, func(p string, d fs.DirEntry, err error) error {
+				if err == nil && d.IsDir() {
+					_ = os.Chmod(p, 0o755)
+				}
+				return nil
+			})
+		})
 		_ = Extract(bytes.NewReader(data), filepath.Join(base, "dest"))
 		entries, err := os.ReadDir(base)
 		if err != nil {

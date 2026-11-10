@@ -37,3 +37,14 @@ func HasLinks(info os.FileInfo) bool {
 func Mkfifo(path string, mode uint32) error {
 	return unix.Mkfifo(path, mode)
 }
+
+// Mknod creates a filesystem node (device, FIFO or socket). mode holds the
+// file type bits and the permissions, dev the device number (see [Mkdev]).
+func Mknod(path string, mode uint32, dev uint64) error {
+	return unix.Mknod(path, mode, int(dev))
+}
+
+// Mkdev composes a device number from its major and minor parts.
+func Mkdev(major, minor uint32) uint64 {
+	return unix.Mkdev(major, minor)
+}

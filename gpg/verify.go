@@ -61,6 +61,17 @@ func (k *Keyring) Len() int {
 	return len(k.entities)
 }
 
+// Entities returns the keys of the keyring as OpenPGP entities, for callers
+// that check signatures themselves (see package rpm's Verify). The slice is
+// a copy; the entities are shared. It is nil for an empty keyring.
+func (k *Keyring) Entities() openpgp.EntityList {
+	if k == nil {
+		return nil
+	}
+
+	return slices.Clone(k.entities)
+}
+
 // Merge adds the keys of other to k. It is a no-op for a nil other.
 func (k *Keyring) Merge(other *Keyring) {
 	if other != nil {

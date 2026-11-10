@@ -19,9 +19,11 @@ package rpm
 import (
 	"bytes"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/M0Rf30/pkgformat/rpm/tag"
 	"github.com/ProtonMail/go-crypto/openpgp"
@@ -90,8 +92,35 @@ func FuzzReadRpm(f *testing.F) {
 		}
 		touchHeader(rpm.Header)
 		rpm.SetMaxPayloadSize(fuzzPayloadLimit)
-		_ = rpm.ExpandPayload(t.TempDir())
+		dest := removableTempDir(t)
+		_ = rpm.ExpandPayload(dest)
+
+		// the same package with every optional behaviour enabled
+		rpm2, err := ReadRpm(bytes.NewReader(data))
+		if err != nil {
+			t.Fatal(err)
+		}
+		rpm2.SetMaxPayloadSize(fuzzPayloadLimit)
+		_ = rpm2.ExpandPayloadWithOptions(removableTempDir(t), &ExpandOptions{
+			Umask: 07022, Chown: true, SpecialFiles: true, SkipDigests: true,
+		})
 	})
+}
+
+// removableTempDir is t.TempDir for trees whose directories may have been
+// given modes that prevent removing them.
+func removableTempDir(t *testing.T) string {
+	t.Helper()
+	dir := t.TempDir()
+	t.Cleanup(func() {
+		_ = filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
+			if err == nil && d.IsDir() {
+				_ = os.Chmod(p, 0o755)
+			}
+			return nil
+		})
+	})
+	return dir
 }
 
 func FuzzPayloadReaderExtended(f *testing.F) {
@@ -154,18 +183,16 @@ func FuzzVerify(f *testing.F) {
 	signed("testdata/nfpm/test-1.0.0.x86_64.rpm")
 	signed("testdata/v6/ref-v6.rpm")
 
-	f.Fuzz(func(_ *testing.T, data []byte) {
+	f.Fuzz(func(t *testing.T, data []byte) {
 		_, _, _ = Verify(bytes.NewReader(data), keyring)
 		_, _, _ = Verify(bytes.NewReader(data), nil)
-	})
-}
-
-func FuzzVercmp(f *testing.F) {
-	for _, s := range []string{"1.0", "1.0~rc1", "2.0.0^git1", "a.b.c", "", "1..2", "01", "~", "1.0\n2"} {
-		f.Add(s, "1.0")
-		f.Add("1.0", s)
-	}
-	f.Fuzz(func(_ *testing.T, a, b string) {
-		_ = Vercmp(a, b)
+		// a package that passes with signatures required carries some
+		_, sigs, err := VerifyWithOptions(bytes.NewReader(data), keyring, &VerifyOptions{
+			RequireSigned: true,
+			Now:           func() time.Time { return time.Unix(1700000000, 0) },
+		})
+		if err == nil && len(sigs) == 0 {
+			t.Fatal("RequireSigned accepted a package without signatures")
+		}
 	})
 }

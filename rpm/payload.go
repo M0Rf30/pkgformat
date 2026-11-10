@@ -22,6 +22,7 @@ import (
 	"io"
 
 	"github.com/M0Rf30/pkgformat/rpm/cpio"
+	"github.com/M0Rf30/pkgformat/rpm/tag"
 )
 
 // TODO version 2:
@@ -46,36 +47,71 @@ type payloadReader struct {
 }
 
 func newPayloadReader(r io.Reader, files []FileInfo) *payloadReader {
+	sizes, _, isLink := payloadLayout(files)
 	pr := &payloadReader{
 		stream:  r,
 		files:   make([]*fileInfo, len(files)),
 		fileMap: make(map[string]int, len(files)),
-		isLink:  make([]bool, len(files)),
+		isLink:  isLink,
 	}
-	fileSizes := make([]int64, len(files))
-	lastInodes := make(map[uint64]int)
 	for i, info := range files {
 		fileSt := info.(*fileInfo)
 		pr.files[i] = fileSt
 		pr.fileMap[fileSt.name] = i
+	}
+	pr.cr = cpio.NewReaderWithSizes(r, sizes)
+	return pr
+}
+
+// payloadLayout works out how the payload stores each file of the header
+// file list, as needed to read a stripped cpio archive (RPM v6), where the
+// entries carry no size of their own.
+//
+// sizes[i] is the number of content bytes stored for file i: its size for a
+// regular file, the length of the target for a symlink, 0 for everything
+// else. A regular file in a hard link group (same device and inode) has
+// content only in the last member of the group, so the others get 0 and are
+// flagged in isLink. nlinks[i] is the size of the group of a regular file.
+// Ghost files are not part of the payload and are ignored.
+func payloadLayout(files []FileInfo) (sizes []int64, nlinks []int, isLink []bool) {
+	sizes = make([]int64, len(files))
+	nlinks = make([]int, len(files))
+	isLink = make([]bool, len(files))
+	lastInodes := make(map[uint64]int)
+	groupSize := make(map[uint64]int)
+	for i, info := range files {
+		fileSt := info.(*fileInfo)
+		if fileSt.flags&tag.RPMFILE_GHOST != 0 {
+			continue
+		}
 		switch fileSt.fileType() {
 		case cpio.S_ISREG:
-			fileSizes[i] = fileSt.Size()
+			sizes[i] = fileSt.Size()
 
 			// all but the last file in a link group will have no contents. flag
 			// them so we don't try to read the nonexistent payload.
 			ino := fileSt.inode64()
-			if lastInode, ok := lastInodes[ino]; ok && ino != 0 {
-				pr.isLink[lastInode] = true
-				fileSizes[lastInode] = 0
+			if ino != 0 {
+				groupSize[ino]++
+				if last, ok := lastInodes[ino]; ok {
+					isLink[last] = true
+					sizes[last] = 0
+				}
+				lastInodes[ino] = i
 			}
-			lastInodes[ino] = i
 		case cpio.S_ISLNK:
-			fileSizes[i] = int64(len(fileSt.linkName))
+			sizes[i] = int64(len(fileSt.linkName))
 		}
 	}
-	pr.cr = cpio.NewReaderWithSizes(r, fileSizes)
-	return pr
+	for i, info := range files {
+		fileSt := info.(*fileInfo)
+		if ino := fileSt.inode64(); ino != 0 && fileSt.fileType() == cpio.S_ISREG && fileSt.flags&tag.RPMFILE_GHOST == 0 {
+			if n := groupSize[ino]; n > 1 {
+				nlinks[i] = n
+			}
+		}
+	}
+	return sizes, nlinks, isLink
 }
 
 // Next returns the info of the next file in the payload. After calling Next(),

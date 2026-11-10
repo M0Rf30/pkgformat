@@ -123,7 +123,10 @@ metadata that `createrepo_c` writes, `GenerateRepomdXML` indexes it and
 `SignRepomdXML` signs the index. On the client side `dnf.New(dnf.Options{...})`
 gives `Update` (fetch and verify), `Load` (index), `Resolve` and `Download`;
 nothing about the host is assumed, the repository, cache and variable
-directories and the installed-package list are all options.
+directories and the installed-package list are all options. The `.repo`
+keys `gpgcheck`/`gpgkey`, `exclude`/`excludepkgs`, `priority` and `proxy` are
+honoured, and a metalink's hashes are checked against `repomd.xml` (see the
+security notes).
 
 Command line:
 
@@ -141,20 +144,45 @@ Packages and archives are often untrusted input.
   `Rpm.SetMaxPayloadSize` before `ExpandPayload`, `PayloadReader` or
   `PayloadReaderExtended`. The default is no limit.
 - **Check that a package is signed.** `Verify` returns an empty list of
-  signatures, and no error, for a package that carries none. A caller that
-  requires a signature must check `len(sigs)`, and that the signatures it got are
-  made by a key it trusts (they are `Signature` values with the key ID and
-  whether they cover the header only).
+  signatures, and no error, for a package that carries none: it is intact, not
+  authentic. A caller that requires a signature uses `VerifyWithOptions` with
+  `RequireSigned` (an unsigned package then fails with `ErrUnsigned`), or checks
+  `len(sigs)`; the signatures are checked against the keys it passes, so pass
+  only keys it trusts.
+- **Keys are checked for validity.** A signature counts only if its key is not
+  revoked (primary key, subkey or primary user id), not expired, allowed to
+  sign, and the signature itself is not expired or from the future. A key that
+  fails is a `*SignatureError` wrapping `gpg.ErrKeyRevoked`, `gpg.ErrKeyExpired`,
+  `gpg.ErrSignatureExpired` or `gpg.ErrKeyCannotSign`. Validity is judged at the
+  time of the check (`VerifyOptions.Now` overrides the clock for tests), as GnuPG
+  does, so a package signed by a key that has since expired no longer verifies.
 - **Extraction is confined.** `cpio.Extract` and `ExpandPayload` write below the
-  destination only, never follow links out of it, and create files without
-  setuid and setgid bits.
+  destination only and never follow links out of it. They apply the modes of the
+  package, including the setuid, setgid and sticky bits, and its modification
+  times, as rpm does; `ExpandOptions.Umask` (`07022` drops the special bits)
+  masks them. Owners are applied only with `ExpandOptions.Chown`, and only when
+  running as root. Device nodes, FIFOs and sockets are skipped, with a logged
+  warning, unless `ExpandOptions.SpecialFiles` is set. `ExpandPayload` checks the
+  contents of every regular file against `FILEDIGESTS` and fails with
+  `*DigestMismatchError` (`errors.Is(err, rpm.ErrDigestMismatch)`) on a mismatch;
+  `ExpandOptions.SkipDigests` turns that off. Both the cpio payload of format 4
+  and the stripped payload of format 6 are extracted.
 - **Repository metadata is untrusted.** The `dnf` client confines every
   location to the repository and the destination, caps what it downloads and
   decompresses, verifies SHA-256 and SHA-512 checksums, refuses a package it
-  cannot verify, and keeps a repository id from leaving the cache directory. It
-  does not check the signature of `repomd.xml`: its checksums catch a corrupt or
-  mismatched mirror, not a repository that lies. Dependencies are matched by
-  name, without comparing versions.
+  cannot verify, and keeps a repository id from leaving the cache directory. A
+  repository with `gpgcheck=1` has the signature of each downloaded package
+  checked with `rpm.VerifyWithOptions` (signatures required) against its
+  `gpgkey` keys, fetched over the client's HTTP client or read from `file://`
+  URLs; `gpgcheck=1` without a key fails (`dnf.ErrNoGPGKey`), `gpgcheck=0` and
+  a missing `gpgcheck` check nothing. A repository whose mirror list is a
+  metalink has its `repomd.xml` compared with the size and hashes the metalink
+  publishes (`dnf.ErrMetalinkMismatch`); other repositories are protected by
+  checksums only, which catch a corrupt or mismatched mirror, not a repository
+  that lies: `repo_gpgcheck` (the signature of `repomd.xml`) is not checked.
+  Dependencies are matched by name, without comparing versions; of several
+  versions of a package the newest by epoch, version and release (`rpm.Vercmp`)
+  is chosen, unless a repository with a lower `priority` number has the name.
 - **OpenPGP v3 signatures** (found in some very old packages) are not supported.
 - Parsers enforce limits on header sizes and counts, and are fuzzed
   (`go test -fuzz`).
