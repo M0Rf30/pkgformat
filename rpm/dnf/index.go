@@ -51,9 +51,30 @@ type Package struct {
 	Recommends []string
 }
 
-// EVR renders "epoch:version-release", the form [rpm.Vercmp] compares.
+// EVR renders "epoch:version-release". It is for display: the string is not
+// comparable with [rpm.Vercmp], which would run the version into the release
+// ("1.0-5" would sort after "1.0.1-1"); use [Package.Compare].
 func (p *Package) EVR() string {
 	return strconv.FormatUint(uint64(p.Epoch), 10) + ":" + p.Version + "-" + p.Release
+}
+
+// Compare orders the versions of two packages the way rpm does: the epoch
+// numerically, then the version and then the release with [rpm.Vercmp], each
+// on its own. It returns -1 if p is older than other, 1 if it is newer, and 0
+// if the versions are the same.
+func (p *Package) Compare(other *Package) int {
+	switch {
+	case p.Epoch < other.Epoch:
+		return -1
+	case p.Epoch > other.Epoch:
+		return 1
+	}
+
+	if c := rpm.Vercmp(p.Version, other.Version); c != 0 {
+		return c
+	}
+
+	return rpm.Vercmp(p.Release, other.Release)
 }
 
 // Index is an in-memory view of the primary metadata of the repositories,
@@ -145,7 +166,7 @@ func (ix *Index) shouldReplace(existing, candidate *Package) bool {
 		return candidate.Arch == archNoarch && existing.Arch != ix.arch
 	}
 
-	return rpm.Vercmp(candidate.EVR(), existing.EVR()) > 0
+	return candidate.Compare(existing) > 0
 }
 
 // add inserts p, unless it belongs to a non-default module stream, and indexes
