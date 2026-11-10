@@ -40,6 +40,8 @@ type Config struct {
 type Repo struct {
 	Name    string
 	Servers []string
+	// Usage is what the repository may be used for; the zero value is all.
+	Usage Usage
 }
 
 // IncludeResolver returns the servers named by an "Include = value" line of a
