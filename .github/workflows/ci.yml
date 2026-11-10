@@ -34,6 +34,10 @@ jobs:
         run: |
           go mod tidy
           git diff --exit-code go.mod go.sum
+      - name: The module zip is valid
+        # Consumers fetch the module as a zip; a file the zip rules reject
+        # (a ":" in a name, for one) makes the tagged version unusable.
+        run: go run ./internal/modzipcheck
       - name: Build
         run: go build ./...
       - name: Cross build

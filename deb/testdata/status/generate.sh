@@ -46,11 +46,14 @@ trap 'rm -rf "$out"' EXIT
 	# Package, version, architecture, abbreviated status, status, provides.
 	dpkg-query -W -f="\${Package}\t\${Version}\t\${Architecture}\t\${db:Status-Abbrev}\t\${Status}\t\${Provides}\n" > /out/status.expected
 	mkdir -p /out/info
+	# Go module paths may not contain ":", so "name:arch" is stored as
+	# "name%3Aarch"; the test maps it back.
 	for p in hello libgcc-s1:amd64 libgcc-s1:i386 libc6:i386 base-files wget; do
-		dpkg-query -L "$p" > "/out/info/$p.expected"
+		n=$(printf %s "$p" | sed "s/:/%3A/")
+		dpkg-query -L "$p" > "/out/info/$n.expected"
 		f=/var/lib/dpkg/info/$p.list
 		[ -f "$f" ] || f=/var/lib/dpkg/info/${p%%:*}.list
-		cp "$f" "/out/info/$p.list"
+		cp "$f" "/out/info/$n.list"
 	done
 '
 

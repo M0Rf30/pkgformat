@@ -443,8 +443,28 @@ func TestFindStatusStaysInRoot(t *testing.T) {
 	require.ErrorIs(t, err, deb.ErrStatusNotFound)
 }
 
+// infoFixture loads testdata/status/info as dpkg lays it out. Go module paths
+// may not contain ":", so the fixtures store "name:arch" as "name%3Aarch".
+func infoFixture(t *testing.T) fstest.MapFS {
+	t.Helper()
+
+	entries, err := os.ReadDir("testdata/status/info")
+	require.NoError(t, err)
+
+	fsys := fstest.MapFS{}
+
+	for _, e := range entries {
+		data, err := os.ReadFile(filepath.Join("testdata/status/info", e.Name()))
+		require.NoError(t, err)
+
+		fsys[strings.ReplaceAll(e.Name(), "%3A", ":")] = &fstest.MapFile{Data: data}
+	}
+
+	return fsys
+}
+
 func TestReadInfoList(t *testing.T) {
-	fsys := os.DirFS("testdata/status/info")
+	fsys := infoFixture(t)
 
 	for _, c := range []struct{ name, arch, file string }{
 		{"hello", "amd64", "hello"},
@@ -458,7 +478,7 @@ func TestReadInfoList(t *testing.T) {
 		got, err := deb.ReadInfoList(fsys, c.name, c.arch, deb.StatusOptions{})
 		require.NoError(t, err, c.file)
 
-		data, err := os.ReadFile("testdata/status/info/" + c.file + ".expected")
+		data, err := fs.ReadFile(fsys, c.file+".expected")
 		require.NoError(t, err)
 
 		assert.Equal(t, strings.Split(strings.TrimRight(string(data), "\n"), "\n"), got, c.file)
