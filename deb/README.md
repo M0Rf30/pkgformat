@@ -15,7 +15,7 @@ github.com/M0Rf30/pkgformat/deb/apt    apt client: update, load, resolve, downlo
 | Read a `.deb` | `ParseDebFileAt`, `ParseDebFile`, `(*DebFile).Extract`, `OpenData`, `Conffiles` |
 | deb822 | `ParseControlFile` (strict, one paragraph), `ScanControl` (lenient, every paragraph), `ControlFile` |
 | Versions | `CompareVersions` (the dpkg algorithm), `ValidVersion`, `StripEpoch` |
-| Relations | `ParseRelations`, `DependencyNames`, `NormalizeDependency` |
+| Relations | `ParseRelations` (keeps `:any`/`:native` qualifiers, `[arch]` and `<profile>` restrictions), `FormatRelations`, `Relation.AppliesTo`, `ActiveRelations`, `ArchMatches` (architecture wildcards), `DependencyNames`, `NormalizeDependency` |
 | Installed packages | `FindStatus`, `OpenStatus`, `(*StatusDB)`: `Entries`, `List`, `InstalledNames`, `InstalledProvides`; `ParseStatus`; `ReadInfoList` for `/var/lib/dpkg/info/*.list` |
 | Repository indexes | `Index` (Packages writer, plain and compressed), `ScanPackages`, `OpenIndex` (gz, bz2, xz, lz4, zst) |
 | Release | `Release`, `ParseRelease`, `SignRelease`, `Trust` (InRelease and Release.gpg verification policy) |

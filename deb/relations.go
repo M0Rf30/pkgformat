@@ -11,36 +11,98 @@ import (
 // limit.
 const maxRelations = 1 << 16
 
+// Restriction is one term of an architecture restriction ("[amd64 !i386]") or
+// of a build-profile restriction ("<!nocheck>"): a name, optionally negated.
+type Restriction struct {
+	// Name is the architecture, architecture wildcard ("linux-any",
+	// "any-arm64") or build profile, as written without the "!".
+	Name string
+	// Negated is true when the term was written with a "!".
+	Negated bool
+}
+
+// String renders the term as written.
+func (t Restriction) String() string {
+	if t.Negated {
+		return "!" + t.Name
+	}
+
+	return t.Name
+}
+
 // Relation is one package reference of a dependency field: name, optional
-// architecture qualifier and optional version constraint.
+// architecture qualifier, optional version constraint, and the architecture
+// and build-profile restrictions of a source package's Build-Depends.
 type Relation struct {
 	// Name is the package name.
 	Name string
 	// Arch is the ":arch" qualifier ("any", "native" or an architecture), or "".
 	Arch string
 	// Op is the version operator: "<<", "<=", "=", ">=", ">>" or the obsolete
-	// "<" and ">". It is "" when the relation has no version constraint.
+	// "<" and ">" (which dpkg reads as "<=" and ">="). It is "" when the
+	// relation has no version constraint.
 	Op string
 	// Version is the version the operator compares with.
 	Version string
+	// ArchRestrictions is the "[amd64 !i386 linux-any]" list: the relation is
+	// in force only for the host architectures it selects (see
+	// [Relation.AppliesTo]). Nil when there is none.
+	ArchRestrictions []Restriction
+	// ProfileGroups are the "<!nocheck> <stage1 cross>" groups: the relation
+	// is in force when every term of at least one group holds for the active
+	// build profiles. Nil when there is none.
+	ProfileGroups [][]Restriction
 }
 
-// String renders the relation the way a control file spells it.
+// String renders the relation in canonical control-file syntax:
+// "name[:arch] (op version) [architectures] <profiles> <profiles>".
 func (r Relation) String() string {
-	name := r.Name
+	var sb strings.Builder
+
+	sb.WriteString(r.Name)
+
 	if r.Arch != "" {
-		name += ":" + r.Arch
+		sb.WriteByte(':')
+		sb.WriteString(r.Arch)
 	}
 
-	if r.Op == "" {
-		return name
+	if r.Op != "" {
+		sb.WriteString(" (")
+		sb.WriteString(r.Op)
+		sb.WriteByte(' ')
+		sb.WriteString(r.Version)
+		sb.WriteByte(')')
 	}
 
-	return fmt.Sprintf("%s (%s %s)", name, r.Op, r.Version)
+	if len(r.ArchRestrictions) > 0 {
+		sb.WriteString(" [")
+		writeRestrictions(&sb, r.ArchRestrictions)
+		sb.WriteByte(']')
+	}
+
+	for _, group := range r.ProfileGroups {
+		sb.WriteString(" <")
+		writeRestrictions(&sb, group)
+		sb.WriteByte('>')
+	}
+
+	return sb.String()
+}
+
+func writeRestrictions(sb *strings.Builder, terms []Restriction) {
+	for i, t := range terms {
+		if i > 0 {
+			sb.WriteByte(' ')
+		}
+
+		sb.WriteString(t.String())
+	}
 }
 
 // Satisfied reports whether version meets the constraint of the relation. A
-// relation without an operator is met by any version.
+// relation without an operator is met by any version. The obsolete operators
+// "<" and ">" mean "<=" and ">=", as they do for dpkg. An unknown operator is
+// met by no version.
 func (r Relation) Satisfied(version string) bool {
 	if r.Op == "" {
 		return true
@@ -49,15 +111,15 @@ func (r Relation) Satisfied(version string) bool {
 	c := CompareVersions(version, r.Version)
 
 	switch r.Op {
-	case "<<", "<":
+	case "<<":
 		return c < 0
-	case "<=":
+	case "<=", "<":
 		return c <= 0
 	case "=":
 		return c == 0
-	case ">=":
+	case ">=", ">":
 		return c >= 0
-	case ">>", ">":
+	case ">>":
 		return c > 0
 	}
 
@@ -68,11 +130,33 @@ func (r Relation) Satisfied(version string) bool {
 // satisfies the dependency.
 type Alternatives []Relation
 
+// String renders the group with " | " between the relations.
+func (a Alternatives) String() string {
+	parts := make([]string, len(a))
+	for i, r := range a {
+		parts[i] = r.String()
+	}
+
+	return strings.Join(parts, " | ")
+}
+
+// FormatRelations renders a dependency field the way [ParseRelations] reads
+// it: entries separated by ", ", alternatives by " | ".
+func FormatRelations(rels []Alternatives) string {
+	parts := make([]string, len(rels))
+	for i, a := range rels {
+		parts[i] = a.String()
+	}
+
+	return strings.Join(parts, ", ")
+}
+
 // ParseRelations parses a dependency field (Depends, Pre-Depends, Conflicts,
-// Provides, ...) into its comma-separated entries, each a list of
-// alternatives. Architecture restrictions ("[amd64]") and build profiles
-// ("<!nocheck>") are accepted and dropped. A malformed entry fails with
-// ErrInvalidControlFormat.
+// Provides, Build-Depends, ...) into its comma-separated entries, each a list
+// of alternatives. Architecture restrictions ("[amd64 !i386]") and build
+// profile restrictions ("<!nocheck> <stage1 cross>") are kept on the relation;
+// [Relation.AppliesTo] and [ActiveRelations] evaluate them. A malformed entry
+// fails with ErrInvalidControlFormat.
 func ParseRelations(field string) ([]Alternatives, error) {
 	var out []Alternatives
 
@@ -103,7 +187,7 @@ func ParseRelations(field string) ([]Alternatives, error) {
 	return out, nil
 }
 
-// parseRelation parses "name[:arch] [(op version)] [[archs]] [<profiles>]".
+// parseRelation parses "name[:arch] [(op version)] [[archs]] [<profiles>...]".
 func parseRelation(s string) (Relation, error) {
 	var rel Relation
 
@@ -135,28 +219,68 @@ func parseRelation(s string) (Relation, error) {
 		rest = strings.TrimSpace(after)
 	}
 
-	// What is left may only be architecture restrictions and build profiles.
-	for rest != "" {
-		var closer byte
-
-		switch rest[0] {
-		case '[':
-			closer = ']'
-		case '<':
-			closer = '>'
-		default:
-			return Relation{}, fmt.Errorf("%w: trailing text in %q", ErrInvalidControlFormat, s)
+	// What is left may only be the architecture restriction, then the build
+	// profile restrictions.
+	if strings.HasPrefix(rest, "[") {
+		inner, after, ok := strings.Cut(rest[1:], "]")
+		if !ok {
+			return Relation{}, fmt.Errorf("%w: unterminated architecture restriction in %q", ErrInvalidControlFormat, s)
 		}
 
-		end := strings.IndexByte(rest, closer)
-		if end < 0 {
-			return Relation{}, fmt.Errorf("%w: unterminated restriction in %q", ErrInvalidControlFormat, s)
+		terms, ok := parseRestrictions(inner)
+		if !ok {
+			return Relation{}, fmt.Errorf("%w: architecture restriction in %q", ErrInvalidControlFormat, s)
 		}
 
-		rest = strings.TrimSpace(rest[end+1:])
+		rel.ArchRestrictions = terms
+		rest = strings.TrimSpace(after)
+	}
+
+	for strings.HasPrefix(rest, "<") {
+		inner, after, ok := strings.Cut(rest[1:], ">")
+		if !ok {
+			return Relation{}, fmt.Errorf("%w: unterminated build profile restriction in %q", ErrInvalidControlFormat, s)
+		}
+
+		terms, ok := parseRestrictions(inner)
+		if !ok {
+			return Relation{}, fmt.Errorf("%w: build profile restriction in %q", ErrInvalidControlFormat, s)
+		}
+
+		rel.ProfileGroups = append(rel.ProfileGroups, terms)
+		rest = strings.TrimSpace(after)
+	}
+
+	if rest != "" {
+		return Relation{}, fmt.Errorf("%w: trailing text in %q", ErrInvalidControlFormat, s)
 	}
 
 	return rel, nil
+}
+
+// parseRestrictions splits the inside of "[...]" or "<...>" into terms. It
+// fails for an empty list and for a term that is empty or has characters no
+// architecture or profile name has.
+func parseRestrictions(inner string) ([]Restriction, bool) {
+	words := strings.Fields(inner)
+	if len(words) == 0 {
+		return nil, false
+	}
+
+	terms := make([]Restriction, len(words))
+
+	for i, w := range words {
+		neg := strings.HasPrefix(w, "!")
+		w = strings.TrimPrefix(w, "!")
+
+		if w == "" || strings.ContainsAny(w, "!<>[](),|:=") {
+			return nil, false
+		}
+
+		terms[i] = Restriction{Name: w, Negated: neg}
+	}
+
+	return terms, true
 }
 
 // splitConstraint splits "<op> <version>" or "<op><version>".

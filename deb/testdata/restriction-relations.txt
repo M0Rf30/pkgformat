@@ -1,0 +1,28 @@
+r01 [amd64]
+r02 [!amd64]
+r03 [amd64 i386]
+r04 [!amd64 !i386]
+r05 [amd64 !i386]
+r06 [!i386 amd64]
+r07 [linux-any]
+r08 [!linux-any]
+r09 [any-amd64 any-arm64]
+r10 [!hurd-any !kfreebsd-any]
+r11 [armhf armel]
+r12 [any-arm]
+r13 [linux-any !armhf]
+r14 <!nocheck>
+r15 <nocheck>
+r16 <cross>
+r17 <!cross> <!nocheck>
+r18 <stage1 cross>
+r19 <!stage1 !cross>
+r20 <stage1 cross> <nodoc>
+r21 (>= 1) [amd64] <!nocheck>
+r22 [arm64] <cross>
+r23 [!amd64] <!nocheck> <cross>
+r24 [AMD64]
+r25 [musl-linux-any]
+r26 [gnu-linux-any]
+r27 <pkg.foo.bar> <!pkg.foo.bar>
+r28 [any]
