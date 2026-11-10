@@ -20,7 +20,7 @@ func ExampleWrite() {
 		Architecture: "amd64",
 		Maintainer:   "Jane Doe <jane@example.org>",
 		Description:  "Say hello\nA friendly greeter.",
-		Depends:      []string{"libc6 (>= 2.31)"},
+		Depends:      rels("libc6 (>= 2.31)"),
 		ModTime:      time.Unix(1700000000, 0),
 	}
 
