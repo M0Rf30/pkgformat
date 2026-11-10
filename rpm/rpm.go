@@ -88,19 +88,8 @@ func ReadRpm(f io.Reader) (*Rpm, error) {
 	}, nil
 }
 
-// ExpandPayload extracts the payload of a RPM to the specified directory
-func (rpm *Rpm) ExpandPayload(dest string) error {
-	pld, err := rpm.uncompressedPayload()
-	if err != nil {
-		return err
-	}
-	if c, ok := pld.(io.Closer); ok {
-		defer c.Close()
-	}
-	return cpio.Extract(pld, dest)
-}
-
-// PayloadReader accesses the payload cpio archive within the RPM.
+// PayloadReader accesses the payload cpio archive within the RPM. The sizes of
+// stripped payloads (RPM v6) are taken from the header.
 //
 // DEPRECATED: Use PayloadReaderExtended instead in order to handle files larger than 4GiB.
 func (rpm *Rpm) PayloadReader() (*cpio.Reader, error) {
@@ -108,7 +97,15 @@ func (rpm *Rpm) PayloadReader() (*cpio.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	return cpio.NewReader(pld), nil
+	files, err := rpm.Header.GetFiles()
+	if err != nil {
+		return nil, err
+	}
+	sizes, _, _ := payloadLayout(files)
+	if sizes == nil {
+		sizes = []int64{}
+	}
+	return cpio.NewReaderWithSizes(pld, sizes), nil
 }
 
 // PayloadReaderExtended accesses payload file contents sequentially

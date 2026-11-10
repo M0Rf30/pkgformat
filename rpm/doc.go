@@ -19,6 +19,11 @@
 // the stripped cpio archives of format 6. Package github.com/M0Rf30/pkgformat/rpm/cpio
 // has the archive reader and the extraction.
 //
+// ExpandPayload applies the modes (including set-uid, set-gid and sticky bits)
+// and modification times of the package and verifies every regular file against
+// the digest in the header; ExpandPayloadWithOptions masks the modes, applies
+// owners, creates device nodes and FIFOs, or skips the digests on request.
+//
 // ReadPackage returns the metadata of a package as a plain struct: identity,
 // sizes, the dependency lists (requires, provides, conflicts, obsoletes and the
 // weak dependencies, with their sense flags), the file list and the changelog.

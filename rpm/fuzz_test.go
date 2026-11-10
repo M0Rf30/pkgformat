@@ -19,6 +19,7 @@ package rpm
 import (
 	"bytes"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
@@ -90,8 +91,35 @@ func FuzzReadRpm(f *testing.F) {
 		}
 		touchHeader(rpm.Header)
 		rpm.SetMaxPayloadSize(fuzzPayloadLimit)
-		_ = rpm.ExpandPayload(t.TempDir())
+		dest := removableTempDir(t)
+		_ = rpm.ExpandPayload(dest)
+
+		// the same package with every optional behaviour enabled
+		rpm2, err := ReadRpm(bytes.NewReader(data))
+		if err != nil {
+			t.Fatal(err)
+		}
+		rpm2.SetMaxPayloadSize(fuzzPayloadLimit)
+		_ = rpm2.ExpandPayloadWithOptions(removableTempDir(t), &ExpandOptions{
+			Umask: 07022, Chown: true, SpecialFiles: true, SkipDigests: true,
+		})
 	})
+}
+
+// removableTempDir is t.TempDir for trees whose directories may have been
+// given modes that prevent removing them.
+func removableTempDir(t *testing.T) string {
+	t.Helper()
+	dir := t.TempDir()
+	t.Cleanup(func() {
+		_ = filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
+			if err == nil && d.IsDir() {
+				_ = os.Chmod(p, 0o755)
+			}
+			return nil
+		})
+	})
+	return dir
 }
 
 func FuzzPayloadReaderExtended(f *testing.F) {

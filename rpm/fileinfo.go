@@ -29,6 +29,8 @@ type FileInfo interface {
 	Linkname() string
 	Device() int
 	Inode() int
+	// Rdev returns the device number (st_rdev) of a character or block device.
+	Rdev() int
 }
 
 type fileInfo struct {
@@ -43,6 +45,7 @@ type fileInfo struct {
 	linkName  string
 	device    uint32
 	inode     uint32
+	rdev      uint32
 }
 
 // Name returns the full path of the file
@@ -98,6 +101,11 @@ func (fi *fileInfo) Device() int {
 // Inode returns a inode number used to tie hard-linked files together
 func (fi *fileInfo) Inode() int {
 	return int(fi.inode)
+}
+
+// Rdev returns the device number of a character or block device
+func (fi *fileInfo) Rdev() int {
+	return int(fi.rdev)
 }
 
 func (fi *fileInfo) fileType() uint32 {

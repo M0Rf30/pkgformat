@@ -146,8 +146,16 @@ Packages and archives are often untrusted input.
   made by a key it trusts (they are `Signature` values with the key ID and
   whether they cover the header only).
 - **Extraction is confined.** `cpio.Extract` and `ExpandPayload` write below the
-  destination only, never follow links out of it, and create files without
-  setuid and setgid bits.
+  destination only and never follow links out of it. They apply the modes of the
+  package, including the setuid, setgid and sticky bits, and its modification
+  times, as rpm does; `ExpandOptions.Umask` (`07022` drops the special bits)
+  masks them. Owners are applied only with `ExpandOptions.Chown`, and only when
+  running as root. Device nodes, FIFOs and sockets are skipped, with a logged
+  warning, unless `ExpandOptions.SpecialFiles` is set. `ExpandPayload` checks the
+  contents of every regular file against `FILEDIGESTS` and fails with
+  `*DigestMismatchError` (`errors.Is(err, rpm.ErrDigestMismatch)`) on a mismatch;
+  `ExpandOptions.SkipDigests` turns that off. Both the cpio payload of format 4
+  and the stripped payload of format 6 are extracted.
 - **Repository metadata is untrusted.** The `dnf` client confines every
   location to the repository and the destination, caps what it downloads and
   decompresses, verifies SHA-256 and SHA-512 checksums, refuses a package it
