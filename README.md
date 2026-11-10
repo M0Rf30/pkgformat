@@ -20,7 +20,7 @@ Requires Go 1.27 or later.
 
 | Format | Package | Packages | Repository index | Repository client |
 | --- | --- | --- | --- | --- |
-| RPM (format 4 and 6) | [`rpm`](rpm/README.md) | write, read, verify, sign | repodata: write, read, sign, modules | `rpm/dnf` |
+| RPM (format 4 and 6) | [`rpm`](rpm/README.md) | write, read, verify, sign; installed database (`rpm/rpmdb`): read | repodata: write, read, sign, modules | `rpm/dnf` |
 | Debian | [`deb`](deb/README.md) | write, read, verify, sign | Packages, Release, InRelease: write, read, sign, verify | `deb/apt` |
 | Alpine | [`apk`](apk/README.md) | write, read, verify, sign (RSA SHA-1 and SHA-256) | APKINDEX: write, read, sign, verify | `apk.Client` |
 | Arch Linux | [`pacman`](pacman/README.md) | write, read, sign | sync database: write, read | `pacman.Client` |

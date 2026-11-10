@@ -28,6 +28,7 @@ C zstd library to decompress payloads, otherwise a pure Go decoder.
 | [`.../cpio`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/cpio) | Read, write and safely extract the cpio payload, including the stripped cpio of format 6 |
 | [`.../repodata`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/repodata) | Write repository metadata (primary, filelists, other, repomd.xml, comps), compress and sign it; read repomd.xml, primary.xml and modules.yaml; merge repositories |
 | [`.../dnf`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/dnf) | Repository client: `.repo` files, mirror failover, verified metadata cache, module filtering, dependency resolution, checked downloads |
+| [`.../rpmdb`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/rpmdb) | Read the installed-package database of a system, read only: SQLite (rpm 4.16 and later), ndb (`Packages.db`) and BerkeleyDB hash (`Packages`, rpm 4.15 and earlier) ([README](rpmdb/README.md)) |
 | [`cmd/tar2rpm`](../cmd/tar2rpm) | Command that turns a tar archive into a package |
 | [`cmd/rpmsample`](../cmd/rpmsample) | Command that writes a sample package, to test other rpm tools |
 

@@ -229,7 +229,7 @@ func TestHeaderLead(t *testing.T) {
 
 func TestIdentityValidation(t *testing.T) {
 	ok := Package{Name: "foo", Version: "1.0", Release: "1.el9", Arch: "x86_64"}
-	require.NoError(t, ok.validateIdentity())
+	require.NoError(t, ok.validateIdentity(true))
 
 	for _, bad := range []string{"", "..", ".", "a/b", "a\\b", "a\x00b", "a b", "a\tb"} {
 		for field := range 4 {
@@ -245,7 +245,7 @@ func TestIdentityValidation(t *testing.T) {
 				p.Arch = bad
 			}
 
-			require.ErrorIs(t, p.validateIdentity(), ErrInvalidHeader, "field %d value %q", field, bad)
+			require.ErrorIs(t, p.validateIdentity(true), ErrInvalidHeader, "field %d value %q", field, bad)
 		}
 	}
 }

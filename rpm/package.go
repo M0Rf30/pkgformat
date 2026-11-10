@@ -36,6 +36,10 @@ type FileEntry struct {
 	Flags  uint32 `json:"flags,omitempty"`
 	Digest string `json:"digest,omitempty"`
 	LinkTo string `json:"linkTo,omitempty"`
+	// Size is the size of the file in bytes. User and Group name its owner.
+	Size  int64  `json:"size,omitempty"`
+	User  string `json:"user,omitempty"`
+	Group string `json:"group,omitempty"`
 }
 
 // ChangelogEntry is one entry of the changelog of a package.
@@ -73,6 +77,10 @@ type Package struct {
 	PackageSize int64 `json:"packageSize,omitempty"`
 	// InstalledSize is the size of the installed files.
 	InstalledSize int64 `json:"installedSize,omitempty"`
+	// InstallTime is when the package was installed, in seconds since the
+	// epoch. Only the header of an installed package carries it: it is set by
+	// [RpmHeader.InstalledPackage] and zero otherwise.
+	InstallTime int64 `json:"installTime,omitempty"`
 	// ArchiveSize is the size of the uncompressed payload.
 	ArchiveSize int64 `json:"archiveSize,omitempty"`
 	// SHA256 is the checksum of the .rpm file. The headers do not carry it:
@@ -155,6 +163,13 @@ func ReadPackageLimits(r io.Reader, lim PackageLimits) (*Package, error) {
 // PackageSize and SHA256 are left for the caller to set. Limits that were not
 // applied when the headers were read are applied to what is kept.
 func (hdr *RpmHeader) Package(lim PackageLimits) (*Package, error) {
+	return hdr.buildPackage(lim, true)
+}
+
+// buildPackage decodes the metadata of the header. A package file always
+// carries an architecture; the header of an installed package may lack one
+// (the gpg-pubkey pseudo packages do), which requireArch=false accepts.
+func (hdr *RpmHeader) buildPackage(lim PackageLimits, requireArch bool) (*Package, error) {
 	lim = lim.normalized()
 	gen := hdr.genHeader
 
@@ -177,10 +192,11 @@ func (hdr *RpmHeader) Package(lim PackageLimits) (*Package, error) {
 		HeaderStart:   int64(len(hdr.lead) + len(hdr.sigHeader.orig)),
 		InstalledSize: size64(gen.firstNumber(tag.LONGSIZE, tag.SIZE)),
 		ArchiveSize:   hdr.archiveSize(),
+		InstallTime:   int64(uint32(gen.firstNumber(tag.INSTALLTIME))),
 	}
 	pkg.HeaderEnd = pkg.HeaderStart + int64(len(gen.orig))
 
-	if err := pkg.validateIdentity(); err != nil {
+	if err := pkg.validateIdentity(requireArch); err != nil {
 		return nil, err
 	}
 
@@ -241,10 +257,14 @@ func (hdr *rpmHeader) firstNumber(ids ...int) uint64 {
 
 // validateIdentity rejects a package missing identity tags, or with
 // characters that are unsafe in a file name.
-func (p *Package) validateIdentity() error {
+func (p *Package) validateIdentity(requireArch bool) error {
 	for _, f := range []struct{ name, value string }{
 		{"NAME", p.Name}, {"VERSION", p.Version}, {"RELEASE", p.Release}, {"ARCH", p.Arch},
 	} {
+		if f.value == "" && f.name == "ARCH" && !requireArch {
+			continue
+		}
+
 		if f.value == "" {
 			return fmt.Errorf("%w: missing %s tag", ErrInvalidHeader, f.name)
 		}
@@ -299,6 +319,14 @@ func (hdr *rpmHeader) files(lim PackageLimits) (files []FileEntry, truncated boo
 	mtimes, _ := hdr.numbersPrefix(tag.FILEMTIMES, len(bases))
 	digests, _ := hdr.stringsPrefix(tag.FILEDIGESTS, len(bases))
 	linktos, _ := hdr.stringsPrefix(tag.FILELINKTOS, len(bases))
+	users, _ := hdr.stringsPrefix(tag.FILEUSERNAME, len(bases))
+	groups, _ := hdr.stringsPrefix(tag.FILEGROUPNAME, len(bases))
+	sizes, _ := hdr.numbersPrefix(tag.LONGFILESIZES, len(bases))
+
+	if len(sizes) == 0 {
+		sizes, _ = hdr.numbersPrefix(tag.FILESIZES, len(bases))
+	}
+
 	modes, _ := hdr.numbersPrefix(tag.FILEMODES, len(bases))
 	flags, _ := hdr.numbersPrefix(tag.FILEFLAGS, len(bases))
 
@@ -322,7 +350,15 @@ func (hdr *rpmHeader) files(lim PackageLimits) (files []FileEntry, truncated boo
 		}
 
 		// Check before concatenating: dir may be megabytes long.
-		cost := len(dir) + len(base) + len(entry.Digest) + len(entry.LinkTo)
+		if i < len(users) {
+			entry.User = users[i]
+		}
+
+		if i < len(groups) {
+			entry.Group = groups[i]
+		}
+
+		cost := len(dir) + len(base) + len(entry.Digest) + len(entry.LinkTo) + len(entry.User) + len(entry.Group)
 		if cost > budget {
 			truncated = true
 
@@ -334,6 +370,10 @@ func (hdr *rpmHeader) files(lim PackageLimits) (files []FileEntry, truncated boo
 
 		if i < len(mtimes) {
 			entry.MTime = int64(uint32(mtimes[i]))
+		}
+
+		if i < len(sizes) {
+			entry.Size = size64(sizes[i])
 		}
 
 		if i < len(modes) {

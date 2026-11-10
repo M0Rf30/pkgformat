@@ -47,6 +47,7 @@ const (
 	DESCRIPTION       = 1005
 	BUILDTIME         = 1006
 	BUILDHOST         = 1007
+	INSTALLTIME       = 1008
 	SIZE              = 1009
 	DISTRIBUTION      = 1010
 	VENDOR            = 1011

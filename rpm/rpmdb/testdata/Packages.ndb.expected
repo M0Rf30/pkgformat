@@ -1,0 +1,1030 @@
+P	system-user-root	0	20190513	2.20	noarch	1794324870
+D	system-user-root	group(root)	0	
+D	system-user-root	group(shadow)	0	
+D	system-user-root	group(trusted)	0	
+D	system-user-root	group(users)	0	
+D	system-user-root	system-user-root	8	20190513-2.20
+D	system-user-root	user(root)	0	
+Q	system-user-root	rpmlib(BuiltinLuaScripts)	16777226	4.2.2-1
+Q	system-user-root	rpmlib(CompressedFileNames)	16777226	3.0.4-1
+Q	system-user-root	rpmlib(FileDigests)	16777226	4.6.0-1
+Q	system-user-root	rpmlib(PayloadFilesHavePrefix)	16777226	4.0-1
+Q	system-user-root	rpmlib(PayloadIsZstd)	16777226	5.4.18-1
+F	system-user-root	/usr/lib/sysusers.d/system-user-root.conf	33188	275	b3145f497c41a7e25e196afe0656cce0892afb1a766cd7a68af99a4692cf0cca		root	root	1643980446	0
+P	filesystem	0	84.87	21.2	x86_64	1794324870
+D	filesystem	filesystem	8	84.87-21.2
+D	filesystem	filesystem(x86-64)	8	84.87-21.2
+D	filesystem	may-perform-usrmerge	0	
+Q	filesystem	compat-usrmerge-tools	512	
+Q	filesystem	group(root)	0	
+Q	filesystem	rpmlib(BuiltinLuaScripts)	16777226	4.2.2-1
+Q	filesystem	rpmlib(CompressedFileNames)	16777226	3.0.4-1
+Q	filesystem	rpmlib(FileDigests)	16777226	4.6.0-1
+Q	filesystem	rpmlib(PayloadFilesHavePrefix)	16777226	4.0-1
+Q	filesystem	rpmlib(PayloadIsZstd)	16777226	5.4.18-1
+Q	filesystem	user(root)	0	
+F	filesystem	/bin	41471	7		usr/bin	root	root	1772455303	0
+F	filesystem	/boot	16749	0			root	root	1772455303	64
+F	filesystem	/dev	16877	0			root	root	1772455303	0
+F	filesystem	/etc	16877	0			root	root	1772455303	0
+F	filesystem	/etc/X11	16877	0			root	root	1772455303	0
+F	filesystem	/etc/aliases.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/default	16877	0			root	root	1772455303	0
+F	filesystem	/etc/ld.so.conf.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/logrotate.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/modprobe.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/motd.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/opt	16877	0			root	root	1772455303	0
+F	filesystem	/etc/permissions.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/profile.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/skel	16877	0			root	root	1772455303	0
+F	filesystem	/etc/sysconfig	16877	0			root	root	1772455303	0
+F	filesystem	/etc/sysctl.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/tmpfiles.d	16877	0			root	root	1772455303	0
+F	filesystem	/etc/xdg	16877	0			root	root	1772455303	0
+F	filesystem	/etc/xdg/autostart	16877	0			root	root	1772455303	0
+F	filesystem	/home	16749	0			root	root	1772455303	64
+F	filesystem	/lib	41471	7		usr/lib	root	root	1772455303	0
+F	filesystem	/lib64	41471	9		usr/lib64	root	root	1772455303	0
+F	filesystem	/mnt	16749	0			root	root	1772455303	64
+F	filesystem	/opt	16749	0			root	root	1772455303	64
+F	filesystem	/proc	16749	0			root	root	1772455303	64
+F	filesystem	/root	16832	0			root	root	1772455303	0
+F	filesystem	/root/.gnupg	16832	0			root	root	1772455303	0
+F	filesystem	/root/bin	16877	0			root	root	1772455303	0
+F	filesystem	/run	16877	0			root	root	1772455303	0
+F	filesystem	/run/lock	16877	0			root	root	1772455303	64
+F	filesystem	/sbin	41471	8		usr/sbin	root	root	1772455303	0
+F	filesystem	/srv	16749	0			root	root	1772455303	64
+F	filesystem	/sys	16749	0			root	root	1772455303	64
+F	filesystem	/tmp	17407	0			root	root	1772455303	0
+F	filesystem	/usr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/bin	16749	0			root	root	1772455303	0
+F	filesystem	/usr/etc	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/X11	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/default	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/logrotate.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/profile.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/security	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/security/pam_env.conf.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel/.cache	16832	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel/.config	16832	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel/.local	16832	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel/.local/bin	16832	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel/.local/share	16832	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel/.local/share/fonts	16832	0			root	root	1772455303	0
+F	filesystem	/usr/etc/skel/.local/state	16832	0			root	root	1772455303	0
+F	filesystem	/usr/etc/xdg	16877	0			root	root	1772455303	0
+F	filesystem	/usr/etc/xdg/autostart	16877	0			root	root	1772455303	0
+F	filesystem	/usr/include	16749	0			root	root	1772455303	0
+F	filesystem	/usr/include/X11	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib/X11	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/browser-plugins	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/environment.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/firmware	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/modprobe.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/modules	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/motd.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/pkgconfig	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib/restricted	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib/restricted/bin	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib/sysctl.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/systemd	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/systemd/system	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/systemd/system-preset	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/systemd/user	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/systemd/user-preset	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/sysusers.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/tmpfiles.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/tmpfiles.d/fs-run.conf	33188	29	22674817a04f03269560e4e8b90c2111c676f00320bc7a6ddb2943d238623242		root	root	1772455303	0
+F	filesystem	/usr/lib/tmpfiles.d/fs-tmp.conf	33188	26	c115db2f6bbd2fe098016e643d32f38eaeee912c4bc768669e66e101ee85c274		root	root	1772455303	0
+F	filesystem	/usr/lib/tmpfiles.d/fs-usr-local.conf	33188	709	d0cb76c1f157934a81fc943c09a49336ebdf0fed057b96eeb4b30c24dd4a6e5b		root	root	1772455303	0
+F	filesystem	/usr/lib/tmpfiles.d/fs-var-tmp.conf	33188	28	690fcbf5a6e397868a35a2a6415b99557d39512eb441272a205e89cbfd3bf1bb		root	root	1772455303	0
+F	filesystem	/usr/lib/tmpfiles.d/fs-var.conf	33188	449	842e5e38939972e90da7555cfb8eeda1c8c1c94d6476cfbbd02ae295dc082f6e		root	root	1772455303	0
+F	filesystem	/usr/lib/udev	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib/udev/rules.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib64	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib64/browser-plugins	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib64/glibc-hwcaps	16877	0			root	root	1772455303	0
+F	filesystem	/usr/lib64/glibc-hwcaps/x86-64-v2	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib64/glibc-hwcaps/x86-64-v3	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib64/glibc-hwcaps/x86-64-v4	16749	0			root	root	1772455303	0
+F	filesystem	/usr/lib64/pkgconfig	16749	0			root	root	1772455303	0
+F	filesystem	/usr/libexec	16877	0			root	root	1772455303	0
+F	filesystem	/usr/local	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/bin	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/include	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/lib	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/lib64	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/libexec	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man1	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man2	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man3	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man4	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man5	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man6	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man7	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man8	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/man9	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/man/mann	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/sbin	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/share	16877	0			root	root	1772455303	64
+F	filesystem	/usr/local/src	16877	0			root	root	1772455303	64
+F	filesystem	/usr/sbin	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/appdata	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/applications	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/dict	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/doc	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/doc/packages	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/fillup-templates	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/fonts	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/games	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/help	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/C	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/af	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ar	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/as	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ast	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/az	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/be	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/be@latin	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/bg	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/bn	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/bn_IN	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/br	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/bs	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ca	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ca@valencia	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/cs	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/cs_CZ	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/cy	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/da	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/de	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/de_AT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/de_CH	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/de_DE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/dz	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/el	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/el_GR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en@boldquot	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en@quot	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en@shaw	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en_AU	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en_CA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en_GB	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en_NZ	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/en_US	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/eo	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_AR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_CL	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_CO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_CR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_DO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_EC	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_ES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_GT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_HN	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_MX	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_NI	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_PA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_PE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_PR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_SV	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_UY	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/es_VE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/et	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/et_EE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/eu	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fa	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fi	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fi_FI	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fr_CA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fr_CH	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fr_FR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/fur	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ga	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/gd	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/gl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/gu	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/he	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/hi	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/hr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/hu	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ia	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/id	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/is	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/it	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/it_IT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ja	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ka	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/kk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/km	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/kn	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ko	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/lt	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/lv	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/mai	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/mk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ml	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/mr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ms	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/nb	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/nb_NO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/nds	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ne	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/nl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/nl_BE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/nn	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/nn_NO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/oc	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/or	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/pa	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/pl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/pl_PL	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/pt	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/pt_BR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/pt_PT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ro	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ru	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ru_RU	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ru_UA.koi8u	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/si	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sl_SI	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sq	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sr@ije	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sr@ijekavian	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sr@ijekavianlatin	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sr@latin	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/sv	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ta	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/te	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/th	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/tr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/tr_TR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/ug	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/uk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/uk_UA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/vi	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/wa	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/zh	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/zh_CN	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/zh_HK	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/zh_Hans	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/zh_Hant	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/help/zh_TW	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/icons	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/info	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/licenses	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/af	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/af/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ar	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ar/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/as	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/as/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ast	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ast/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/az	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/az/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/be	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/be/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/be@latin	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/be@latin/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bg	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bg/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bn	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bn/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bn_IN	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bn_IN/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/br	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/br/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bs	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/bs/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ca	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ca/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ca@valencia	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ca@valencia/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/cs	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/cs/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/cs_CZ	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/cs_CZ/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/cy	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/cy/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/da	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/da/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de_AT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de_AT/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de_CH	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de_CH/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de_DE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/de_DE/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/dz	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/dz/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/el	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/el/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/el_GR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/el_GR/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en@boldquot	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en@boldquot/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en@quot	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en@quot/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en@shaw	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en@shaw/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_AU	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_AU/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_CA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_CA/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_GB	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_GB/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_NZ	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_NZ/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_US	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/en_US/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/eo	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/eo/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_AR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_AR/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_CL	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_CL/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_CO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_CO/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_CR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_CR/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_DO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_DO/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_EC	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_EC/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_ES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_ES/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_GT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_GT/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_HN	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_HN/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_MX	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_MX/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_NI	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_NI/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_PA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_PA/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_PE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_PE/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_PR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_PR/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_SV	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_SV/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_UY	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_UY/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_VE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/es_VE/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/et	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/et/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/et_EE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/et_EE/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/eu	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/eu/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fa	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fa/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fi	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fi/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fi_FI	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fi_FI/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr_CA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr_CA/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr_CH	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr_CH/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr_FR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fr_FR/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fur	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/fur/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ga	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ga/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/gd	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/gd/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/gl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/gl/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/gu	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/gu/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/he	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/he/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/hi	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/hi/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/hr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/hr/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/hu	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/hu/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ia	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ia/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/id	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/id/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/is	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/is/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/it	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/it/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/it_IT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/it_IT/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ja	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ja/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ka	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ka/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/kk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/kk/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/km	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/km/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/kn	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/kn/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ko	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ko/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/lt	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/lt/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/lv	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/lv/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/mai	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/mai/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/mk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/mk/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ml	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ml/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/mr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/mr/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ms	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ms/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nb	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nb/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nb_NO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nb_NO/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nds	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nds/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ne	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ne/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nl/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nl_BE	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nl_BE/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nn	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nn/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nn_NO	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/nn_NO/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/oc	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/oc/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/or	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/or/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pa	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pa/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pl/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pl_PL	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pl_PL/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pt	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pt/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pt_BR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pt_BR/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pt_PT	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/pt_PT/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ro	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ro/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ru	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ru/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ru_RU	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ru_RU/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ru_UA.koi8u	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ru_UA.koi8u/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/si	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/si/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sk/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sl/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sl_SI	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sl_SI/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sq	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sq/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@ije	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@ije/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@ijekavian	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@ijekavian/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@ijekavianlatin	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@ijekavianlatin/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@latin	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sr@latin/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sv	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/sv/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ta	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ta/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/te	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/te/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/th	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/th/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/tr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/tr/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/tr_TR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/tr_TR/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ug	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/ug/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/uk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/uk/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/uk_UA	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/uk_UA/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/vi	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/vi/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/wa	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/wa/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_CN	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_CN/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_HK	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_HK/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_Hans	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_Hans/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_Hant	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_Hant/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_TW	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/locale/zh_TW/LC_MESSAGES	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/bg/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ca/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/cs/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/da/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/de/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/el/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/eo/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/es/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/fr/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/hu/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/id/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/it/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ja/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ko/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man1	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man2	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man3	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man4	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man5	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man6	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man7	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man8	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/man9	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/mann	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/nl/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pl/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/pt_BR/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ro/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/ru/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sk/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sr/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/sv/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/tr/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/uk/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_CN/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hans/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_Hant/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man2	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man3	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man4	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man5	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man6	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man7	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man8	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/man9	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/man/zh_TW/mann	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/metainfo	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/mime	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/mime/packages	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/misc	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/omc	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/omc/svcinfo.d	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/pixmaps	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/pkgconfig	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/polkit-1	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/polkit-1/actions	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/polkit-1/rules.d	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/sgml	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/sgml/docbook	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/sounds	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/themes	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/user-tmpfiles.d	16877	0			root	root	1772455303	0
+F	filesystem	/usr/share/xml	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/xml/docbook	16749	0			root	root	1772455303	0
+F	filesystem	/usr/share/xsessions	16749	0			root	root	1772455303	0
+F	filesystem	/usr/src	16877	0			root	root	1772455303	0
+F	filesystem	/usr/src/packages	16877	0			root	root	1772455303	0
+F	filesystem	/usr/x86_64-suse-linux	16877	0			root	root	1772455303	0
+F	filesystem	/usr/x86_64-suse-linux/bin	16877	0			root	root	1772455303	0
+F	filesystem	/usr/x86_64-suse-linux/include	16877	0			root	root	1772455303	0
+F	filesystem	/usr/x86_64-suse-linux/lib	16877	0			root	root	1772455303	0
+F	filesystem	/var	16877	0			root	root	1772455303	0
+F	filesystem	/var/adm	16877	0			root	root	1772455303	0
+F	filesystem	/var/adm/backup	16832	0			root	root	1772455303	0
+F	filesystem	/var/adm/update-messages	16832	0			root	root	1772455303	0
+F	filesystem	/var/adm/update-scripts	16832	0			root	root	1772455303	0
+F	filesystem	/var/cache	16877	0			root	root	1772455303	0
+F	filesystem	/var/crash	16877	0			root	root	1772455303	0
+F	filesystem	/var/lib	16877	0			root	root	1772455303	0
+F	filesystem	/var/lib/empty	16749	0			root	root	1772455303	0
+F	filesystem	/var/lib/misc	16877	0			root	root	1772455303	0
+F	filesystem	/var/lock	41471	11		../run/lock	root	root	1772455303	64
+F	filesystem	/var/log	16877	0			root	root	1772455303	0
+F	filesystem	/var/opt	16877	0			root	root	1772455303	0
+F	filesystem	/var/run	41471	6		../run	root	root	1772455303	64
+F	filesystem	/var/spool	16877	0			root	root	1772455303	0
+F	filesystem	/var/tmp	17407	0			root	root	1772455303	0
+P	aaa_base	0	84.87+git20260924.144354a1	2.1	x86_64	1794324870
+D	aaa_base	/sbin/service	32768	
+D	aaa_base	aaa_base	8	84.87+git20260924.144354a1-2.1
+D	aaa_base	aaa_base(x86-64)	8	84.87+git20260924.144354a1-2.1
+D	aaa_base	config(aaa_base)	268435464	84.87+git20260924.144354a1-2.1
+Q	aaa_base	(glibc >= 2.30 if glibc)	1024	
+Q	aaa_base	/bin/mktemp	0	
+Q	aaa_base	/bin/sh	768	
+Q	aaa_base	/bin/sh	1280	
+Q	aaa_base	/bin/sh	2304	
+Q	aaa_base	/bin/sh	4352	
+Q	aaa_base	/bin/sh	16384	
+Q	aaa_base	/usr/bin/cat	0	
+Q	aaa_base	/usr/bin/date	0	
+Q	aaa_base	/usr/bin/grep	0	
+Q	aaa_base	/usr/bin/mv	0	
+Q	aaa_base	/usr/bin/sed	0	
+Q	aaa_base	/usr/bin/tput	0	
+Q	aaa_base	/usr/bin/xz	0	
+Q	aaa_base	config(aaa_base)	268435464	84.87+git20260924.144354a1-2.1
+Q	aaa_base	distribution-release	0	
+Q	aaa_base	filesystem	0	
+Q	aaa_base	fillup	1024	
+Q	aaa_base	libc.so.6()(64bit)	16384	
+Q	aaa_base	libc.so.6(GLIBC_2.2.5)(64bit)	16384	
+Q	aaa_base	libc.so.6(GLIBC_2.3)(64bit)	16384	
+Q	aaa_base	libc.so.6(GLIBC_2.3.4)(64bit)	16384	
+Q	aaa_base	libc.so.6(GLIBC_2.34)(64bit)	16384	
+Q	aaa_base	libc.so.6(GLIBC_2.4)(64bit)	16384	
+Q	aaa_base	rpmlib(CompressedFileNames)	16777226	3.0.4-1
+Q	aaa_base	rpmlib(FileDigests)	16777226	4.6.0-1
+Q	aaa_base	rpmlib(PayloadFilesHavePrefix)	16777226	4.0-1
+Q	aaa_base	rpmlib(PayloadIsZstd)	16777226	5.4.18-1
+Q	aaa_base	rpmlib(RichDependencies)	16777226	4.12.0-1
+F	aaa_base	/etc/bash.bashrc	33188	12196	3e73e69379b5e0d2e770a978e7126efe3439dac09aed66e51c212f1f41d7ac4b		root	root	1790247541	1
+F	aaa_base	/etc/csh.cshrc	33188	6008	18c95a591e33243390fa08151059523a0b9933bca0acd863fe56cb553ab7ede1		root	root	1790247541	1
+F	aaa_base	/etc/csh.login	33188	7002	b5f7dbb47b539b9315808df287c2f0e87f99239fbf8d5c6fca17cf27926c63bd		root	root	1790247541	1
+F	aaa_base	/etc/init.d	16877	0			root	root	1792999935	64
+F	aaa_base	/etc/inittab	33188	0			root	root	1792999935	65
+F	aaa_base	/etc/inputrc	33188	2414	4684fe69868e0b03c9315fb23e0a94536f7ba64465b96d50b970fa11005fe9f4		root	root	1790247541	1
+F	aaa_base	/etc/mime.types	33188	116519	bff03e8a3251b05b12f7f63361ecbbc775f793676ff581287f9619e314b75071		root	root	1790247541	1
+F	aaa_base	/etc/profile	33188	9197	23715fd4814fe12d2b3a292998dfeabe99c5ec72a468a724e5e11ecdb2137485		root	root	1790247541	1
+F	aaa_base	/etc/shells	33188	322	c9e13c4e67e113479016efb2d0ada903793c1d854e997c63ff8d882d82750c25		root	root	1790247541	1
+F	aaa_base	/etc/sysctl.conf	33188	0			root	root	1790247541	81
+F	aaa_base	/usr/bin/filesize	33261	68	c50efb99bd84181a7e0ccfc1d5beb7cb6b321c7759dbe40708cdd59eedf8bdc9		root	root	1790247541	0
+F	aaa_base	/usr/bin/get_kernel_version	33261	14528	2bd3c680d385cfdedc43b0b1e9c023bf4a210f327076fb005b6f72db7816e92a		root	root	1792999935	0
+F	aaa_base	/usr/bin/old	33261	1980	2f026917e2171356e9bca0678455754f9ca9b720ef664afb983a9b67756b1d65		root	root	1790247541	0
+F	aaa_base	/usr/bin/rpmlocate	33261	336	ccd91ad716640aa45c8b4f1b0548e7b9e3b814f62b09ea2d3d45c440ce68e350		root	root	1790247541	0
+F	aaa_base	/usr/etc/DIR_COLORS	33188	4992	5fec94c79a76c3aa0a1307e89c13fe0071c0bb007be71ae34bdd1429a8dd5f82		root	root	1790247541	0
+F	aaa_base	/usr/etc/bash.bashrc	33188	56	57dc7120b6b3432b65b38c099ab351eaef64f3c0880660473e83e2a0ee031f19		root	root	1790247541	0
+F	aaa_base	/usr/etc/csh.cshrc	33188	47	d7ba9416b7f5e66a6828588b98e856b95b8b24a1c6fa0daabe660a7b5390ff51		root	root	1790247541	0
+F	aaa_base	/usr/etc/csh.login	33188	47	6c3a16eeb4eb236b7516d8eb6cd342fe9058a8fa7b09ad79930babc505c695b7		root	root	1790247541	0
+F	aaa_base	/usr/etc/inputrc	33188	22	82f0b90d9dd7aa6ed897b04037fde02d102f5f7640cb09eceb070427a32df4d7		root	root	1790247541	0
+F	aaa_base	/usr/etc/inputrc.keys	33188	20455	3a2a25737ce769a76209ba546992e8a49b4ca45ec11a61fbbddaca2c49f2c831		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile	33188	48	def114679359f88ee69c1cd45ad1b5c70182860fb25e7e1844b352a2bcc88f6c		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/alias.ash	33188	1347	10ae2f44f8535a9c45da39f72f8ea07b0c213d997044b6d5ea05006a5871da6d		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/alias.bash	33188	1609	a33112d20b3915d04382761e5ae1255f86906858c1009ec48f2e1997933bb8ee		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/alias.tcsh	33188	752	6387b451170f8bb465a4bf07418db9d10251650a7e73a510f24abbc6e9192fee		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/alljava.csh	33188	1248	c9c2a1469512c92268d50f70c980bf285e874e451542e4683b589085af8f854b		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/alljava.sh	33188	1395	d36652b851e15c49d8b914e8b23cce1a3ea32d7daed004c2923d8e8a5aa39c00		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/lang.csh	33188	2394	68478cf31089b64ae2baf3e2a43b9255be89c22c114ff013b686538dd9b17bbc		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/lang.sh	33188	1876	124138da1ab5f24a94abba618da6bfb500fdd6c841de46e0262c23044549986c		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/ls.bash	33188	1363	0e50569b2abb8b4ab283a2bd8273b28f6531366461f3ca73b4f9ac5c0ce2ebd2		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/ls.tcsh	33188	815	f5bfeb89312fd46ec10233b2526134a6581946b130fe99f0baeeffb3402d9af3		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/profile.csh	33188	4011	28bb74e6c9759a66d030f1e6b961663b30179a05e241e858c731e58276dbefef		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/profile.sh	33188	3389	8b484616ced6e6622c40a776b2f0034737ef22d31f05d0a03a6df2e894262cc5		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/terminal.csh	33188	159	cfe1181c1c4ffb2a27876364cf9f11146b9de66a68ff773f0c3061f6870c0b04		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/terminal.sh	33188	123	25ace82f1c9eb1a0741e38c1c2a19b976d03919ffdb9f269d313831004731604		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/xdg-environment.csh	33188	343	0be490eec0ceda597283b6f14a5227d28cbaa287dc52ddfcb02f8f7cf4679858		root	root	1790247541	0
+F	aaa_base	/usr/etc/profile.d/xdg-environment.sh	33188	342	b5acb61ef6b4d0ad9d3fc64707c4c3b7c1fbc6371183e60d0ea7108d94cd96f1		root	root	1790247541	0
+F	aaa_base	/usr/etc/security/pam_env.conf.d/xdg.conf	33188	311	eb1d37b85a0a9a9aa03cecac5e2fc90dddec2fb53b84dbea991b59c737995d2b		root	root	1790247541	0
+F	aaa_base	/usr/lib/environment.d/50-xdg.conf	33188	343	d5abd5379056999d5bb9dfffef27df81c1115579fdfbb09d2afdf69c631d8cbc		root	root	1790247541	0
+F	aaa_base	/usr/lib/sysctl.d/50-default.conf	33188	2363	19f1226320e1727fd2ef8fa088aba6eeafc126fa7bc8a7d643b58afd578ebf12		root	root	1790247541	0
+F	aaa_base	/usr/lib/sysctl.d/50-pid-max.conf	33188	165	94503724952597ccab7cb8319f91f818ee1aa2e7526bdfafc60fae3da5df0ab2		root	root	1790247541	0
+F	aaa_base	/usr/lib/sysctl.d/51-network.conf	33188	252	4292c83e211bc30c928712a25708edf1cbeb94cf39d4d17b6594ad5559eef2e0		root	root	1790247541	0
+F	aaa_base	/usr/lib/systemd/system/soft-reboot-cleanup.service	33188	346	28e6d620cc421c256f2346924efad34cd11b070bc30a8b95ef6e042363556c22		root	root	1790247541	0
+F	aaa_base	/usr/lib/tmpfiles.d/soft-reboot-cleanup.conf	33188	272	646a08e2ec01d5265dd9646a2f1e387f5844664b0987d313fe6c8e49653adf1e		root	root	1790247541	0
+F	aaa_base	/usr/libexec/soft-reboot-cleanup	33261	245	e7436a93fef556595e7128a60946d3af285950f78af902ea8c8d553d24264918		root	root	1790247541	0
+F	aaa_base	/usr/sbin/service	33261	5825	a6457fe2af2cd760f5b0ca9a9cd4ab5696bd075ee86192db62d01a4e9593ae38		root	root	1790247541	0
+F	aaa_base	/usr/sbin/smart_agetty	33261	2073	d926e524ce5effce31b8e02a926b177d45d984c28c05f5063645224d01d31472		root	root	1790247541	0
+F	aaa_base	/usr/sbin/sysconf_addword	33261	2781	daaeee40c988a5e3faf70f5c8eb524ea3f436da6863b9e558dd0cfe3dc909551		root	root	1790247541	0
+F	aaa_base	/usr/share/fillup-templates/sysconfig.proxy	33188	1220	cf2ba7750d6c87e38514ac97cd6057f66d3b918be940f079a204f9d985cd18ec		root	root	1790247541	0
+F	aaa_base	/usr/share/licenses/aaa_base	16877	0			root	root	1792999935	0
+F	aaa_base	/usr/share/licenses/aaa_base/COPYING	33188	18092	8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643		root	root	1790247541	128
+F	aaa_base	/usr/share/man/man1/smart_agetty.1.gz	33188	749	599dec14ee03018470d52a29dbe30cdb6e08a1aa858743240c1ded26b12fdb2b		root	root	1790247541	2
+F	aaa_base	/usr/share/man/man8/service.8.gz	33188	607	c69e85f79e4632822ac777c63a70193ac32e552772834e37dbd76753bdd62924		root	root	1790247541	2
