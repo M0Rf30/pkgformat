@@ -59,6 +59,36 @@ type PackageInfo struct {
 	Provides []deb.Relation
 	// Version is the Version field.
 	Version string
+	// SourceName and SourceVersion are the source package the version was
+	// built from: the Source field, which defaults to Name and, when it carries
+	// a version in parentheses, that one, else Version. Phased updates are
+	// seeded with them.
+	SourceName, SourceVersion string
+	// PhasedUpdatePercentage is the Phased-Update-Percentage field; nil when
+	// the version has none.
+	PhasedUpdatePercentage *int
+	// Releases lists the Release files of the indexes the version was read
+	// from, in load order; empty for a version only the status database or a
+	// hand-built entry knows. Pin matching and the Not-Automatic rules read
+	// them.
+	Releases []*ReleaseInfo
+}
+
+// ReleaseInfo is what apt keeps of the Release file of the index a version
+// was read from: the properties package pins match against, and the
+// repository's automatic-upgrade flags.
+type ReleaseInfo struct {
+	// Origin, Label, Suite (the archive, "a=" of a pin), Codename ("n="),
+	// Version ("v=") and Component ("c=") as the Release file and the index
+	// name them. Architecture is the architecture of the index ("b=").
+	Origin, Label, Suite, Codename, Version, Component, Architecture string
+	// Site is the host name of the source the index came from, matched by
+	// "origin" pins; empty for a local source.
+	Site string
+	// NotAutomatic and ButAutomaticUpgrades are the Release flags of those
+	// names: NotAutomatic repositories have pin priority 1, or 100 together
+	// with ButAutomaticUpgrades.
+	NotAutomatic, ButAutomaticUpgrades bool
 }
 
 // ArchitectureAll reports whether the package is architecture-independent.

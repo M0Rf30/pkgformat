@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/M0Rf30/pkgformat/deb"
 	"github.com/M0Rf30/pkgformat/internal/limitio"
@@ -18,10 +19,67 @@ import (
 // LoadSources.
 const MaxSourcesFileBytes = 1 << 20
 
-// Source is one apt repository: a base URL, a suite and its components.
+// SourceType is the Types value of a source: what kind of archive it is.
+type SourceType string
+
+const (
+	// TypeDeb is a binary package archive ("deb").
+	TypeDeb SourceType = "deb"
+	// TypeDebSrc is a source package archive ("deb-src").
+	TypeDebSrc SourceType = "deb-src"
+)
+
+// Switch is a yes/no source option that may be left to the global
+// configuration. The zero value means unset.
+type Switch uint8
+
+const (
+	// SwitchDefault leaves the option to the default (UpdateOptions or apt's).
+	SwitchDefault Switch = iota
+	// SwitchYes is yes, true or 1.
+	SwitchYes
+	// SwitchNo is no, false or 0.
+	SwitchNo
+)
+
+// Enabled resolves the switch, using def when it is unset.
+func (s Switch) Enabled(def bool) bool {
+	switch s {
+	case SwitchYes:
+		return true
+	case SwitchNo:
+		return false
+	default:
+		return def
+	}
+}
+
+// ByHashMode is the By-Hash source option.
+type ByHashMode uint8
+
+const (
+	// ByHashDefault is unset: by-hash is used when the Release file says
+	// Acquire-By-Hash: yes, as with "yes".
+	ByHashDefault ByHashMode = iota
+	// ByHashYes uses by-hash when the Release file offers it.
+	ByHashYes
+	// ByHashNo never uses by-hash.
+	ByHashNo
+	// ByHashForce uses by-hash even if the Release file does not say so, and
+	// does not fall back to the plain index path.
+	ByHashForce
+)
+
+// Source is one apt repository: a base URL, a suite and its components, with
+// the options of a sources.list line or deb822 stanza.
 type Source struct {
+	// Type is TypeDeb or TypeDebSrc. The zero value means TypeDeb.
+	Type SourceType
 	// URL is the repository base URL with a trailing slash
-	// ("https://archive.ubuntu.com/ubuntu/").
+	// ("https://archive.ubuntu.com/ubuntu/"). Besides http(s) it may carry
+	// the schemes file:, copy:, cdrom:, mirror+http(s):// and mirror+file://
+	// (and, accepted by the parser, anything else apt knows, which Update
+	// refuses with ErrUnsupportedScheme).
 	URL string
 	// Suite is the distribution ("jammy", "bookworm-updates").
 	Suite string
@@ -30,10 +88,49 @@ type Source struct {
 	// Architectures restricts the source to these architectures. Empty means
 	// the default architecture.
 	Architectures []string
-	// SignedBy is the Signed-By option: a path to a keyring file or directory,
-	// or "".
+	// ArchitecturesAdd and ArchitecturesRemove are the Architectures-Add and
+	// Architectures-Remove options: architectures added to, or taken off, the
+	// set the source is fetched for.
+	ArchitecturesAdd, ArchitecturesRemove []string
+	// Languages are the Languages option for the Translation indexes ("en",
+	// "de", "none"); empty means the default (the translations apt would
+	// fetch for the environment, here "none" unless UpdateOptions says
+	// otherwise).
+	Languages []string
+	// Targets are the Targets option: the kinds of index to fetch, such as
+	// "Packages", "Translations", "Contents", "Sources". Empty selects the
+	// default of the Type: Packages for deb, Sources for deb-src.
+	Targets []string
+	// SignedBy is the Signed-By option verbatim: key fingerprints (separated
+	// by comma or blank, each optionally ending in "!"), paths of keyring
+	// files or directories, or an inline armored PGP public key block. "" means
+	// the default keyrings.
 	SignedBy string
+	// Trusted, AllowInsecure, AllowWeak, AllowDowngradeToInsecure,
+	// CheckValidUntil and CheckDate are the options of those names (trusted,
+	// allow-insecure, allow-weak, allow-downgrade-to-insecure,
+	// check-valid-until, check-date).
+	Trusted, AllowInsecure, AllowWeak, AllowDowngradeToInsecure, CheckValidUntil, CheckDate Switch
+	// ValidUntilMin and ValidUntilMax are the Valid-Until-Min and
+	// Valid-Until-Max options, as durations. Zero is unset.
+	ValidUntilMin, ValidUntilMax time.Duration
+	// DateMaxFuture is the Date-Max-Future option: how far past the local clock
+	// the Date of the Release may lie. Zero is unset.
+	DateMaxFuture time.Duration
+	// ByHash is the By-Hash option.
+	ByHash ByHashMode
+	// PDiffs is the PDiffs option.
+	PDiffs Switch
+	// Snapshot is the Snapshot option: a snapshot id for archives that serve
+	// them, or "".
+	Snapshot string
+	// Options holds the options the parser does not interpret, with their
+	// names as written, so that a writer can reproduce them.
+	Options map[string]string
 }
+
+// IsSource reports whether the source is a source package archive.
+func (s *Source) IsSource() bool { return s.Type == TypeDebSrc }
 
 // isHTTPURL reports whether raw is an http or https URL.
 func isHTTPURL(raw string) bool {
