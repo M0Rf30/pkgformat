@@ -23,6 +23,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/M0Rf30/pkgformat/rpm/tag"
 	"github.com/ProtonMail/go-crypto/openpgp"
@@ -182,8 +183,16 @@ func FuzzVerify(f *testing.F) {
 	signed("testdata/nfpm/test-1.0.0.x86_64.rpm")
 	signed("testdata/v6/ref-v6.rpm")
 
-	f.Fuzz(func(_ *testing.T, data []byte) {
+	f.Fuzz(func(t *testing.T, data []byte) {
 		_, _, _ = Verify(bytes.NewReader(data), keyring)
 		_, _, _ = Verify(bytes.NewReader(data), nil)
+		// a package that passes with signatures required carries some
+		_, sigs, err := VerifyWithOptions(bytes.NewReader(data), keyring, &VerifyOptions{
+			RequireSigned: true,
+			Now:           func() time.Time { return time.Unix(1700000000, 0) },
+		})
+		if err == nil && len(sigs) == 0 {
+			t.Fatal("RequireSigned accepted a package without signatures")
+		}
 	})
 }

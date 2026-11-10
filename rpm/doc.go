@@ -35,8 +35,14 @@
 // Verify checks the digests of a stream and the OpenPGP signatures of the
 // header and payload against a keyring. It returns the signatures it
 // found. A package that carries no signature at all is not an error: Verify
-// returns an empty list, so callers that require a signature must check
-// len(sigs).
+// returns an empty list, so callers that require a signature use
+// VerifyWithOptions with RequireSigned, or check len(sigs).
+//
+// A signature is accepted only if its key is not revoked, not expired and
+// allowed to sign, and the signature is not expired; the failure is a
+// *SignatureError wrapping the matching error of package
+// github.com/M0Rf30/pkgformat/gpg. VerifyOptions.Now sets the time those
+// checks are made at.
 //
 // # Signing
 //

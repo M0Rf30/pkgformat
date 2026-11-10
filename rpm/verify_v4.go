@@ -7,9 +7,11 @@ import (
 
 	"github.com/ProtonMail/go-crypto/openpgp"
 	"github.com/ProtonMail/go-crypto/openpgp/packet"
+
+	"github.com/M0Rf30/pkgformat/gpg"
 )
 
-func parseSignature(blob []byte, knownKeys openpgp.EntityList) (*Signature, error) {
+func parseSignature(blob []byte, vf *verifier) (*Signature, error) {
 	reader := bytes.NewReader(blob)
 	genpkt, err := packet.Read(reader)
 	if err != nil {
@@ -17,7 +19,7 @@ func parseSignature(blob []byte, knownKeys openpgp.EntityList) (*Signature, erro
 	} else if reader.Len() > 0 {
 		return nil, ErrTrailingGarbage
 	}
-	sig, err := parseSignatureV4(genpkt, knownKeys)
+	sig, err := parseSignatureV4(genpkt, vf)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +31,7 @@ func parseSignature(blob []byte, knownKeys openpgp.EntityList) (*Signature, erro
 	return sig, nil
 }
 
-func parseSignatureV4(genpkt packet.Packet, knownKeys openpgp.EntityList) (*Signature, error) {
+func parseSignatureV4(genpkt packet.Packet, vf *verifier) (*Signature, error) {
 	pkt, ok := genpkt.(*packet.Signature)
 	if !ok || (pkt.IssuerKeyId == nil && len(pkt.IssuerFingerprint) == 0) {
 		return nil, ErrNoPGPSignature
@@ -43,17 +45,25 @@ func parseSignatureV4(genpkt packet.Packet, knownKeys openpgp.EntityList) (*Sign
 		sig.KeyId = *pkt.IssuerKeyId
 	}
 	sig.validate = func(h hash.Hash) error {
-		if knownKeys == nil {
+		if vf.keys == nil {
 			return nil
 		}
-		if entity, key := findKey(pkt, knownKeys); key != nil {
-			setEntity(sig, entity)
-			return key.VerifySignature(h, pkt)
+		entity, key := findKey(pkt, vf.keys)
+		if key == nil {
+			return KeyNotFoundError{
+				KeyID:       sig.KeyId,
+				Fingerprint: sig.KeyFingerprint,
+			}
 		}
-		return KeyNotFoundError{
-			KeyID:       sig.KeyId,
-			Fingerprint: sig.KeyFingerprint,
+		setEntity(sig, entity)
+		if err := key.VerifySignature(h, pkt); err != nil {
+			return err
 		}
+		// the signature is genuine: check that its key may be relied on
+		if err := gpg.CheckSigner(entity, key, pkt, vf.now()); err != nil {
+			return &SignatureError{KeyID: sig.KeyId, Fingerprint: sig.KeyFingerprint, Err: err}
+		}
+		return nil
 	}
 	return sig, nil
 }

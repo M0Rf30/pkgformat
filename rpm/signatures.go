@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"hash"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"time"
@@ -43,6 +44,10 @@ type SignatureOptions struct {
 	Hash crypto.Hash
 	// CreationTime for the signature. If not set, defaults to the current time
 	CreationTime time.Time
+	// Lifetime is how long the signature is valid for, counted from its
+	// creation time and rounded down to whole seconds. Zero means it never
+	// expires.
+	Lifetime time.Duration
 }
 
 func (opts *SignatureOptions) hash() crypto.Hash {
@@ -67,6 +72,10 @@ func makeSignature(h hash.Hash, key *packet.PrivateKey, opts *SignatureOptions) 
 		PubKeyAlgo:   key.PubKeyAlgo,
 		Hash:         hashType,
 		IssuerKeyId:  &key.KeyId,
+	}
+	if opts != nil && opts.Lifetime >= time.Second {
+		secs := uint32(min(opts.Lifetime/time.Second, math.MaxUint32))
+		sig.SigLifetimeSecs = &secs
 	}
 	err := sig.Sign(h, key, nil)
 	if err != nil {

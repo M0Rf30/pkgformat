@@ -141,10 +141,18 @@ Packages and archives are often untrusted input.
   `Rpm.SetMaxPayloadSize` before `ExpandPayload`, `PayloadReader` or
   `PayloadReaderExtended`. The default is no limit.
 - **Check that a package is signed.** `Verify` returns an empty list of
-  signatures, and no error, for a package that carries none. A caller that
-  requires a signature must check `len(sigs)`, and that the signatures it got are
-  made by a key it trusts (they are `Signature` values with the key ID and
-  whether they cover the header only).
+  signatures, and no error, for a package that carries none: it is intact, not
+  authentic. A caller that requires a signature uses `VerifyWithOptions` with
+  `RequireSigned` (an unsigned package then fails with `ErrUnsigned`), or checks
+  `len(sigs)`; the signatures are checked against the keys it passes, so pass
+  only keys it trusts.
+- **Keys are checked for validity.** A signature counts only if its key is not
+  revoked (primary key, subkey or primary user id), not expired, allowed to
+  sign, and the signature itself is not expired or from the future. A key that
+  fails is a `*SignatureError` wrapping `gpg.ErrKeyRevoked`, `gpg.ErrKeyExpired`,
+  `gpg.ErrSignatureExpired` or `gpg.ErrKeyCannotSign`. Validity is judged at the
+  time of the check (`VerifyOptions.Now` overrides the clock for tests), as GnuPG
+  does, so a package signed by a key that has since expired no longer verifies.
 - **Extraction is confined.** `cpio.Extract` and `ExpandPayload` write below the
   destination only and never follow links out of it. They apply the modes of the
   package, including the setuid, setgid and sticky bits, and its modification

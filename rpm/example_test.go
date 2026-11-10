@@ -167,3 +167,18 @@ func ExampleSignRpmStream() {
 	fmt.Println(len(sigs), "signatures")
 	// Output: 2 signatures
 }
+
+func ExampleVerifyWithOptions() {
+	f, err := os.Open("testdata/v6/ref-v6.rpm") // an unsigned package
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	key, err := openpgp.NewEntity("example", "", "example@example.com", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, _, err = rpm.VerifyWithOptions(f, openpgp.EntityList{key}, &rpm.VerifyOptions{RequireSigned: true})
+	fmt.Println(err)
+	// Output: rpm: package is not signed
+}
