@@ -4,60 +4,74 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/M0Rf30/pkgformat/rpm/tag"
 )
-
-// senseCompareMask selects the comparison bits of the sense flags.
-const senseCompareMask = tag.RPMSENSE_LESS | tag.RPMSENSE_GREATER | tag.RPMSENSE_EQUAL
 
 // Dependency is one entry of a dependency list of a package: a provide, a
 // requirement, a conflict, an obsolete or a weak dependency.
 type Dependency struct {
 	Name string `json:"name"`
-	// Flags holds the sense bits, the tag.RPMSENSE_* values.
-	Flags   uint32 `json:"flags,omitempty"`
+	// Flags holds the sense bits, the tag.RPMSENSE_* values: the comparison
+	// and the roles of the dependency. The predicates below (IsPre, IsPost,
+	// IsRPMLib, ...) read them.
+	Flags   Sense  `json:"flags,omitempty"`
 	Version string `json:"version,omitempty"`
 	// Epoch is the epoch part of the version, when it is written "epoch:version".
 	Epoch uint32 `json:"epoch,omitempty"`
 }
 
-// SenseFlagsString renders the comparison bits of flags as the flags attribute
-// of repodata: "LT", "GT", "EQ", "LE" or "GE". An unversioned dependency
-// yields "".
-func SenseFlagsString(flags uint32) string {
-	switch flags & senseCompareMask {
-	case tag.RPMSENSE_LESS:
-		return "LT"
-	case tag.RPMSENSE_GREATER:
-		return "GT"
-	case tag.RPMSENSE_EQUAL:
-		return "EQ"
-	case tag.RPMSENSE_LESS | tag.RPMSENSE_EQUAL:
-		return "LE"
-	case tag.RPMSENSE_GREATER | tag.RPMSENSE_EQUAL:
-		return "GE"
-	default:
-		return ""
-	}
-}
+// IsPre reports whether the requirement is needed before the package is
+// installed: Requires(pre), Requires(post) or a legacy PreReq; the pre
+// attribute of repodata. See [Sense.IsPre].
+func (d Dependency) IsPre() bool { return d.Flags.IsPre() }
 
-// IsPre reports whether the requirement must be met before the scriptlets of
-// the package run.
-func (d Dependency) IsPre() bool {
-	return d.Flags&(tag.RPMSENSE_PREREQ|tag.RPMSENSE_SCRIPT_PRE|tag.RPMSENSE_SCRIPT_POST) != 0
-}
+// IsPost reports a Requires(post) dependency.
+func (d Dependency) IsPost() bool { return d.Flags.IsPost() }
 
-// IsRPMLib reports whether the dependency is an rpmlib(...) feature
-// requirement.
-func (d Dependency) IsRPMLib() bool {
-	return d.Flags&tag.RPMSENSE_RPMLIB != 0
-}
+// IsPreun reports a Requires(preun) dependency.
+func (d Dependency) IsPreun() bool { return d.Flags.IsPreun() }
+
+// IsPostun reports a Requires(postun) dependency.
+func (d Dependency) IsPostun() bool { return d.Flags.IsPostun() }
+
+// IsPretrans reports a Requires(pretrans) dependency.
+func (d Dependency) IsPretrans() bool { return d.Flags.IsPretrans() }
+
+// IsPosttrans reports a Requires(posttrans) dependency.
+func (d Dependency) IsPosttrans() bool { return d.Flags.IsPosttrans() }
+
+// IsUntrans reports a Requires(preuntrans) or Requires(postuntrans)
+// dependency.
+func (d Dependency) IsUntrans() bool { return d.Flags.IsUntrans() }
+
+// IsMissingOK reports a dependency that need not be satisfied.
+func (d Dependency) IsMissingOK() bool { return d.Flags.IsMissingOK() }
+
+// IsKeyring reports a requirement on a key of the rpm keyring.
+func (d Dependency) IsKeyring() bool { return d.Flags.IsKeyring() }
+
+// IsConfig reports the implicit config(name) dependency of a package that
+// ships configuration files.
+func (d Dependency) IsConfig() bool { return d.Flags.IsConfig() }
+
+// IsRich reports a rich (boolean) dependency such as "(a if b)". Packages do
+// not store the rich marker of the sense flags, so it is recognised by the
+// parenthesis that opens the name. Package richdep parses and evaluates them.
+func (d Dependency) IsRich() bool { return d.Flags.IsRich() || IsRichName(d.Name) }
+
+// IsRPMLib reports an rpmlib(...) feature requirement.
+func (d Dependency) IsRPMLib() bool { return d.Flags.IsRPMLib() }
+
+// IsPrereq reports a legacy PreReq dependency.
+func (d Dependency) IsPrereq() bool { return d.Flags.IsPrereq() }
+
+// IsInterp reports the dependency on the interpreter of a scriptlet.
+func (d Dependency) IsInterp() bool { return d.Flags.IsInterp() }
+
+// IsScriptVerify reports a Requires(verify) dependency.
+func (d Dependency) IsScriptVerify() bool { return d.Flags.IsScriptVerify() }
 
 // Versioned reports whether the dependency carries a version comparison.
-func (d Dependency) Versioned() bool {
-	return d.Flags&senseCompareMask != 0
-}
+func (d Dependency) Versioned() bool { return d.Flags.Versioned() }
 
 // SplitVersionRelease splits a dependency version "ver[-rel]" at the last dash.
 func SplitVersionRelease(v string) (version, release string) {
@@ -104,7 +118,7 @@ func (hdr *rpmHeader) dependencies(nameTag, flagsTag, versionTag, limit int) ([]
 		deps[i].Name = name
 
 		if i < len(flags) {
-			deps[i].Flags = uint32(flags[i])
+			deps[i].Flags = Sense(flags[i])
 		}
 
 		if i < len(versions) {
