@@ -488,7 +488,7 @@ func TestResolveMultiArch(t *testing.T) {
 			index: tool("arm64", "foreign") + tool("amd64", "foreign") + app("tool"), seeds: []string{"app:arm64"},
 			want: []string{"tool:amd64=1", "app:arm64=1"}},
 		{name: "an unqualified dependency is met by an installed foreign package of the same architecture",
-			index: tool("arm64", "foreign") + tool("amd64", "foreign") + app("tool"),
+			index:  tool("arm64", "foreign") + tool("amd64", "foreign") + app("tool"),
 			status: installedStanza("tool", "1", "Architecture: arm64", "Multi-Arch: foreign"), seeds: []string{"app:arm64"},
 			want: []string{"app:arm64=1"}},
 		{name: "an unqualified dependency is not met by another architecture without foreign",
