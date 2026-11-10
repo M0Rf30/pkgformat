@@ -19,6 +19,7 @@ package fileutil
 /* Stubs for file operations that aren't meaningful on windows */
 
 import (
+	"errors"
 	"os"
 )
 
@@ -28,4 +29,12 @@ func HasLinks(info os.FileInfo) bool {
 
 func Mkfifo(path string, mode uint32) error {
 	return nil
+}
+
+func Mknod(path string, mode uint32, dev uint64) error {
+	return errors.ErrUnsupported
+}
+
+func Mkdev(major, minor uint32) uint64 {
+	return uint64(major)<<8 | uint64(minor)
 }
