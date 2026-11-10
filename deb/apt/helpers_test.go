@@ -366,3 +366,47 @@ func (f *fixture) load() (*Cache, error) {
 
 // runtimeArch is the Debian architecture of the running program.
 func runtimeArch() string { return ArchFromGoarch(runtime.GOARCH) }
+
+// deps parses a dependency field the way a Packages stanza carries it.
+func deps(tb testing.TB, field string) []deb.Alternatives {
+	tb.Helper()
+
+	groups, err := deb.ParseRelations(field)
+	require.NoError(tb, err)
+
+	return groups
+}
+
+// rels parses a Conflicts, Breaks or Provides field.
+func rels(tb testing.TB, field string) []deb.Relation {
+	tb.Helper()
+
+	var out []deb.Relation
+
+	for _, alts := range deps(tb, field) {
+		out = append(out, alts...)
+	}
+
+	return out
+}
+
+// mustGroups is deps for fixtures built outside a test function.
+func mustGroups(field string) []deb.Alternatives {
+	groups, err := deb.ParseRelations(field)
+	if err != nil {
+		panic(err)
+	}
+
+	return groups
+}
+
+// altsOf turns a flat relation list into one single-alternative group each,
+// the form deb.FormatRelations writes.
+func altsOf(rs []deb.Relation) []deb.Alternatives {
+	out := make([]deb.Alternatives, len(rs))
+	for i, r := range rs {
+		out[i] = deb.Alternatives{r}
+	}
+
+	return out
+}

@@ -13,6 +13,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/M0Rf30/pkgformat/deb"
 )
 
 // run executes a tool and returns its trimmed standard output.
@@ -162,7 +164,7 @@ func TestRealRepositoryRoundTrip(t *testing.T) {
 			assert.Equal(t, "1.2-3", app.Version)
 			assert.Equal(t, src.URL, app.BaseURL)
 			assert.Equal(t, "pool/main/a/app/app_1.2-3_amd64.deb", app.Filename)
-			assert.Equal(t, []string{"lib", "tool"}, app.Depends)
+			assert.Equal(t, "lib (>= 1.0), tool | other", deb.FormatRelations(app.Depends))
 
 			info, err := os.Stat(appDeb)
 			require.NoError(t, err)

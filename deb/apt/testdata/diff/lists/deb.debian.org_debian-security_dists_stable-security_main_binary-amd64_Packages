@@ -1,0 +1,2548 @@
+Package: apache2
+Version: 2.4.69-1~deb13u1
+Installed-Size: 582
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Provides: httpd, httpd-cgi
+Depends: apache2-bin (= 2.4.69-1~deb13u1), apache2-data (= 2.4.69-1~deb13u1), apache2-utils (= 2.4.69-1~deb13u1), media-types, procps, perl:any
+Suggests: apache2-doc, apache2-suexec-pristine | apache2-suexec-custom, ufw, www-browser
+Description: Apache HTTP Server
+Homepage: https://httpd.apache.org/
+Description-md5: d02426bc360345e5acd45367716dc35c
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: ssl-cert
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/a/apache2/apache2_2.4.69-1~deb13u1_amd64.deb
+Size: 230040
+SHA256: eb8642234bc497cd83ead6c4a5951cce784da6bd52c8afc6f1f78206a61974d0
+
+Package: apache2-bin
+Source: apache2
+Version: 2.4.69-1~deb13u1
+Installed-Size: 5182
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Provides: apache2-api-20120211, apache2-api-20120211-openssl1.1
+Depends: perl:any, libapr1t64 (>= 1.7.0), libaprutil1-dbd-sqlite3 | libaprutil1-dbd-mysql | libaprutil1-dbd-odbc | libaprutil1-dbd-pgsql | libaprutil1-dbd-freetds, libaprutil1-ldap, libaprutil1t64 (>= 1.6.0), libbrotli1 (>= 0.6.0), libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libcurl4t64 (>= 7.28.0), libjansson4 (>= 2.14), libldap2 (>= 2.6.2), liblua5.4-0 (>= 5.4.6), libnghttp2-14 (>= 1.50.0), libpcre2-8-0 (>= 10.22), libssl3t64 (>= 3.0.0), libxml2 (>= 2.7.4), zlib1g (>= 1:1.1.4)
+Suggests: apache2-doc, apache2-suexec-pristine | apache2-suexec-custom, www-browser
+Breaks: fossil (<< 1:2.24-5~)
+Description: Apache HTTP Server (modules and other binary files)
+Homepage: https://httpd.apache.org/
+Description-md5: 37901ca6bbb9305b61d0920ecc08204f
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/a/apache2/apache2-bin_2.4.69-1~deb13u1_amd64.deb
+Size: 1416040
+SHA256: cd856ae60045f85ade7f2271561f69d82d277d9960f58ff6b6e3c646e56dc07b
+
+Package: apache2-data
+Source: apache2
+Version: 2.4.69-1~deb13u1
+Installed-Size: 847
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: all
+Description: Apache HTTP Server (common files)
+Homepage: https://httpd.apache.org/
+Description-md5: 9f2fab36019a61312dec627d1cd80365
+Multi-Arch: foreign
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/a/apache2/apache2-data_2.4.69-1~deb13u1_all.deb
+Size: 160016
+SHA256: 85d6d3b790f6739d0cf8558d9ec642949cd6fa1436983977aec6a029ce4a7b85
+
+Package: apache2-utils
+Source: apache2
+Version: 2.4.69-1~deb13u1
+Installed-Size: 450
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Depends: libapr1t64 (>= 1.4.8-2~), libaprutil1t64 (>= 1.5.0), libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libssl3t64 (>= 3.0.0)
+Description: Apache HTTP Server (utility programs for web servers)
+Homepage: https://httpd.apache.org/
+Description-md5: f1e2440381fa90571f125990da6a52fc
+Multi-Arch: foreign
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/a/apache2/apache2-utils_2.4.69-1~deb13u1_amd64.deb
+Size: 221856
+SHA256: 301757254871ac9bd4ad393b5f880764c08363f03087665496faeb52ba878d51
+
+Package: libaprutil1-dbd-mysql
+Source: apr-util
+Version: 1.6.3-3+deb13u1
+Installed-Size: 52
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Depends: libaprutil1t64 (= 1.6.3-3+deb13u1), libc6 (>= 2.38), libmariadb3 (>= 3.0.0)
+Description: Apache Portable Runtime Utility Library - MySQL Driver
+Homepage: https://apr.apache.org/
+Description-md5: 15a666ed46c11f75bd13c5e02383601c
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/a/apr-util/libaprutil1-dbd-mysql_1.6.3-3+deb13u1_amd64.deb
+Size: 16240
+SHA256: ff0fdf4f13fdf340238ba65c8f0b679e06aaff60154a20eaed234dec9a24bc85
+
+Package: libaprutil1-dbd-odbc
+Source: apr-util
+Version: 1.6.3-3+deb13u1
+Installed-Size: 60
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Depends: libaprutil1t64 (= 1.6.3-3+deb13u1), libc6 (>= 2.38), libodbc2 (>= 2.3.1)
+Description: Apache Portable Runtime Utility Library - ODBC Driver
+Homepage: https://apr.apache.org/
+Description-md5: 085602535c579227169d691cc9bd9db1
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/a/apr-util/libaprutil1-dbd-odbc_1.6.3-3+deb13u1_amd64.deb
+Size: 20060
+SHA256: cabeae44769a3d4f90eef2dffa26bb738c959c136a5bd40af8e716fb7d980d40
+
+Package: libaprutil1-dbd-pgsql
+Source: apr-util
+Version: 1.6.3-3+deb13u1
+Installed-Size: 52
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Depends: libaprutil1t64 (= 1.6.3-3+deb13u1), libc6 (>= 2.38), libpq5
+Description: Apache Portable Runtime Utility Library - PostgreSQL Driver
+Homepage: https://apr.apache.org/
+Description-md5: 3e0d8248ad62a14f055f01f5218a8c8f
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/a/apr-util/libaprutil1-dbd-pgsql_1.6.3-3+deb13u1_amd64.deb
+Size: 16064
+SHA256: 389c1c5b470af06dafb1b3e25a530af5a67002f368f495b728d7f7577893b005
+
+Package: libaprutil1-dbd-sqlite3
+Source: apr-util
+Version: 1.6.3-3+deb13u1
+Installed-Size: 48
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Depends: libaprutil1t64 (= 1.6.3-3+deb13u1), libc6 (>= 2.38), libsqlite3-0 (>= 3.5.9)
+Description: Apache Portable Runtime Utility Library - SQLite3 Driver
+Homepage: https://apr.apache.org/
+Description-md5: f471c87c1f3c003cda76426ff2939b9c
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/a/apr-util/libaprutil1-dbd-sqlite3_1.6.3-3+deb13u1_amd64.deb
+Size: 14376
+SHA256: 22fbd51277b23a95e37c09e002ae73caaf8d0f98b5856773e9cf8ec6080bcaee
+
+Package: libaprutil1-ldap
+Source: apr-util
+Version: 1.6.3-3+deb13u1
+Installed-Size: 40
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Depends: libaprutil1t64 (= 1.6.3-3+deb13u1), libc6 (>= 2.4), libldap2 (>= 2.6.2)
+Description: Apache Portable Runtime Utility Library - LDAP Driver
+Homepage: https://apr.apache.org/
+Description-md5: d25faaa24a0fbf145505cba06b4192d7
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/a/apr-util/libaprutil1-ldap_1.6.3-3+deb13u1_amd64.deb
+Size: 12512
+SHA256: 0343ba0870afbec89442307324c4bfa5b68933530ffcd62976d4ccd7f4d27b2a
+
+Package: libaprutil1t64
+Source: apr-util
+Version: 1.6.3-3+deb13u1
+Installed-Size: 284
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: amd64
+Replaces: libaprutil1
+Provides: libaprutil1 (= 1.6.3-3+deb13u1)
+Depends: libapr1t64 (>= 1.6.2), libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libdb5.3t64, libexpat1 (>= 2.0.1), libgdbm6t64 (>= 1.16), libssl3t64 (>= 3.0.0)
+Breaks: libaprutil1 (<< 1.6.3-3+deb13u1)
+Description: Apache Portable Runtime Utility Library
+Homepage: https://apr.apache.org/
+Description-md5: e0d4198f7ab8d2d00a12d0e044194068
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/a/apr-util/libaprutil1t64_1.6.3-3+deb13u1_amd64.deb
+Size: 90228
+SHA256: 3942c90183043c2bfd461f7ced5a535537cb4428cb7f134c279e95df45403572
+
+Package: apt
+Version: 3.0.4
+Installed-Size: 4481
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: amd64
+Replaces: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~)
+Provides: apt-transport-https (= 3.0.4)
+Depends: base-passwd (>= 3.6.1) | adduser, sqv (>= 1.3.0), libapt-pkg7.0 (>= 3.0.4), debian-archive-keyring, libc6 (>= 2.38), libgcc-s1 (>= 3.0), libseccomp2 (>= 2.4.2), libssl3t64 (>= 3.0.0), libstdc++6 (>= 13.1), libsystemd0
+Suggests: apt-doc, aptitude | synaptic | wajig, dpkg-dev (>= 1.17.2), gnupg | gnupg2 | gnupg1, powermgmt-base
+Conflicts: apt-verify, libnettle8 (<< 3.9.1-2.2~)
+Breaks: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~), aptitude (<< 0.8.10)
+Description: commandline package manager
+Description-md5: 6b534aaa75feaadaa911a5a6e81b66b2
+Recommends: ca-certificates
+Section: admin
+Priority: required
+Filename: pool/updates/main/a/apt/apt_3.0.4_amd64.deb
+Size: 1453228
+SHA256: 15c2030e0fb46580af4f1b4cc303f4bd26da781b004e99763bc9eff7cf8e19b8
+
+Package: libapt-pkg7.0
+Source: apt
+Version: 3.0.4
+Installed-Size: 3856
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: amd64
+Provides: libapt-pkg (= 3.0.4)
+Depends: libbz2-1.0, libc6 (>= 2.38), libgcc-s1 (>= 3.0), liblz4-1 (>= 0.0~r127), liblzma5 (>= 5.1.1alpha+20120614), libssl3t64 (>= 3.0.0), libstdc++6 (>= 14), libsystemd0 (>= 221), libudev1 (>= 183), libxxhash0 (>= 0.8), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.2.2.3)
+Conflicts: libnettle8 (<< 3.9.1-2.2~)
+Breaks: appstream (<< 0.9.0-3~), apt (<< 1.6~), aptitude (<< 0.8.9), dpkg (<< 1.20.8), libapt-inst1.5 (<< 0.9.9~)
+Description: package management runtime library
+Description-md5: 1e225d7f6cafc33f74a452fd5c53755e
+Multi-Arch: same
+Recommends: apt (>= 3.0.4)
+Section: libs
+Priority: optional
+Filename: pool/updates/main/a/apt/libapt-pkg7.0_3.0.4_amd64.deb
+Size: 1113872
+SHA256: 577eb8f489de419290102364892dbd13ca256297b61f96d61b114fd4ac18be41
+
+Package: libbrotli1
+Source: brotli
+Version: 1.1.0-2+deb13u1
+Installed-Size: 865
+Maintainer: Tomasz Buchert <tomasz@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.29)
+Description: library implementing brotli encoder and decoder (shared libraries)
+Homepage: https://github.com/google/brotli
+Description-md5: 907235dad2acd28ce4f1a8b4e1a35321
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/b/brotli/libbrotli1_1.1.0-2+deb13u1_amd64.deb
+Size: 303640
+SHA256: db46824c60fee46aff3cc0be3e5f736bc606cae669b1fb17516a41e8073251a9
+
+Package: ca-certificates
+Version: 20250419+deb13u1
+Installed-Size: 387
+Maintainer: Julien Cristau <jcristau@debian.org>
+Architecture: all
+Depends: openssl (>= 1.1.1), debconf (>= 0.5) | debconf-2.0
+Breaks: ca-certificates-java (<< 20121112+nmu1)
+Description: Common CA certificates
+Description-md5: e867d2a359bea1800b5bff209fc65bd1
+Enhances: openssl
+Multi-Arch: foreign
+Section: misc
+Priority: standard
+Filename: pool/updates/main/c/ca-certificates/ca-certificates_20250419+deb13u1_all.deb
+Size: 160720
+SHA256: c10585ac22c7f617a73d394eea29ba71d0356f350ae973b19043d1b017f80f54
+
+Package: chromium
+Version: 156.0.8078.79-1~deb13u1
+Installed-Size: 323964
+Maintainer: Debian Chromium Team <chromium@packages.debian.org>
+Architecture: amd64
+Provides: gnome-www-browser, www-browser
+Depends: libasound2t64 (>= 1.0.17), libatk-bridge2.0-0t64 (>= 2.5.3), libatk1.0-0t64 (>= 2.32.0), libatspi2.0-0t64 (>= 2.9.90), libc6 (>= 2.38), libcairo2 (>= 1.14.0), libcups2t64 (>= 1.7.0), libdav1d7 (>= 0.1.0), libdbus-1-3 (>= 1.10), libdouble-conversion3 (>= 2.0.0), libexpat1 (>= 2.1~beta3), libflac14 (>= 1.5.0), libfontconfig1 (>= 2.12.6), libfreetype6 (>= 2.11.1), libgbm1 (>= 21.1.0), libgcc-s1 (>= 4.2), libglib2.0-0t64 (>= 2.50.0), libharfbuzz-subset0 (>= 6.0.0), libharfbuzz0b (>= 10.0.1), libjpeg62-turbo (>= 1:1.5.0), liblcms2-2 (>= 2.2+git20110628), libminizip1t64, libnspr4 (>= 2:4.9-2~), libnss3 (>= 2:3.30), libopenh264-8 (>= 2.6.0+dfsg), libopenjp2-7 (>= 2.5.0), libopus0 (>= 1.1), libpango-1.0-0 (>= 1.14.0), libpulse0 (>= 0.99.1), libudev1 (>= 183), libx11-6, libxcb1 (>= 1.9.2), libxcomposite1 (>= 1:0.4.6), libxdamage1 (>= 1:1.1), libxext6, libxfixes3, libxkbcommon0 (>= 0.5.0), libxnvctrl0, libxrandr2, libzstd1 (>= 1.5.5), zlib1g (>= 1:1.2.11.dfsg), libgtk-3-0t64 | xdg-desktop-portal-backend, chromium-common (= 156.0.8078.79-1~deb13u1)
+Suggests: chromium-l10n, chromium-shell, chromium-driver
+Conflicts: libgl1-mesa-swx11, libnettle4
+Breaks: chromium-lwn4chrome (<= 1.0-2), chromium-tt-rss-notifier (<= 0.5.2-2), libsecret-1-0 (<< 0.18)
+Description: web browser
+Homepage: http://www.chromium.org/Home
+Description-md5: 3a7ed4512cf49e4fe53b4490bcc1060b
+Section: web
+Priority: optional
+Filename: pool/updates/main/c/chromium/chromium_156.0.8078.79-1~deb13u1_amd64.deb
+Size: 91684936
+SHA256: 9325777fb842eafa3f992209ee6f1b69bad76c3311a88efd4d7772cec22e3795
+
+Package: libcups2-dev
+Source: cups
+Version: 2.4.10-3+deb13u1
+Installed-Size: 1356
+Maintainer: Debian Printing Team <debian-printing@lists.debian.org>
+Architecture: amd64
+Depends: dpkg-dev, libcups2t64 (= 2.4.10-3+deb13u1), libcupsimage2-dev (= 2.4.10-3+deb13u1)
+Description: Common UNIX Printing System(tm) - Development files CUPS library
+Homepage: https://github.com/OpenPrinting/cups/
+Description-md5: bf3f385e98251c2563c3f58554d2adce
+Multi-Arch: same
+Section: libdevel
+Priority: optional
+Filename: pool/updates/main/c/cups/libcups2-dev_2.4.10-3+deb13u1_amd64.deb
+Size: 303544
+SHA256: 38142165ec5c95f1c4dfd4dd65f3ad1dc913230e82a0e79764292d34a10b8fd2
+
+Package: libcups2t64
+Source: cups
+Version: 2.4.10-3+deb13u1
+Installed-Size: 699
+Maintainer: Debian Printing Team <debian-printing@lists.debian.org>
+Architecture: amd64
+Replaces: libcups2
+Provides: libcups2 (= 2.4.10-3+deb13u1)
+Depends: libavahi-client3 (>= 0.6.16), libavahi-common3 (>= 0.6.16), libc6 (>= 2.38), libgnutls30t64 (>= 3.8.1), libgssapi-krb5-2 (>= 1.17), zlib1g (>= 1:1.2.0)
+Suggests: cups-common
+Breaks: libcups2 (<< 2.4.10-3+deb13u1)
+Description: Common UNIX Printing System(tm) - Core library
+Homepage: https://github.com/OpenPrinting/cups/
+Description-md5: cce9961cb86712146cb19e1b4636f79d
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/c/cups/libcups2t64_2.4.10-3+deb13u1_amd64.deb
+Size: 251328
+SHA256: 3ad4c8a3aeb00f3e5c950e43e92618f1b6ebffc6a1d7d46a62c75a56098dded4
+
+Package: curl
+Version: 8.14.1-2+deb13u7
+Installed-Size: 495
+Maintainer: Debian Curl Maintainers <team+curl@tracker.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libcurl4t64 (= 8.14.1-2+deb13u7), zlib1g (>= 1:1.1.4)
+Description: command line tool for transferring data with URL syntax
+Homepage: https://curl.se/
+Description-md5: f83293d10df083ae6f7bb7d01642913c
+Multi-Arch: foreign
+Recommends: bash-completion
+Section: web
+Priority: optional
+Filename: pool/updates/main/c/curl/curl_8.14.1-2+deb13u7_amd64.deb
+Size: 270212
+SHA256: 135636bd8b713c582d33e50ec4e36ea55cc3c5da3f12bbeb6b87d2bcbd3a0649
+
+Package: libcurl3t64-gnutls
+Source: curl
+Version: 8.14.1-2+deb13u7
+Installed-Size: 997
+Maintainer: Debian Curl Maintainers <team+curl@tracker.debian.org>
+Architecture: amd64
+Replaces: libcurl3-gnutls
+Provides: libcurl3-gnutls (= 8.14.1-2+deb13u7)
+Depends: libbrotli1 (>= 0.6.0), libc6 (>= 2.38), libgnutls30t64 (>= 3.8.6), libgssapi-krb5-2 (>= 1.17), libidn2-0 (>= 2.0.0), libldap2 (>= 2.6.2), libnettle8t64, libnghttp2-14 (>= 1.50.0), libnghttp3-9 (>= 0.15.0), libngtcp2-16 (>= 1.1.0), libngtcp2-crypto-gnutls8 (>= 1.1.0), libpsl5t64 (>= 0.16.0), librtmp1 (>= 2.3), libssh2-1t64 (>= 1.11.1), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.2.3.4)
+Breaks: libcurl3-gnutls (<< 8.14.1-2+deb13u7)
+Description: easy-to-use client-side URL transfer library (GnuTLS flavour)
+Homepage: https://curl.se/
+Description-md5: 785baf29d91f9f781677a7f569940052
+Multi-Arch: same
+Recommends: ca-certificates
+Section: libs
+Priority: optional
+Filename: pool/updates/main/c/curl/libcurl3t64-gnutls_8.14.1-2+deb13u7_amd64.deb
+Size: 384636
+SHA256: 9475c591b338b81859ee6d06bf2a9fbb01b52f184c235afa7f6e7f1652136e55
+
+Package: libcurl4t64
+Source: curl
+Version: 8.14.1-2+deb13u7
+Installed-Size: 1013
+Maintainer: Debian Curl Maintainers <team+curl@tracker.debian.org>
+Architecture: amd64
+Replaces: libcurl3, libcurl4
+Provides: libcurl4 (= 8.14.1-2+deb13u7)
+Depends: libbrotli1 (>= 0.6.0), libc6 (>= 2.38), libgssapi-krb5-2 (>= 1.17), libidn2-0 (>= 2.0.0), libldap2 (>= 2.6.2), libnghttp2-14 (>= 1.50.0), libnghttp3-9 (>= 0.15.0), libpsl5t64 (>= 0.16.0), librtmp1 (>= 2.3), libssh2-1t64 (>= 1.11.1), libssl3t64 (>= 3.3.0), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.2.3.4)
+Conflicts: libcurl3
+Breaks: libcurl4 (<< 8.14.1-2+deb13u7)
+Description: easy-to-use client-side URL transfer library (OpenSSL flavour)
+Homepage: https://curl.se/
+Description-md5: f1c7f18aba2d8ab7a7e32acea1dc61e7
+Multi-Arch: same
+Recommends: ca-certificates
+Section: libs
+Priority: optional
+Filename: pool/updates/main/c/curl/libcurl4t64_8.14.1-2+deb13u7_amd64.deb
+Size: 391640
+SHA256: 4f89bd3e7a33bbd8f7422817a8a8e2233c9e194fda9c331e33bf98705f525bfc
+
+Package: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 54
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: all
+Depends: emacs-gtk (>= 1:30.1) | emacs-pgtk (>= 1:30.1) | emacs-lucid (>= 1:30.1) | emacs-nox (>= 1:30.1)
+Description: GNU Emacs editor (metapackage)
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: f991b22b712b84422dc583d29a7b2171
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs_30.1+1-6+deb13u1_all.deb
+Size: 19880
+SHA256: 0a682d78ec810d088af748005e0ee9f3ead2a1cedc071e3f7310939afcbf6b9b
+
+Package: emacs-bin-common
+Source: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 356
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: amd64
+Depends: emacs-common (= 1:30.1+1-6+deb13u1), libc6 (>= 2.38)
+Breaks: emacs-gtk (<< 1:29.2), emacs-lucid (<< 1:29.2), emacs-nox (<< 1:29.2), emacs-pgtk (<< 1:29.2)
+Description: GNU Emacs editor's shared, architecture dependent files
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: ce069068c69e551074a35c36904e2797
+Recommends: mailutils
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs-bin-common_30.1+1-6+deb13u1_amd64.deb
+Size: 98408
+SHA256: 86ad88ffb8d0024fe22a4b95863918655ecb10523c4bcdd199540da75f67c4db
+
+Package: emacs-common
+Source: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 80561
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: all
+Replaces: elpa-allout (<< 2.3), elpa-allout-widgets (<< 1.0), elpa-ansi-color (<< 3.4.2), elpa-antlr-mode (<< 2.2.3), elpa-auth-source-pass (<< 5.0.0), elpa-backtrace (<< 1.0), elpa-bind-key (<< 2.4.1), elpa-cc-mode (<< 5.33.1), elpa-cedet (<< 2.0), elpa-cfengine (<< 1.4), elpa-cl-generic (<< 1.0), elpa-cl-lib (<< 1.0), elpa-cl-print (<< 1.0), elpa-compat (<< 30.1.9999), elpa-ede (<< 2.0), elpa-ediff (<< 2.81.6), elpa-editorconfig (<< 0.11.0), elpa-eglot (<< 1.17.30), elpa-eieio (<< 1.4), elpa-eieio-core (<< 1.4), elpa-eldoc (<< 1.15.0), elpa-epg (<< 1.0.0), elpa-erc (<< 5.6.0.30.1), elpa-eshell (<< 2.4.2), elpa-external-completion (<< 0.1), elpa-faceup (<< 0.0.6), elpa-feedmail (<< 11), elpa-find-cmd (<< 0.6), elpa-flymake (<< 1.3.7), elpa-flymake-proc (<< 1.0), elpa-foldout (<< 1.10), elpa-gnus (<< 5.13), elpa-idlwave (<< 6.1.22), elpa-image-dired (<< 0.5), elpa-info-xref (<< 3), elpa-isearchb (<< 1.5), elpa-js (<< 9), elpa-json (<< 1.5), elpa-jsonrpc (<< 1.0.25), elpa-let-alist (<< 1.0.6), elpa-map (<< 3.3.1), elpa-meta-mode (<< 1.0), elpa-mh-e (<< 8.6~snapshot), elpa-mixal-mode (<< 0.4), elpa-nadvice (<< 1.0), elpa-ntlm (<< 2.1.0), elpa-org (<< 9.7.11), elpa-package (<< 1.1.0), elpa-peg (<< 1.0.1), elpa-project (<< 0.11.1), elpa-ps-mode (<< 1.1.9), elpa-pulse (<< 1.0), elpa-python (<< 0.28), elpa-ruby-mode (<< 1.2), elpa-ruby-ts-mode (<< 0.2), elpa-semantic (<< 2.2), elpa-seq (<< 2.24), elpa-so-long (<< 1.1.2), elpa-soap-client (<< 3.2.3), elpa-sql (<< 3.6), elpa-srecode (<< 1.2), elpa-svg (<< 1.1), elpa-tabulated-list (<< 1.0), elpa-thunk (<< 1.0), elpa-tildify (<< 4.6.1), elpa-track-changes (<< 1.2), elpa-tramp (<< 2.7.1.30.1), elpa-transient (<< 0.7.2.2), elpa-use-package (<< 2.4.6), elpa-vera-mode (<< 2.28), elpa-verilog-mode (<< 2024.3.1.121933719), elpa-viper (<< 3.14.2), elpa-which-key (<< 3.6.0), elpa-whitespace (<< 13.2.2), elpa-window-tool-bar (<< 0.2.1), elpa-xref (<< 1.7.0), emacs-bin-common (<< 1:28)
+Provides: elpa-allout (= 2.3), elpa-allout-widgets (= 1.0), elpa-ansi-color (= 3.4.2), elpa-antlr-mode (= 2.2.3), elpa-auth-source-pass (= 5.0.0), elpa-backtrace (= 1.0), elpa-bind-key (= 2.4.1), elpa-cc-mode (= 5.33.1), elpa-cedet (= 2.0), elpa-cfengine (= 1.4), elpa-cl-generic (= 1.0), elpa-cl-lib (= 1.0), elpa-cl-print (= 1.0), elpa-compat (= 30.1.9999), elpa-ede (= 2.0), elpa-ediff (= 2.81.6), elpa-editorconfig (= 0.11.0), elpa-eglot (= 1.17.30), elpa-eieio (= 1.4), elpa-eieio-core (= 1.4), elpa-eldoc (= 1.15.0), elpa-epg (= 1.0.0), elpa-erc (= 5.6.0.30.1), elpa-eshell (= 2.4.2), elpa-external-completion (= 0.1), elpa-faceup (= 0.0.6), elpa-feedmail (= 11), elpa-find-cmd (= 0.6), elpa-flymake (= 1.3.7), elpa-flymake-proc (= 1.0), elpa-foldout (= 1.10), elpa-gnus (= 5.13), elpa-idlwave (= 6.1.22), elpa-image-dired (= 0.5), elpa-info-xref (= 3), elpa-isearchb (= 1.5), elpa-js (= 9), elpa-json (= 1.5), elpa-jsonrpc (= 1.0.25), elpa-let-alist (= 1.0.6), elpa-map (= 3.3.1), elpa-meta-mode (= 1.0), elpa-mh-e (= 8.6~snapshot), elpa-mixal-mode (= 0.4), elpa-nadvice (= 1.0), elpa-ntlm (= 2.1.0), elpa-org (= 9.7.11), elpa-package (= 1.1.0), elpa-peg (= 1.0.1), elpa-project (= 0.11.1), elpa-ps-mode (= 1.1.9), elpa-pulse (= 1.0), elpa-python (= 0.28), elpa-ruby-mode (= 1.2), elpa-ruby-ts-mode (= 0.2), elpa-semantic (= 2.2), elpa-seq (= 2.24), elpa-so-long (= 1.1.2), elpa-soap-client (= 3.2.3), elpa-sql (= 3.6), elpa-srecode (= 1.2), elpa-svg (= 1.1), elpa-tabulated-list (= 1.0), elpa-thunk (= 1.0), elpa-tildify (= 4.6.1), elpa-track-changes (= 1.2), elpa-tramp (= 2.7.1.30.1), elpa-transient (= 0.7.2.2), elpa-use-package (= 2.4.6), elpa-vera-mode (= 2.28), elpa-verilog-mode (= 2024.3.1.121933719), elpa-viper (= 3.14.2), elpa-which-key (= 3.6.0), elpa-whitespace (= 13.2.2), elpa-window-tool-bar (= 0.2.1), elpa-xref (= 1.7.0)
+Depends: emacs-el, emacsen-common (>= 3.0.0), install-info, init-system-helpers (>= 1.52)
+Suggests: emacs-common-non-dfsg, emacs-editing-major-modes, ncurses-term
+Conflicts: cedet, eieio, emacs-el (<< 1:30.1+1-6+deb13u1), gnus-bonus-el, speedbar
+Breaks: apel (<< 10.8+0.20120427-4), edb (<< 1.32), egg (<< 4.2.0-2), elpa-allout (<< 2.3), elpa-allout-widgets (<< 1.0), elpa-ansi-color (<< 3.4.2), elpa-antlr-mode (<< 2.2.3), elpa-auth-source-pass (<< 5.0.0), elpa-backtrace (<< 1.0), elpa-bind-key (<< 2.4.1), elpa-cc-mode (<< 5.33.1), elpa-cedet (<< 2.0), elpa-cfengine (<< 1.4), elpa-cider (<< 0.19.0+dfsg-4~), elpa-cl-generic (<< 1.0), elpa-cl-lib (<< 1.0), elpa-cl-print (<< 1.0), elpa-compat (<< 30.1.9999), elpa-ede (<< 2.0), elpa-ediff (<< 2.81.6), elpa-editorconfig (<< 0.11.0), elpa-eglot (<< 1.17.30), elpa-eieio (<< 1.4), elpa-eieio-core (<< 1.4), elpa-eldoc (<< 1.15.0), elpa-epg (<< 1.0.0), elpa-erc (<< 5.6.0.30.1), elpa-eshell (<< 2.4.2), elpa-external-completion (<< 0.1), elpa-faceup (<< 0.0.6), elpa-feedmail (<< 11), elpa-find-cmd (<< 0.6), elpa-flymake (<< 1.3.7), elpa-flymake-proc (<< 1.0), elpa-foldout (<< 1.10), elpa-gnus (<< 5.13), elpa-idlwave (<< 6.1.22), elpa-image-dired (<< 0.5), elpa-info-xref (<< 3), elpa-isearchb (<< 1.5), elpa-js (<< 9), elpa-json (<< 1.5), elpa-jsonrpc (<< 1.0.25), elpa-let-alist (<< 1.0.6), elpa-map (<< 3.3.1), elpa-meta-mode (<< 1.0), elpa-mh-e (<< 8.6~snapshot), elpa-mixal-mode (<< 0.4), elpa-nadvice (<< 1.0), elpa-ntlm (<< 2.1.0), elpa-org (<< 9.7.11), elpa-package (<< 1.1.0), elpa-peg (<< 1.0.1), elpa-project (<< 0.11.1), elpa-ps-mode (<< 1.1.9), elpa-pulse (<< 1.0), elpa-python (<< 0.28), elpa-ruby-mode (<< 1.2), elpa-ruby-ts-mode (<< 0.2), elpa-semantic (<< 2.2), elpa-seq (<< 2.24), elpa-so-long (<< 1.1.2), elpa-soap-client (<< 3.2.3), elpa-sql (<< 3.6), elpa-srecode (<< 1.2), elpa-svg (<< 1.1), elpa-tabulated-list (<< 1.0), elpa-thunk (<< 1.0), elpa-tildify (<< 4.6.1), elpa-track-changes (<< 1.2), elpa-tramp (<< 2.7.1.30.1), elpa-transient (<< 0.7.2.2), elpa-use-package (<< 2.4.6), elpa-vera-mode (<< 2.28), elpa-verilog-mode (<< 2024.3.1.121933719), elpa-viper (<< 3.14.2), elpa-which-key (<< 3.6.0), elpa-whitespace (<< 13.2.2), elpa-window-tool-bar (<< 0.2.1), elpa-xref (<< 1.7.0), emacs (<< 1:25), emacs-bin-common (<< 1:28), emacs-gtk (<< 1:25), emacs-lucid (<< 1:25), emacs-nox (<< 1:25)
+Description: GNU Emacs editor's shared, architecture independent infrastructure
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: 6fb53b6ebee8590a3b8c928e705270e5
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs-common_30.1+1-6+deb13u1_all.deb
+Size: 15791344
+SHA256: 1a20b06410720a432bd6c82a455a919b7083011e02a3c7b46243e65d8582791b
+
+Package: emacs-el
+Source: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 19710
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: all
+Depends: emacs-common (= 1:30.1+1-6+deb13u1)
+Description: GNU Emacs LISP (.el) files
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: 293759cc44e4faeb7e4ad6e292cf8c63
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs-el_30.1+1-6+deb13u1_all.deb
+Size: 19500736
+SHA256: 374eb66e5dd66e5b643e9e584ee4d9376df14b1272fc16e7353953bbdf29063b
+
+Package: emacs-gtk
+Source: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 46690
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: amd64
+Replaces: emacs-bin-common (<< 1:29.2), emacs-lucid, emacs-nox, emacs-pgtk
+Provides: editor, emacs, emacsen, info-browser, mail-reader, news-reader
+Depends: emacs-bin-common (= 1:30.1+1-6+deb13u1), emacs-common (= 1:30.1+1-6+deb13u1), libacl1 (>= 2.2.23), libasound2t64 (>= 1.0.16), libattr1 (>= 1:2.4.48), libc6 (>= 2.38), libcairo2 (>= 1.7.2), libdbus-1-3 (>= 1.10), libfontconfig1 (>= 2.12.6), libfreetype6 (>= 2.2.1), libgccjit0 (>= 12), libgdk-pixbuf-2.0-0 (>= 2.22.0), libgif7 (>= 5.1), libglib2.0-0t64 (>= 2.80.0), libgmp10 (>= 2:6.3.0+dfsg), libgnutls30t64 (>= 3.8.6), libgpm2 (>= 1.20.7), libgtk-3-0t64 (>= 3.21.4), libharfbuzz0b (>= 0.9.42), libice6 (>= 1:1.0.0), libjpeg62-turbo (>= 1.3.1), liblcms2-2 (>= 2.2+git20110628), libm17n-0 (>= 1.6.1), libotf1 (>= 0.9.16), libpango-1.0-0 (>= 1.18.0), libpng16-16t64 (>= 1.6.46), librsvg2-2 (>= 2.58.93), libselinux1 (>= 3.1~), libsm6 (>= 2:1.2.6), libsqlite3-0 (>= 3.7.15), libsystemd0, libtiff6 (>= 4.0.3), libtinfo6 (>= 6), libtree-sitter0.22 (>= 0.22.4), libwebpdecoder3 (>= 1.5.0), libwebpdemux2 (>= 1.5.0), libx11-6 (>= 2:1.2.99.901), libxcomposite1 (>= 1:0.4.6), libxext6, libxfixes3 (>= 1:4.0.1), libxi6 (>= 2:1.5.99.2), libxinerama1 (>= 2:1.1.4), libxml2 (>= 2.7.4), libxrandr2, libxrender1 (>= 1:0.9.12), zlib1g (>= 1:1.1.4)
+Suggests: emacs-common-non-dfsg, emacs-editing-major-modes
+Conflicts: emacs-lucid, emacs-nox, emacs-pgtk
+Breaks: dh-elpa-helper (<< 2.1.7), emacs-bin-common (<< 1:29.2)
+Description: GNU Emacs editor (with GTK+ GUI support)
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: 0c21163250e39c4d332ee40663450921
+Recommends: fonts-noto-color-emoji
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs-gtk_30.1+1-6+deb13u1_amd64.deb
+Size: 7807916
+SHA256: 6cd8853e6ee3ec845f1adebe8a03b2afdcafb731c20d97e4306053265c61e66c
+
+Package: emacs-lucid
+Source: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 46943
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: amd64
+Replaces: emacs-bin-common (<< 1:29.2), emacs-gtk, emacs-nox, emacs-pgtk
+Provides: editor, emacs, emacsen, info-browser, mail-reader, news-reader
+Depends: emacs-bin-common (= 1:30.1+1-6+deb13u1), emacs-common (= 1:30.1+1-6+deb13u1), libacl1 (>= 2.2.23), libasound2t64 (>= 1.0.16), libattr1 (>= 1:2.4.48), libc6 (>= 2.38), libcairo2 (>= 1.7.2), libdbus-1-3 (>= 1.10), libfontconfig1 (>= 2.12.6), libfreetype6 (>= 2.2.1), libgccjit0 (>= 12), libgdk-pixbuf-2.0-0 (>= 2.22.0), libgif7 (>= 5.1), libglib2.0-0t64 (>= 2.16.0), libgmp10 (>= 2:6.3.0+dfsg), libgnutls30t64 (>= 3.8.6), libgpm2 (>= 1.20.7), libharfbuzz0b (>= 0.9.42), libice6 (>= 1:1.0.0), libjpeg62-turbo (>= 1.3.1), liblcms2-2 (>= 2.2+git20110628), libm17n-0 (>= 1.6.1), libotf1 (>= 0.9.16), libpng16-16t64 (>= 1.6.46), librsvg2-2 (>= 2.58.93), libselinux1 (>= 3.1~), libsm6 (>= 2:1.2.6), libsqlite3-0 (>= 3.7.15), libsystemd0, libtiff6 (>= 4.0.3), libtinfo6 (>= 6), libtree-sitter0.22 (>= 0.22.4), libwebpdecoder3 (>= 1.5.0), libwebpdemux2 (>= 1.5.0), libx11-6 (>= 2:1.2.99.901), libxcomposite1 (>= 1:0.4.6), libxext6 (>= 2:1.3.0), libxfixes3 (>= 1:4.0.1), libxi6 (>= 2:1.5.99.2), libxinerama1 (>= 2:1.1.4), libxml2 (>= 2.7.4), libxmu6 (>= 2:1.1.3), libxpm4, libxrandr2 (>= 2:1.5.0), libxrender1 (>= 1:0.9.12), libxt6t64, xaw3dg (>= 1.5+E-1), zlib1g (>= 1:1.1.4)
+Suggests: emacs-common-non-dfsg, emacs-editing-major-modes
+Conflicts: emacs-gtk, emacs-nox, emacs-pgtk
+Breaks: dh-elpa-helper (<< 2.1.7), emacs-bin-common (<< 1:29.2)
+Description: GNU Emacs editor (with Lucid GUI support)
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: 9d732a75402fcf8b7c270985ef008093
+Recommends: fonts-noto-color-emoji
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs-lucid_30.1+1-6+deb13u1_amd64.deb
+Size: 7779404
+SHA256: 60017fb86c689e8fa082b7fded19f514c1fa1796db58d94af070caab29769633
+
+Package: emacs-nox
+Source: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 44881
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: amd64
+Replaces: emacs-bin-common (<< 1:29.2), emacs-gtk, emacs-lucid, emacs-pgtk
+Provides: editor, emacs, emacsen, info-browser, mail-reader, news-reader
+Depends: emacs-bin-common (= 1:30.1+1-6+deb13u1), emacs-common (= 1:30.1+1-6+deb13u1), libacl1 (>= 2.2.23), libasound2t64 (>= 1.0.16), libattr1 (>= 1:2.4.48), libc6 (>= 2.38), libdbus-1-3 (>= 1.10), libgccjit0 (>= 12), libgmp10 (>= 2:6.3.0+dfsg), libgnutls30t64 (>= 3.8.6), libgpm2 (>= 1.20.7), liblcms2-2 (>= 2.2+git20110628), libselinux1 (>= 3.1~), libsqlite3-0 (>= 3.7.15), libsystemd0, libtinfo6 (>= 6), libtree-sitter0.22 (>= 0.22.4), libxml2 (>= 2.7.4), zlib1g (>= 1:1.1.4)
+Suggests: emacs-common-non-dfsg, emacs-editing-major-modes
+Conflicts: emacs-gtk, emacs-lucid, emacs-pgtk
+Breaks: dh-elpa-helper (<< 2.1.7), emacs-bin-common (<< 1:29.2)
+Description: GNU Emacs editor (without GUI support)
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: d7627aff9867f2ba95f2b9dcfc399d6a
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs-nox_30.1+1-6+deb13u1_amd64.deb
+Size: 7262376
+SHA256: fee9e5bc5d4c0da716e3e12eee8e1b063bd24a58a6ca6755be2516b377d50364
+
+Package: emacs-pgtk
+Source: emacs
+Version: 1:30.1+1-6+deb13u1
+Installed-Size: 46392
+Maintainer: Rob Browning <rlb@defaultvalue.org>
+Architecture: amd64
+Replaces: emacs-bin-common (<< 1:29.2), emacs-common (<< 1:29.3+1-3~), emacs-gtk, emacs-lucid, emacs-nox
+Provides: editor, emacs, emacsen, info-browser, mail-reader, news-reader
+Depends: emacs-bin-common (= 1:30.1+1-6+deb13u1), emacs-common (= 1:30.1+1-6+deb13u1), dconf-gsettings-backend | gsettings-backend, libacl1 (>= 2.2.23), libasound2t64 (>= 1.0.16), libattr1 (>= 1:2.4.48), libc6 (>= 2.38), libcairo2 (>= 1.7.2), libdbus-1-3 (>= 1.10), libfontconfig1 (>= 2.12.6), libfreetype6 (>= 2.2.1), libgccjit0 (>= 12), libgdk-pixbuf-2.0-0 (>= 2.22.0), libgif7 (>= 5.1), libglib2.0-0t64 (>= 2.80.0), libgmp10 (>= 2:6.3.0+dfsg), libgnutls30t64 (>= 3.8.6), libgpm2 (>= 1.20.7), libgtk-3-0t64 (>= 3.21.5), libharfbuzz0b (>= 0.9.42), libjpeg62-turbo (>= 1.3.1), liblcms2-2 (>= 2.2+git20110628), libotf1 (>= 0.9.10), libpango-1.0-0 (>= 1.18.0), libpng16-16t64 (>= 1.6.46), librsvg2-2 (>= 2.58.93), libselinux1 (>= 3.1~), libsqlite3-0 (>= 3.7.15), libsystemd0, libtiff6 (>= 4.0.3), libtinfo6 (>= 6), libtree-sitter0.22 (>= 0.22.4), libwebpdecoder3 (>= 1.5.0), libwebpdemux2 (>= 1.5.0), libxml2 (>= 2.7.4), zlib1g (>= 1:1.1.4)
+Suggests: emacs-common-non-dfsg, emacs-editing-major-modes
+Conflicts: emacs-gtk, emacs-lucid, emacs-nox
+Breaks: dh-elpa-helper (<< 2.1.7), emacs-bin-common (<< 1:29.2), emacs-common (<< 1:29.3+1-3~)
+Description: GNU Emacs editor (with GTK+ Wayland GUI support)
+Homepage: https://www.gnu.org/software/emacs/
+Description-md5: 5514dad69844cdf5a6d45a09487b50ea
+Recommends: fonts-noto-color-emoji
+Section: editors
+Priority: optional
+Filename: pool/updates/main/e/emacs/emacs-pgtk_30.1+1-6+deb13u1_amd64.deb
+Size: 7640456
+SHA256: eae6fad75d6672a7688df5610c85135ea8c1bc7dcabc8704df141d251ce84b34
+
+Package: exim4
+Version: 4.98.2-1+deb13u5
+Installed-Size: 27
+Maintainer: Exim4 Maintainers <pkg-exim4-maintainers@lists.alioth.debian.org>
+Architecture: all
+Depends: debconf (>= 1.4.69) | cdebconf (>= 0.39), exim4-base (<< 4.98.2-1+deb13u5.1), exim4-base (>= 4.98.2-1+deb13u5), exim4-daemon-light (>= 4.98.2-1+deb13u5) | exim4-daemon-heavy (>= 4.98.2-1+deb13u5) | exim4-daemon-custom (>= 4.98.2-1+deb13u5), debconf (>= 0.5) | debconf-2.0
+Description: metapackage to ease Exim MTA (v4) installation
+Homepage: https://www.exim.org/
+Description-md5: 458592f74d76e446735736c1d55ce615
+Section: mail
+Priority: optional
+Filename: pool/updates/main/e/exim4/exim4_4.98.2-1+deb13u5_all.deb
+Size: 7196
+SHA256: 5fda3f1b4d611016de4c72def2febc1ddc398389a80ce417ed356f466f691710
+
+Package: exim4-base
+Source: exim4
+Version: 4.98.2-1+deb13u5
+Installed-Size: 1731
+Maintainer: Exim4 Maintainers <pkg-exim4-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: exim, exim-tls, exim4-daemon-custom, exim4-daemon-heavy, exim4-daemon-light
+Depends: adduser, cron | cron-daemon | anacron | systemd-sysv, exim4-config (>= 4.94) | exim4-config-2, libfile-fcntllock-perl, netbase, debconf (>= 0.5) | debconf-2.0, perl:any, libc6 (>= 2.38), libdb5.3t64
+Suggests: exim4-doc-html | exim4-doc-info, eximon4, file, gnutls-bin | openssl, mail-reader, spf-tools-perl, swaks
+Conflicts: exim, exim-tls
+Breaks: exim4-daemon-custom (<< 4.98.2), exim4-daemon-heavy (<< 4.98.2), exim4-daemon-light (<< 4.98.2)
+Description: support files for all Exim MTA (v4) packages
+Homepage: https://www.exim.org/
+Description-md5: ab23a802a5e7dee33641329abf2b6565
+Recommends: bsd-mailx | mailx, psmisc
+Section: mail
+Priority: optional
+Filename: pool/updates/main/e/exim4/exim4-base_4.98.2-1+deb13u5_amd64.deb
+Size: 1143472
+SHA256: 32bc9c2c40731bfcb74dddc784126f62df8435eb50e3614ec2b25b550b51632d
+
+Package: exim4-config
+Source: exim4
+Version: 4.98.2-1+deb13u5
+Installed-Size: 908
+Maintainer: Exim4 Maintainers <pkg-exim4-maintainers@lists.alioth.debian.org>
+Architecture: all
+Provides: exim4-config-2
+Depends: adduser, debconf (>= 0.5) | debconf-2.0
+Conflicts: citadel-server, courier-mta, dma, esmtp-run, exim, exim-tls, exim4-config, exim4-config-2, hula-mta, masqmail, msmtp-mta, mta-dummy, nullmailer, opensmtpd, postfix, qmail-run, sendmail-bin, smail, ssmtp, xmail, zmailer
+Breaks: exim4-daemon-heavy (<< 4.94), exim4-daemon-light (<< 4.94)
+Description: configuration for the Exim MTA (v4)
+Homepage: https://www.exim.org/
+Description-md5: 32395c972fcf7f5014c06bce8ee1c59a
+Recommends: ca-certificates
+Section: mail
+Priority: optional
+Filename: pool/updates/main/e/exim4/exim4-config_4.98.2-1+deb13u5_all.deb
+Size: 250372
+SHA256: 2829f47de50a5ec953805135a26ca050245e9b89fe24a030646b89fea18c50f6
+
+Package: exim4-daemon-heavy
+Source: exim4
+Version: 4.98.2-1+deb13u5
+Installed-Size: 1782
+Maintainer: Exim4 Maintainers <pkg-exim4-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: exim4-base (<= 4.61-1), mail-transport-agent
+Provides: exim4-localscanapi-6.0, mail-transport-agent
+Depends: exim4-base (>= 4.98.2), debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libdb5.3t64, libgnutls-dane0t64 (>= 3.7.0), libgnutls30t64 (>= 3.8.6), libidn12 (>= 1.13), libidn2-0 (>= 0.6), libldap2 (>= 2.6.2), libmariadb3 (>= 3.0.0), libnsl2 (>= 1.0), libpam0g (>= 0.99.7.1), libpcre2-8-0 (>= 10.22), libperl5.40 (>= 5.40.0), libpq5, libsasl2-2 (>= 2.1.28+dfsg1), libspf2-2t64 (>= 1.2.8~), libsqlite3-0 (>= 3.5.9)
+Conflicts: mail-transport-agent
+Breaks: clamav-daemon (<< 0.95)
+Description: Exim MTA (v4) daemon with extended features, including exiscan-acl
+Homepage: https://www.exim.org/
+Description-md5: 29c4b395a92bdc12932f151c3643a602
+Section: mail
+Priority: optional
+Filename: pool/updates/main/e/exim4/exim4-daemon-heavy_4.98.2-1+deb13u5_amd64.deb
+Size: 691472
+SHA256: 4ac05cb5692e3dbb0326aee979be46005f1e53a4d9dd5cb60f3c206155134995
+
+Package: exim4-daemon-light
+Source: exim4
+Version: 4.98.2-1+deb13u5
+Installed-Size: 1614
+Maintainer: Exim4 Maintainers <pkg-exim4-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: exim4-base (<= 4.61-1), mail-transport-agent
+Provides: default-mta, exim4-localscanapi-6.0, mail-transport-agent
+Depends: exim4-base (>= 4.98.2), debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libdb5.3t64, libgnutls-dane0t64 (>= 3.7.0), libgnutls30t64 (>= 3.8.6), libidn12 (>= 1.13), libidn2-0 (>= 0.6), libnsl2 (>= 1.0), libpcre2-8-0 (>= 10.22)
+Conflicts: mail-transport-agent
+Description: lightweight Exim MTA (v4) daemon
+Homepage: https://www.exim.org/
+Description-md5: 3f5190a801cb3e11718c951f768c4d54
+Section: mail
+Priority: optional
+Filename: pool/updates/main/e/exim4/exim4-daemon-light_4.98.2-1+deb13u5_amd64.deb
+Size: 631460
+SHA256: 8b95fbf799d478f711c833eedc3a639357be43d75e41d9446b01dfc8265a2691
+
+Package: libexpat1
+Source: expat
+Version: 2.9.0-1~deb13u1
+Installed-Size: 427
+Maintainer: Laszlo Boszormenyi (GCS) <gcs@debian.org>
+Architecture: amd64
+Description: XML parsing C library - runtime library
+Homepage: https://libexpat.github.io/
+Description-md5: 969a775adb36dbfb73b9d7ef67f13bd6
+Multi-Arch: same
+Pre-Depends: libc6 (>= 2.36)
+Section: libs
+Priority: optional
+Filename: pool/updates/main/e/expat/libexpat1_2.9.0-1~deb13u1_amd64.deb
+Size: 125744
+SHA256: feff874772cae904ae4d24e917b35664952bec4b4ae9100a4edda5a7fa746832
+
+Package: libexpat1-dev
+Source: expat
+Version: 2.9.0-1~deb13u1
+Installed-Size: 964
+Maintainer: Laszlo Boszormenyi (GCS) <gcs@debian.org>
+Architecture: amd64
+Provides: libexpat-dev
+Depends: libexpat1 (= 2.9.0-1~deb13u1), libc6-dev | libc-dev
+Conflicts: libexpat-dev
+Description: XML parsing C library - development kit
+Homepage: https://libexpat.github.io/
+Description-md5: 0b45073661cf63b9161c598405a4e62d
+Multi-Arch: same
+Section: libdevel
+Priority: optional
+Filename: pool/updates/main/e/expat/libexpat1-dev_2.9.0-1~deb13u1_amd64.deb
+Size: 184304
+SHA256: f1fb8aa3165e8c8f20d9e37e1d421fe17eaeb647fcf8fe3305acf3afb315c677
+
+Package: firefox-esr
+Version: 153.6.0esr-1~deb13u1
+Installed-Size: 301610
+Maintainer: Maintainers of Mozilla-related packages <team+pkg-mozilla@tracker.debian.org>
+Architecture: amd64
+Provides: gnome-www-browser, www-browser
+Depends: libasound2t64 (>= 1.0.16), libatk1.0-0t64 (>= 1.12.4), libc6 (>= 2.39), libcairo-gobject2 (>= 1.10.0), libcairo2 (>= 1.10.0), libdbus-1-3 (>= 1.10), libevent-2.1-7t64 (>= 2.1.8-stable), libffi8 (>= 3.4), libfontconfig1 (>= 2.12.6), libfreetype6 (>= 2.10.1), libgcc-s1 (>= 4.2), libgdk-pixbuf-2.0-0 (>= 2.22.0), libglib2.0-0t64 (>= 2.78.0), libgtk-3-0t64 (>= 3.13.7), libnspr4 (>= 2:4.32~), libpango-1.0-0 (>= 1.14.0), libstdc++6 (>= 13), libvpx9 (>= 1.12.0), libx11-6, libx11-xcb1, libxcb-shm0, libxcb1, libxcomposite1 (>= 1:0.4.6), libxdamage1 (>= 1:1.1), libxext6, libxfixes3 (>= 1:5.0), libxrandr2 (>= 2:1.4.0), zlib1g (>= 1:1.2.3.4), fontconfig, procps, debianutils (>= 1.16)
+Suggests: fonts-stix | otf-stix, fonts-lmodern, libgssapi-krb5-2 | libkrb53, libcanberra0, pulseaudio
+Description: Mozilla Firefox web browser - Extended Support Release (ESR)
+Description-md5: 88ee196fd829d9218a763b4d498a6f6a
+Recommends: libavcodec63 | libavcodec-extra63 | libavcodec62 | libavcodec-extra62 | libavcodec61 | libavcodec-extra61 | libavcodec60 | libavcodec-extra60 | libavcodec59 | libavcodec-extra59 | libavcodec58 | libavcodec-extra58 | libavcodec57 | libavcodec-extra57 | libavcodec56 | libavcodec-extra56 | libavcodec55 | libavcodec-extra55 | libavcodec54 | libavcodec-extra54 | libavcodec53 | libavcodec-extra53
+Section: web
+Priority: optional
+Filename: pool/updates/main/f/firefox-esr/firefox-esr_153.6.0esr-1~deb13u1_amd64.deb
+Size: 79947732
+SHA256: 1a71e5e60d2a02bccc1320b822c4b7a92561dd72b8dbb7bcc0967311375fe2d2
+
+Package: libfreetype6
+Source: freetype
+Version: 2.13.3+dfsg-1+deb13u1
+Installed-Size: 963
+Maintainer: Hugh McMaster <hmc@debian.org>
+Architecture: amd64
+Depends: libbrotli1 (>= 0.6.0), libbz2-1.0, libc6 (>= 2.33), libpng16-16t64 (>= 1.6.46), zlib1g (>= 1:1.1.4)
+Description: FreeType 2 font engine, shared library files
+Homepage: https://freetype.org
+Description-md5: a1e3ee2cc4e84cd6907bcd99545e0796
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/f/freetype/libfreetype6_2.13.3+dfsg-1+deb13u1_amd64.deb
+Size: 452308
+SHA256: e4947f3291528f03d574f2b01d5c5fc45c58c47480f32888a5cdf0f231ab584e
+
+Package: libgdk-pixbuf-2.0-0
+Source: gdk-pixbuf
+Version: 2.42.12+dfsg-4+deb13u1
+Installed-Size: 486
+Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libgdk-pixbuf2.0-common (>= 2.42.12+dfsg-4+deb13u1), shared-mime-info, libc6 (>= 2.34), libglib2.0-0t64 (>= 2.80.0), libjpeg62-turbo (>= 1.3.1), libpng16-16t64 (>= 1.6.46), libtiff6 (>= 4.0.3)
+Description: GDK Pixbuf library
+Homepage: https://www.gtk.org/
+Description-md5: 63eb319f3f676573afbb3b5585491e65
+Multi-Arch: same
+Recommends: libgdk-pixbuf2.0-bin
+Section: libs
+Priority: optional
+Filename: pool/updates/main/g/gdk-pixbuf/libgdk-pixbuf-2.0-0_2.42.12+dfsg-4+deb13u1_amd64.deb
+Size: 141088
+SHA256: 94150fb955b2d3a9a5e054e31c5a4b048bad4a479207e86cde46fbc975c838b4
+
+Package: libgdk-pixbuf2.0-common
+Source: gdk-pixbuf
+Version: 2.42.12+dfsg-4+deb13u1
+Installed-Size: 2552
+Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Architecture: all
+Description: GDK Pixbuf library - data files
+Homepage: https://www.gtk.org/
+Description-md5: cd3fff9d184ca859b9cd83a1a6a9e258
+Multi-Arch: foreign
+Section: libs
+Priority: optional
+Filename: pool/updates/main/g/gdk-pixbuf/libgdk-pixbuf2.0-common_2.42.12+dfsg-4+deb13u1_all.deb
+Size: 311852
+SHA256: 9f0c64e33cf5bb3226a5a6ddf630dd76530596e476e6b47a8b27da444ff43a03
+
+Package: ghostscript
+Version: 10.05.1~dfsg-1+deb13u3
+Installed-Size: 183
+Maintainer: Debian Printing Team <debian-printing@lists.debian.org>
+Architecture: amd64
+Replaces: ghostscript-x (<< 10.02.0~dfsg-1)
+Provides: ghostscript-x (= 10.05.1~dfsg-1+deb13u3), postscript-viewer
+Depends: libgs10 (= 10.05.1~dfsg-1+deb13u3), libc6 (>= 2.34)
+Suggests: texlive-binaries
+Conflicts: ghostscript-x (<< 10.02.0~dfsg-1)
+Breaks: manpages-l10n (<< 4.22)
+Description: interpreter for the PostScript language and for PDF
+Homepage: https://www.ghostscript.com/
+Description-md5: ab0ac55fd3cdba396944cd65f6d36654
+Multi-Arch: foreign
+Section: text
+Priority: optional
+Filename: pool/updates/main/g/ghostscript/ghostscript_10.05.1~dfsg-1+deb13u3_amd64.deb
+Size: 50612
+SHA256: 8bacb4fc1a409b99fb8f3b4182324068979e37388639f3aee03eb8b9e6f4e252
+
+Package: gnutls-bin
+Source: gnutls28
+Version: 3.8.9-3+deb13u4
+Installed-Size: 1822
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libgnutls-dane0t64 (>= 3.7.0), libgnutls30t64 (>= 3.8.6-0+private+1), libtasn1-6 (>= 4.14)
+Description: GNU TLS library - commandline utilities
+Homepage: https://www.gnutls.org/
+Description-md5: 4d4cd373c5be12f8c5459215d3ef89f7
+Multi-Arch: foreign
+Section: net
+Priority: optional
+Filename: pool/updates/main/g/gnutls28/gnutls-bin_3.8.9-3+deb13u4_amd64.deb
+Size: 692668
+SHA256: caa3f9496ac350122fa12ca94b13aa8c5b507f6fcd931100a8eb128f8194f9ef
+
+Package: libgnutls-dane0t64
+Source: gnutls28
+Version: 3.8.9-3+deb13u4
+Installed-Size: 546
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: libgnutls-dane0
+Provides: libgnutls-dane0 (= 3.8.9-3+deb13u4)
+Depends: libgnutls30t64 (= 3.8.9-3+deb13u4), libc6 (>= 2.34), libunbound8 (>= 1.8.0)
+Suggests: dns-root-data
+Breaks: libgnutls-dane0 (<< 3.8.9-3+deb13u4)
+Description: GNU TLS library - DANE security support
+Homepage: https://www.gnutls.org/
+Description-md5: f54d1a37430965b4aabea6b30ac9ad5b
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/g/gnutls28/libgnutls-dane0t64_3.8.9-3+deb13u4_amd64.deb
+Size: 455908
+SHA256: 119a357b321614be7e17655cccbf767bd55b136d1ad722d3e80fb99d862fe2f4
+
+Package: libgnutls-openssl27t64
+Source: gnutls28
+Version: 3.8.9-3+deb13u4
+Installed-Size: 548
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: libgnutls-openssl27
+Provides: libgnutls-openssl27 (= 3.8.9-3+deb13u4)
+Depends: libgnutls30t64 (= 3.8.9-3+deb13u4), libc6 (>= 2.34)
+Breaks: libgnutls-openssl27 (<< 3.8.9-3+deb13u4)
+Description: GNU TLS library - OpenSSL wrapper
+Homepage: https://www.gnutls.org/
+Description-md5: cc3138ac587efbd57933152c18168024
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/g/gnutls28/libgnutls-openssl27t64_3.8.9-3+deb13u4_amd64.deb
+Size: 455752
+SHA256: b7d1252b21d4e10bb46dcd97b5f8dd5a6412f166e945f386bc908c9b2cb82b44
+
+Package: libgnutls30t64
+Source: gnutls28
+Version: 3.8.9-3+deb13u4
+Installed-Size: 3504
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: libgnutls30
+Provides: libgnutls30 (= 3.8.9-3+deb13u4)
+Depends: libc6 (>= 2.38), libgmp10 (>= 2:6.3.0+dfsg), libhogweed6t64 (>= 3.10), libidn2-0 (>= 2.0.0), libnettle8t64 (>= 3.10), libp11-kit0 (>= 0.25.1), libtasn1-6 (>= 4.14), libunistring5 (>= 1.1)
+Suggests: gnutls-bin
+Breaks: libgnutls30 (<< 3.8.9-3+deb13u4)
+Description: GNU TLS library - main runtime library
+Homepage: https://www.gnutls.org/
+Description-md5: 62280ac2a597a21eda709c611a5c0008
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/g/gnutls28/libgnutls30t64_3.8.9-3+deb13u4_amd64.deb
+Size: 1469024
+SHA256: 18a8bdfd91c7e3bcb01719d55a2b56849c7160b34f1f52b1c4fdfdd41bf1352b
+
+Package: libgsasl18
+Source: gsasl
+Version: 2.2.2-1.1+deb13u2
+Installed-Size: 187
+Maintainer: Debian XMPP Maintainers <pkg-xmpp-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libgssglue1 (>= 0.4), libidn12 (>= 1.13), libntlm0 (>= 1.2)
+Description: GNU SASL library
+Homepage: https://www.gnu.org/software/gsasl/
+Description-md5: ed39b31e74593a5134d8823aa4a43bb3
+Multi-Arch: same
+Recommends: gsasl-common
+Section: libs
+Priority: optional
+Filename: pool/updates/main/g/gsasl/libgsasl18_2.2.2-1.1+deb13u2_amd64.deb
+Size: 80136
+SHA256: 5d214b1347226d02203071f60f59d826aafd52fa5b247f3d4c2b7e501b3ff167
+
+Package: krb5-admin-server
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 338
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: krb5-kdc, libkrb5-3 (= 1.21.3-5+deb13u1), debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libgssapi-krb5-2 (>= 1.17), libgssrpc4t64 (>= 1.12~beta2+dfsg), libk5crypto3 (>= 1.18.2), libkadm5srv-mit12 (>= 1.18.2), libkdb5-10t64 (>= 1.21.3), libkrb5support0 (= 1.21.3-5+deb13u1), libss2 (>= 1.01), libverto1t64 (>= 0.2.4)
+Description: MIT Kerberos master server (kadmind)
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 768e84fbe9ad60b9ec2130a96ea21ea4
+Multi-Arch: foreign
+Pre-Depends: init-system-helpers (>= 1.54~)
+Section: net
+Priority: optional
+Filename: pool/updates/main/k/krb5/krb5-admin-server_1.21.3-5+deb13u1_amd64.deb
+Size: 95188
+SHA256: 40a6668be1d7de8b45305ac0f3568ae9f1ed9520ce457ff00b0a5fac77ffd1d6
+
+Package: krb5-kdc
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 564
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: krb5-config, krb5-user, libkadm5srv-mit12 (>= 1.18.2), libkdb5-10t64 (>= 1.21.3), libkrb5-3 (= 1.21.3-5+deb13u1), libverto-libev1t64 | libverto-libevent1t64, debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libgssrpc4t64 (>= 1.6.dfsg.2), libk5crypto3 (>= 1.20), libkrb5support0 (= 1.21.3-5+deb13u1), liblmdb0 (>= 0.9.7), libverto1t64 (>= 0.2.4)
+Suggests: krb5-admin-server, krb5-kdc-ldap (= 1.21.3-5+deb13u1), krb5-kpropd
+Description: MIT Kerberos key server (KDC)
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 0a143660c97d96b64a9766db9ef769fb
+Multi-Arch: foreign
+Pre-Depends: init-system-helpers (>= 1.54~)
+Section: net
+Priority: optional
+Filename: pool/updates/main/k/krb5/krb5-kdc_1.21.3-5+deb13u1_amd64.deb
+Size: 190828
+SHA256: 5533f05f8d20cee3e5441b5934f131a3b5b0487c7c1818680f175cbe8c7ea7c1
+
+Package: krb5-pkinit
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 203
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: libkrb5-3 (= 1.21.3-5+deb13u1), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.8+dfsg), libkrb5support0 (= 1.21.3-5+deb13u1), libssl3t64 (>= 3.0.0)
+Suggests: opensc
+Description: PKINIT plugin for MIT Kerberos
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 5b95da6e663d16f53b0cdeb2712ed0f3
+Multi-Arch: same
+Section: net
+Priority: optional
+Filename: pool/updates/main/k/krb5/krb5-pkinit_1.21.3-5+deb13u1_amd64.deb
+Size: 59308
+SHA256: cda1731e67f799007fb1e19af14bad9707f8fb6843e2081a217d93b227c7a831
+
+Package: krb5-user
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 416
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: libkrb5-3 (= 1.21.3-5+deb13u1), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkadm5clnt-mit12 (>= 1.18.2), libkadm5srv-mit12 (>= 1.18.2), libkdb5-10t64 (>= 1.21.3), libkrb5support0 (= 1.21.3-5+deb13u1), libss2 (>= 1.01)
+Suggests: krb5-k5tls
+Conflicts: heimdal-clients (<< 1.6~rc2+dfsg-7)
+Description: basic programs to authenticate using MIT Kerberos
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: b10599fa748131166d0b1a01617ee6ce
+Multi-Arch: foreign
+Recommends: krb5-config
+Section: net
+Priority: optional
+Filename: pool/updates/main/k/krb5/krb5-user_1.21.3-5+deb13u1_amd64.deb
+Size: 120080
+SHA256: dedac19418718f9db1a951be2967e77410f17898c0300b5c341bb37b841de72b
+
+Package: libgssapi-krb5-2
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 434
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: libkrb5-3 (= 1.21.3-5+deb13u1), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkrb5support0 (= 1.21.3-5+deb13u1)
+Suggests: krb5-doc, krb5-user
+Description: MIT Kerberos runtime libraries - krb5 GSS-API Mechanism
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 2dd7fe357b29d0ba6727171c01f0301c
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/k/krb5/libgssapi-krb5-2_1.21.3-5+deb13u1_amd64.deb
+Size: 138356
+SHA256: 30847c1fde4240567d7ed3aeab4f655dd591203758b857e85e824045aae70299
+
+Package: libk5crypto3
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 266
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libkrb5support0 (= 1.21.3-5+deb13u1)
+Suggests: krb5-doc, krb5-user
+Breaks: libgssapi-krb5-2 (<= 1.18~), libkrb5-3 (<= 1.18~)
+Description: MIT Kerberos runtime libraries - Crypto Library
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 4b107bcb8481fee0b8b11744a386a6b0
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/k/krb5/libk5crypto3_1.21.3-5+deb13u1_amd64.deb
+Size: 81152
+SHA256: 7da07ee674b47f1f0be7cc89317c25310086a1f1761217d0f72e6ae2c5a69b84
+
+Package: libkadm5srv-mit12
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 201
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libgssapi-krb5-2 (>= 1.6.dfsg.2), libgssrpc4t64 (>= 1.6.dfsg.2), libk5crypto3 (>= 1.6.dfsg.2), libkdb5-10t64 (>= 1.21.3), libkrb5-3 (>= 1.15~beta1), libkrb5support0 (= 1.21.3-5+deb13u1)
+Suggests: krb5-doc, krb5-user
+Conflicts: libkdb5-8
+Breaks: krb5-admin-server (<< 1.21), krb5-kdc (<< 1.21)
+Description: MIT Kerberos runtime libraries - KDC and Admin Server
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 34bc9a3bc5f24d8493ce16a753dc317d
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/k/krb5/libkadm5srv-mit12_1.21.3-5+deb13u1_amd64.deb
+Size: 54440
+SHA256: ab608b7692bcb980957c2dc83da291fa58e065955fdc6c0882c66d26502693ca
+
+Package: libkdb5-10t64
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 161
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Replaces: libkdb5-10
+Provides: libkdb5-10 (= 1.21.3-5+deb13u1)
+Depends: libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libgssrpc4t64 (>= 1.7dfsg~alpha1), libk5crypto3 (>= 1.20), libkrb5-3 (>= 1.14+dfsg), libkrb5support0 (= 1.21.3-5+deb13u1)
+Suggests: krb5-doc, krb5-user
+Description: MIT Kerberos runtime libraries - Kerberos database
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 339dba7d5a44f05699e73cc493c3def3
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/k/krb5/libkdb5-10t64_1.21.3-5+deb13u1_amd64.deb
+Size: 42788
+SHA256: d6d4ec516fe87c545862b117bc5cec294cabf06319c400720ec6c01bc215b79f
+
+Package: libkrb5-3
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 1074
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: libkrb5support0 (= 1.21.3-5+deb13u1), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkeyutils1 (>= 1.5.9), libssl3t64 (>= 3.0.0)
+Suggests: krb5-doc, krb5-user
+Breaks: libapache2-mod-auth-kerb (<= 5.4-2.4)
+Description: MIT Kerberos runtime libraries
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 07bb931a85fb24c6a0ef0f62a94bb26c
+Multi-Arch: same
+Recommends: krb5-locales
+Section: libs
+Priority: optional
+Filename: pool/updates/main/k/krb5/libkrb5-3_1.21.3-5+deb13u1_amd64.deb
+Size: 326056
+SHA256: 47d71d6a7f2e59b9bae5f89602397594805113b95889ad18fa703cd53abafc97
+
+Package: libkrb5support0
+Source: krb5
+Version: 1.21.3-5+deb13u1
+Installed-Size: 137
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38)
+Breaks: krb5-admin-server (<< 1.20.1-4~), krb5-kdc (<< 1.20.1-4~), krb5-pkinit (<< 1.20.1-4~), krb5-user (<< 1.20.1-4~), libgssapi-krb5-2 (<< 1.20), libk5crypto3 (<< 1.20.1-4~), libkadm5clnt-mit9 (<< 1.13~alpha1-1), libkadm5srv-mit12 (<< 1.20.1-4~), libkadm5srv-mit9 (<< 1.13~alpha1-1), libkdb5-10t64 (<< 1.20.1-4~), libkdb5-8 (<< 1.16), libkrb5-3 (<< 1.20.1-4~)
+Description: MIT Kerberos runtime libraries - Support library
+Homepage: https://web.mit.edu/kerberos/
+Description-md5: 4f3abf66dd7bfd20406fc400a05b0693
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/k/krb5/libkrb5support0_1.21.3-5+deb13u1_amd64.deb
+Size: 33124
+SHA256: 3a0acd8b37955c0e102c756b52c97df2a31f67b96453c35dab70df218d309117
+
+Package: liblcms2-2
+Source: lcms2
+Version: 2.16-2+deb13u2
+Installed-Size: 454
+Maintainer: Thomas Weber <tweber@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.29)
+Suggests: liblcms2-utils
+Description: Little CMS 2 color management library
+Homepage: http://www.littlecms.com/
+Description-md5: f14b0f581e9d68c55f05903d2bbecb4c
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/l/lcms2/liblcms2-2_2.16-2+deb13u2_amd64.deb
+Size: 160264
+SHA256: 32e53c2002ccea8c60c02779bea0ba49ac132fef702988a30d64af79b6617806
+
+Package: libconfig-inifiles-perl
+Version: 3.000003-3+deb13u1
+Installed-Size: 122
+Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+Architecture: all
+Description: read .ini-style configuration files
+Homepage: https://metacpan.org/release/Config-IniFiles/
+Description-md5: dbe4b698f524cea88f6967e4d995bdca
+Multi-Arch: foreign
+Section: perl
+Priority: optional
+Filename: pool/updates/main/libc/libconfig-inifiles-perl/libconfig-inifiles-perl_3.000003-3+deb13u1_all.deb
+Size: 44968
+SHA256: a24450fa610d65ec82f117346e1ae31fbfa0ea487379dfc6e23fcf2786b3f772
+
+Package: libdbi-perl
+Version: 1.652-2~deb13u1
+Installed-Size: 2545
+Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Provides: dh-sequence-perl-dbi, perl-dbdabi-94
+Depends: perl (>= 5.40.1-6), perlapi-5.40.1, libc6 (>= 2.38)
+Suggests: libclone-perl (>= 0.47), libmldbm-perl, libnet-daemon-perl, libsql-statement-perl
+Description: Perl Database Interface (DBI)
+Homepage: https://dbi.perl.org/
+Description-md5: aa070f52bfbf0d9e220aa40da4b4ced1
+Multi-Arch: same
+Section: perl
+Priority: optional
+Filename: pool/updates/main/libd/libdbi-perl/libdbi-perl_1.652-2~deb13u1_amd64.deb
+Size: 866736
+SHA256: 9cb39c5bda09e5b1804849b6fca588d4423fc753378a62957264afafeeb7a12a
+
+Package: libevent-2.1-7t64
+Source: libevent
+Version: 2.1.13-stable-1~deb13u1
+Installed-Size: 443
+Maintainer: Nicolas Mora <babelouest@debian.org>
+Architecture: amd64
+Replaces: libevent-2.1-7
+Provides: libevent-2.1-7 (= 2.1.13-stable-1~deb13u1)
+Depends: libc6 (>= 2.38)
+Breaks: libevent-2.1-7 (<< 2.1.13-stable-1~deb13u1)
+Description: Asynchronous event notification library
+Homepage: https://libevent.org/
+Description-md5: 45b333b614c8e682d2a525e278f5c233
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libe/libevent/libevent-2.1-7t64_2.1.13-stable-1~deb13u1_amd64.deb
+Size: 182984
+SHA256: 9a2a9a6c4ceaafe280f8f39ffa217bb50719c5e79feb75f412755c4036a76ca0
+
+Package: libevent-core-2.1-7t64
+Source: libevent
+Version: 2.1.13-stable-1~deb13u1
+Installed-Size: 306
+Maintainer: Nicolas Mora <babelouest@debian.org>
+Architecture: amd64
+Replaces: libevent-core-2.1-7
+Provides: libevent-core-2.1-7 (= 2.1.13-stable-1~deb13u1)
+Depends: libc6 (>= 2.38)
+Breaks: libevent-core-2.1-7 (<< 2.1.13-stable-1~deb13u1)
+Description: Asynchronous event notification library (core)
+Homepage: https://libevent.org/
+Description-md5: 951eaa6250fb2e171dca3efbd48a13f0
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libe/libevent/libevent-core-2.1-7t64_2.1.13-stable-1~deb13u1_amd64.deb
+Size: 132868
+SHA256: faa7d20cc8fa05ac3b0497065fa60bc920eacd3711ff039649d43a7aa34421ce
+
+Package: libgcrypt20
+Version: 1.11.0-7+deb13u1
+Installed-Size: 1999
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libgpg-error0 (>= 1.50)
+Suggests: rng-tools
+Description: LGPL Crypto library - runtime library
+Homepage: https://gnupg.org/software/libgcrypt/
+Description-md5: 98bb5dd0ae9e4cb030e532a58cd590be
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libg/libgcrypt20/libgcrypt20_1.11.0-7+deb13u1_amd64.deb
+Size: 843104
+SHA256: f0eb41f8cb40896e0822e9ab65611e8383c12b721c76c54764f744abb4a8c247
+
+Package: libinput-bin
+Source: libinput
+Version: 1.28.1-1+deb13u1
+Installed-Size: 165
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libevdev2 (>= 1.10.0), libudev1 (>= 183), libwacom9 (>= 2.0.0)
+Description: input device management and event handling library - udev quirks
+Homepage: https://www.freedesktop.org/wiki/Software/libinput/
+Description-md5: 73c43f4be44104c1d21c610329934c9d
+Multi-Arch: foreign
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libi/libinput/libinput-bin_1.28.1-1+deb13u1_amd64.deb
+Size: 26764
+SHA256: 0ef9fc75d9fb4d8aa478baa3e2165c8f3b5e7310c13d9dddbb18029e6cad9143
+
+Package: libinput10
+Source: libinput
+Version: 1.28.1-1+deb13u1
+Installed-Size: 426
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libevdev2 (>= 1.10.0), libmtdev1t64 (>= 1.1.0), libudev1 (>= 183), libwacom9 (>= 2.13.0), libinput-bin (>= 1.28.1-1+deb13u1)
+Description: input device management and event handling library - shared library
+Homepage: https://www.freedesktop.org/wiki/Software/libinput/
+Description-md5: 9e49b464a8b88d8e000e69071f6816b7
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libi/libinput/libinput10_1.28.1-1+deb13u1_amd64.deb
+Size: 143596
+SHA256: fa967b1a25d8e5c0314459f6abd9e0e7518de7d8e02a8d4e69f51642a88569d4
+
+Package: libpng16-16t64
+Source: libpng1.6
+Version: 1.6.48-1+deb13u6
+Installed-Size: 444
+Maintainer: Maintainers of libpng1.6 packages <libpng1.6@packages.debian.org>
+Architecture: amd64
+Replaces: libpng16-16
+Provides: libpng16-16 (= 1.6.48-1+deb13u6)
+Depends: libc6 (>= 2.29), zlib1g (>= 1:1.2.3.4)
+Breaks: libpng16-16 (<< 1.6.48-1+deb13u6)
+Description: PNG library - runtime (version 1.6)
+Homepage: http://libpng.org/pub/png/libpng.html
+Description-md5: d5a985e94f8651ba49089e3bee0eb18f
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libp/libpng1.6/libpng16-16t64_1.6.48-1+deb13u6_amd64.deb
+Size: 283368
+SHA256: 0f8034d1c2547760430c81e8d87e5d6acd533a3493c80cf76dbecd0343b6773c
+
+Package: librsvg2-2
+Source: librsvg
+Version: 2.60.0+dfsg-1+deb13u1
+Installed-Size: 6160
+Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libcairo-gobject2 (>= 1.10.0), libcairo2 (>= 1.15.8), libdav1d7 (>= 0.1.0), libgcc-s1 (>= 4.2), libgdk-pixbuf-2.0-0 (>= 2.25.2), libglib2.0-0t64 (>= 2.54.0), libpango-1.0-0 (>= 1.48.11), libpangocairo-1.0-0 (>= 1.48.11), libxml2 (>= 2.9.0)
+Suggests: librsvg2-bin
+Description: SAX-based renderer library for SVG files (runtime)
+Homepage: https://wiki.gnome.org/Projects/LibRsvg
+Description-md5: 5955c666a37a7cde845fec0579db4217
+Multi-Arch: same
+Recommends: librsvg2-common
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libr/librsvg/librsvg2-2_2.60.0+dfsg-1+deb13u1_amd64.deb
+Size: 1794824
+SHA256: 5f68f720eccefebda3855a30007cab9d7662042ccbc01c126aa5f697ae6e5791
+
+Package: librsvg2-common
+Source: librsvg
+Version: 2.60.0+dfsg-1+deb13u1
+Installed-Size: 400
+Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Depends: librsvg2-2 (= 2.60.0+dfsg-1+deb13u1), libc6 (>= 2.34), libgcc-s1 (>= 4.2), libgdk-pixbuf-2.0-0 (>= 2.23.5-2), libglib2.0-0t64 (>= 2.50.0)
+Description: SAX-based renderer library for SVG files (extra runtime)
+Homepage: https://wiki.gnome.org/Projects/LibRsvg
+Description-md5: ea3b9a976900e5b502f7a5919085cda4
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libr/librsvg/librsvg2-common_2.60.0+dfsg-1+deb13u1_amd64.deb
+Size: 154452
+SHA256: b653edb698c94157e7f3ace314751ac0709f82e8c2d9229e3b402d134e97c624
+
+Package: libsodium23
+Source: libsodium
+Version: 1.0.18-1+deb13u1
+Installed-Size: 431
+Maintainer: Laszlo Boszormenyi (GCS) <gcs@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Description: Network communication, cryptography and signaturing library
+Homepage: https://www.libsodium.org/
+Description-md5: 0affde5b96740664a1c3f33fe4ca7e9f
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libs/libsodium/libsodium23_1.0.18-1+deb13u1_amd64.deb
+Size: 165028
+SHA256: 9ff9d97bb7ce3aee7f6e6ec3a785cdbe237454a7b9fd84728121bc4ef2bebebe
+
+Package: libssh2-1t64
+Source: libssh2
+Version: 1.11.1-1+deb13u1
+Installed-Size: 441
+Maintainer: Nicolas Mora <babelouest@debian.org>
+Architecture: amd64
+Replaces: libssh2-1
+Provides: libssh2-1 (= 1.11.1-1+deb13u1)
+Depends: libc6 (>= 2.25), libssl3t64 (>= 3.0.0), zlib1g (>= 1:1.1.4)
+Breaks: libssh2-1 (<< 1.11.1-1+deb13u1)
+Description: SSH2 client-side library
+Homepage: https://libssh2.org/
+Description-md5: a72806365acab9f7b0057c7e13cb7b14
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libs/libssh2/libssh2-1t64_1.11.1-1+deb13u1_amd64.deb
+Size: 245088
+SHA256: 915c4ec450a369d430e0151f9e10e25044ea2f0d6e41901e00a9317e232e5683
+
+Package: libxml2
+Version: 2.12.7+dfsg+really2.9.14-2.1+deb13u1
+Installed-Size: 1915
+Maintainer: Debian XML/SGML Group <debian-xml-sgml-pkgs@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), liblzma5 (>= 5.1.1alpha+20120614), zlib1g (>= 1:1.2.3.3)
+Conflicts: w3c-dtd-xhtml
+Description: GNOME XML library
+Homepage: http://xmlsoft.org
+Description-md5: 6771e66f557fa0f71e6955303e1d8f8d
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u1_amd64.deb
+Size: 698060
+SHA256: b4743a0fd8e86379ec2bdfb6b97b99fb1c92a925e538920052316814470e99f8
+
+Package: libxslt1.1
+Source: libxslt
+Version: 1.1.35-1.2+deb13u2
+Installed-Size: 497
+Maintainer: Debian XML/SGML Group <debian-xml-sgml-pkgs@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libgcrypt20 (>= 1.11.0), libxml2 (>= 2.9.0)
+Description: XSLT 1.0 processing library - runtime library
+Homepage: https://gitlab.gnome.org/GNOME/libxslt/-/wikis/home
+Description-md5: a00a78b7d528f023d0297a93b37a3a68
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/libx/libxslt/libxslt1.1_1.1.35-1.2+deb13u2_amd64.deb
+Size: 233008
+SHA256: 9bc71cdba622881dc1ad97a9854309025623ad10e9b545adeb7587cb26ecafe5
+
+Package: linux-libc-dev
+Source: linux
+Version: 6.12.107-1
+Installed-Size: 10975
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Description: Linux support headers for userspace development
+Homepage: https://www.kernel.org/
+Description-md5: b95630af34c5b0ac63c5a6f7cf44ced6
+Multi-Arch: foreign
+Section: devel
+Priority: optional
+Filename: pool/updates/main/l/linux/linux-libc-dev_6.12.107-1_all.deb
+Size: 2919204
+SHA256: dc68dd53c7356598d005866da0d19d7bd33af2a62971aced624cdf04492902b4
+
+Package: linux-libc-dev
+Source: linux
+Version: 6.12.111-1
+Installed-Size: 11043
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Description: Linux support headers for userspace development
+Homepage: https://www.kernel.org/
+Description-md5: b95630af34c5b0ac63c5a6f7cf44ced6
+Multi-Arch: foreign
+Section: devel
+Priority: optional
+Filename: pool/updates/main/l/linux/linux-libc-dev_6.12.111-1_all.deb
+Size: 2988444
+SHA256: b9055566f71a6fa2e818174dcc3622aa0fb5d16cdff1bc5346e52492ba27b57c
+
+Package: linux-libc-dev
+Source: linux
+Version: 6.12.113-1
+Installed-Size: 11075
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Description: Linux support headers for userspace development
+Homepage: https://www.kernel.org/
+Description-md5: b95630af34c5b0ac63c5a6f7cf44ced6
+Multi-Arch: foreign
+Section: devel
+Priority: optional
+Filename: pool/updates/main/l/linux/linux-libc-dev_6.12.113-1_all.deb
+Size: 3021244
+SHA256: b2d475e01aaf0030c72bd3a0300d311f8be64aa9e82d82eae5da1a04f4010071
+
+Package: linux-libc-dev
+Source: linux
+Version: 6.12.115-1
+Installed-Size: 11103
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Description: Linux support headers for userspace development
+Homepage: https://www.kernel.org/
+Description-md5: b95630af34c5b0ac63c5a6f7cf44ced6
+Multi-Arch: foreign
+Section: devel
+Priority: optional
+Filename: pool/updates/main/l/linux/linux-libc-dev_6.12.115-1_all.deb
+Size: 3049468
+SHA256: 3c1462fd228763c03922b20bec7cc484a29033dc87df440af33f3a232a96e2bd
+
+Package: linux-libc-dev
+Source: linux
+Version: 6.12.115-2
+Installed-Size: 11103
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Description: Linux support headers for userspace development
+Homepage: https://www.kernel.org/
+Description-md5: b95630af34c5b0ac63c5a6f7cf44ced6
+Multi-Arch: foreign
+Section: devel
+Priority: optional
+Filename: pool/updates/main/l/linux/linux-libc-dev_6.12.115-2_all.deb
+Size: 3049692
+SHA256: 235ba2cb2ea677f4acaf402b027e76d305342870f6d80d822d7ee9713e2f0ff5
+
+Package: linux-libc-dev
+Source: linux
+Version: 6.12.116-1
+Installed-Size: 11103
+Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+Architecture: all
+Description: Linux support headers for userspace development
+Homepage: https://www.kernel.org/
+Description-md5: b95630af34c5b0ac63c5a6f7cf44ced6
+Multi-Arch: foreign
+Section: devel
+Priority: optional
+Filename: pool/updates/main/l/linux/linux-libc-dev_6.12.116-1_all.deb
+Size: 3049964
+SHA256: c43f5c6dc104f2a2ce985d6d68d3575a7be6fe904313efa7b10edfa0170f9dce
+
+Package: mutt
+Version: 2.2.13-1+deb13u2
+Installed-Size: 7113
+Maintainer: Mutt maintainers <mutt@packages.debian.org>
+Architecture: amd64
+Provides: imap-client, mail-reader
+Depends: libc6 (>= 2.38), libgnutls30t64 (>= 3.8.6), libgpg-error0 (>= 1.33), libgpgme11t64 (>= 1.23.2), libgsasl18 (>= 1.1), libgssapi-krb5-2 (>= 1.17), libidn2-0 (>= 2.0.0), libncursesw6 (>= 6), libtinfo6 (>= 6), libtokyocabinet9t64 (>= 1.4.47), zlib1g (>= 1:1.1.4)
+Suggests: default-mta | mail-transport-agent, urlview, aspell | ispell, gnupg, openssl, ca-certificates
+Description: text-based mailreader supporting MIME, GPG, PGP and threading
+Homepage: http://www.mutt.org/
+Description-md5: 14c29b7cb02b614c08865f8fb8a0ac39
+Recommends: locales, mailcap, sensible-utils
+Section: mail
+Priority: optional
+Filename: pool/updates/main/m/mutt/mutt_2.2.13-1+deb13u2_amd64.deb
+Size: 1878080
+SHA256: bef44cf20e935dd9a990c927844fa1ccf40193493d877ff15898d7d2de661cf0
+
+Package: libnghttp2-14
+Source: nghttp2
+Version: 1.64.0-1.1+deb13u1
+Installed-Size: 229
+Maintainer: Tomasz Buchert <tomasz@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.17)
+Description: library implementing HTTP/2 protocol (shared library)
+Homepage: https://nghttp2.org/
+Description-md5: e959c1ba3df5439ba338e7e50ed40e05
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/n/nghttp2/libnghttp2-14_1.64.0-1.1+deb13u1_amd64.deb
+Size: 76188
+SHA256: 896cb217537c09251fb909b8541349010ac279d802d871e98c06a62a2c67ce2c
+
+Package: nginx
+Version: 1.26.3-3+deb13u10
+Installed-Size: 1556
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: nginx-core (<< 1.22.1-6~), nginx-extras (<< 1.22.1-6~), nginx-light (<< 1.22.1-6~)
+Provides: httpd, httpd-cgi, nginx-abi-1.26.3-1
+Depends: libc6 (>= 2.34), libcrypt1 (>= 1:4.1.0), libpcre2-8-0 (>= 10.22), libssl3t64 (>= 3.0.0), zlib1g (>= 1:1.1.4), iproute2, nginx-common (= 1.26.3-3+deb13u10)
+Breaks: nginx-core (<< 1.22.1-6~), nginx-extras (<< 1.22.1-6~), nginx-light (<< 1.22.1-6~)
+Description: small, powerful, scalable web/proxy server
+Homepage: https://nginx.org
+Description-md5: cb534cf82475d3e706f730549c99229f
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/n/nginx/nginx_1.26.3-3+deb13u10_amd64.deb
+Size: 613548
+SHA256: 222f1f296cb91a67323fdca0e37c4f34a7be78d14de043f15b2f76acdd8750a9
+
+Package: nginx-common
+Source: nginx
+Version: 1.26.3-3+deb13u10
+Installed-Size: 305
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
+Architecture: all
+Replaces: nginx (<< 1.22.1-8)
+Depends: debconf (>= 0.5) | debconf-2.0
+Suggests: fcgiwrap, nginx-doc, ssl-cert
+Breaks: nginx (<< 1.22.1-8)
+Description: small, powerful, scalable web/proxy server - common files
+Homepage: https://nginx.org
+Description-md5: 9e23931d84d07adbee5412aefdad8a90
+Multi-Arch: foreign
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/n/nginx/nginx-common_1.26.3-3+deb13u10_all.deb
+Size: 111828
+SHA256: 410d048889786394e5706a73f22ee1405b65114eec798881c4a7cfb119026153
+
+Package: nginx-core
+Source: nginx
+Version: 1.26.3-3+deb13u10
+Installed-Size: 91
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
+Architecture: all
+Replaces: nginx-full (<< 1.18.0-1)
+Depends: libnginx-mod-http-geoip (>= 1.26.3-3+deb13u10), libnginx-mod-http-geoip (<< 1.26.3-3+deb13u10.1~), libnginx-mod-http-image-filter (>= 1.26.3-3+deb13u10), libnginx-mod-http-image-filter (<< 1.26.3-3+deb13u10.1~), libnginx-mod-http-xslt-filter (>= 1.26.3-3+deb13u10), libnginx-mod-http-xslt-filter (<< 1.26.3-3+deb13u10.1~), libnginx-mod-mail (>= 1.26.3-3+deb13u10), libnginx-mod-mail (<< 1.26.3-3+deb13u10.1~), libnginx-mod-stream (>= 1.26.3-3+deb13u10), libnginx-mod-stream (<< 1.26.3-3+deb13u10.1~), libnginx-mod-stream-geoip (>= 1.26.3-3+deb13u10), libnginx-mod-stream-geoip (<< 1.26.3-3+deb13u10.1~), nginx (>= 1.26.3-3+deb13u10), nginx (<< 1.26.3-3+deb13u10.1~)
+Breaks: nginx-full (<< 1.18.0-1)
+Description: nginx web/proxy server (standard version)
+Homepage: https://nginx.org
+Description-md5: e85c58ee97847a5147d2960542e84a35
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/n/nginx/nginx-core_1.26.3-3+deb13u10_all.deb
+Size: 85052
+SHA256: 1de27457d3c18363177fff6cf4ac29d234f796c3c99e470eba40fb91aabe9ae1
+
+Package: nginx-extras
+Source: nginx
+Version: 1.26.3-3+deb13u10
+Installed-Size: 91
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
+Architecture: amd64
+Depends: nginx (= 1.26.3-3+deb13u10), libnginx-mod-http-geoip (= 1.26.3-3+deb13u10), libnginx-mod-http-image-filter (= 1.26.3-3+deb13u10), libnginx-mod-http-perl (= 1.26.3-3+deb13u10), libnginx-mod-http-xslt-filter (= 1.26.3-3+deb13u10), libnginx-mod-mail (= 1.26.3-3+deb13u10), libnginx-mod-stream (= 1.26.3-3+deb13u10), libnginx-mod-stream-geoip (= 1.26.3-3+deb13u10), libnginx-mod-http-auth-pam, libnginx-mod-http-cache-purge, libnginx-mod-http-dav-ext, libnginx-mod-http-echo, libnginx-mod-http-fancyindex, libnginx-mod-http-geoip2, libnginx-mod-http-headers-more-filter, libnginx-mod-http-lua, libnginx-mod-http-subs-filter, libnginx-mod-http-uploadprogress, libnginx-mod-http-upstream-fair, libnginx-mod-nchan, libnginx-mod-stream-geoip2
+Description: nginx web/proxy server (extended version)
+Homepage: https://nginx.org
+Description-md5: 1d3b9fb345563354827d5cafdc42a135
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/n/nginx/nginx-extras_1.26.3-3+deb13u10_amd64.deb
+Size: 85200
+SHA256: 3e7cf47d9848ed1cde6da1c4258aa8bbfde3c3b1530e89e404f491f9d5fd3c32
+
+Package: nginx-full
+Source: nginx
+Version: 1.26.3-3+deb13u10
+Installed-Size: 91
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
+Architecture: all
+Depends: libnginx-mod-http-auth-pam, libnginx-mod-http-dav-ext, libnginx-mod-http-echo, libnginx-mod-http-geoip2, libnginx-mod-http-subs-filter, libnginx-mod-http-upstream-fair, libnginx-mod-stream-geoip2, nginx (>= 1.26.3-3+deb13u10), nginx (<< 1.26.3-3+deb13u10.1~)
+Description: nginx web/proxy server (standard version with 3rd parties)
+Homepage: https://nginx.org
+Description-md5: 38101909ef24536167f0acdee4f45ef9
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/n/nginx/nginx-full_1.26.3-3+deb13u10_all.deb
+Size: 85072
+SHA256: 45294e9cc37a43d38d675574b26e2e4df4850f8ede12dc45f40e3fbeab69c842
+
+Package: nginx-light
+Source: nginx
+Version: 1.26.3-3+deb13u10
+Installed-Size: 91
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
+Architecture: all
+Depends: libnginx-mod-http-echo, nginx (>= 1.26.3-3+deb13u10), nginx (<< 1.26.3-3+deb13u10.1~)
+Description: nginx web/proxy server (basic version)
+Homepage: https://nginx.org
+Description-md5: 3988a4d9cebce50812e3e3cb815d6200
+Section: httpd
+Priority: optional
+Filename: pool/updates/main/n/nginx/nginx-light_1.26.3-3+deb13u10_all.deb
+Size: 84816
+SHA256: 09b778e694eb7504aa7b74a986d378003882be8ab394591a2df0bb9cbbe8c3c9
+
+Package: libngtcp2-16
+Source: ngtcp2
+Version: 1.11.0-1+deb13u1
+Installed-Size: 335
+Maintainer: Debian Curl Maintainers <team+curl@tracker.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.25)
+Description: implementation of QUIC protocol (library)
+Homepage: https://github.com/ngtcp2/ngtcp2
+Description-md5: 56db2111df33e922517e5625b3bbfef6
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/n/ngtcp2/libngtcp2-16_1.11.0-1+deb13u1_amd64.deb
+Size: 131904
+SHA256: 627eec81ebbd48c4e6091f5cd9dc5070b792b7075000eed60ab08c7daa961caf
+
+Package: libngtcp2-crypto-gnutls8
+Source: ngtcp2
+Version: 1.11.0-1+deb13u1
+Installed-Size: 80
+Maintainer: Debian Curl Maintainers <team+curl@tracker.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.14), libgnutls30t64 (>= 3.8.2), libngtcp2-16 (>= 1.1.0)
+Description: implementation of QUIC protocol (library)
+Homepage: https://github.com/ngtcp2/ngtcp2
+Description-md5: 56db2111df33e922517e5625b3bbfef6
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/n/ngtcp2/libngtcp2-crypto-gnutls8_1.11.0-1+deb13u1_amd64.deb
+Size: 29524
+SHA256: 2a7f109c0c4db6a800e4661c5e5e34e1f1f83c8162482276183d1ada9da7c96c
+
+Package: libnss3
+Source: nss
+Version: 2:3.110-1+deb13u5
+Installed-Size: 4479
+Maintainer: Maintainers of Mozilla-related packages <team+pkg-mozilla@tracker.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libnspr4 (>= 2:4.34), libsqlite3-0 (>= 3.5.9)
+Description: Network Security Service libraries
+Homepage: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
+Description-md5: 8cae15b3c3c4e609abb7935ebf0d0f66
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/n/nss/libnss3_3.110-1+deb13u5_amd64.deb
+Size: 1392784
+SHA256: 7059839165c39e734ff59c712fde83ef5ea01328872819dfbabd1c08e75f3116
+
+Package: openjdk-21-jdk-headless
+Source: openjdk-21
+Version: 21.0.13+9-1~deb13u2
+Installed-Size: 94303
+Maintainer: OpenJDK Team <openjdk-21@packages.debian.org>
+Architecture: amd64
+Replaces: openjdk-17-jre-headless (<< 17~10), openjdk-21-jre-headless (<< 21~27ea)
+Provides: java-compiler, java-sdk-headless (= 21), java10-sdk-headless, java11-sdk-headless, java12-sdk-headless, java13-sdk-headless, java14-sdk-headless, java15-sdk-headless, java16-sdk-headless, java17-sdk-headless, java18-sdk-headless, java19-sdk-headless, java2-sdk-headless, java20-sdk-headless, java21-sdk-headless, java5-sdk-headless, java6-sdk-headless, java7-sdk-headless, java8-sdk-headless, java9-sdk-headless
+Depends: openjdk-21-jre-headless (= 21.0.13+9-1~deb13u2), libc6 (>= 2.34), zlib1g (>= 1:1.1.4)
+Suggests: openjdk-21-demo, openjdk-21-source
+Breaks: openjdk-17-jre-headless (<< 17~10), openjdk-21-jre-headless (<< 21~27ea)
+Description: OpenJDK Development Kit (JDK) (headless)
+Homepage: https://openjdk.java.net/
+Description-md5: 494a52f34d707a832270d6d51a78f511
+Multi-Arch: same
+Section: java
+Priority: optional
+Filename: pool/updates/main/o/openjdk-21/openjdk-21-jdk-headless_21.0.13+9-1~deb13u2_amd64.deb
+Size: 83187032
+SHA256: fc39e84c52e86abb9e335bdf7bcec37a5fafbcb2eb4aa4893bd5ceec7dc941d2
+
+Package: openjdk-21-jre-headless
+Source: openjdk-21
+Version: 21.0.13+9-1~deb13u2
+Installed-Size: 199005
+Maintainer: OpenJDK Team <openjdk-21@packages.debian.org>
+Architecture: amd64
+Replaces: openjdk-11-jdk-headless (<< 11~18-2)
+Provides: java-runtime-headless (= 21), java10-runtime-headless, java11-runtime-headless, java12-runtime-headless, java13-runtime-headless, java14-runtime-headless, java15-runtime-headless, java16-runtime-headless, java17-runtime-headless, java19-runtime-headless, java2-runtime-headless, java20-runtime-headless, java21-runtime-headless, java5-runtime-headless, java6-runtime-headless, java7-runtime-headless, java8-runtime-headless, java9-runtime-headless
+Depends: ca-certificates-java (>= 20190405~), java-common (>= 0.28), liblcms2-2 (>= 2.8), libjpeg62-turbo (>= 1.3.1), libnss3 (>= 2:3.17.1), util-linux (>= 2.26.2-4), libc6 (>= 2.38), libgcc-s1 (>= 3.0), libpcsclite1 (>= 1.3.0), libstdc++6 (>= 5), zlib1g (>= 1:1.2.2)
+Suggests: libnss-mdns, fonts-dejavu-extra, fonts-ipafont-gothic, fonts-ipafont-mincho, fonts-wqy-microhei | fonts-wqy-zenhei, fonts-indic
+Conflicts: openjdk-11-jdk-headless (<< 11~18-2), oracle-java11-installer
+Breaks: clojure1.8 (<= 1.8.0-7ubuntu1~)
+Description: OpenJDK Java runtime, using Hotspot JIT (headless)
+Homepage: https://openjdk.java.net/
+Description-md5: 62c2c9689e617c48cc4480926d2ca785
+Multi-Arch: same
+Recommends: libcups2t64, libfontconfig1, libfreetype6 (>= 2.3.5), libharfbuzz0b (>= 1.2.6), libasound2t64 (>= 1.0.16)
+Section: java
+Priority: optional
+Filename: pool/updates/main/o/openjdk-21/openjdk-21-jre-headless_21.0.13+9-1~deb13u2_amd64.deb
+Size: 41993808
+SHA256: 7334a11777942862fa97f8d16f23a391f85e6c3a3fc8ea73e0cc30adc52c8299
+
+Package: openssh-client
+Source: openssh
+Version: 1:10.0p1-7+deb13u2
+Installed-Size: 4998
+Maintainer: Debian OpenSSH Maintainers <debian-ssh@lists.debian.org>
+Architecture: amd64
+Replaces: openssh-sk-helper, ssh, ssh-krb5
+Provides: ssh-client
+Depends: adduser, init-system-helpers (>= 1.66~), passwd, libc6 (>= 2.38), libedit2 (>= 2.11-20080614-0), libfido2-1 (>= 1.8.0), libgssapi-krb5-2 (>= 1.17), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.0), zlib1g (>= 1:1.1.4)
+Suggests: keychain, libpam-ssh, monkeysphere, ssh-askpass
+Conflicts: sftp
+Breaks: openssh-sk-helper
+Description: secure shell (SSH) client, for secure access to remote machines
+Homepage: https://www.openssh.com/
+Description-md5: 8cde3280ebad71c16b3e8c661dae6c6d
+Multi-Arch: foreign
+Recommends: xauth
+Section: net
+Priority: standard
+Filename: pool/updates/main/o/openssh/openssh-client_10.0p1-7+deb13u2_amd64.deb
+Size: 985740
+SHA256: e6bbb079e06539ecebd598b74f7725299ba61cebd64a2cfb09f2bab8fbe25d18
+
+Package: openssh-server
+Source: openssh
+Version: 1:10.0p1-7+deb13u2
+Installed-Size: 3429
+Maintainer: Debian OpenSSH Maintainers <debian-ssh@lists.debian.org>
+Architecture: amd64
+Replaces: openssh-client (<< 1:7.9p1-8), ssh, ssh-krb5
+Provides: ssh-server
+Depends: libpam-modules, libpam-runtime, lsb-base, openssh-client (= 1:10.0p1-7+deb13u2), openssh-sftp-server, procps, ucf, debconf (>= 0.5) | debconf-2.0, runit-helper (>= 2.14.0~), systemd | systemd-standalone-sysusers | systemd-sysusers, libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libcrypt1 (>= 1:4.1.0), libgssapi-krb5-2 (>= 1.17), libkrb5-3 (>= 1.13~alpha1+dfsg), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.0), libwrap0 (>= 7.6-4~), libwtmpdb0 (>= 0.13.0), zlib1g (>= 1:1.1.4)
+Suggests: molly-guard, monkeysphere, ssh-askpass, ufw
+Conflicts: sftp, ssh-socks, ssh2
+Breaks: runit (<< 2.1.2-51~)
+Description: secure shell (SSH) server, for secure access from remote machines
+Homepage: https://www.openssh.com/
+Description-md5: 842cc998cae371b9d8106c1696373919
+Multi-Arch: foreign
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: default-logind | logind | libpam-systemd, ncurses-term, xauth
+Section: net
+Priority: optional
+Filename: pool/updates/main/o/openssh/openssh-server_10.0p1-7+deb13u2_amd64.deb
+Size: 601604
+SHA256: 46e9d73149ba34744d17f5859e8e7f0277f3f7f2daf078dd4f477dd1798f7b78
+
+Package: openssh-sftp-server
+Source: openssh
+Version: 1:10.0p1-7+deb13u2
+Installed-Size: 173
+Maintainer: Debian OpenSSH Maintainers <debian-ssh@lists.debian.org>
+Architecture: amd64
+Replaces: openssh-server (<< 1:6.5p1-5)
+Depends: openssh-client (= 1:10.0p1-7+deb13u2), libc6 (>= 2.38)
+Breaks: openssh-server (<< 1:6.5p1-5)
+Description: secure shell (SSH) sftp server module, for SFTP access from remote machines
+Homepage: https://www.openssh.com/
+Description-md5: b9a6d4f71758c154615deaec42e8415d
+Enhances: openssh-server, ssh-server
+Multi-Arch: foreign
+Recommends: openssh-server | ssh-server
+Section: net
+Priority: optional
+Filename: pool/updates/main/o/openssh/openssh-sftp-server_10.0p1-7+deb13u2_amd64.deb
+Size: 65320
+SHA256: ceafc87f74e71d2b8346f7715064bfee197bdf2848e0a425e370e5cc4317d1f4
+
+Package: libssl-dev
+Source: openssl
+Version: 3.5.7-1~deb13u3
+Installed-Size: 16010
+Maintainer: Debian OpenSSL Team <pkg-openssl-devel@alioth-lists.debian.net>
+Architecture: amd64
+Depends: libssl3t64 (= 3.5.7-1~deb13u3)
+Suggests: libssl-doc
+Description: Secure Sockets Layer toolkit - development files
+Homepage: https://openssl-library.org
+Description-md5: 27044468897c45b271f879c7c6e135fe
+Multi-Arch: same
+Section: libdevel
+Priority: optional
+Filename: pool/updates/main/o/openssl/libssl-dev_3.5.7-1~deb13u3_amd64.deb
+Size: 2968412
+SHA256: c5f5f0383cac45209fefe85b3c3308e5ef6743663597d89bedcb96aaa06b8342
+
+Package: libssl3t64
+Source: openssl
+Version: 3.5.7-1~deb13u3
+Installed-Size: 8115
+Maintainer: Debian OpenSSL Team <pkg-openssl-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libssl3
+Provides: libssl3 (= 3.5.7-1~deb13u3)
+Depends: libc6 (>= 2.38), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4), openssl-provider-legacy
+Breaks: freeradius (<< 3.2.7+dfsg-1+deb13u1), libssl3 (<< 3.5.7-1~deb13u3), openssh-client (<< 1:9.4p1), openssh-server (<< 1:9.4p1), python3-m2crypto (<< 0.38.0-4)
+Description: Secure Sockets Layer toolkit - shared libraries
+Homepage: https://openssl-library.org
+Description-md5: 88547c6206c7fbc4fcc7d09ce100d210
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/o/openssl/libssl3t64_3.5.7-1~deb13u3_amd64.deb
+Size: 2458176
+SHA256: ff16bc048bcd7d1b256094450b79c77947d8e76fe2a24bd99b91021d591fa074
+
+Package: openssl
+Version: 3.5.7-1~deb13u3
+Installed-Size: 2510
+Maintainer: Debian OpenSSL Team <pkg-openssl-devel@alioth-lists.debian.net>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libssl3t64 (>= 3.5.0)
+Suggests: ca-certificates
+Description: Secure Sockets Layer toolkit - cryptographic utility
+Homepage: https://openssl-library.org
+Description-md5: 9b6de2bb6e1d9016aeb0f00bcf6617bd
+Multi-Arch: foreign
+Section: utils
+Priority: optional
+Filename: pool/updates/main/o/openssl/openssl_3.5.7-1~deb13u3_amd64.deb
+Size: 1508068
+SHA256: 43a9cbcf2a8a0e1f0a1c3f5a33ee1f56b269690e7a2129f2b2d0582e789589d7
+
+Package: openssl-provider-legacy
+Source: openssl
+Version: 3.5.7-1~deb13u3
+Installed-Size: 424
+Maintainer: Debian OpenSSL Team <pkg-openssl-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libssl3 (<< 3.3.1-5), libssl3t64 (<< 3.3.1-5)
+Depends: libc6 (>= 2.14), libssl3t64 (>= 3.0.3)
+Breaks: libssl3 (<< 3.3.1-5), libssl3t64 (<< 3.3.1-5)
+Description: Secure Sockets Layer toolkit - cryptographic utility
+Homepage: https://openssl-library.org
+Description-md5: 6ae6f8ddd6448e07b5d86dc9b813dddd
+Multi-Arch: foreign
+Section: utils
+Priority: optional
+Filename: pool/updates/main/o/openssl/openssl-provider-legacy_3.5.7-1~deb13u3_amd64.deb
+Size: 316452
+SHA256: c12e0266c4780749a4702b8959ac979689f4182e18eed85a8a5eb90ed0e16eab
+
+Package: libpcre2-16-0
+Source: pcre2
+Version: 10.46-1~deb13u3
+Installed-Size: 713
+Maintainer: Matthew Vernon <matthew@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Description: New Perl Compatible Regular Expression Library - 16 bit runtime files
+Homepage: https://github.com/PCRE2Project/pcre2
+Description-md5: d6c0e8013a7482f54831f24be8910309
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/p/pcre2/libpcre2-16-0_10.46-1~deb13u3_amd64.deb
+Size: 281748
+SHA256: e25b12fcd1f62185962a81499388fb9c25a7614b9513b6017489275bc7011a51
+
+Package: libpcre2-8-0
+Source: pcre2
+Version: 10.46-1~deb13u3
+Installed-Size: 774
+Maintainer: Matthew Vernon <matthew@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Description: New Perl Compatible Regular Expression Library- 8 bit runtime files
+Homepage: https://github.com/PCRE2Project/pcre2
+Description-md5: c7a3d45ed09bfb032aada6998b70c4e1
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/p/pcre2/libpcre2-8-0_10.46-1~deb13u3_amd64.deb
+Size: 299148
+SHA256: e226f661d918f04daf38cdbc4806b7ed7d6ef95c7eb0ade692fc350e31970040
+
+Package: libpcre2-posix3
+Source: pcre2
+Version: 10.46-1~deb13u3
+Installed-Size: 90
+Maintainer: Matthew Vernon <matthew@debian.org>
+Architecture: amd64
+Replaces: libpcre2-posix0
+Depends: libc6 (>= 2.4), libpcre2-8-0 (>= 10.22)
+Conflicts: libpcre2-posix0
+Description: New Perl Compatible Regular Expression Library - posix-compatible runtime files
+Homepage: https://github.com/PCRE2Project/pcre2
+Description-md5: 36d3623865b28406ab156b00d782f2f2
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/p/pcre2/libpcre2-posix3_10.46-1~deb13u3_amd64.deb
+Size: 64104
+SHA256: 4a7f75f6f3b7e67a9a7f1dcdfca6377db6564057bac2a225cbd0583fe878f7df
+
+Package: postfix
+Version: 3.10.13-0+deb13u1
+Installed-Size: 4029
+Maintainer: Debian Postfix Team <team+postfix@tracker.debian.org>
+Architecture: amd64
+Replaces: mail-transport-agent, postfix-doc (<< 3.9.1-3~), postfix-ldap (<< 3.9.1-5~), postfix-lmdb (<< 3.9.1-5~), postfix-mongodb (<< 3.9.1-5~), postfix-mysql (<< 3.9.1-5~), postfix-pcre (<< 3.9.1-5~), postfix-pgsql (<< 3.9.1-5~), postfix-sqlite (<< 3.9.1-5~)
+Provides: mail-transport-agent
+Depends: adduser, netbase, debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.34), libdb5.3t64, libicu76 (>= 76.1-1~), libnsl2 (>= 1.0), libsasl2-2 (>= 2.1.28+dfsg1), libssl3t64 (>= 3.2.0), libtlsrpt0 (>= 0.5.0rc1)
+Suggests: libsasl2-modules | dovecot-common, mail-reader, postfix-cdb, postfix-doc, postfix-ldap, postfix-lmdb, postfix-mta-sts-resolver, postfix-mongodb, postfix-mysql, postfix-pcre, postfix-pgsql, postfix-sqlite, procmail, resolvconf, sasl2-bin | dovecot-common, ufw
+Conflicts: mail-transport-agent, smail
+Description: High-performance mail transport agent
+Homepage: https://www.postfix.org
+Description-md5: d1e5b8a8efc0139e26e8e2264b919364
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: ca-certificates, ssl-cert, python3
+Section: mail
+Priority: optional
+Filename: pool/updates/main/p/postfix/postfix_3.10.13-0+deb13u1_amd64.deb
+Size: 1612316
+SHA256: 8ce131d062484f3beb5f56615b3f731347e766c0087f5a198acf824e5f034aa2
+
+Package: libpq5
+Source: postgresql-17
+Version: 17.11-0+deb13u1
+Installed-Size: 1089
+Maintainer: Debian PostgreSQL Maintainers <team+postgresql@tracker.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libgssapi-krb5-2 (>= 1.17), libldap2 (>= 2.6.2), libssl3t64 (>= 3.0.0)
+Description: PostgreSQL C client library
+Homepage: http://www.postgresql.org/
+Description-md5: da9bc59f7fd653cbf94d3bb2760708aa
+Multi-Arch: same
+Recommends: ca-certificates
+Section: libs
+Priority: optional
+Filename: pool/updates/main/p/postgresql-17/libpq5_17.11-0+deb13u1_amd64.deb
+Size: 237376
+SHA256: 20a4c9ef58b4baf90deda67cfb2cc062871c062830dddc234d28f5ac7931b86b
+
+Package: postgresql-17
+Version: 17.11-0+deb13u1
+Installed-Size: 57512
+Maintainer: Debian PostgreSQL Maintainers <team+postgresql@tracker.debian.org>
+Architecture: amd64
+Provides: postgresql-17-jit-llvm (= 19), postgresql-contrib-17
+Depends: locales | locales-all, postgresql-client-17, postgresql-common (>= 252~), ssl-cert, tzdata, debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.38), libgcc-s1 (>= 3.0), libgssapi-krb5-2 (>= 1.14+dfsg), libicu76 (>= 76.1-1~), libldap2 (>= 2.6.2), libllvm19 (>= 1:19.1.0), liblz4-1 (>= 0.0~r130), libpam0g (>= 0.99.7.1), libpq5 (>= 17~~), libselinux1 (>= 3.1~), libssl3t64 (>= 3.4.0), libstdc++6 (>= 5.2), libsystemd0, libuuid1 (>= 2.16), libxml2 (>= 2.7.4), libxslt1.1 (>= 1.1.25), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Breaks: dbconfig-common (<< 2.0.22~)
+Description: The World's Most Advanced Open Source Relational Database
+Homepage: http://www.postgresql.org/
+Description-md5: b045ba4e9ac97ba71c16264f2467bd3c
+Postgresql-Catversion: 202406281-1700
+Recommends: sysstat
+Section: database
+Priority: optional
+Filename: pool/updates/main/p/postgresql-17/postgresql-17_17.11-0+deb13u1_amd64.deb
+Size: 16678028
+SHA256: d2ce1ddffafa783f9acda4c92c86fc21e8288bff3782d739294f14fa797d7886
+
+Package: postgresql-client-17
+Source: postgresql-17
+Version: 17.11-0+deb13u1
+Installed-Size: 10520
+Maintainer: Debian PostgreSQL Maintainers <team+postgresql@tracker.debian.org>
+Architecture: amd64
+Provides: postgresql-client
+Depends: libpq5 (>= 17.11), postgresql-client-common (>= 182~), sensible-utils, libc6 (>= 2.38), liblz4-1 (>= 0.0~r127), libreadline8t64 (>= 6.0), libssl3t64 (>= 3.0.0), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Suggests: postgresql-17, postgresql-doc-17
+Description: front-end programs for PostgreSQL 17
+Homepage: http://www.postgresql.org/
+Description-md5: eaea3378475832005862cf031d1071c0
+Multi-Arch: foreign
+Section: database
+Priority: optional
+Filename: pool/updates/main/p/postgresql-17/postgresql-client-17_17.11-0+deb13u1_amd64.deb
+Size: 2071508
+SHA256: 9d8558f8dd57c8e92e218a20698383575d53742ca3f9e7c2b7fe5f246d5216ae
+
+Package: puppet-agent
+Version: 8.10.0-5+deb13u1
+Installed-Size: 7101
+Maintainer: Puppet Package Maintainers <pkg-puppet-devel@alioth-lists.debian.net>
+Architecture: all
+Replaces: puppet (<< 7.16.0), puppet-common (<< 4.5.1-1)
+Depends: adduser, libruby (>= 3.3), ruby, ruby-augeas, ruby-shadow, debconf (>= 0.5) | debconf-2.0, ruby-concurrent (>= 1.0), ruby-deep-merge (>= 1.0), facter (>= 4.3.0), facter (<< 5), ruby-fast-gettext (>= 2.1), ruby-fast-gettext (<< 4), ruby-getoptlong (>= 0), ruby-locale (>= 2.1), ruby-multi-json (>= 1.13), ruby-puppet-resource-api (>= 1.5), ruby-scanf (>= 1.0), ruby-semantic-puppet (>= 1.0)
+Suggests: hiera-eyaml, ruby-hocon, ruby-msgpack
+Breaks: puppet (<< 7.16.0), puppet-common (<< 4.5.1-1), puppet-master (<< 7.9.3), puppet-master-passenger (<< 7.9.3), puppetserver (<< 8)
+Description: configuration management system, agent
+Homepage: https://github.com/puppetlabs/puppet
+Description-md5: 9c11faacf3d08afaeacee81d1e4a7435
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: augeas-tools, debconf-utils, lsb-release, ruby-selinux
+Section: admin
+Priority: optional
+Filename: pool/updates/main/p/puppet-agent/puppet-agent_8.10.0-5+deb13u1_all.deb
+Size: 1235124
+SHA256: 5db18e513059c6d550f7a5310e5de81f37f3a6cec61951fda9f92d3d009c422f
+
+Package: rsync
+Version: 3.5.0+ds1-0+deb13u1
+Installed-Size: 955
+Maintainer: Samuel Henrique <samueloph@debian.org>
+Architecture: amd64
+Depends: libacl1 (>= 2.2.23), libc6 (>= 2.38), liblz4-1 (>= 0.0~r130), libpopt0 (>= 1.14), libssl3t64 (>= 3.0.0), libxxhash0 (>= 0.8.0), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Suggests: openssh-client, openssh-server, python3, python3-braceexpand
+Description: fast, versatile, remote (and local) file-copying tool
+Homepage: https://rsync.samba.org/
+Description-md5: 3bf40f318d2abfed74fa472aaff46d5f
+Multi-Arch: foreign
+Pre-Depends: init-system-helpers (>= 1.54~)
+Section: net
+Priority: optional
+Filename: pool/updates/main/r/rsync/rsync_3.5.0+ds1-0+deb13u1_amd64.deb
+Size: 501964
+SHA256: 4e7c9ceffc110e23e91177811fb02c7033b161d327f696f1b8f2f57d2edb92c5
+
+Package: libruby3.3
+Source: ruby3.3
+Version: 3.3.13-0+deb13u1
+Installed-Size: 29126
+Maintainer: Debian Ruby Team <pkg-ruby-extras-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Provides: ruby-abbrev (= 0.1.2), ruby-benchmark (= 0.3.0), ruby-bigdecimal (= 3.1.5), ruby-cgi (= 0.4.2), ruby-date (= 3.3.4), ruby-debug (= 1.9.2), ruby-delegate (= 0.3.1), ruby-digest (= 3.1.1), ruby-drb (= 2.2.0), ruby-english (= 0.8.0), ruby-erb (= 4.0.3.1), ruby-error-highlight (= 0.6.0), ruby-etc (= 1.4.3), ruby-fcntl (= 1.1.0), ruby-fiddle (= 1.1.2), ruby-fileutils (= 1.7.2), ruby-find (= 0.2.0), ruby-forwardable (= 1.3.3), ruby-getoptlong (= 0.2.1), ruby-io-console (= 0.7.1), ruby-io-nonblock (= 0.3.0), ruby-io-wait (= 0.3.1), ruby-irb (= 1.13.1), ruby-logger (= 1.6.0), ruby-matrix (= 0.4.2), ruby-mutex-m (= 0.2.0), ruby-net-ftp (= 0.3.4), ruby-net-http (= 0.4.1), ruby-net-imap (= 0.4.25), ruby-net-pop (= 0.1.2), ruby-net-protocol (= 0.2.2), ruby-net-smtp (= 0.5.1), ruby-nkf (= 0.1.3), ruby-observer (= 0.1.2), ruby-open-uri (= 0.4.1), ruby-open3 (= 0.2.1), ruby-openssl (= 3.2.4), ruby-optparse (= 0.4.0), ruby-ostruct (= 0.6.0), ruby-pathname (= 0.3.0), ruby-pp (= 0.5.0), ruby-prettyprint (= 0.2.0), ruby-prime (= 0.1.2), ruby-prism (= 0.19.0), ruby-pstore (= 0.2.1), ruby-racc (= 1.7.3), ruby-rbs (= 3.4.0), ruby-rdoc (= 6.6.3.1), ruby-readline (= 0.0.4), ruby-reline (= 0.5.10), ruby-resolv (= 0.3.2), ruby-resolv-replace (= 0.1.1), ruby-rexml (= 3.4.4), ruby-rinda (= 0.2.0), ruby-rss (= 0.3.1), ruby-securerandom (= 0.3.1), ruby-set (= 1.1.0), ruby-shellwords (= 0.2.0), ruby-singleton (= 0.2.0), ruby-stringio (= 3.1.1), ruby-strscan (= 3.0.9), ruby-syntax-suggest (= 2.0.3), ruby-syslog (= 0.1.2), ruby-tempfile (= 0.2.1), ruby-time (= 0.3.0), ruby-timeout (= 0.4.1), ruby-tmpdir (= 0.2.0), ruby-tsort (= 0.2.0), ruby-typeprof (= 0.21.9), ruby-un (= 0.3.0), ruby-uri (= 0.13.3), ruby-weakref (= 0.1.3), ruby-yaml (= 0.3.0), ruby-zlib (= 3.1.2)
+Depends: rake (>= 10.4.2), ruby-csv (>= 3.3.3), ruby-did-you-mean (>= 1.6.3-2~), ruby-net-telnet (>= 0.1.1), ruby-ruby2-keywords (>= 0.0.5-1~), ruby-xmlrpc (>= 0.3.3~), ruby-webrick (>= 1.9), libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libffi8 (>= 3.4), libgmp10 (>= 2:6.3.0+dfsg), libssl3t64 (>= 3.4.0), libyaml-0-2, zlib1g (>= 1:1.2.11.dfsg)
+Description: Libraries necessary to run Ruby 3.3
+Homepage: https://www.ruby-lang.org/
+Description-md5: 9f2f4d0dca1c4dc5f025a47716c0a5df
+Multi-Arch: same
+Recommends: ruby-sdbm (>= 1.0.0-3~)
+Section: libs
+Priority: optional
+Filename: pool/updates/main/r/ruby3.3/libruby3.3_3.3.13-0+deb13u1_amd64.deb
+Size: 5539844
+SHA256: f7d75845a26a0a163476ede94c48219ebe452053943e5499a015c8edcc5d5b7a
+
+Package: ruby3.3
+Version: 3.3.13-0+deb13u1
+Installed-Size: 140
+Maintainer: Debian Ruby Team <pkg-ruby-extras-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Depends: rubygems-integration (>= 1.17.1~), libc6 (>= 2.34), libcrypt1 (>= 1:4.1.0), libgmp10 (>= 2:6.3.0+dfsg), libruby3.3 (>= 3.3.0~preview1), zlib1g (>= 1:1.1.4)
+Description: Interpreter of object-oriented scripting language Ruby
+Homepage: https://www.ruby-lang.org/
+Description-md5: 6fa64e47222e494e3091add39441e131
+Multi-Arch: allowed
+Recommends: fonts-lato, libjs-jquery
+Section: ruby
+Priority: optional
+Filename: pool/updates/main/r/ruby3.3/ruby3.3_3.3.13-0+deb13u1_amd64.deb
+Size: 57372
+SHA256: 0395c5e99b662bc0c3fb7cb371ea484f576e981ee1b234e53a48f1f38cab3095
+
+Package: libtdb1
+Source: samba (2:4.22.10+dfsg-0+deb13u2)
+Version: 2:1.4.13+samba4.22.10+dfsg-0+deb13u2
+Installed-Size: 171
+Maintainer: Debian Samba Maintainers <pkg-samba-maint@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Description: Trivial Database - shared library
+Homepage: https://www.samba.org
+Description-md5: 0f3fcc8a1c8e6b3b4c956fdf394636a6
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/s/samba/libtdb1_1.4.13+samba4.22.10+dfsg-0+deb13u2_amd64.deb
+Size: 83288
+SHA256: 08bf208f68ed9ef88f571034ec2fc6837dcbd28987a111ec473778ad097c98b2
+
+Package: libslurm-dev
+Source: slurm-wlm
+Version: 24.11.5-4+deb13u1
+Installed-Size: 5081
+Maintainer: Debian HPC Team <debian-hpc@lists.debian.org>
+Architecture: amd64
+Replaces: libslurm10-dev, libslurm11-dev, libslurm12-dev, libslurm13-dev, libslurm20-dev, libslurm21-dev, libslurmdb-dev
+Depends: libslurm42t64 (= 24.11.5-4+deb13u1)
+Conflicts: libslurm10-dev, libslurm11-dev, libslurm12-dev, libslurm13-dev, libslurm20-dev, libslurm21-dev
+Breaks: libslurmdb-dev
+Description: Slurm development files
+Homepage: http://slurm.schedmd.com
+Description-md5: fe0f2aba26475144fd65d4073a4ded5c
+Section: libdevel
+Priority: optional
+Filename: pool/updates/main/s/slurm-wlm/libslurm-dev_24.11.5-4+deb13u1_amd64.deb
+Size: 923580
+SHA256: bed2068be215f27ddf21a2c560013dcf26ac845b3da815028da443be9254a79e
+
+Package: slurm-wlm-basic-plugins-dev
+Source: slurm-wlm
+Version: 24.11.5-4+deb13u1
+Installed-Size: 16028
+Maintainer: Debian HPC Team <debian-hpc@lists.debian.org>
+Architecture: amd64
+Depends: slurm-wlm-basic-plugins (= 24.11.5-4+deb13u1)
+Description: Slurm basic plugins development files
+Homepage: http://slurm.schedmd.com
+Description-md5: ecce296ca1ee4705d01d8736fac7aa6e
+Recommends: slurm-wlm-plugins-dev (= 24.11.5-4+deb13u1)
+Section: devel
+Priority: optional
+Filename: pool/updates/main/s/slurm-wlm/slurm-wlm-basic-plugins-dev_24.11.5-4+deb13u1_amd64.deb
+Size: 1652380
+SHA256: 8010f364ccf146a663ebd8814986ec5078ea7040cf6d831fb6a91507274524ea
+
+Package: python3-swift
+Source: swift
+Version: 2.35.1-0+deb13u4
+Installed-Size: 3950
+Maintainer: Debian OpenStack <team+openstack@tracker.debian.org>
+Architecture: all
+Depends: adduser, python3-cffi, python3-cryptography (>= 2.0.2), python3-dnspython, python3-eventlet, python3-greenlet, python3-openssl, python3-oslo.config, python3-oslo.log, python3-pastedeploy, python3-pyeclib, python3-xattr, python3-lxml, python3-requests, python3:any
+Breaks: systemd (<< 235~)
+Description: distributed virtual object store - Python 3 libraries
+Homepage: https://github.com/openstack/swift
+Description-md5: 1610b42ded260a638127e10387659e4f
+Section: python
+Priority: optional
+Filename: pool/updates/main/s/swift/python3-swift_2.35.1-0+deb13u4_all.deb
+Size: 737964
+SHA256: 805f0bc929022401507220c2f52ff4a63cc96d08b80c9be13814d3eb2e862651
+
+Package: libtiff6
+Source: tiff
+Version: 4.7.0-3+deb13u3
+Installed-Size: 766
+Maintainer: Laszlo Boszormenyi (GCS) <gcs@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.33), libdeflate0 (>= 1.0), libjbig0 (>= 2.0), libjpeg62-turbo (>= 1.3.1), liblerc4 (>= 3.0), liblzma5 (>= 5.1.1alpha+20120614), libwebp7 (>= 1.5.0), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Breaks: libimager-perl (<< 1.022+dfsg)
+Description: Tag Image File Format (TIFF) library
+Homepage: https://libtiff.gitlab.io/libtiff/
+Description-md5: bdf182da5cc17db1c9eb4ccb03647efc
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/t/tiff/libtiff6_4.7.0-3+deb13u3_amd64.deb
+Size: 345492
+SHA256: 6bb2038f36817ae1ee6d33df03917b21835dcc2e0f3e3e80a71390e83c171173
+
+Package: libunbound8
+Source: unbound
+Version: 1.26.2-0+deb13u1
+Installed-Size: 1420
+Maintainer: unbound packagers <unbound@packages.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libevent-2.1-7t64 (>= 2.1.8-stable), libssl3t64 (>= 3.4.0)
+Description: library implementing DNS resolution and validation
+Homepage: https://www.unbound.net/
+Description-md5: 2be0d2578ccb5656d253e8013682ad4a
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/u/unbound/libunbound8_1.26.2-0+deb13u1_amd64.deb
+Size: 644244
+SHA256: 5b057b041a39f40208ddf9aeff1b5581a6c3af68c9a96c784a0d6270f1943a1a
+
+Package: bsdextrautils
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 339
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Replaces: bsdmainutils (<< 12.1.3)
+Depends: libc6 (>= 2.38), libsmartcols1 (= 2.41.5-0+deb13u1), libtinfo6 (>= 6)
+Breaks: bsdmainutils (<< 12.1.3)
+Description: extra utilities from 4.4BSD-Lite
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: 61ff4e9f9a6cd494351f0af8d84ab370
+Multi-Arch: foreign
+Section: utils
+Priority: optional
+Filename: pool/updates/main/u/util-linux/bsdextrautils_2.41.5-0+deb13u1_amd64.deb
+Size: 94796
+SHA256: bf9888552d2f5dac61a3d434252af30a7619bfad1152d2a3c73bcf4b3be74526
+
+Package: bsdutils
+Source: util-linux (2.41.5-0+deb13u1)
+Version: 1:2.41.5-0+deb13u1
+Installed-Size: 401
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Description: basic utilities from 4.4BSD-Lite
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: 07a52b485dd8e72c97ccec74c54564a0
+Essential: yes
+Multi-Arch: foreign
+Pre-Depends: libc6 (>= 2.38), libsystemd0 (>= 254)
+Recommends: bsdextrautils
+Section: utils
+Priority: required
+Filename: pool/updates/main/u/util-linux/bsdutils_2.41.5-0+deb13u1_amd64.deb
+Size: 110208
+SHA256: d935a5102752a1108bdf1e815c89a84ac88d1949bf049a784178f946a09b14da
+
+Package: libblkid1
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 453
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38)
+Description: block device ID library
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: a511054d3223ae05280eebc8f3e2c80e
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/u/util-linux/libblkid1_2.41.5-0+deb13u1_amd64.deb
+Size: 171612
+SHA256: 81535f3c2c0efc732965907c8749103a0a26377c761622c9ce39b4c92dcde52f
+
+Package: liblastlog2-2
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 75
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libsqlite3-0 (>= 3.5.9)
+Description: lastlog2 database shared library
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: eea62ff73e66a83c684042e59cac1a51
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/u/util-linux/liblastlog2-2_2.41.5-0+deb13u1_amd64.deb
+Size: 28772
+SHA256: abb76aecbf51479e6e193873dfddaa1b88667dc0b1db82a11286a67550ba1557
+
+Package: libmount1
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 565
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Depends: libblkid1 (= 2.41.5-0+deb13u1), libc6 (>= 2.38), libselinux1 (>= 3.1~)
+Suggests: cryptsetup-bin
+Description: device mounting library
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: 7e446c44302ff94779f1434f2e05d553
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/u/util-linux/libmount1_2.41.5-0+deb13u1_amd64.deb
+Size: 210408
+SHA256: 6d00f45f2e80e078e906e3eedecd3ba6913e39fef49bff361ee583f17f00ec05
+
+Package: libsmartcols1
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 377
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38)
+Description: smart column output alignment library
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: d5382f0223188fc45ed69f879488c198
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/u/util-linux/libsmartcols1_2.41.5-0+deb13u1_amd64.deb
+Size: 143216
+SHA256: d96bac9c8805685f2734885098a214b82950da6ebb182c27a6b7a124a0323392
+
+Package: libuuid1
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 98
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Replaces: libuuid1t64
+Provides: libuuid1t64 (= 2.41.5-0+deb13u1)
+Depends: libc6 (>= 2.38)
+Suggests: uuid-runtime
+Breaks: libuuid1t64 (<< 2.41.5-0+deb13u1)
+Description: Universally Unique ID library
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: f31dd3d34d42a99fedd60c9fb7d79469
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/u/util-linux/libuuid1_2.41.5-0+deb13u1_amd64.deb
+Size: 37848
+SHA256: c1bf4c4c3ff48c57fabf93307dfb56996b60cfa33927afc4158b5db36fb2721e
+
+Package: mount
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 497
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Suggests: nfs-common
+Description: tools for mounting and manipulating filesystems
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: 90e187380786a435bb9c85b37afa2c5f
+Multi-Arch: foreign
+Pre-Depends: libblkid1 (= 2.41.5-0+deb13u1), libc6 (>= 2.38), libmount1 (= 2.41.5-0+deb13u1), libselinux1 (>= 3.1~), libsmartcols1 (= 2.41.5-0+deb13u1)
+Section: admin
+Priority: required
+Filename: pool/updates/main/u/util-linux/mount_2.41.5-0+deb13u1_amd64.deb
+Size: 163208
+SHA256: eb70a615114ac40123768beb20e302554d5cb7edb33290be7e418ebe1075c878
+
+Package: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 4986
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Replaces: hardlink
+Provides: hardlink
+Suggests: dosfstools, kbd, util-linux-extra, util-linux-locales, wtmpdb
+Conflicts: hardlink
+Description: miscellaneous system utilities
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: 33d0291a69ffd307cfba295915df602a
+Essential: yes
+Multi-Arch: foreign
+Pre-Depends: libpam-modules, libpam-runtime, libblkid1 (= 2.41.5-0+deb13u1), libc6 (>= 2.41), libcap-ng0 (>= 0.7.9), libcrypt1 (>= 1:4.1.0), liblastlog2-2 (= 2.41.5-0+deb13u1), libmount1 (= 2.41.5-0+deb13u1), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libsmartcols1 (= 2.41.5-0+deb13u1), libsystemd0, libtinfo6 (>= 6), libudev1 (>= 183), libuuid1 (= 2.41.5-0+deb13u1)
+Recommends: sensible-utils
+Section: utils
+Priority: required
+Filename: pool/updates/main/u/util-linux/util-linux_2.41.5-0+deb13u1_amd64.deb
+Size: 1242392
+SHA256: 7d5b1176cc3d8cc6b290b3ec17af458f362d9200845f30da22057a8198744430
+
+Package: util-linux-extra
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 1402
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: amd64
+Replaces: util-linux (<< 2.40.4-4~)
+Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libsmartcols1 (= 2.41.5-0+deb13u1), zlib1g (>= 1:1.1.4)
+Breaks: initscripts (<< 3.08-2~), util-linux (<< 2.40.4-4~)
+Description: interactive login tools
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: 6d905c81fc375da4b911c6b1488773c9
+Multi-Arch: foreign
+Section: utils
+Priority: standard
+Filename: pool/updates/main/u/util-linux/util-linux-extra_2.41.5-0+deb13u1_amd64.deb
+Size: 300900
+SHA256: b5d0492ee97c7f3f79178973f2518af631669d5ad84ff7e539ec6bfe6f0bd700
+
+Package: util-linux-locales
+Source: util-linux
+Version: 2.41.5-0+deb13u1
+Installed-Size: 13714
+Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Architecture: all
+Replaces: manpages-cs (<< 4.19.0-7~), manpages-da (<< 4.19.0-7~), manpages-de (<< 4.19.0-7~), manpages-de-dev (<< 4.19.0-7~), manpages-es (<< 4.19.0-7~), manpages-fi (<< 4.19.0-7~), manpages-fr (<< 4.19.0-7~), manpages-fr-dev (<< 4.19.0-7~), manpages-hu (<< 4.19.0-7~), manpages-id (<< 4.19.0-7~), manpages-it (<< 4.19.0-7~), manpages-nl (<< 4.19.0-7~), manpages-pl (<< 1:4.25.1-1~), manpages-ro (<< 4.19.0-7~), manpages-ro-dev (<< 4.19.0-7~), manpages-sr (<< 4.19.0-7~), manpages-uk (<< 4.19.0-7~), manpages-uk-dev (<< 4.19.0-7~)
+Depends: util-linux (>= 2.41.5)
+Breaks: manpages-cs (<< 4.19.0-7~), manpages-da (<< 4.19.0-7~), manpages-de (<< 4.19.0-7~), manpages-de-dev (<< 4.19.0-7~), manpages-es (<< 4.19.0-7~), manpages-fi (<< 4.19.0-7~), manpages-fr (<< 4.19.0-7~), manpages-fr-dev (<< 4.19.0-7~), manpages-hu (<< 4.19.0-7~), manpages-id (<< 4.19.0-7~), manpages-it (<< 4.19.0-7~), manpages-nl (<< 4.19.0-7~), manpages-pl (<< 1:4.25.1-1~), manpages-ro (<< 4.19.0-7~), manpages-ro-dev (<< 4.19.0-7~), manpages-sr (<< 4.19.0-7~), manpages-uk (<< 4.19.0-7~), manpages-uk-dev (<< 4.19.0-7~)
+Description: locales files for util-linux
+Homepage: https://github.com/util-linux/util-linux
+Description-md5: 82531200c8b3929a95bc0ef54cf0d268
+Multi-Arch: foreign
+Section: localization
+Priority: optional
+Filename: pool/updates/main/u/util-linux/util-linux-locales_2.41.5-0+deb13u1_all.deb
+Size: 3766620
+SHA256: 039e96313709c6dd2daebea6617ac33120e7738eaa7273db50d1569983a3f436
+
+Package: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 3930
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: amd64
+Provides: editor
+Depends: vim-common (= 2:9.1.1230-2+deb13u2), vim-runtime (= 2:9.1.1230-2+deb13u2), libacl1 (>= 2.2.23), libc6 (>= 2.38), libgpm2 (>= 1.20.7), libselinux1 (>= 3.1~), libsodium23 (>= 1.0.14), libtinfo6 (>= 6)
+Suggests: ctags, vim-doc, vim-scripts
+Description: Vi IMproved - enhanced vi editor
+Homepage: https://www.vim.org/
+Description-md5: 59e8b8f7757db8b53566d5d119872de8
+Section: editors
+Priority: optional
+Filename: pool/updates/main/v/vim/vim_9.1.1230-2+deb13u2_amd64.deb
+Size: 1670616
+SHA256: 6ac5ca33102bcb285b4b3862638b723801fdf96881baad1fef85dfcb1fed3b88
+
+Package: vim-common
+Source: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 1864
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: all
+Replaces: vim-runtime (<< 2:9.0.1658-1~)
+Breaks: vim-runtime (<< 2:9.0.1658-1~)
+Description: Vi IMproved - Common files
+Homepage: https://www.vim.org/
+Description-md5: 30b64c3dceccc4faef229eafc38d0069
+Multi-Arch: foreign
+Recommends: xxd, vim | vim-gtk3 | vim-motif | vim-nox | vim-tiny
+Section: editors
+Priority: important
+Filename: pool/updates/main/v/vim/vim-common_9.1.1230-2+deb13u2_all.deb
+Size: 421100
+SHA256: 39b504410e89a36cdca9f0c6b351c43f3b36d04f4c91122c5b186b6b05b0ecff
+
+Package: vim-gtk3
+Source: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 4772
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: amd64
+Provides: editor, gvim (= 2:9.1.1230-2+deb13u2), vim (= 2:9.1.1230-2+deb13u2), vim-lua (= 2:9.1.1230-2+deb13u2), vim-perl (= 2:9.1.1230-2+deb13u2), vim-python3 (= 2:9.1.1230-2+deb13u2), vim-ruby (= 2:9.1.1230-2+deb13u2), vim-tcl (= 2:9.1.1230-2+deb13u2)
+Depends: vim-common (= 2:9.1.1230-2+deb13u2), vim-gui-common (= 2:9.1.1230-2+deb13u2), vim-runtime (= 2:9.1.1230-2+deb13u2), libacl1 (>= 2.2.23), libc6 (>= 2.38), libcairo2 (>= 1.4.10), libcanberra0 (>= 0.2), libgdk-pixbuf-2.0-0 (>= 2.22.0), libglib2.0-0t64 (>= 2.80.0), libgpm2 (>= 1.20.7), libgtk-3-0t64 (>= 3.21.5), libice6 (>= 1:1.0.0), liblua5.1-0 (>= 5.1.3), libpango-1.0-0 (>= 1.37.5), libpangocairo-1.0-0 (>= 1.14.0), libperl5.40 (>= 5.40.0), libpython3.13 (>= 3.13.0~rc3), libruby3.3 (>= 3.3.0~preview1), libselinux1 (>= 3.1~), libsm6 (>= 2:1.2.6), libsodium23 (>= 1.0.14), libtcl8.6 (>= 8.6.0), libtinfo6 (>= 6), libx11-6, libxt6t64
+Suggests: cscope, fonts-dejavu, gnome-icon-theme, vim-doc
+Description: Vi IMproved - enhanced vi editor - with GTK3 GUI
+Homepage: https://www.vim.org/
+Description-md5: 55a9161bf3dec9e8a999586c8e73467a
+Section: editors
+Priority: optional
+Filename: pool/updates/main/v/vim/vim-gtk3_9.1.1230-2+deb13u2_amd64.deb
+Size: 1987748
+SHA256: 674704be10072863ddd942b0a3734b3190eee2f37358652de190cf62d455f51c
+
+Package: vim-gui-common
+Source: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 247
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: all
+Description: Vi IMproved - Common GUI files
+Homepage: https://www.vim.org/
+Description-md5: f51060aa71b1aeaa83cfde145ca640c3
+Multi-Arch: foreign
+Recommends: vim-gtk3 | vim-motif
+Section: editors
+Priority: optional
+Filename: pool/updates/main/v/vim/vim-gui-common_9.1.1230-2+deb13u2_all.deb
+Size: 148324
+SHA256: 9dc99583a11f31aeac50602460423751c1e35cb475b3792d124a3c1b7ddc8c20
+
+Package: vim-motif
+Source: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 4824
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: amd64
+Provides: editor, gvim (= 2:9.1.1230-2+deb13u2), vim (= 2:9.1.1230-2+deb13u2), vim-lua (= 2:9.1.1230-2+deb13u2), vim-perl (= 2:9.1.1230-2+deb13u2), vim-python3 (= 2:9.1.1230-2+deb13u2), vim-ruby (= 2:9.1.1230-2+deb13u2), vim-tcl (= 2:9.1.1230-2+deb13u2)
+Depends: vim-common (= 2:9.1.1230-2+deb13u2), vim-gui-common (= 2:9.1.1230-2+deb13u2), vim-runtime (= 2:9.1.1230-2+deb13u2), libacl1 (>= 2.2.23), libc6 (>= 2.38), libcanberra0 (>= 0.2), libgpm2 (>= 1.20.7), libice6 (>= 1:1.0.0), liblua5.1-0 (>= 5.1.3), libperl5.40 (>= 5.40.0), libpython3.13 (>= 3.13.0~rc3), libruby3.3 (>= 3.3.0~preview1), libselinux1 (>= 3.1~), libsm6 (>= 2:1.2.6), libsodium23 (>= 1.0.14), libtcl8.6 (>= 8.6.0), libtinfo6 (>= 6), libx11-6, libxm4 (>= 2.3.4), libxt6t64
+Suggests: cscope, vim-doc
+Description: Vi IMproved - enhanced vi editor - with Motif GUI
+Homepage: https://www.vim.org/
+Description-md5: 0d24b1f25ebcc42266fd1abc532adc46
+Section: editors
+Priority: optional
+Filename: pool/updates/main/v/vim/vim-motif_9.1.1230-2+deb13u2_amd64.deb
+Size: 1979648
+SHA256: 23db50731721caeac9f5e008b955ead0cc8236126a39b87179bae9b39005471a
+
+Package: vim-nox
+Source: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 4459
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: amd64
+Provides: editor, vim (= 2:9.1.1230-2+deb13u2), vim-lua (= 2:9.1.1230-2+deb13u2), vim-perl (= 2:9.1.1230-2+deb13u2), vim-python3 (= 2:9.1.1230-2+deb13u2), vim-ruby (= 2:9.1.1230-2+deb13u2), vim-tcl (= 2:9.1.1230-2+deb13u2)
+Depends: vim-common (= 2:9.1.1230-2+deb13u2), vim-runtime (= 2:9.1.1230-2+deb13u2), libacl1 (>= 2.2.23), libc6 (>= 2.38), libgpm2 (>= 1.20.7), liblua5.1-0 (>= 5.1.3), libperl5.40 (>= 5.40.0), libpython3.13 (>= 3.13.0~rc3), libruby3.3 (>= 3.3.0~preview1), libselinux1 (>= 3.1~), libsodium23 (>= 1.0.14), libtcl8.6 (>= 8.6.0), libtinfo6 (>= 6)
+Suggests: cscope, vim-doc
+Description: Vi IMproved - enhanced vi editor - with scripting languages support
+Homepage: https://www.vim.org/
+Description-md5: f840d0104436408f409898adc9a43d8c
+Section: editors
+Priority: optional
+Filename: pool/updates/main/v/vim/vim-nox_9.1.1230-2+deb13u2_amd64.deb
+Size: 1857332
+SHA256: 7006f4cd6588296c05ab25191ff2ea34495558b42f2b4b3f82ca66d7c727b131
+
+Package: vim-runtime
+Source: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 38426
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: all
+Breaks: vim-tiny (<< 2:9.1.1230-2+deb13u2)
+Description: Vi IMproved - Runtime files
+Homepage: https://www.vim.org/
+Description-md5: 97bb83c83cb35767c340c5066ce9be0c
+Enhances: vim-tiny
+Multi-Arch: foreign
+Recommends: vim | vim-gtk3 | vim-motif | vim-nox | vim-tiny
+Section: editors
+Priority: optional
+Filename: pool/updates/main/v/vim/vim-runtime_9.1.1230-2+deb13u2_all.deb
+Size: 7129236
+SHA256: c6d8d29948dad3ec08ff9ea48d94a62210a39953b7704c8da1cb197a0f2efb69
+
+Package: vim-tiny
+Source: vim
+Version: 2:9.1.1230-2+deb13u2
+Installed-Size: 1831
+Maintainer: Debian Vim Maintainers <team+vim@tracker.debian.org>
+Architecture: amd64
+Provides: editor
+Depends: vim-common (= 2:9.1.1230-2+deb13u2), libacl1 (>= 2.2.23), libc6 (>= 2.34), libselinux1 (>= 3.1~), libtinfo6 (>= 6)
+Suggests: indent
+Description: Vi IMproved - enhanced vi editor - compact version
+Homepage: https://www.vim.org/
+Description-md5: fe73b8215543cb5fd9e09b0b6e59a151
+Section: editors
+Priority: important
+Filename: pool/updates/main/v/vim/vim-tiny_9.1.1230-2+deb13u2_amd64.deb
+Size: 776152
+SHA256: ddf2d4e1e4dbb915619b116930ed34fdc9e78650ab5c512a101f4106cdc25489
+
+Package: xserver-xorg-core
+Source: xorg-server
+Version: 2:21.1.16-1.3+deb13u4
+Installed-Size: 6261
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: amd64
+Replaces: xserver-xorg (<< 1:7.7+10~), xserver-xorg-video-modesetting
+Provides: xorg-input-abi-24, xorg-video-abi-25, xserver-xorg-video-modesetting
+Depends: xserver-common (>= 2:21.1.16-1.3+deb13u4), keyboard-configuration, udev (>= 149), libegl1, libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libdbus-1-3 (>= 1.10), libdrm2 (>= 2.4.107-5~), libepoxy0 (>= 1.5.4), libgbm1 (>= 17.1.0~rc2), libgl1, libnettle8t64, libpciaccess0 (>= 0.12.902), libpixman-1-0 (>= 0.30.0), libselinux1 (>= 3.1~), libsystemd0, libudev1 (>= 183), libunwind8, libxau6 (>= 1:1.0.11), libxcvt0 (>= 0.1.0), libxdmcp6, libxfont2 (>= 1:2.0.1), libxshmfence1
+Suggests: xfonts-100dpi | xfonts-75dpi, xfonts-scalable
+Conflicts: xserver-xorg-input-evtouch, xserver-xorg-video-modesetting
+Breaks: libgl1-mesa-dri (<< 18.0.5), systemd (<< 226-4~), xserver-xorg (<< 1:7.7+10~)
+Description: Xorg X server - core server
+Homepage: https://www.x.org/
+Description-md5: 018a15965c91ba9a09e0652c1c0fb9ac
+Recommends: libgl1-mesa-dri (>= 7.10.2-4), default-logind | logind, xcvt
+Section: x11
+Priority: optional
+Filename: pool/updates/main/x/xorg-server/xserver-xorg-core_21.1.16-1.3+deb13u4_amd64.deb
+Size: 3778736
+SHA256: f35ebbafc3246460d7256ca16a395fc4e736d3da5dd285a7a1a5d101489d5f6c
+
+Package: xserver-xorg-legacy
+Source: xorg-server
+Version: 2:21.1.16-1.3+deb13u4
+Installed-Size: 2501
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: amd64
+Replaces: x11-common (<< 1:7.7+10~), xserver-xorg-core (<< 2:1.17.2-3~)
+Depends: xserver-common (>= 2:21.1.16-1.3+deb13u4), libc6 (>= 2.34), debconf (>= 0.5) | debconf-2.0
+Breaks: x11-common (<< 1:7.7+10~), xserver-xorg-core (<< 2:1.17.2-3~)
+Description: setuid root Xorg server wrapper
+Homepage: https://www.x.org/
+Description-md5: a49fa8443df84effdf1fd36e26ad0f94
+Section: x11
+Priority: optional
+Filename: pool/updates/main/x/xorg-server/xserver-xorg-legacy_21.1.16-1.3+deb13u4_amd64.deb
+Size: 2415672
+SHA256: 503dfe6939b78bfa7bd07ec03257a93e1fb53b0aea7316a28b68f05645f7f050
+
+Package: liblzma5
+Source: xz-utils
+Version: 5.8.1-1+deb13u2
+Installed-Size: 435
+Maintainer: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Breaks: liblzma2 (<< 5.1.1alpha+20110809-3~)
+Description: XZ-format compression library
+Homepage: https://tukaani.org/xz/
+Description-md5: 0ceca09eb4ab99863be3578fa55e7d2b
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/x/xz-utils/liblzma5_5.8.1-1+deb13u2_amd64.deb
+Size: 309696
+SHA256: b38acab30f295bf1066a6632e31cbd0a1980f2924b38040cda131d5dea5384ec
+
+Package: xz-utils
+Version: 5.8.1-1+deb13u2
+Installed-Size: 1424
+Maintainer: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Architecture: amd64
+Replaces: lzip (<< 1.8~rc2), manpages-de (<< 4.17.0-2~bpo11+1), manpages-fr (<< 4.17.0-2~bpo11+1), xz-lzma
+Provides: lzma
+Depends: libc6 (>= 2.34), liblzma5 (>= 5.6.2)
+Conflicts: lzma (<< 9.22-1), xz-lzma
+Breaks: lzip (<< 1.8~rc2), manpages-de (<< 4.17.0-2~bpo11+1), manpages-fr (<< 4.17.0-2~bpo11+1), pristine-tar (<< 1.50+nmu1)
+Description: XZ-format compression utilities
+Homepage: https://tukaani.org/xz/
+Description-md5: ea97a558c8575aebbed2c11cbd20e0f2
+Multi-Arch: foreign
+Section: utils
+Priority: standard
+Filename: pool/updates/main/x/xz-utils/xz-utils_5.8.1-1+deb13u2_amd64.deb
+Size: 659760
+SHA256: 66b060ef2f09722c947ba019da5e9a63f6bac9d7bf90b32339a72c0390acc53f
+
+Package: zlib1g
+Source: zlib
+Version: 1:1.3.dfsg+really1.3.1-1+deb13u1
+Installed-Size: 172
+Maintainer: Mark Brown <broonie@debian.org>
+Architecture: amd64
+Provides: libz1
+Depends: libc6 (>= 2.14)
+Conflicts: zlib1 (<= 1:1.0.4-7)
+Breaks: libxml2 (<< 2.7.6.dfsg-2), texlive-binaries (<< 2023.20230311.66589-8)
+Description: compression library - runtime
+Homepage: http://zlib.net/
+Description-md5: 567f396aeeb2b2b63295099aed237057
+Multi-Arch: same
+Section: libs
+Priority: optional
+Filename: pool/updates/main/z/zlib/zlib1g_1.3.dfsg+really1.3.1-1+deb13u1_amd64.deb
+Size: 88720
+SHA256: 8c27c342230503b73dfde629642c3b352e87b554e06d60cf58772f236a305ceb
+
+Package: zlib1g-dev
+Source: zlib
+Version: 1:1.3.dfsg+really1.3.1-1+deb13u1
+Installed-Size: 1316
+Maintainer: Mark Brown <broonie@debian.org>
+Architecture: amd64
+Provides: libz-dev
+Depends: zlib1g (= 1:1.3.dfsg+really1.3.1-1+deb13u1), libc6-dev | libc-dev
+Conflicts: zlib1-dev
+Description: compression library - development
+Homepage: http://zlib.net/
+Description-md5: d7f4e8a626131fc83c643c5d59096290
+Multi-Arch: same
+Section: libdevel
+Priority: optional
+Filename: pool/updates/main/z/zlib/zlib1g-dev_1.3.dfsg+really1.3.1-1+deb13u1_amd64.deb
+Size: 919568
+SHA256: 88ebb839a7a54c97dceb647e2a2bfa2451d6f440801ceef3d56f654022637eb9
+

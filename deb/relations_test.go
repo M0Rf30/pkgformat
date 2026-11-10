@@ -49,16 +49,53 @@ func TestParseRelationsObsoleteAndCompactOperators(t *testing.T) {
 	assert.Equal(t, []string{"1", "2", "3", "4", "5", "6", "7"}, vers)
 }
 
-func TestParseRelationsDropsRestrictions(t *testing.T) {
-	got, err := deb.ParseRelations("a [amd64 i386], b (>= 1) [!arm64] <!nocheck> <cross>, c:any <!stage1>, d [linux-any]")
+func TestParseRelationsKeepsRestrictions(t *testing.T) {
+	got, err := deb.ParseRelations("a [amd64 i386], b (>= 1) [!arm64] <!nocheck> <cross>, c:any <!stage1 !cross>, d [linux-any any-arm64]")
 	require.NoError(t, err)
 
+	arch := func(terms ...string) []deb.Restriction {
+		out := make([]deb.Restriction, len(terms))
+		for i, s := range terms {
+			out[i] = deb.Restriction{Name: strings.TrimPrefix(s, "!"), Negated: strings.HasPrefix(s, "!")}
+		}
+
+		return out
+	}
+
 	assert.Equal(t, []deb.Alternatives{
-		{{Name: "a"}},
-		{{Name: "b", Op: ">=", Version: "1"}},
-		{{Name: "c", Arch: "any"}},
-		{{Name: "d"}},
+		{{Name: "a", ArchRestrictions: arch("amd64", "i386")}},
+		{{Name: "b", Op: ">=", Version: "1", ArchRestrictions: arch("!arm64"), ProfileGroups: [][]deb.Restriction{arch("!nocheck"), arch("cross")}}},
+		{{Name: "c", Arch: "any", ProfileGroups: [][]deb.Restriction{arch("!stage1", "!cross")}}},
+		{{Name: "d", ArchRestrictions: arch("linux-any", "any-arm64")}},
 	}, got)
+}
+
+func TestRelationCanonicalString(t *testing.T) {
+	tests := []struct{ in, want string }{
+		{"a", "a"},
+		{"  a:any   (>=   1.0 ) ", "a:any (>= 1.0)"},
+		{"a (>= 1)[amd64   !i386]<!nocheck><stage1  cross>", "a (>= 1) [amd64 !i386] <!nocheck> <stage1 cross>"},
+		{"a:native [linux-any]", "a:native [linux-any]"},
+		{"a:amd64 <cross>", "a:amd64 <cross>"},
+		{"a | b:any (<< 2) [!hurd-any] | c <!nocheck>", "a | b:any (<< 2) [!hurd-any] | c <!nocheck>"},
+	}
+
+	for _, tt := range tests {
+		got, err := deb.ParseRelations(tt.in)
+		require.NoError(t, err, tt.in)
+		require.Len(t, got, 1)
+		assert.Equal(t, tt.want, got[0].String(), tt.in)
+
+		back, err := deb.ParseRelations(deb.FormatRelations(got))
+		require.NoError(t, err)
+		assert.Equal(t, got, back, tt.in)
+	}
+
+	// Entries are joined with a comma and a space.
+	got, err := deb.ParseRelations("a,b (= 1) [amd64] ,\n c|d")
+	require.NoError(t, err)
+	assert.Equal(t, "a, b (= 1) [amd64], c | d", deb.FormatRelations(got))
+	assert.Empty(t, deb.FormatRelations(nil))
 }
 
 func TestParseRelationsEmpty(t *testing.T) {
@@ -90,6 +127,15 @@ func TestParseRelationsMalformed(t *testing.T) {
 		"a)",
 		"a (= 1) (= 2)",
 		"a ]",
+		"a []",
+		"a [ ]",
+		"a [!]",
+		"a [amd64] [i386]",
+		"a <>",
+		"a <!>",
+		"a <nocheck> [amd64]",
+		"a [am<d64]",
+		"a <no:check>",
 	} {
 		t.Run(in, func(t *testing.T) {
 			_, err := deb.ParseRelations(in)
@@ -120,6 +166,14 @@ func TestRelationString(t *testing.T) {
 	got, err := deb.ParseRelations(rel.String())
 	require.NoError(t, err)
 	assert.Equal(t, []deb.Alternatives{{rel}}, got)
+
+	rel.ArchRestrictions = []deb.Restriction{{Name: "amd64"}, {Name: "i386", Negated: true}}
+	rel.ProfileGroups = [][]deb.Restriction{{{Name: "nocheck", Negated: true}}, {{Name: "cross"}, {Name: "stage1"}}}
+	assert.Equal(t, "libfoo:i386 (= 1:2~rc1-3) [amd64 !i386] <!nocheck> <cross stage1>", rel.String())
+
+	got, err = deb.ParseRelations(rel.String())
+	require.NoError(t, err)
+	assert.Equal(t, []deb.Alternatives{{rel}}, got)
 }
 
 func TestRelationSatisfied(t *testing.T) {
@@ -134,15 +188,15 @@ func TestRelationSatisfied(t *testing.T) {
 				var want bool
 
 				switch op {
-				case "<<", "<":
+				case "<<":
 					want = c < 0
-				case "<=":
+				case "<=", "<": // dpkg reads the obsolete "<" as "<="
 					want = c <= 0
 				case "=":
 					want = c == 0
-				case ">=":
+				case ">=", ">": // and ">" as ">="
 					want = c >= 0
-				case ">>", ">":
+				case ">>":
 					want = c > 0
 				}
 
@@ -234,6 +288,7 @@ func TestNormalizeDependencyParses(t *testing.T) {
 // FuzzParseRelations feeds arbitrary text to the relation parser.
 func FuzzParseRelations(f *testing.F) {
 	f.Add("libc6 (>= 2.31), foo | bar (<< 3~) [amd64] <!nocheck>, baz:any")
+	f.Add("debhelper-compat (= 13), dh-golang <!nocheck>, libc6-dev [!hurd-any] <!stage1 !cross> <cross>, gcc:native [linux-any any-amd64]")
 	f.Add("")
 	f.Add("a (>= 1")
 	f.Add(", | ,")
@@ -260,6 +315,24 @@ func FuzzParseRelations(f *testing.F) {
 				require.Equal(t, []deb.Alternatives{{r}}, back)
 
 				_ = r.Satisfied(strconv.Itoa(len(in)))
+				_ = r.AppliesTo("amd64", []string{"nocheck", "cross"})
+				_, _ = r.TargetArch("arm64", "amd64")
+			}
+		}
+
+		// The whole field survives a render and a parse.
+		again, err := deb.ParseRelations(deb.FormatRelations(rels))
+		require.NoError(t, err)
+		require.Equal(t, rels, again)
+
+		for _, host := range []string{"amd64", "armhf", "hurd-i386", ""} {
+			for _, alts := range deb.ActiveRelations(rels, host, []string{"nocheck"}) {
+				require.NotEmpty(t, alts)
+
+				for _, r := range alts {
+					require.Empty(t, r.ArchRestrictions)
+					require.Empty(t, r.ProfileGroups)
+				}
 			}
 		}
 	})

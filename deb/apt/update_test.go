@@ -89,7 +89,7 @@ func TestUpdateIndexVariants(t *testing.T) {
 			alpha, ok := c.Lookup("alpha")
 			require.True(t, ok)
 			assert.Equal(t, f.repo.baseURL(), alpha.BaseURL)
-			assert.Equal(t, []string{"beta"}, alpha.Depends)
+			assert.Equal(t, "beta", deb.FormatRelations(alpha.Depends))
 
 			order, unresolved, err := c.ResolveDeps([]string{"alpha"})
 			require.NoError(t, err)

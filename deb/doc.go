@@ -33,9 +33,17 @@
 // lenient and visits every paragraph. Package extracts the common fields.
 // CompareVersions orders versions as dpkg does, ValidVersion and StripEpoch
 // help with their syntax, and ParseRelations reads a dependency field into
-// alternatives with an optional version constraint, which Relation.Satisfied
-// checks against a version. NormalizeDependency converts a "name>=version"
-// dependency to control-file syntax.
+// alternatives with an optional architecture qualifier ("foo:any",
+// "foo:native"), version constraint, architecture restriction
+// ("[amd64 !i386 linux-any]") and build-profile restrictions
+// ("<!nocheck> <stage1 cross>"). Relation.Satisfied checks the constraint
+// against a version, Relation.AppliesTo and ActiveRelations evaluate the
+// restrictions for a host architecture and a set of build profiles the way
+// dpkg-checkbuilddeps does, ArchMatches matches architecture wildcards
+// ("linux-any", "any-amd64") as dpkg-architecture does, and Relation.String
+// and FormatRelations write the canonical control-file syntax back.
+// NormalizeDependency converts a "name>=version" dependency to control-file
+// syntax.
 //
 // # Installed packages
 //

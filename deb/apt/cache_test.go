@@ -164,16 +164,18 @@ func TestResolveVirtual(t *testing.T) {
 		para("Package: real", "Version: 1", "Architecture: amd64", "Provides: virt")+
 		para("Package: virt", "Version: 2", "Architecture: amd64")+
 		para("Package: allpkg", "Version: 1", "Architecture: all", "Provides: allvirt")+
-		para("Package: ghost", "Architecture: amd64", "Provides: ghostly"))
+		para("Package: ghost", "Architecture: amd64", "Provides: ghostly")+
+		para("Package: star", "Version: 1", "Architecture: amd64", "Priority: standard", "Provides: ranked")+
+		para("Package: moon", "Version: 1", "Architecture: amd64", "Priority: optional", "Provides: ranked"))
 
-	assert.Equal(t, "exim4", c.ResolveVirtual("mail-transport-agent"), "first provider in index order")
+	assert.Equal(t, "postfix", c.ResolveVirtual("mail-transport-agent"), "the provider read last, as apt prefers it")
 	assert.Equal(t, "exim4", c.ResolveVirtual("foo"), "version suffix of a provide is dropped")
 	assert.Equal(t, "exim4", c.ResolveVirtual("bar"), "architecture qualifier of a provide is dropped")
+	assert.Equal(t, "star", c.ResolveVirtual("ranked"), "the higher priority beats the later provider")
 	assert.Equal(t, "virt", c.ResolveVirtual("virt"), "a real package is not replaced by its providers")
 	assert.Equal(t, "allpkg", c.ResolveVirtual("allpkg"))
 	assert.Equal(t, "allpkg", c.ResolveVirtual("allvirt"))
-	assert.Equal(t, "ghost", c.ResolveVirtual("ghostly"))
-	assert.Equal(t, "ghost", c.ResolveVirtual("ghost"), "a package without candidate and without providers")
+	assert.Equal(t, "ghostly", c.ResolveVirtual("ghostly"), "a stanza without Version is not kept")
 	assert.Equal(t, "unknown", c.ResolveVirtual("unknown"))
 	assert.Positive(t, c.CapabilityCount())
 }
@@ -201,7 +203,7 @@ func TestResolveDepsOrder(t *testing.T) {
 	require.NoError(t, err)
 	assert.Empty(t, unresolved)
 	assert.Equal(t, []string{"base:amd64", "deep:amd64", "lib:amd64", "tool:amd64", "app:amd64"}, names(order),
-		"Pre-Depends first, dependencies before dependents, first alternative only")
+		"Pre-Depends first, dependencies before dependents, first alternative that installs")
 }
 
 func TestResolveDepsCycle(t *testing.T) {
@@ -247,7 +249,7 @@ func TestResolveDepsSeedForms(t *testing.T) {
 	assert.Empty(t, unresolved)
 }
 
-func TestResolveDepsInstalledSkippedButWalked(t *testing.T) {
+func TestResolveDepsInstalledSkippedAndNotWalked(t *testing.T) {
 	t.Parallel()
 
 	dir := t.TempDir()
@@ -262,11 +264,11 @@ func TestResolveDepsInstalledSkippedButWalked(t *testing.T) {
 
 	order, _, err := c.ResolveDeps([]string{"app"})
 	require.NoError(t, err)
-	assert.Equal(t, []string{"libdeep:amd64", "app:amd64"}, names(order))
+	assert.Equal(t, []string{"app:amd64"}, names(order), "libx is installed, and is taken to have its dependencies")
 
 	order, _, err = c.ResolveDeps([]string{"libx"})
 	require.NoError(t, err)
-	assert.Equal(t, []string{"libdeep:amd64"}, names(order), "an installed seed is skipped, its dependency is not")
+	assert.Empty(t, order, "an installed seed at the newest version is skipped")
 }
 
 func TestResolveDepsArchitectureInheritance(t *testing.T) {
@@ -349,16 +351,8 @@ func TestResolveDepsEmittedDedup(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, []string{"docs:all", "a:amd64", "b:arm64"}, names(order), "the all package is listed once")
 
-	// The same Filename under two keys is one download.
-	c2 := NewCache("amd64")
-	c2.AddEntry(&PackageInfo{Name: "p", Architecture: "amd64", Filename: "pool/p.deb"})
-	c2.AddEntry(&PackageInfo{Name: "q", Architecture: "amd64", Filename: "pool/p.deb"})
-
-	order, _, err = c2.ResolveDeps([]string{"p", "q"})
-	require.NoError(t, err)
-	assert.Len(t, order, 1)
-
-	// Without a Filename the identity is name, architecture and version.
+	// Hand-built entries without a Filename or Version: name and architecture
+	// are the identity.
 	c3 := NewCache("amd64")
 	c3.AddEntry(&PackageInfo{Name: "r", Architecture: "amd64", Version: "1"})
 	c3.AddEntry(&PackageInfo{Name: "r", Architecture: "arm64", Version: "1"})

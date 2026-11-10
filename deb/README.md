@@ -15,7 +15,7 @@ github.com/M0Rf30/pkgformat/deb/apt    apt client: update, load, resolve, downlo
 | Read a `.deb` | `ParseDebFileAt`, `ParseDebFile`, `(*DebFile).Extract`, `OpenData`, `Conffiles` |
 | deb822 | `ParseControlFile` (strict, one paragraph), `ScanControl` (lenient, every paragraph), `ControlFile` |
 | Versions | `CompareVersions` (the dpkg algorithm), `ValidVersion`, `StripEpoch` |
-| Relations | `ParseRelations`, `DependencyNames`, `NormalizeDependency` |
+| Relations | `ParseRelations` (keeps `:any`/`:native` qualifiers, `[arch]` and `<profile>` restrictions), `FormatRelations`, `Relation.AppliesTo`, `ActiveRelations`, `ArchMatches` (architecture wildcards), `DependencyNames`, `NormalizeDependency` |
 | Installed packages | `FindStatus`, `OpenStatus`, `(*StatusDB)`: `Entries`, `List`, `InstalledNames`, `InstalledProvides`; `ParseStatus`; `ReadInfoList` for `/var/lib/dpkg/info/*.list` |
 | Repository indexes | `Index` (Packages writer, plain and compressed), `ScanPackages`, `OpenIndex` (gz, bz2, xz, lz4, zst) |
 | Release | `Release`, `ParseRelease`, `SignRelease`, `Trust` (InRelease and Release.gpg verification policy) |
@@ -71,7 +71,8 @@ level; the file size and the number of stanzas are limits
 * Control files and tar entries use `./` prefixes, as dpkg-deb does. `Installed-Size` is computed from the payload.
 * Package names must match `^[a-z0-9][a-z0-9+.-]+$`.
 * `Release.PackagesVariants` lists the variants a Release declares, best compression first (`.xz`, `.zst`, `.gz`, `.bz2`, `.lz4`, plain); `apt.Update` only fetches a variant whose SHA-256 the verified Release lists.
-* The apt cache keys entries by `name:arch`; architecture `all` lives under the bare name. A higher Debian version wins when repositories overlap; Multi-Arch: foreign dependencies of a foreign-architecture package resolve to the host architecture.
+* The apt cache keys entries by `name:arch`; architecture `all` lives under the bare name. Every version the indexes carry is kept, the highest is the candidate (`Lookup`), `Versions` lists them all.
+* `ResolveDeps` honours version constraints, alternatives, versioned and unversioned `Provides`, Pre-Depends, `Conflicts`/`Breaks` in both directions (`ConflictError`) and Multi-Arch (`foreign`, `allowed`, `same`, `:any`, `:native`, `:arch`). A dependency nothing satisfies is an `UnsatisfiedError`. Installed packages are never removed (apt would remove one a candidate conflicts with); `apt/testdata/diff` compares the result with `apt-get install -s` for a set of real packages.
 * A plain-http transfer that fails transiently is retried once over https.
 
 ## Not included

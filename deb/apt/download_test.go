@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 
@@ -19,7 +20,8 @@ func publishDeb(c *Cache, repo *testRepo, name, arch, filename string, content [
 	repo.put("/"+filename, content)
 	c.AddEntry(&PackageInfo{
 		Name: name, Architecture: arch, Version: "1", Filename: filename, HasCandidate: true,
-		SHA256: sha256Hex(content), Size: int64(len(content)), BaseURL: repo.baseURL(), Depends: depends,
+		SHA256: sha256Hex(content), Size: int64(len(content)), BaseURL: repo.baseURL(),
+		Depends: mustGroups(strings.Join(depends, ", ")),
 	})
 }
 
@@ -294,7 +296,10 @@ func TestDownloadClosure(t *testing.T) {
 	publishDeb(c, repo, "lib", "amd64", "pool/lib_1_amd64.deb", []byte("lib"), "deep")
 	publishDeb(c, repo, "deep", "amd64", "pool/deep_1_amd64.deb", []byte("deep"))
 	publishDeb(c, repo, "provider", "amd64", "pool/provider_1_amd64.deb", []byte("provider"))
-	c.providers["virt"] = []string{"provider"}
+
+	provider, _ := c.Lookup("provider")
+	provider.Provides = rels(t, "virt")
+	c.AddEntry(&provider)
 
 	dest := t.TempDir()
 

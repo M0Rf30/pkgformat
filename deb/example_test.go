@@ -208,3 +208,20 @@ Architecture: amd64
 	// wget 1.25.0-2 deinstall ok config-files false
 	// [hello] [greeter hello]
 }
+
+func ExampleActiveRelations() {
+	const field = "debhelper-compat (= 13), dh-golang <!nocheck>, libhurd-dev [hurd-any], gcc-for-host <cross>, libgtk-3-dev [linux-any] | libgtk-dev"
+
+	rels, err := deb.ParseRelations(field)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// What a native build of an amd64 package, running the tests, needs.
+	fmt.Println(deb.FormatRelations(deb.ActiveRelations(rels, "amd64", nil)))
+	// And a cross build for hurd-i386 that skips the tests.
+	fmt.Println(deb.FormatRelations(deb.ActiveRelations(rels, "hurd-i386", []string{"nocheck", "cross"})))
+	// Output:
+	// debhelper-compat (= 13), dh-golang, libgtk-3-dev | libgtk-dev
+	// debhelper-compat (= 13), libhurd-dev, gcc-for-host, libgtk-dev
+}
