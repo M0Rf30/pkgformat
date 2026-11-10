@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (go ${{ matrix.go }}, CGO_ENABLED=${{ matrix.cgo }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.27.x", "stable"]
+        cgo: ["0", "1"]
+    env:
+      CGO_ENABLED: ${{ matrix.cgo }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: ${{ matrix.go }}
+      - name: go.mod and go.sum are tidy
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+      - name: Build
+        run: go build ./...
+      - name: Cross build
+        if: matrix.cgo == '0'
+        run: |
+          GOOS=windows go build ./...
+          GOOS=darwin go build ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Test with the race detector
+        if: matrix.cgo == '1'
+        run: go test -race -covermode=atomic -coverprofile=coverage.out ./...
+      - name: Test
+        if: matrix.cgo == '0'
+        run: go test -covermode=atomic -coverprofile=coverage.out ./...
+      - name: Coverage
+        run: go tool cover -func=coverage.out | tail -n 1
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.15.0
+
+  govulncheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: golang/govulncheck-action@032d45514ae346b1db93c04b0c90b841c370344f # v1.1.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          go-package: ./...
+
+  fuzz:
+    name: fuzz smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - name: Run every fuzz target for 10 seconds
+        shell: bash
+        run: |
+          set -euo pipefail
+          # "go test -list" prints the targets of a package, then its "ok <package>" line.
+          targets=()
+          while read -r line; do
+            case "$line" in
+              Fuzz*) targets+=("$line") ;;
+              ok*)
+                pkg=$(awk '{print $2}' <<<"$line")
+                for target in "${targets[@]}"; do
+                  echo "::group::$pkg $target"
+                  go test -run '^$' -fuzz "^${target}\$" -fuzztime 10s "$pkg"
+                  echo "::endgroup::"
+                done
+                targets=()
+                ;;
+            esac
+          done < <(go test -list '^Fuzz' ./...)

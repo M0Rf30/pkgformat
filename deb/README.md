@@ -1,0 +1,56 @@
+# deb
+
+Debian packages and apt repositories, in pure Go. No `dpkg`, `ar` or `apt` is needed.
+
+```
+github.com/M0Rf30/pkgformat/deb        packages, control files, versions, indexes, Release, signing
+github.com/M0Rf30/pkgformat/deb/apt    apt client: update, load, resolve, download
+```
+
+## What it does
+
+| Area | API |
+| --- | --- |
+| Write a `.deb` | `Write`, `WriteFile` with a plain `Spec` and `[]Entry` (or `FSEntries` over an `fs.FS`) |
+| Read a `.deb` | `ParseDebFileAt`, `ParseDebFile`, `(*DebFile).Extract`, `OpenData`, `Conffiles` |
+| deb822 | `ParseControlFile` (strict, one paragraph), `ScanControl` (lenient, every paragraph), `ControlFile` |
+| Versions | `CompareVersions` (the dpkg algorithm), `ValidVersion`, `StripEpoch` |
+| Relations | `ParseRelations`, `DependencyNames`, `NormalizeDependency` |
+| Repository indexes | `Index` (Packages writer, plain and compressed), `ScanPackages`, `OpenIndex` (gz, bz2, xz, lz4, zst) |
+| Release | `Release`, `ParseRelease`, `SignRelease`, `Trust` (InRelease and Release.gpg verification policy) |
+| apt client | `apt.Update`, `apt.Load`, `(*apt.Cache)`: `Lookup`, `ResolveVirtual`, `ResolveDeps`, `Download`, `DownloadClosure` |
+
+Compression of written packages: `gzip`, `xz`, `zstd` (default) or none. Index decoders also read `bzip2` and `lz4`.
+
+## Design
+
+* **The writer takes plain structs.** `Spec` carries the control fields, scripts, conffiles, Multi-Arch, debconf and the compression. Nothing in the package knows any build recipe format.
+* **Output is deterministic.** Entries are written in the order given, modification times come from `Spec.ModTime` and `Entry.ModTime`, owners are root:root, and a given input gives the same bytes. `dpkg-deb -I`, `-c`, `-x` and `md5sum -c` accept the result.
+* **Untrusted input is bounded.** Package size, control archive, control file, lines, paragraphs, indexes (decompressed), Releases, extraction size and entry count each have a limit, exported as a constant. Hitting one gives a typed error (`ErrDebFileTooLarge`, `ErrTooLarge`, ...). Parsers do not panic; every entry point has a fuzz target.
+* **Extraction cannot escape.** `Extract` resolves every path under the target directory, including symlink chains (see the `safepath` package).
+* **Errors are values.** `fmt.Errorf("deb: ...: %w")` with exported sentinels; `errors.Is` works.
+* **No globals, no host paths.** The apt client takes the lists directory, the dpkg status file, the keyring paths and the HTTP client as options. `*slog.Logger` is optional.
+
+## Verification policy
+
+`Trust` implements what apt does, with one strict rule:
+
+* a signature that exists and does not verify (altered data, expired or revoked key) is **always** an error, even with `AllowUnverified`;
+* no keys, an unknown signer, or no signature at all are errors unless `AllowUnverified` is set, which accepts the document and logs a warning;
+* `Valid-Until` is checked separately by `Release.CheckValidity`; `apt.Update` calls it with `UpdateOptions.Now`.
+
+`apt.IsVerificationError` separates these trust failures from network ones in the joined error `Update` returns.
+
+## Behaviour to know
+
+* deb822 values are *logical*: the continuation marker is removed and a `" ."` line is an empty line. `ControlFile.String` and the Packages writer re-encode them.
+* The writer rejects field values containing a newline (it would inject fields).
+* Control files and tar entries use `./` prefixes, as dpkg-deb does. `Installed-Size` is computed from the payload.
+* Package names must match `^[a-z0-9][a-z0-9+.-]+$`.
+* `Release.PackagesVariants` lists the variants a Release declares, best compression first (`.xz`, `.zst`, `.gz`, `.bz2`, `.lz4`, plain); `apt.Update` only fetches a variant whose SHA-256 the verified Release lists.
+* The apt cache keys entries by `name:arch`; architecture `all` lives under the bare name. A higher Debian version wins when repositories overlap; Multi-Arch: foreign dependencies of a foreign-architecture package resolve to the host architecture.
+* A plain-http transfer that fails transiently is retried once over https.
+
+## Not included
+
+Writing the dpkg status database and running maintainer scripts are the installer's job and live outside this module. The parser reads a dpkg status file given by path so that installed packages can be skipped when resolving.

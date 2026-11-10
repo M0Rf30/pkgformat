@@ -1,0 +1,59 @@
+# pkgformat
+
+[![CI](https://github.com/M0Rf30/pkgformat/actions/workflows/ci.yml/badge.svg)](https://github.com/M0Rf30/pkgformat/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/M0Rf30/pkgformat.svg)](https://pkg.go.dev/github.com/M0Rf30/pkgformat)
+
+A pure-Go library for Linux package formats. It builds, reads, verifies and
+signs packages; reads and writes repository indexes; and fetches from
+repositories, with dependency resolution. It calls none of the native
+packaging tools.
+
+## Install
+
+```sh
+go get github.com/M0Rf30/pkgformat
+```
+
+Requires Go 1.27 or later.
+
+## Formats
+
+| Format | Package | Packages | Repository index | Repository client |
+| --- | --- | --- | --- | --- |
+| RPM (format 4 and 6) | [`rpm`](rpm/README.md) | write, read, verify, sign | repodata: write, read, sign, modules | `rpm/dnf` |
+| Debian | [`deb`](deb/README.md) | write, read, verify, sign | Packages, Release, InRelease: write, read, sign, verify | `deb/apt` |
+| Alpine | [`apk`](apk/README.md) | write, read, verify, sign (RSA SHA-1 and SHA-256) | APKINDEX: write, read, sign, verify | `apk.Client` |
+| Arch Linux | [`pacman`](pacman/README.md) | write, read, sign | sync database: write, read | `pacman.Client` |
+
+Each format has its own README with its supported features, examples and
+security notes for untrusted input.
+
+## Shared packages
+
+| Package | Purpose |
+| --- | --- |
+| [`gpg`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/gpg) | OpenPGP signing (cleartext, detached armored, detached binary) and verification against a keyring |
+| [`httpclient`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/httpclient) | HTTP client with capped bodies and one retry policy and classifier (transport errors, 408/429/5xx) |
+| [`download`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/download) | Resumable downloads (`Range` + `If-Range`) with length and checksum checks, atomic rename and bounded concurrency |
+| [`safepath`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/safepath) | Containment checks for untrusted archive entry names and symlink targets |
+| [`xzlimit`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/xzlimit) | xz decoding that rejects oversized dictionaries before allocating them |
+
+All packages take their settings through options structs. They keep no
+package-level state, and they log only through an optional `*slog.Logger`.
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| [`cmd/tar2rpm`](cmd/tar2rpm) | Turn a tar archive into an rpm package |
+| [`cmd/rpmsample`](cmd/rpmsample) | Write a sample rpm package, to test other rpm tools |
+
+## Security
+
+Every parser is written for untrusted input. Sizes and counts are bounded, and
+errors are typed. Archive extraction stays inside its target directory. Every
+parser has fuzz targets, and CI runs all of them.
+
+## License
+
+Apache License 2.0, see [LICENSE](LICENSE).
