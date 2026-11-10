@@ -16,16 +16,7 @@
 
 package rpm
 
-import (
-	"regexp"
-	"strings"
-)
-
-var (
-	R_NONALNUMTILDE = regexp.MustCompile(`^([^a-zA-Z0-9~]*)(.*)$`)
-	R_NUM           = regexp.MustCompile(`^([\d]+)(.*)$`)
-	R_ALPHA         = regexp.MustCompile(`^([a-zA-Z]+)(.*)$`)
-)
+import "strings"
 
 // VersionSlice provides the Sort interface for sorting version strings.
 type VersionSlice []string
@@ -48,16 +39,23 @@ func (vs VersionSlice) Swap(i, j int) {
 	vs[j] = s1
 }
 
-// Vercmp compares two version strings using the same algorithm as rpm uses.
-// Returns -1 if first < second, 1 if first > second, and 0 if first == second.
+// Vercmp compares two version strings the way rpm does (rpmvercmp in rpm
+// 4.15 and later, including the tilde and caret operators). Returns -1 if
+// first < second, 1 if first > second, and 0 if first == second.
+//
+// The versions are split into runs of digits and runs of letters; anything
+// else only separates them. A run of digits is compared as a number, and
+// always sorts after a run of letters. A tilde sorts before everything,
+// even the end of the version ("1.0~rc1" < "1.0"). A caret sorts after the
+// end of the version but before any other character ("1.0" < "1.0^git1" <
+// "1.0.1" and "1.0^git1" < "1.0a"). Letters are ASCII only; like in C, a
+// version ends at the first NUL byte.
 //
 // It runs in time linear in the length of the inputs, which may come from
 // untrusted package headers.
 func Vercmp(first, second string) int {
-	// The historical regexp based implementation could not match a string
-	// that has a newline after its first alphanumeric character, and then
-	// reported the versions as equal. Keep that behaviour.
-	if hasNewlineAfterToken(first) || hasNewlineAfterToken(second) {
+	first, second = cutNUL(first), cutNUL(second)
+	if first == second {
 		return 0
 	}
 	for first != "" || second != "" {
@@ -66,15 +64,35 @@ func Vercmp(first, second string) int {
 		second = skipJunk(second)
 
 		// Handle the tilde separator, it sorts before everything else.
-		if strings.HasPrefix(first, "~") {
-			if !strings.HasPrefix(second, "~") {
+		if startsWith(first, '~') || startsWith(second, '~') {
+			if !startsWith(first, '~') {
+				return 1
+			}
+			if !startsWith(second, '~') {
 				return -1
 			}
 			first, second = first[1:], second[1:]
 			continue
 		}
-		if strings.HasPrefix(second, "~") {
-			return 1
+
+		// Handle the caret separator. Like the tilde, except that it
+		// sorts after the end of the version: if one of the versions ends
+		// (it is the base version), the other one is higher.
+		if startsWith(first, '^') || startsWith(second, '^') {
+			if first == "" {
+				return -1
+			}
+			if second == "" {
+				return 1
+			}
+			if !startsWith(first, '^') {
+				return 1
+			}
+			if !startsWith(second, '^') {
+				return -1
+			}
+			first, second = first[1:], second[1:]
+			continue
 		}
 
 		// If we ran to the end of either, we are finished with the loop.
@@ -86,31 +104,37 @@ func Vercmp(first, second string) int {
 		var seg1, seg2 string
 		isnum := isDigit(first[0])
 		if isnum {
-			if !isDigit(second[0]) {
-				// numeric segments are always newer than alpha segments.
-				return 1
-			}
 			seg1, first = splitWhile(first, isDigit)
 			seg2, second = splitWhile(second, isDigit)
-			// Throw away any leading zeros.
+		} else {
+			seg1, first = splitWhile(first, isAlpha)
+			seg2, second = splitWhile(second, isAlpha)
+		}
+
+		// The segments are of different types: one numeric, the other
+		// alpha (so empty here). Numeric segments are always newer than
+		// alpha segments.
+		if seg2 == "" {
+			if isnum {
+				return 1
+			}
+			return -1
+		}
+
+		if isnum {
+			// Throw away any leading zeros: whichever number has more
+			// digits wins.
 			seg1 = strings.TrimLeft(seg1, "0")
 			seg2 = strings.TrimLeft(seg2, "0")
-			// Whichever number has more digits wins
 			if len(seg1) != len(seg2) {
 				if len(seg1) < len(seg2) {
 					return -1
 				}
 				return 1
 			}
-		} else {
-			if !isAlpha(second[0]) {
-				// alpha segment against a numeric one
-				return -1
-			}
-			seg1, first = splitWhile(first, isAlpha)
-			seg2, second = splitWhile(second, isAlpha)
 		}
 
+		// Do not return if they are equal: there may be more segments.
 		if seg1 < seg2 {
 			return -1
 		} else if seg1 > seg2 {
@@ -118,6 +142,8 @@ func Vercmp(first, second string) int {
 		}
 	}
 
+	// All segments compared identically, but the separating characters may
+	// differ: whichever version still has characters left over wins.
 	if first == "" && second == "" {
 		return 0
 	}
@@ -131,7 +157,16 @@ func isDigit(c byte) bool { return c >= '0' && c <= '9' }
 
 func isAlpha(c byte) bool { return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' }
 
-func isJunk(c byte) bool { return !isDigit(c) && !isAlpha(c) && c != '~' }
+func isJunk(c byte) bool { return !isDigit(c) && !isAlpha(c) && c != '~' && c != '^' }
+
+func startsWith(s string, c byte) bool { return s != "" && s[0] == c }
+
+func cutNUL(s string) string {
+	if i := strings.IndexByte(s, 0); i >= 0 {
+		return s[:i]
+	}
+	return s
+}
 
 func skipJunk(s string) string {
 	i := 0
@@ -147,8 +182,4 @@ func splitWhile(s string, pred func(byte) bool) (head, rest string) {
 		i++
 	}
 	return s[:i], s[i:]
-}
-
-func hasNewlineAfterToken(s string) bool {
-	return strings.Contains(skipJunk(s), "\n")
 }

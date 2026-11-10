@@ -1,6 +1,9 @@
 package rpm
 
 import (
+	"bufio"
+	"encoding/json"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -31,11 +34,13 @@ func TestVercmp(t *testing.T) {
 		{"1.0~rc1", "1.0"},
 		{"1.0~rc1", "1.0~rc2"},
 		{"1.0~rc1~git123", "1.0~rc1"},
-		// {"1.0", "1.0^"},
+		{"1.0", "1.0^"},
 		{"1.0", "1.0^git1"},
 		{"1.0^git1", "1.0^git2"},
 		{"1.0^git1", "1.01"},
-		// {"1.0^20160101", "1.0.1"},
+		{"1.0^20160101", "1.0.1"},
+		{"1.0^git1", "1.0a"},
+		{"2^a", "2.a"},
 		{"1.0^20160101^git1", "1.0^20160102"},
 		{"1.0~rc1", "1.0~rc1^git1"},
 		{"1.0^git1~pre", "1.0^git1"},
@@ -46,121 +51,76 @@ func TestVercmp(t *testing.T) {
 	}
 }
 
-// vercmpRegexp is the original regexp based implementation, kept as a
-// reference for differential testing.
-func vercmpRegexp(first, second string) int {
-	var m1Head, m2Head string
-	for first != "" || second != "" {
-		m1 := R_NONALNUMTILDE.FindStringSubmatch(first)
-		m2 := R_NONALNUMTILDE.FindStringSubmatch(second)
-		// This probably needs to return something different.
-		if m1 == nil || m2 == nil {
-			return 0
-		}
-
-		m1Head, first = m1[1], m1[2]
-		m2Head, second = m2[1], m2[2]
-
-		// Ignore junk at beginning of version.
-		if m1Head != "" || m2Head != "" {
-			continue
-		}
-
-		// Hnalde the tolde seporator, it sorts before everything else.
-		if strings.HasPrefix(first, "~") {
-			if !strings.HasPrefix(second, "~") {
-				return -1
-			}
-			first, second = first[1:], second[1:]
-			continue
-		}
-		if strings.HasPrefix(second, "~") {
-			return 1
-		}
-
-		// If we ran to the end of either, we are finished with the loop.
-		if first == "" || second == "" {
-			break
-		}
-
-		// Grab the first completely alpha or completely numeric segment.
-		isnum := false
-		m1 = R_NUM.FindStringSubmatch(first)
-		m2 = R_NUM.FindStringSubmatch(second)
-		if R_NUM.MatchString(first) {
-			if !R_NUM.MatchString(second) {
-				// numeric segments are always newer than alpha segments.
-				return 1
-			}
-			isnum = true
-		} else {
-			m1 = R_ALPHA.FindStringSubmatch(first)
-			m2 = R_ALPHA.FindStringSubmatch(second)
-		}
-
-		if len(m1) == 0 {
-			// This condition should not be reached since we previously
-			// tested to make sure that the first string has a non-nill
-			// segment.
-			return -1
-		}
-		if len(m2) == 0 {
-			if isnum {
-				return 1
-			}
-			return -1
-		}
-
-		m1Head, first = m1[1], m1[2]
-		m2Head, second = m2[1], m2[2]
-
-		if isnum {
-			// Throw away any leading zeros.
-			m1Head = strings.TrimLeft(m1Head, "0")
-			m2Head = strings.TrimLeft(m2Head, "0")
-
-			// Whichever number has more digits wins
-			m1Hlen := len(m1Head)
-			m2Hlen := len(m2Head)
-			if m1Hlen < m2Hlen {
-				return -1
-			}
-			if m1Hlen > m2Hlen {
-				return 1
-			}
-		}
-
-		// Same number of chars
-		if m1Head < m2Head {
-			return -1
-		} else if m1Head > m2Head {
-			return 1
-		}
-
-		// Both segments equal
-		continue
+// TestVercmpEquivalence covers what the table above does not: equality, the
+// end of a version, and characters that are not part of any segment.
+func TestVercmpEquivalence(t *testing.T) {
+	for _, v := range [][2]string{
+		{"1.0", "1.0"}, {"", ""}, {"1_0", "1.0"}, {"1.0", "1..0"}, {"01", "1"}, {"1.0^", "1.0^"},
+		{"1.0~", "1.0~"}, {"1.0\n", "1.0"}, {"1\x00x", "1"},
+	} {
+		assert.Equal(t, 0, Vercmp(v[0], v[1]), "%q %q", v[0], v[1])
+		assert.Equal(t, 0, Vercmp(v[1], v[0]), "%q %q", v[1], v[0])
 	}
-
-	m1Hlen := len(first)
-	m2Hlen := len(second)
-	if m1Hlen == 0 && m2Hlen == 0 {
-		return 0
+	for _, v := range [][2]string{ // first < second
+		{"", "1"}, {"", "a"}, {"~", ""}, {"", "^"}, {"~", "^"}, {"1.0", "1.0 a"}, {"a", "1"},
+		{"1.0^", "1.0^1"}, {"1.0^1", "1.0.1"}, {"1.0~", "1.0~^"},
+	} {
+		assert.Equal(t, -1, Vercmp(v[0], v[1]), "%q %q", v[0], v[1])
+		assert.Equal(t, 1, Vercmp(v[1], v[0]), "%q %q", v[1], v[0])
 	}
-	if m1Hlen != 0 {
-		return 1
-	}
-	return -1
 }
 
-func FuzzVercmpMatchesReference(f *testing.F) {
-	for _, s := range []string{"1.0", "1.0~rc1", "2.0.0^git1", "a.b.c", "", "1..2", "01", "~", "1.0\n2", "\n1", "1a", "a1", "~~a", "1.0-é"} {
+// TestVercmpMatchesRpm compares Vercmp with librpm on the pairs of
+// testdata/vercmp/golden.jsonl (see generate.sh there; librpm is not needed to
+// run this test).
+func TestVercmpMatchesRpm(t *testing.T) {
+	f, err := os.Open("testdata/vercmp/golden.jsonl")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	var n, withCaret int
+	sc := bufio.NewScanner(f)
+	for sc.Scan() {
+		var pair [3]any
+		if err := json.Unmarshal(sc.Bytes(), &pair); err != nil {
+			t.Fatalf("golden line %d: %v", n+1, err)
+		}
+		a, _ := pair[0].(string)
+		b, _ := pair[1].(string)
+		want, _ := pair[2].(float64)
+		n++
+		if strings.Contains(a+b, "^") {
+			withCaret++
+		}
+		if got := Vercmp(a, b); got != int(want) {
+			t.Errorf("Vercmp(%q, %q) = %d, librpm says %d", a, b, got, int(want))
+		}
+	}
+	if err := sc.Err(); err != nil {
+		t.Fatal(err)
+	}
+	if n < 3000 || withCaret < 500 {
+		t.Fatalf("golden file has %d pairs, %d with a caret: too few", n, withCaret)
+	}
+}
+
+// FuzzVercmp checks that Vercmp is reflexive and antisymmetric, and returns
+// one of -1, 0, 1.
+func FuzzVercmp(f *testing.F) {
+	for _, s := range []string{"1.0", "1.0~rc1", "2.0.0^git1", "a.b.c", "", "1..2", "01", "~", "^", "1.0\n2", "1a", "a1", "~~a", "1.0-é", "1\x00"} {
 		f.Add(s, "1.0")
 		f.Add("1.0", s)
-		f.Add(s, s)
+		f.Add(s, s+"^x")
 	}
 	f.Fuzz(func(t *testing.T, a, b string) {
-		if got, want := Vercmp(a, b), vercmpRegexp(a, b); got != want {
-			t.Fatalf("Vercmp(%q, %q) = %d, reference says %d", a, b, got, want)
+		if Vercmp(a, a) != 0 || Vercmp(b, b) != 0 {
+			t.Fatalf("Vercmp is not reflexive for %q or %q", a, b)
+		}
+		ab, ba := Vercmp(a, b), Vercmp(b, a)
+		if ab < -1 || ab > 1 || ab != -ba {
+			t.Fatalf("Vercmp(%q, %q) = %d but Vercmp(%q, %q) = %d", a, b, ab, b, a, ba)
 		}
 	})
 }

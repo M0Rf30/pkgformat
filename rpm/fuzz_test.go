@@ -187,13 +187,3 @@ func FuzzVerify(f *testing.F) {
 		_, _, _ = Verify(bytes.NewReader(data), nil)
 	})
 }
-
-func FuzzVercmp(f *testing.F) {
-	for _, s := range []string{"1.0", "1.0~rc1", "2.0.0^git1", "a.b.c", "", "1..2", "01", "~", "1.0\n2"} {
-		f.Add(s, "1.0")
-		f.Add("1.0", s)
-	}
-	f.Fuzz(func(_ *testing.T, a, b string) {
-		_ = Vercmp(a, b)
-	})
-}
