@@ -5,12 +5,14 @@ import (
 	"testing"
 
 	"github.com/M0Rf30/pkgformat/internal/pathseg"
+	"github.com/M0Rf30/pkgformat/rpm/repodata"
 )
 
 func FuzzParseRepoFile(f *testing.F) {
 	f.Add("[base]\nbaseurl=https://a/ https://b/\n    https://c/\nenabled=1\n")
 	f.Add("[x]\nmirrorlist=https://m/\ngpgkey=https://k\n  https://k2\n")
 	f.Add("[../a]\nbaseurl=x\n[]\n[ok]\n")
+	f.Add("[r]\ngpgcheck=1\ngpgkey=file:///k\nexclude=a* b-1,c\npriority=-5\nproxy=http://p:3128\nproxy_username=u\n")
 
 	f.Fuzz(func(t *testing.T, in string) {
 		repos, err := ParseRepoFile(strings.NewReader(in))
@@ -23,6 +25,9 @@ func FuzzParseRepoFile(f *testing.F) {
 			if !pathseg.Name(r.ID) {
 				t.Fatalf("repository id %q is not a path segment", r.ID)
 			}
+
+			// patterns of any content must be matchable
+			r.excludes(&repodata.PrimaryPackage{Name: "n", Version: "1", Release: "2", Arch: "x86_64"})
 		}
 	})
 }
@@ -30,13 +35,17 @@ func FuzzParseRepoFile(f *testing.F) {
 func FuzzMirrorLists(f *testing.F) {
 	f.Add("https://a.example/os\nhttp://b.example/os\n# c\n")
 	f.Add(`<url protocol="https">https://m.example/x/repodata/repomd.xml</url>`)
+	f.Add(`<metalink><files><file name="repomd.xml"><size>3</size><verification><hash type="sha256">00</hash></verification><resources><url>https://m.example/x/repodata/repomd.xml</url></resources></file></files></metalink>`)
 
 	f.Fuzz(func(t *testing.T, in string) {
 		secure, plain := listMirrors(in)
 		checkMirrors(t, secure, plain)
 
-		secure, plain = metalinkMirrors(in)
+		secure, plain, info := metalinkMirrors(in)
 		checkMirrors(t, secure, plain)
+
+		// whatever the document says, verifying must not panic
+		_ = info.verify([]byte(in))
 	})
 }
 

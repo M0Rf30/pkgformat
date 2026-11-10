@@ -49,6 +49,16 @@ type Package struct {
 	Requires   []string
 	Provides   []string
 	Recommends []string
+	// Repo is the id of the repository the package comes from.
+	Repo string
+	// Priority is the priority of that repository (see [Repo.Priority]): of
+	// two packages with the same name the lower number wins, whatever the
+	// versions.
+	Priority int
+
+	// repo carries the settings a download needs (proxy, gpgcheck, gpgkey).
+	// It is nil for a Package not built by [Client.Load].
+	repo *Repo
 }
 
 // EVR renders "epoch:version-release". It is for display: the string is not
@@ -126,13 +136,27 @@ func (ix *Index) ResolveVirtual(name string) string {
 	return name
 }
 
-// pickProvider chooses the best concrete provider of a capability: the host
-// architecture, then noarch, then whatever comes first. This keeps a foreign
-// architecture (i686 on x86_64) from being pulled in by a capability lookup.
+// pickProvider chooses the best concrete provider of a capability: among the
+// providers of the best repository priority, the host architecture, then
+// noarch, then whatever comes first. This keeps a foreign architecture (i686
+// on x86_64) from being pulled in by a capability lookup.
 func (ix *Index) pickProvider(providers []*Package) *Package {
-	var noarch *Package
+	best := providers[0].Priority
+	for _, p := range providers[1:] {
+		best = min(best, p.Priority)
+	}
+
+	var noarch, first *Package
 
 	for _, p := range providers {
+		if p.Priority != best {
+			continue
+		}
+
+		if first == nil {
+			first = p
+		}
+
 		if p.Arch == ix.arch {
 			return p
 		}
@@ -146,16 +170,21 @@ func (ix *Index) pickProvider(providers []*Package) *Package {
 		return noarch
 	}
 
-	return providers[0]
+	return first
 }
 
 // shouldReplace reports whether candidate should take the place of existing as
-// the package of its name: downloadable beats not, the host architecture beats
-// another, noarch beats a foreign architecture, and on the same architecture
-// the higher version wins.
+// the package of its name: downloadable beats not, a repository with a lower
+// priority number beats any other, the host architecture beats another, noarch
+// beats a foreign architecture, and on the same architecture the higher version
+// wins.
 func (ix *Index) shouldReplace(existing, candidate *Package) bool {
 	if existing.Location == "" && candidate.Location != "" {
 		return true
+	}
+
+	if existing.Priority != candidate.Priority {
+		return candidate.Priority < existing.Priority
 	}
 
 	if existing.Arch != candidate.Arch {
@@ -391,6 +420,10 @@ func (c *Client) readPrimary(src *repoSource) ([]*Package, error) {
 			return nil
 		}
 
+		if src.repo.excludes(pp) {
+			return nil
+		}
+
 		pkgs = append(pkgs, newPackage(pp, src))
 
 		return nil
@@ -414,6 +447,9 @@ func newPackage(pp *repodata.PrimaryPackage, src *repoSource) *Package {
 		Checksum:     pp.Checksum,
 		ChecksumType: pp.ChecksumType,
 		Size:         pp.PackageSize,
+		Repo:         src.repo.ID,
+		Priority:     src.repo.Priority,
+		repo:         src.repo,
 		BaseURL:      src.baseURL,
 		MirrorList:   src.mirrorList,
 		Requires:     depNames(pp.Requires, true),

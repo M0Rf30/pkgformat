@@ -237,3 +237,36 @@ func TestVerifyRevokedKeys(t *testing.T) {
 		})
 	}
 }
+
+func TestKeyringEntities(t *testing.T) {
+	var none *Keyring
+	if got := none.Entities(); got != nil {
+		t.Errorf("nil keyring: %v", got)
+	}
+
+	a, b := smallEntity(t, "a"), smallEntity(t, "b")
+
+	ring, err := ParseKeyring(armoredPublic(t, a))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	second, err := ParseKeyring(armoredPublic(t, b))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ring.Merge(second)
+
+	got := ring.Entities()
+	if len(got) != 2 || got[0].PrimaryKey.KeyId != a.PrimaryKey.KeyId || got[1].PrimaryKey.KeyId != b.PrimaryKey.KeyId {
+		t.Errorf("entities = %v", got)
+	}
+
+	// the slice is a copy
+	got[0] = nil
+
+	if ring.Entities()[0] == nil {
+		t.Error("Entities returned the keyring's own slice")
+	}
+}

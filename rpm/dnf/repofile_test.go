@@ -37,9 +37,13 @@ baseurl=https://evil.example/
 	}
 
 	want := []Repo{
-		{ID: "base", Enabled: true, BaseURLs: []string{"https://a.example/os", "https://b.example/os", "https://c.example/os"}},
-		{ID: "extras", Enabled: false, MirrorList: "https://m.example/list?repo=extras"},
-		{ID: "no-urls", Enabled: true},
+		{
+			ID: "base", Enabled: true, Priority: 99,
+			BaseURLs: []string{"https://a.example/os", "https://b.example/os", "https://c.example/os"},
+			GPGKeys:  []string{"https://keys.example/key", "https://keys.example/other"},
+		},
+		{ID: "extras", Enabled: false, Priority: 99, MirrorList: "https://m.example/list?repo=extras"},
+		{ID: "no-urls", Enabled: true, Priority: 99},
 	}
 
 	if !reflect.DeepEqual(repos, want) {
@@ -145,5 +149,49 @@ func TestReposSkipsOversizedFile(t *testing.T) {
 	repos, err := env.Repos()
 	if err != nil || len(repos) != 1 || repos[0].ID != "ok" {
 		t.Errorf("repos = %+v, %v", repos, err)
+	}
+}
+
+func TestParseRepoFilePolicyKeys(t *testing.T) {
+	const content = `[r]
+baseurl=https://a.example/os
+gpgcheck=1
+gpgkey=file:///etc/pki/key-a https://k.example/b
+    file:///etc/pki/key-c
+exclude=kernel* foo,bar
+    baz-1.0
+excludepkgs=qux
+priority=10
+proxy=http://user@proxy.example:3128
+proxy_username=u
+proxy_password=p
+
+[s]
+gpgcheck=False
+priority=abc
+proxy=_none_
+`
+
+	repos, err := ParseRepoFile(strings.NewReader(content))
+	if err != nil || len(repos) != 2 {
+		t.Fatalf("repos = %+v, err %v", repos, err)
+	}
+
+	r := repos[0]
+	if !r.GPGCheck || r.Priority != 10 || r.Proxy != "http://user@proxy.example:3128" ||
+		r.ProxyUsername != "u" || r.ProxyPassword != "p" {
+		t.Errorf("repo r = %+v", r)
+	}
+
+	if want := []string{"file:///etc/pki/key-a", "https://k.example/b", "file:///etc/pki/key-c"}; !reflect.DeepEqual(r.GPGKeys, want) {
+		t.Errorf("GPGKeys = %q, want %q", r.GPGKeys, want)
+	}
+
+	if want := []string{"kernel*", "foo", "bar", "baz-1.0", "qux"}; !reflect.DeepEqual(r.Exclude, want) {
+		t.Errorf("Exclude = %q, want %q", r.Exclude, want)
+	}
+
+	if s := repos[1]; s.GPGCheck || s.Priority != defaultPriority || s.Proxy != "_none_" {
+		t.Errorf("repo s = %+v", s)
 	}
 }

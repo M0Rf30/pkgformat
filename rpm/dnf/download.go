@@ -24,6 +24,15 @@ import (
 // The mirror the metadata came from is tried first, then the mirrors of the
 // repository's mirror list. A mirror that serves wrong bytes or fails is
 // skipped for the next; the last error is returned when none works.
+//
+// When the repository of p says gpgcheck=1, the package must also carry a valid
+// signature of one of the keys of its gpgkey lines (fetched over the client's
+// HTTP client, or read for file URLs): an unsigned package, a signature by an
+// unknown, revoked or expired key, an expired signature, or a repository
+// without gpgkey ([ErrNoGPGKey]) fails the download, and a file just written is
+// removed. The errors wrap those of [rpm.VerifyWithOptions]. With gpgcheck=0,
+// or for a [Package] not built by [Client.Load], no signature is checked.
+// Requests of a repository with proxy= go through that proxy.
 func (c *Client) Download(ctx context.Context, p *Package, destDir string) (string, error) {
 	loc, ok := repoLocation(p.Location)
 	if !ok {
@@ -35,12 +44,21 @@ func (c *Client) Download(ctx context.Context, p *Package, destDir string) (stri
 		return "", fmt.Errorf("dnf: %s: %w", p.Name, err)
 	}
 
+	hc, err := c.httpFor(p.repo)
+	if err != nil {
+		return "", err
+	}
+
 	if err := os.MkdirAll(destDir, 0o755); err != nil { //nolint:gosec // a download directory others may read
 		return "", fmt.Errorf("dnf: creating destination: %w", err)
 	}
 
 	dest := filepath.Join(destDir, path.Base(loc))
 	if fileMatches(dest, sum) {
+		if err := c.checkSignature(ctx, p, dest); err != nil {
+			return "", err
+		}
+
 		return dest, nil
 	}
 
@@ -55,7 +73,7 @@ func (c *Client) Download(ctx context.Context, p *Package, destDir string) (stri
 	try := func(base string) bool {
 		req.URL = joinURL(base, loc)
 
-		lastErr = download.Download(ctx, req, download.Options{Client: c.opts.HTTP})
+		lastErr = download.Download(ctx, req, download.Options{Client: hc})
 		if lastErr != nil {
 			c.opts.Logger.Warn("package download failed", "package", p.Name, "mirror", base, "error", lastErr)
 		}
@@ -63,13 +81,25 @@ func (c *Client) Download(ctx context.Context, p *Package, destDir string) (stri
 		return lastErr == nil
 	}
 
-	base := strings.TrimSuffix(p.BaseURL, "/")
-	if base != "" && try(base) {
+	// A signature that fails is not retried on another mirror: they all serve
+	// the bytes the metadata checksum names.
+	signed := func() (string, error) {
+		if err := c.checkSignature(ctx, p, dest); err != nil {
+			_ = os.Remove(dest)
+
+			return "", err
+		}
+
 		return dest, nil
 	}
 
+	base := strings.TrimSuffix(p.BaseURL, "/")
+	if base != "" && try(base) {
+		return signed()
+	}
+
 	if p.MirrorList != "" && ctx.Err() == nil {
-		mirrors, err := c.resolveMirrors(ctx, p.MirrorList)
+		mirrors, _, err := c.resolveMirrors(ctx, hc, p.MirrorList)
 		if err != nil {
 			lastErr = errors.Join(lastErr, err)
 		}
@@ -80,7 +110,7 @@ func (c *Client) Download(ctx context.Context, p *Package, destDir string) (stri
 			}
 
 			if m = strings.TrimSuffix(m, "/"); m != base && try(m) {
-				return dest, nil
+				return signed()
 			}
 		}
 	}

@@ -88,7 +88,12 @@ func isNonFatal(err error) bool {
 // fetchRepo tries the candidate mirrors of one repository in order. The last
 // failure is returned when none works.
 func (c *Client) fetchRepo(ctx context.Context, repo *Repo) error {
-	bases, err := c.candidates(ctx, repo)
+	hc, err := c.httpFor(repo)
+	if err != nil {
+		return err
+	}
+
+	bases, meta, err := c.candidates(ctx, hc, repo)
 	if err != nil {
 		return err
 	}
@@ -100,7 +105,7 @@ func (c *Client) fetchRepo(ctx context.Context, repo *Repo) error {
 			return err
 		}
 
-		lastErr = c.fetchRepoFrom(ctx, repo, base)
+		lastErr = c.fetchRepoFrom(ctx, hc, repo, base, meta)
 		if lastErr == nil {
 			return nil
 		}
@@ -111,8 +116,11 @@ func (c *Client) fetchRepo(ctx context.Context, repo *Repo) error {
 	return fmt.Errorf("dnf: repository %s: %w", repo.ID, lastErr)
 }
 
-// fetchRepoFrom takes the metadata of repo from one mirror.
-func (c *Client) fetchRepoFrom(ctx context.Context, repo *Repo, base string) error {
+// fetchRepoFrom takes the metadata of repo from one mirror. A non-nil meta is
+// what the repository's metalink says about repomd.xml, which must match.
+func (c *Client) fetchRepoFrom(
+	ctx context.Context, hc *httpclient.Client, repo *Repo, base string, meta *metalinkInfo,
+) error {
 	cacheDir := c.repoCacheDir(repo.ID)
 	dataDir := filepath.Join(cacheDir, repodataDir)
 
@@ -120,9 +128,27 @@ func (c *Client) fetchRepoFrom(ctx context.Context, repo *Repo, base string) err
 		return fmt.Errorf("dnf: creating cache directory: %w", err)
 	}
 
-	repomdXML, err := c.fetchRepomd(ctx, base, filepath.Join(dataDir, repomdName))
+	cachedRepomd := filepath.Join(dataDir, repomdName)
+
+	repomdXML, fromCache, err := c.fetchRepomd(ctx, hc, base, cachedRepomd)
 	if err != nil {
 		return err
+	}
+
+	if err := meta.verify(repomdXML); err != nil {
+		if !fromCache {
+			return fmt.Errorf("dnf: %s: %w", base, err)
+		}
+
+		// The mirror said "not modified" about a copy that is not the one the
+		// metalink names: ask for the current file.
+		if repomdXML, _, err = c.fetchRepomd(ctx, hc, base, ""); err != nil {
+			return err
+		}
+
+		if err := meta.verify(repomdXML); err != nil {
+			return fmt.Errorf("dnf: %s: %w", base, err)
+		}
 	}
 
 	md, err := repodata.ParseRepomd(bytes.NewReader(repomdXML))
@@ -135,14 +161,14 @@ func (c *Client) fetchRepoFrom(ctx context.Context, repo *Repo, base string) err
 		return fmt.Errorf("%s: %w", base, ErrNoPrimary)
 	}
 
-	if err := c.fetchMetadataFile(ctx, base, dataDir, &primary); err != nil {
+	if err := c.fetchMetadataFile(ctx, hc, base, dataDir, &primary); err != nil {
 		return err
 	}
 
 	// Module metadata only narrows what the index offers; losing it must not
 	// lose the repository.
 	if modules, ok := md.Find("modules"); ok && modules.Location != "" {
-		if err := c.fetchMetadataFile(ctx, base, dataDir, &modules); err != nil {
+		if err := c.fetchMetadataFile(ctx, hc, base, dataDir, &modules); err != nil {
 			c.opts.Logger.Warn("module metadata not fetched", "repo", repo.ID, "error", err)
 		}
 	}
@@ -169,35 +195,40 @@ func (c *Client) fetchRepoFrom(ctx context.Context, repo *Repo, base string) err
 }
 
 // fetchRepomd downloads repomd.xml, sending If-Modified-Since when a copy is
-// cached; on 304 the cached copy is used. The copy is not rewritten here.
-func (c *Client) fetchRepomd(ctx context.Context, base, cached string) ([]byte, error) {
+// cached; on 304 the cached copy is used and fromCache is true. An empty cached
+// path makes the request unconditional. The copy is not rewritten here.
+func (c *Client) fetchRepomd(
+	ctx context.Context, hc *httpclient.Client, base, cached string,
+) (data []byte, fromCache bool, err error) {
 	var since time.Time
 
 	if fi, err := os.Stat(cached); err == nil {
 		since = fi.ModTime()
 	}
 
-	data, notModified, err := c.opts.HTTP.FetchBytesConditional(
+	data, notModified, err := hc.FetchBytesConditional(
 		ctx, base+"/"+repodataDir+"/"+repomdName, maxRepomdBytes, since)
 	if err != nil {
-		return nil, fmt.Errorf("dnf: fetching repomd.xml: %w", err)
+		return nil, false, fmt.Errorf("dnf: fetching repomd.xml: %w", err)
 	}
 
 	if !notModified {
-		return data, nil
+		return data, false, nil
 	}
 
 	data, err = readCapped(cached, maxRepomdBytes)
 	if err != nil {
-		return nil, fmt.Errorf("dnf: reading cached repomd.xml: %w", err)
+		return nil, false, fmt.Errorf("dnf: reading cached repomd.xml: %w", err)
 	}
 
-	return data, nil
+	return data, true, nil
 }
 
 // fetchMetadataFile downloads the file a repomd entry describes into dataDir,
 // verified against the entry's checksum, unless it is there already.
-func (c *Client) fetchMetadataFile(ctx context.Context, base, dataDir string, e *repodata.RepomdData) error {
+func (c *Client) fetchMetadataFile(
+	ctx context.Context, hc *httpclient.Client, base, dataDir string, e *repodata.RepomdData,
+) error {
 	loc, ok := repodata.SafeLocation(e.Location)
 	if !ok {
 		return fmt.Errorf("%w: %q", ErrUnsafeLocation, e.Location)
@@ -218,7 +249,7 @@ func (c *Client) fetchMetadataFile(ctx context.Context, base, dataDir string, e 
 		Dest:     dest,
 		Checksum: sum,
 		MaxBytes: c.opts.MaxMetadataBytes,
-	}, download.Options{Client: c.opts.HTTP})
+	}, download.Options{Client: hc})
 }
 
 // checksumFor builds the verifier for a checksum of repository metadata. Only

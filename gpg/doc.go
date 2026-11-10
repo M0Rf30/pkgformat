@@ -10,7 +10,11 @@
 // VerifyClearsigned and VerifyDetached check a signature against it. Failures
 // map onto sentinels (ErrUnknownSigner, ErrBadSignature, ErrKeyExpired, ...),
 // so a caller can tell "signed by someone we do not trust yet" from "the data
-// was altered".
+// was altered". Both refuse revoked and expired keys and expired signatures.
+// For callers that check a signature themselves with the OpenPGP library (the
+// RPM header signatures), Keyring.Entities lists the keys and CheckSigner
+// applies the same revocation, expiry and key-flag rules to the key that made a
+// signature.
 //
 // What a caller trusts is policy and stays with the caller: which keyring
 // applies to which repository, and whether an unsigned or unknown-signer

@@ -123,7 +123,10 @@ metadata that `createrepo_c` writes, `GenerateRepomdXML` indexes it and
 `SignRepomdXML` signs the index. On the client side `dnf.New(dnf.Options{...})`
 gives `Update` (fetch and verify), `Load` (index), `Resolve` and `Download`;
 nothing about the host is assumed, the repository, cache and variable
-directories and the installed-package list are all options.
+directories and the installed-package list are all options. The `.repo`
+keys `gpgcheck`/`gpgkey`, `exclude`/`excludepkgs`, `priority` and `proxy` are
+honoured, and a metalink's hashes are checked against `repomd.xml` (see the
+security notes).
 
 Command line:
 
@@ -167,10 +170,19 @@ Packages and archives are often untrusted input.
 - **Repository metadata is untrusted.** The `dnf` client confines every
   location to the repository and the destination, caps what it downloads and
   decompresses, verifies SHA-256 and SHA-512 checksums, refuses a package it
-  cannot verify, and keeps a repository id from leaving the cache directory. It
-  does not check the signature of `repomd.xml`: its checksums catch a corrupt or
-  mismatched mirror, not a repository that lies. Dependencies are matched by
-  name, without comparing versions.
+  cannot verify, and keeps a repository id from leaving the cache directory. A
+  repository with `gpgcheck=1` has the signature of each downloaded package
+  checked with `rpm.VerifyWithOptions` (signatures required) against its
+  `gpgkey` keys, fetched over the client's HTTP client or read from `file://`
+  URLs; `gpgcheck=1` without a key fails (`dnf.ErrNoGPGKey`), `gpgcheck=0` and
+  a missing `gpgcheck` check nothing. A repository whose mirror list is a
+  metalink has its `repomd.xml` compared with the size and hashes the metalink
+  publishes (`dnf.ErrMetalinkMismatch`); other repositories are protected by
+  checksums only, which catch a corrupt or mismatched mirror, not a repository
+  that lies: `repo_gpgcheck` (the signature of `repomd.xml`) is not checked.
+  Dependencies are matched by name, without comparing versions; of several
+  versions of a package the newest by epoch, version and release (`rpm.Vercmp`)
+  is chosen, unless a repository with a lower `priority` number has the name.
 - **OpenPGP v3 signatures** (found in some very old packages) are not supported.
 - Parsers enforce limits on header sizes and counts, and are fuzzed
   (`go test -fuzz`).
