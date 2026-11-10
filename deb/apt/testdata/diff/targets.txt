@@ -1,0 +1,40 @@
+curl
+git
+wget
+vim
+nano
+python3
+python3-pip
+nginx
+apache2
+postfix
+exim4
+mutt
+openssh-server
+sudo
+build-essential
+cmake
+gnupg
+rsync
+tmux
+cron
+default-jre-headless
+golang-go
+man-db
+less
+ca-certificates
+# depend on virtual packages (default-mta | mail-transport-agent, awk, ...):
+# apt picks the provider
+bsd-mailx
+mailutils
+logrotate
+dpkg-dev
+libssl-dev
+# more alternatives, Pre-Depends and conflicts
+emacs-nox
+postgresql
+mariadb-server
+dbus
+systemd-sysv
+python3-dev
+lsb-release

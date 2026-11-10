@@ -44,10 +44,11 @@ type DownloadOptions struct {
 // resolved packages in dependency order (dependencies first) and the names
 // that could not be resolved.
 //
-// Installed packages are skipped, though their dependencies are still walked,
-// so that runtime dependencies reachable only through an installed library are
-// pulled in. This is what a cross build needs to find the transitive libraries
-// of a dependency its recipe names only directly.
+// Installed packages are skipped, and so are their dependencies: as with apt,
+// an installed package is taken to have its own met. A dependency an
+// installed package would meet only for another architecture (a cross build
+// reading the dependencies of a foreign library) is still resolved, since the
+// installed one does not satisfy it.
 func (c *Cache) DownloadClosure(
 	ctx context.Context, destDir string, seeds []string, opts DownloadOptions,
 ) (resolved []*PackageInfo, unresolved []string, err error) {
@@ -63,6 +64,9 @@ func (c *Cache) DownloadClosure(
 	names := make([]string, len(resolved))
 	for i, p := range resolved {
 		names[i] = entryKey(p.Name, p.Architecture)
+		if p.Version != "" {
+			names[i] += " (= " + p.Version + ")"
+		}
 	}
 
 	if err := c.Download(ctx, destDir, names, opts); err != nil {
@@ -82,7 +86,9 @@ type debJob struct {
 }
 
 // Download fetches the named packages into destDir, each as the base name of
-// its index Filename. A name may carry an architecture qualifier. The size and
+// its index Filename. A name may carry an architecture qualifier and a version
+// constraint ("gcc-11:arm64 (= 11.3.0-1)"); the highest version that meets it
+// is fetched, the highest of all without one. The size and
 // SHA-256 of the index are enforced while the file is written, and a file that
 // fails the check is not left behind.
 //
@@ -203,11 +209,8 @@ func (c *Cache) resolveDownloadJobs(destDir string, pkgs []string) ([]*debJob, e
 	// concurrently and fail the checksum.
 	seenDest := make(map[string]bool, len(pkgs))
 
-	for _, pkg := range pkgs {
-		name, _, _ := strings.Cut(pkg, "(") // a version constraint is ignored
-		name = strings.TrimSpace(name)
-
-		info, ok := c.Lookup(name)
+	for _, spec := range pkgs {
+		name, info, ok := c.lookupSpec(spec)
 		if !ok || info.Filename == "" {
 			return nil, fmt.Errorf("%w: %s", ErrPackageNotFound, name)
 		}

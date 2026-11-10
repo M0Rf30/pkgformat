@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"maps"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -32,12 +31,16 @@ type LoadOptions struct {
 	// HostArch is the architecture unqualified names resolve to. Empty selects
 	// the one of the running program.
 	HostArch string
-	// Logger receives one debug record per file loaded. Nil is silent.
+	// Logger receives one debug record per file loaded and one per stanza that
+	// is skipped. Nil is silent.
 	Logger *slog.Logger
 }
 
 // Load reads the apt indexes of opts.ListsDir, then the dpkg status database
 // of opts.StatusFile.
+//
+// Every version of a package that an index carries is kept. A stanza without
+// Version, or whose relation fields do not parse, is skipped.
 //
 // Like apt itself, Load tolerates what it cannot read: a missing directory,
 // an unreadable or corrupt index. The returned Cache is never nil and holds
@@ -45,6 +48,7 @@ type LoadOptions struct {
 // that did not, so a caller can warn about them.
 func Load(opts LoadOptions) (*Cache, error) {
 	c := NewCache(opts.HostArch)
+	c.logger = opts.Logger
 
 	var errs []error
 
@@ -124,11 +128,12 @@ func (c *Cache) loadLists(opts LoadOptions) error {
 		wg.Go(func() {
 			for idx := range jobCh {
 				local := NewCache(c.hostArch)
+				local.logger = opts.Logger
 				fileErrs[idx] = local.parseFile(jobs[idx].path, jobs[idx].baseURL)
 				partials[idx] = local
 
 				if opts.Logger != nil {
-					opts.Logger.Debug("apt: index loaded", "path", jobs[idx].path, "packages", len(local.entries))
+					opts.Logger.Debug("apt: index loaded", "path", jobs[idx].path, "packages", len(local.slots))
 				}
 			}
 		})
@@ -154,107 +159,22 @@ func deriveBaseURL(filename string, bases map[string]string) string {
 	return bases[prefix]
 }
 
-// mergeFrom folds a Cache built by one worker into c. Iteration is sorted so
-// that byBareName, and with it the any-architecture fallback, is deterministic.
+// mergeFrom folds a Cache built by one worker into c, keeping the order its
+// versions were read in, which decides between providers.
 func (c *Cache) mergeFrom(other *Cache) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	for _, name := range slices.Sorted(maps.Keys(other.entries)) {
-		info := other.entries[name]
+	all := make([]*pkg, 0, len(other.slots))
 
-		existing, ok := c.entries[name]
-		if !ok {
-			c.entries[name] = info
-			c.addToBareName(info.Name, name)
-
-			continue
-		}
-
-		mergeEntryFields(existing, info)
+	for _, versions := range other.slots {
+		all = append(all, versions...)
 	}
 
-	for virt, providers := range other.providers {
-		c.providers[virt] = append(c.providers[virt], providers...)
-	}
-}
+	slices.SortFunc(all, func(a, b *pkg) int { return a.seq - b.seq })
 
-// mergeEntryFields merges info into existing. Artifact fields follow the
-// higher Debian version; see infoArtifactsWin.
-func mergeEntryFields(existing, info *PackageInfo) {
-	if info.Architecture != "" {
-		existing.Architecture = info.Architecture
-	}
-
-	if info.MultiArch != "" {
-		existing.MultiArch = info.MultiArch
-	}
-
-	if info.Essential {
-		existing.Essential = true
-	}
-
-	if info.HasCandidate {
-		existing.HasCandidate = true
-	}
-
-	if info.Installed {
-		existing.Installed = true
-	}
-
-	if infoArtifactsWin(existing, info) {
-		copyInfoArtifacts(existing, info)
-	}
-}
-
-// infoArtifactsWin decides whether info overwrites the artifact fields of
-// existing: the higher Debian version wins; a tie, or a missing version on both
-// sides, favours info if it carries any artifact data.
-func infoArtifactsWin(existing, info *PackageInfo) bool {
-	switch {
-	case existing.Version == "" && info.Version == "":
-		return info.Filename != "" || info.SHA256 != "" || info.Size > 0 ||
-			len(info.Depends) > 0 || len(info.PreDepends) > 0
-	case existing.Version == "":
-		return true
-	case info.Version == "":
-		return false
-	default:
-		return deb.CompareVersions(info.Version, existing.Version) >= 0
-	}
-}
-
-// copyInfoArtifacts overwrites the artifact fields of existing with the
-// non-empty ones of info. BaseURL follows Filename only for architectures other
-// than all, so an _all.deb is never pointed at a foreign-architecture mirror
-// (ports.ubuntu.com).
-func copyInfoArtifacts(existing, info *PackageInfo) {
-	if info.Version != "" {
-		existing.Version = info.Version
-	}
-
-	if info.Filename != "" {
-		existing.Filename = info.Filename
-
-		if info.BaseURL != "" && info.Architecture != "" && info.Architecture != archAll {
-			existing.BaseURL = info.BaseURL
-		}
-	}
-
-	if info.SHA256 != "" {
-		existing.SHA256 = info.SHA256
-	}
-
-	if info.Size > 0 {
-		existing.Size = info.Size
-	}
-
-	if len(info.Depends) > 0 {
-		existing.Depends = info.Depends
-	}
-
-	if len(info.PreDepends) > 0 {
-		existing.PreDepends = info.PreDepends
+	for _, p := range all {
+		c.insert(&p.PackageInfo, true)
 	}
 }
 
@@ -276,7 +196,24 @@ func (c *Cache) parseFile(path, baseURL string) error {
 	defer func() { _ = rc.Close() }()
 
 	err = deb.ScanControl(rc, func(cf *deb.ControlFile) error {
-		c.flushStanza(stanzaOf(cf, baseURL), false)
+		info, err := packageInfoOf(cf, baseURL)
+		if err != nil {
+			c.skipStanza(path, cf, err)
+
+			return nil
+		}
+
+		if info.Version == "" {
+			c.skipStanza(path, cf, errors.New("no Version"))
+
+			return nil
+		}
+
+		info.HasCandidate = true
+
+		c.mu.Lock()
+		c.insert(info, true)
+		c.mu.Unlock()
 
 		return nil
 	})
@@ -287,9 +224,17 @@ func (c *Cache) parseFile(path, baseURL string) error {
 	return nil
 }
 
-// parseStatus overlays the dpkg status database at path: every stanza adds its
-// package, and the ones whose state is installed set Installed. The
-// index-only fields of a status stanza are ignored. A nil logger is silent.
+// skipStanza logs a stanza the cache does not keep.
+func (c *Cache) skipStanza(path string, cf *deb.ControlFile, err error) {
+	if c.logger != nil {
+		c.logger.Debug("apt: stanza skipped", "path", path, "package", cf.Get("Package"), "reason", err)
+	}
+}
+
+// parseStatus overlays the dpkg status database at path: every stanza of an
+// installed package adds that version and sets Installed, and a version an
+// index carries too keeps the artifacts of the index. The other states are not
+// installed and add nothing. A nil logger is silent.
 func (c *Cache) parseStatus(path string, logger *slog.Logger) error {
 	db, err := deb.OpenStatus(path, deb.StatusOptions{Logger: logger})
 	if err != nil {
@@ -303,151 +248,122 @@ func (c *Cache) parseStatus(path string, logger *slog.Logger) error {
 			return fmt.Errorf("apt: parse %s: %w", filepath.Base(path), err)
 		}
 
-		s := stanzaOf(entry.Control, "")
-		s.installed = entry.Status.Installed()
-		s.sha256, s.size = "", 0
+		if !entry.Status.Installed() {
+			continue
+		}
 
-		c.flushStanza(s, true)
+		info, err := packageInfoOf(entry.Control, "")
+		if err != nil {
+			c.skipStanza(path, entry.Control, err)
+
+			continue
+		}
+
+		if info.Version == "" {
+			c.skipStanza(path, entry.Control, errors.New("no Version"))
+
+			continue
+		}
+
+		// The index-only fields of a status stanza are not meaningful.
+		info.Filename, info.SHA256, info.Size = "", "", 0
+		info.Installed = true
+
+		c.mu.Lock()
+		c.insert(info, true)
+		c.mu.Unlock()
 	}
 
 	return nil
 }
 
-// stanza holds the fields of one paragraph that the cache keeps.
-type stanza struct {
-	pkgName    string
-	arch       string
-	multiArch  string
-	provides   string
-	depends    string
-	preDepends string
-	essential  bool
-	installed  bool
-	hasVersion bool
-	version    string
-	filename   string
-	sha256     string
-	size       int64
-	baseURL    string
+// packageInfoOf reads the fields of a paragraph of an index or of the status
+// database that the cache keeps. HasCandidate and Installed are the caller's
+// to set. A paragraph without a name or with a relation field that does not
+// parse is an error.
+func packageInfoOf(cf *deb.ControlFile, baseURL string) (*PackageInfo, error) {
+	name := cf.Get("Package")
+	if name == "" {
+		return nil, errors.New("no Package")
+	}
+
+	info := &PackageInfo{
+		Name:         name,
+		Version:      cf.Get("Version"),
+		Architecture: cf.Get("Architecture"),
+		Essential:    strings.EqualFold(cf.Get("Essential"), "yes"),
+		MultiArch:    cf.Get("Multi-Arch"),
+		Priority:     cf.Get("Priority"),
+		Filename:     cf.Get("Filename"),
+		SHA256:       cf.Get("SHA256"),
+		BaseURL:      baseURL,
+	}
+
+	info.Size, _ = strconv.ParseInt(cf.Get("Size"), 10, 64)
+
+	if info.Filename == "" {
+		info.BaseURL = ""
+	}
+
+	var err error
+
+	if info.Depends, err = parseGroups(cf, "Depends"); err != nil {
+		return nil, err
+	}
+
+	if info.PreDepends, err = parseGroups(cf, "Pre-Depends"); err != nil {
+		return nil, err
+	}
+
+	if info.Conflicts, err = parseFlat(cf, "Conflicts"); err != nil {
+		return nil, err
+	}
+
+	if info.Breaks, err = parseFlat(cf, "Breaks"); err != nil {
+		return nil, err
+	}
+
+	if info.Provides, err = parseFlat(cf, "Provides"); err != nil {
+		return nil, err
+	}
+
+	return info, nil
 }
 
-// stanzaOf reads the fields of a paragraph of an index or of the status
-// database; the index-only ones are empty for a status stanza.
-func stanzaOf(cf *deb.ControlFile, baseURL string) *stanza {
-	s := &stanza{
-		baseURL:    baseURL,
-		pkgName:    cf.Get("Package"),
-		version:    cf.Get("Version"),
-		arch:       cf.Get("Architecture"),
-		essential:  strings.EqualFold(cf.Get("Essential"), "yes"),
-		multiArch:  cf.Get("Multi-Arch"),
-		provides:   cf.Get("Provides"),
-		depends:    cf.Get("Depends"),
-		preDepends: cf.Get("Pre-Depends"),
-		filename:   cf.Get("Filename"),
+// parseGroups reads a dependency field of a paragraph.
+func parseGroups(cf *deb.ControlFile, field string) ([]deb.Alternatives, error) {
+	text := cf.Get(field)
+	if text == "" {
+		return nil, nil
 	}
 
-	s.hasVersion = s.version != ""
-	s.sha256 = cf.Get("SHA256")
-	s.size, _ = strconv.ParseInt(cf.Get("Size"), 10, 64)
+	groups, err := deb.ParseRelations(text)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", field, err)
+	}
 
-	return s
+	return groups, nil
 }
 
-// flushStanza merges a paragraph into the cache under its name:arch key, so
-// that arm64 entries never overwrite amd64 ones when both indexes are loaded.
-func (c *Cache) flushStanza(s *stanza, dpkgStatus bool) {
-	if s.pkgName == "" {
-		return
+// parseFlat reads a field whose entries are plain relations (Conflicts,
+// Breaks, Provides); an alternative in one is an error.
+func parseFlat(cf *deb.ControlFile, field string) ([]deb.Relation, error) {
+	groups, err := parseGroups(cf, field)
+	if err != nil {
+		return nil, err
 	}
 
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	out := make([]deb.Relation, 0, len(groups))
 
-	key := entryKey(s.pkgName, s.arch)
-
-	existing, ok := c.entries[key]
-	if !ok {
-		existing = &PackageInfo{}
-		c.entries[key] = existing
+	for _, alts := range groups {
+		// dpkg rejects "a | b" here; keep every term as its own relation
+		// rather than lose a package a hand-edited field names.
+		out = append(out, alts...)
 	}
 
-	mergePackageInfo(existing, s, dpkgStatus)
-	c.flushProvides(s.pkgName, s.provides)
-	c.addToBareName(s.pkgName, key)
-}
-
-// mergePackageInfo merges a paragraph into an entry. An apt index paragraph
-// replaces the artifact fields of an entry that already has a candidate only
-// when its version is strictly greater: the newest version wins across
-// repositories that index the same name and architecture, as apt does without
-// pinning.
-func mergePackageInfo(existing *PackageInfo, s *stanza, dpkgStatus bool) {
-	existing.Name = s.pkgName
-
-	if s.arch != "" {
-		existing.Architecture = s.arch
+	if len(out) == 0 {
+		return nil, nil
 	}
 
-	if s.essential {
-		existing.Essential = true
-	}
-
-	if s.multiArch != "" {
-		existing.MultiArch = s.multiArch
-	}
-
-	if dpkgStatus && s.installed {
-		existing.Installed = true
-	}
-
-	if !s.hasVersion {
-		return // a pure virtual carries no artifact
-	}
-
-	existing.HasCandidate = true
-
-	if existing.Version != "" && !versionWins(s.version, existing.Version) {
-		return
-	}
-
-	copyStanzaArtifacts(existing, s)
-}
-
-// copyStanzaArtifacts overwrites the artifact fields of existing with a
-// paragraph's.
-func copyStanzaArtifacts(existing *PackageInfo, s *stanza) {
-	existing.Version = s.version
-
-	if s.filename != "" {
-		existing.Filename = s.filename
-	}
-
-	if s.sha256 != "" {
-		existing.SHA256 = s.sha256
-	}
-
-	if s.size > 0 {
-		existing.Size = s.size
-	}
-
-	if s.baseURL != "" {
-		existing.BaseURL = s.baseURL
-	}
-
-	if s.depends != "" {
-		existing.Depends = deb.DependencyNames(s.depends)
-	}
-
-	if s.preDepends != "" {
-		existing.PreDepends = deb.DependencyNames(s.preDepends)
-	}
-}
-
-// flushProvides records the Provides of a package in the reverse index.
-func (c *Cache) flushProvides(pkgName, provides string) {
-	// "foo (= 1.0)" provides foo, "foo:any" too.
-	for _, vname := range deb.DependencyNames(provides) {
-		c.providers[vname] = append(c.providers[vname], pkgName)
-	}
+	return out, nil
 }

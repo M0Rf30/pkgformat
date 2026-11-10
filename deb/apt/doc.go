@@ -24,11 +24,25 @@
 // # Reading
 //
 // Load builds a Cache from a lists directory, and optionally a dpkg status
-// file, whose path the caller gives. A Cache answers Lookup, ResolveVirtual
-// and ResolveDeps, with Multi-Arch awareness: Multi-Arch: foreign packages are
-// redirected to the host architecture and architecture-qualified names are
-// inherited by dependencies. The highest Debian version wins when several
-// repositories carry one package.
+// file, whose path the caller gives. A Cache keeps every version of every
+// package the indexes carry, per name and architecture, and the versions the
+// status file says are installed. Lookup answers with the highest version,
+// Versions with all of them.
+//
+// ResolveDeps works out what installing some packages would add, after apt's
+// rules: version constraints (<<, <=, =, >=, >>) are honoured with
+// deb.CompareVersions; alternatives are tried in order, an installed or
+// already selected one first; a virtual package is met by its providers, a
+// versioned dependency only by a versioned Provides; Pre-Depends count as
+// Depends; a package that Conflicts with or Breaks an installed or selected
+// one, or the other way round, is refused with a ConflictError; and
+// Multi-Arch foreign, allowed and same decide which architecture meets a
+// dependency, with "name:any", "name:native" and "name:arch" as apt reads
+// them. An installed package whose version a dependency finds too old is
+// upgraded if the indexes carry a newer one, else the dependency is
+// unsatisfiable. The result is deterministic. Where it differs from apt (it
+// never removes an installed package, and does not model pins) is listed on
+// ResolveDeps.
 //
 // # Downloading
 //

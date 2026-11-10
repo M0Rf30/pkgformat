@@ -1,7 +1,7 @@
 package apt
 
 import (
-	"errors"
+	"log/slog"
 	"runtime"
 	"slices"
 	"strings"
@@ -10,19 +10,12 @@ import (
 	"github.com/M0Rf30/pkgformat/deb"
 )
 
-// ErrDependencyDepth is returned by ResolveDeps for a dependency chain deeper
-// than maxResolveDepth, which only a hostile or corrupt index produces.
-var ErrDependencyDepth = errors.New("apt: dependency chain too deep")
-
-// maxResolveDepth bounds the recursion of ResolveDeps. Real Debian chains are
-// shorter than 50.
-const maxResolveDepth = 4096
-
 // archAll is the Architecture value of architecture-independent packages.
 const archAll = "all"
 
 // PackageInfo is the subset of a package's control fields that dependency
-// resolution and downloading need.
+// resolution and downloading need. One value describes one version of one
+// package on one architecture.
 type PackageInfo struct {
 	// Name is the package name ("gcc", "libssl-dev").
 	Name string
@@ -32,11 +25,15 @@ type PackageInfo struct {
 	Essential bool
 	// MultiArch is the Multi-Arch field ("same", "foreign", "allowed" or "").
 	MultiArch string
-	// Installed is true when the dpkg status database reports the package as
+	// Priority is the Priority field ("required", "optional", ...). It orders
+	// the candidates of a virtual package.
+	Priority string
+	// Installed is true when the dpkg status database reports this version as
 	// installed (see [deb.Status.Installed]).
 	Installed bool
-	// HasCandidate is true when the package has a version in an apt index, that
-	// is, it is a real installable package and not a pure virtual one.
+	// HasCandidate is true when this version is in an apt index, that is, it
+	// can be downloaded. An installed version that no index carries any more
+	// has none.
 	HasCandidate bool
 	// Filename is the path of the .deb relative to the repository base URL
 	// ("pool/main/g/gcc/gcc_12.2.0-14_amd64.deb").
@@ -49,13 +46,18 @@ type PackageInfo struct {
 	// "https://ports.ubuntu.com/ubuntu-ports/". Empty for packages that only
 	// come from the dpkg status database, which cannot be downloaded.
 	BaseURL string
-	// Depends lists the package names of the Depends field: the first
-	// alternative of every entry, without version constraint.
-	Depends []string
-	// PreDepends is the same for Pre-Depends.
-	PreDepends []string
-	// Version is the Version field. When one name and architecture comes from
-	// several repositories, the highest version wins.
+	// Depends is the Depends field, one [deb.Alternatives] per entry.
+	Depends []deb.Alternatives
+	// PreDepends is the same for Pre-Depends. Resolution treats both alike.
+	PreDepends []deb.Alternatives
+	// Conflicts is the Conflicts field.
+	Conflicts []deb.Relation
+	// Breaks is the Breaks field.
+	Breaks []deb.Relation
+	// Provides is the Provides field: the virtual packages, with the version
+	// of a versioned one ("foo (= 1.2)").
+	Provides []deb.Relation
+	// Version is the Version field.
 	Version string
 }
 
@@ -64,11 +66,13 @@ func (p PackageInfo) ArchitectureAll() bool { //nolint:gocritic // small value t
 	return strings.EqualFold(p.Architecture, archAll)
 }
 
-// MultiArchForeign reports whether one copy of the package on the host
-// satisfies dependencies from any architecture (Multi-Arch: foreign or
-// allowed): tools and daemons that run on the build host, which must not be
-// qualified with a target architecture during cross-compilation. Multi-Arch:
-// same, the -dev libraries, is deliberately excluded.
+// MultiArchForeign reports whether one copy of the package on the host is
+// meant to serve every architecture (Multi-Arch: foreign or allowed): tools
+// and daemons that run on the build host, which must not be qualified with a
+// target architecture during cross-compilation. Multi-Arch: same, the -dev
+// libraries, is deliberately excluded. The resolver itself follows apt more
+// closely: only "foreign" satisfies a dependency from another architecture,
+// and only "allowed" satisfies one written "name:any".
 func (p PackageInfo) MultiArchForeign() bool { //nolint:gocritic // small value type
 	ma := strings.ToLower(p.MultiArch)
 
@@ -80,6 +84,10 @@ func (p PackageInfo) MultiArchForeign() bool { //nolint:gocritic // small value 
 func (p PackageInfo) MultiArchSame() bool { //nolint:gocritic // small value type
 	return strings.EqualFold(p.MultiArch, "same")
 }
+
+// available reports whether the version can be installed: it is in an index,
+// or it is a hand-built entry that says nothing about being installed.
+func (p *PackageInfo) available() bool { return p.HasCandidate || !p.Installed }
 
 // ArchFromGoarch maps a runtime.GOARCH value to the Debian architecture name.
 func ArchFromGoarch(goarch string) string {
@@ -95,21 +103,38 @@ func ArchFromGoarch(goarch string) string {
 	}
 }
 
-// Cache is an in-memory index of package metadata keyed by name and
-// architecture, merged from apt package indexes and the dpkg status database.
-// It is safe for concurrent use.
+// pkg is the stored form of one version of a package.
+type pkg struct {
+	PackageInfo
+
+	// seq is the insertion order: apt prefers the provider it read last.
+	seq int
+	// slot is the key of the name:arch group the version belongs to.
+	slot string
+}
+
+// Cache is an in-memory index of package metadata, merged from apt package
+// indexes and the dpkg status database. Every version of a package that any
+// index carries is kept, grouped by name and architecture. It is safe for
+// concurrent use.
 type Cache struct {
 	hostArch string
+	logger   *slog.Logger
 
-	mu      sync.RWMutex
-	entries map[string]*PackageInfo
-	// providers maps a virtual package name to the concrete packages providing
-	// it, in index order.
-	providers map[string][]string
-	// byBareName maps a package name to the entry keys of its architecture
-	// qualified entries ("gcc-11:amd64", "gcc-11:arm64"), so the any-architecture
-	// fallback does not scan every entry.
+	mu sync.RWMutex
+	// slots maps a name:arch key to the versions of that package, the highest
+	// version first.
+	slots map[string][]*pkg
+	// providers maps a virtual package name to the versions that provide it,
+	// in insertion order.
+	providers map[string][]*pkg
+	// byBareName maps a package name to the slot keys of its architecture
+	// qualified groups ("gcc-11:amd64", "gcc-11:arm64"), so the
+	// any-architecture fallback does not scan every slot.
 	byBareName map[string][]string
+	// installed maps a slot key to its installed version.
+	installed map[string]*pkg
+	seq       int
 }
 
 // NewCache returns an empty cache. hostArch is the architecture packages are
@@ -122,9 +147,10 @@ func NewCache(hostArch string) *Cache {
 
 	return &Cache{
 		hostArch:   hostArch,
-		entries:    make(map[string]*PackageInfo),
-		providers:  make(map[string][]string),
+		slots:      make(map[string][]*pkg),
+		providers:  make(map[string][]*pkg),
 		byBareName: make(map[string][]string),
+		installed:  make(map[string]*pkg),
 	}
 }
 
@@ -141,7 +167,7 @@ func entryKey(name, arch string) string {
 	return name + ":" + arch
 }
 
-// addToBareName records an entry key in the byBareName index; c.mu must be held.
+// addToBareName records a slot key in the byBareName index; c.mu must be held.
 func (c *Cache) addToBareName(name, key string) {
 	// Bare keys are found directly and need no index entry.
 	if key != name && !slices.Contains(c.byBareName[name], key) {
@@ -149,61 +175,274 @@ func (c *Cache) addToBareName(name, key string) {
 	}
 }
 
-// AddEntry inserts or replaces an entry. Use it to set a cache up by hand,
-// before it is shared.
+// AddEntry adds a version of a package. An entry with the same name,
+// architecture and version replaces the old one; another version is kept next
+// to the others. Use it to set a cache up by hand, before it is shared.
 func (c *Cache) AddEntry(info *PackageInfo) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	cp := *info
-	key := entryKey(info.Name, info.Architecture)
-	c.entries[key] = &cp
-	c.addToBareName(info.Name, key)
+	c.insert(info, false)
 }
 
-// Lookup returns the entry of the named package. The name may carry an
-// architecture qualifier ("gcc-11:arm64"). Without one, or when the qualified
-// entry is missing, it tries the bare name (architecture all), the host
-// architecture, then any architecture.
+// insert adds a version to its slot. When the slot already has that version,
+// merge folds info into it, else info replaces it. c.mu must be held.
+func (c *Cache) insert(info *PackageInfo, merge bool) {
+	key := entryKey(info.Name, info.Architecture)
+	versions := c.slots[key]
+
+	if i := slices.IndexFunc(versions, func(e *pkg) bool { return e.Version == info.Version }); i >= 0 {
+		existing := versions[i]
+
+		c.unindexProvides(existing)
+
+		if merge {
+			mergeVersion(&existing.PackageInfo, info)
+		} else {
+			existing.PackageInfo = *info
+		}
+
+		c.indexVersion(existing)
+
+		return
+	}
+
+	c.seq++
+	p := &pkg{PackageInfo: *info, seq: c.seq, slot: key}
+
+	pos, _ := slices.BinarySearchFunc(versions, p, func(e, target *pkg) int {
+		// highest version first
+		return deb.CompareVersions(target.Version, e.Version)
+	})
+	c.slots[key] = slices.Insert(versions, pos, p)
+
+	c.addToBareName(info.Name, key)
+	c.indexVersion(p)
+}
+
+// indexVersion adds a stored version to the providers and installed indexes.
+func (c *Cache) indexVersion(p *pkg) {
+	for _, prov := range p.Provides {
+		if !slices.Contains(c.providers[prov.Name], p) {
+			c.providers[prov.Name] = append(c.providers[prov.Name], p)
+		}
+	}
+
+	if p.Installed {
+		if cur, ok := c.installed[p.slot]; !ok || cur == p || deb.CompareVersions(p.Version, cur.Version) > 0 {
+			c.installed[p.slot] = p
+		}
+	} else if c.installed[p.slot] == p {
+		delete(c.installed, p.slot)
+	}
+}
+
+// unindexProvides removes a stored version from the providers index; the
+// version is about to change its Provides.
+func (c *Cache) unindexProvides(p *pkg) {
+	for _, prov := range p.Provides {
+		list := slices.DeleteFunc(c.providers[prov.Name], func(e *pkg) bool { return e == p })
+		if len(list) == 0 {
+			delete(c.providers, prov.Name)
+		} else {
+			c.providers[prov.Name] = list
+		}
+	}
+}
+
+// mergeVersion folds info into the stored version existing, for the same name,
+// architecture and version read from another file. Flags and provides
+// accumulate; the artifact fields of an index follow the later file, so a tie
+// favours the last index by file name, and a status-only version takes the
+// artifacts of an index. The repository of an architecture all package stays
+// the first one, so an _all.deb is never pointed at a foreign-architecture
+// mirror (ports.ubuntu.com).
+func mergeVersion(existing, info *PackageInfo) {
+	existing.Essential = existing.Essential || info.Essential
+	existing.Installed = existing.Installed || info.Installed
+
+	if info.MultiArch != "" {
+		existing.MultiArch = info.MultiArch
+	}
+
+	for _, prov := range info.Provides {
+		if !slices.ContainsFunc(existing.Provides, func(r deb.Relation) bool { return r.String() == prov.String() }) {
+			existing.Provides = append(existing.Provides, prov)
+		}
+	}
+
+	if !info.HasCandidate {
+		if !existing.HasCandidate && len(existing.Depends)+len(existing.PreDepends)+len(existing.Conflicts)+len(existing.Breaks) == 0 {
+			existing.Depends, existing.PreDepends = info.Depends, info.PreDepends
+			existing.Conflicts, existing.Breaks = info.Conflicts, info.Breaks
+		}
+
+		if existing.Priority == "" {
+			existing.Priority = info.Priority
+		}
+
+		return
+	}
+
+	existing.HasCandidate = true
+	existing.Depends, existing.PreDepends = info.Depends, info.PreDepends
+	existing.Conflicts, existing.Breaks = info.Conflicts, info.Breaks
+
+	if info.Priority != "" {
+		existing.Priority = info.Priority
+	}
+
+	if info.Filename != "" {
+		existing.Filename = info.Filename
+
+		if info.BaseURL != "" && (existing.BaseURL == "" || !strings.EqualFold(info.Architecture, archAll)) {
+			existing.BaseURL = info.BaseURL
+		}
+	}
+
+	if info.SHA256 != "" {
+		existing.SHA256 = info.SHA256
+	}
+
+	if info.Size > 0 {
+		existing.Size = info.Size
+	}
+}
+
+// slotKeysFor lists the slot keys a name can be found under, in the order
+// Lookup tries them: the name as given, the bare name (architecture all), the
+// host architecture, then every other architecture. c.mu must be held.
+func (c *Cache) slotKeysFor(name string) []string {
+	keys := make([]string, 0, 4)
+
+	base := name
+	if idx := strings.IndexByte(name, ':'); idx >= 0 {
+		keys = append(keys, name)
+		base = name[:idx]
+	}
+
+	keys = append(keys, base, base+":"+c.hostArch)
+
+	for _, k := range c.byBareName[base] {
+		if k != base+":"+c.hostArch {
+			keys = append(keys, k)
+		}
+	}
+
+	return keys
+}
+
+// pick returns the first version of a slot that accept admits, preferring one
+// that can be installed over an installed-only one.
+func pick(versions []*pkg, accept func(*pkg) bool) *pkg {
+	var fallback *pkg
+
+	for _, p := range versions {
+		if accept != nil && !accept(p) {
+			continue
+		}
+
+		if p.available() {
+			return p
+		}
+
+		if fallback == nil {
+			fallback = p
+		}
+	}
+
+	return fallback
+}
+
+// lookup finds the version of the named package that Lookup returns, among
+// those accept admits (nil admits all). c.mu must be held.
+func (c *Cache) lookup(name string, accept func(*pkg) bool) *pkg {
+	for _, key := range c.slotKeysFor(name) {
+		if p := pick(c.slots[key], accept); p != nil {
+			return p
+		}
+	}
+
+	return nil
+}
+
+// Lookup returns the highest installable version of the named package. The
+// name may carry an architecture qualifier ("gcc-11:arm64"). Without one, or
+// when the qualified package is missing, it tries the bare name (architecture
+// all), the host architecture, then any architecture. A package that is only
+// installed, with no index version, is returned too, with HasCandidate false.
 func (c *Cache) Lookup(name string) (PackageInfo, bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	if idx := strings.IndexByte(name, ':'); idx >= 0 {
-		if p, ok := c.entries[name]; ok {
-			return *p, true
-		}
-
-		name = name[:idx]
-	}
-
-	if p, ok := c.entries[name]; ok {
-		return *p, true
-	}
-
-	if p, ok := c.entries[name+":"+c.hostArch]; ok {
-		return *p, true
-	}
-
-	if p, ok := c.entries[name+":"+archAll]; ok {
-		return *p, true
-	}
-
-	// A package that exists only for a foreign architecture. Misses are the
-	// common case here (virtual packages), so this stays an index lookup.
-	if p, ok := c.scanEntryByName(name); ok {
-		return *p, true
+	if p := c.lookup(name, nil); p != nil {
+		return p.PackageInfo, true
 	}
 
 	return PackageInfo{}, false
 }
 
-// PackageCount is the number of entries in the cache.
+// lookupSpec finds the version a package spec names: "name", "name:arch" or
+// either with a version constraint ("name:arch (= 1.2)"), in which case the
+// highest version that meets it. It returns the name part of the spec for
+// error messages.
+func (c *Cache) lookupSpec(spec string) (string, PackageInfo, bool) {
+	spec = strings.TrimSpace(spec)
+
+	groups, err := deb.ParseRelations(spec)
+	if err != nil || len(groups) != 1 || len(groups[0]) != 1 {
+		name, _, _ := strings.Cut(spec, "(")
+		name = strings.TrimSpace(name)
+
+		info, ok := c.Lookup(name)
+
+		return name, info, ok
+	}
+
+	rel := groups[0][0]
+
+	name := rel.Name
+	if rel.Arch != "" {
+		name += ":" + rel.Arch
+	}
+
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if p := c.lookup(name, func(p *pkg) bool { return rel.Satisfied(p.Version) }); p != nil {
+		return name, p.PackageInfo, true
+	}
+
+	return name, PackageInfo{}, false
+}
+
+// Versions returns every known version of the named package, the highest
+// first, from the first architecture Lookup would find it under.
+func (c *Cache) Versions(name string) []PackageInfo {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	for _, key := range c.slotKeysFor(name) {
+		if versions := c.slots[key]; len(versions) > 0 {
+			out := make([]PackageInfo, len(versions))
+			for i, p := range versions {
+				out[i] = p.PackageInfo
+			}
+
+			return out
+		}
+	}
+
+	return nil
+}
+
+// PackageCount is the number of packages in the cache, counting a name on two
+// architectures twice and every version of one once.
 func (c *Cache) PackageCount() int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	return len(c.entries)
+	return len(c.slots)
 }
 
 // CapabilityCount is the number of virtual package names (Provides) known.
@@ -214,29 +453,81 @@ func (c *Cache) CapabilityCount() int {
 	return len(c.providers)
 }
 
-// ResolveVirtual returns the first concrete provider of a virtual package, or
-// name itself when it is a real package (it has a candidate) or unknown.
+// notCandidate is 0 for the highest version of a name and architecture and 1
+// for the others. c.mu is not needed: the resolver works on a snapshot taken
+// under it.
+func (c *Cache) notCandidate(p *pkg) int {
+	if versions := c.slots[p.slot]; len(versions) > 0 && versions[0] == p {
+		return 0
+	}
+
+	return 1
+}
+
+// priorityRank orders the Priority values; an unknown or missing one ranks
+// lowest.
+func priorityRank(priority string) int {
+	switch strings.ToLower(priority) {
+	case "required":
+		return 5
+	case "important":
+		return 4
+	case "standard":
+		return 3
+	case "optional":
+		return 2
+	case "extra":
+		return 1
+	default:
+		return 0
+	}
+}
+
+// providerOrder compares two providers of a virtual package the way apt picks
+// among them without a preference: the higher priority first, then the one
+// read later (apt prepends to the provider list). seq is unique to a version,
+// so the order is total.
+func providerOrder(a, b *pkg) int {
+	if d := priorityRank(b.Priority) - priorityRank(a.Priority); d != 0 {
+		return d
+	}
+
+	return b.seq - a.seq
+}
+
+// hasAvailable reports whether a real package of that name has an installable
+// version on any architecture. c.mu must be held.
+func (c *Cache) hasAvailable(name string) bool {
+	for _, key := range c.slotKeysFor(name) {
+		if slices.ContainsFunc(c.slots[key], func(p *pkg) bool { return p.available() }) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// ResolveVirtual returns the name of the concrete package ResolveDeps prefers
+// for a virtual package (the highest priority, then the provider read last),
+// or name itself when it is a real package (it has a candidate) or unknown.
 func (c *Cache) ResolveVirtual(name string) string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	for _, key := range []string{name, name + ":" + c.hostArch, name + ":" + archAll} {
-		if p, ok := c.entries[key]; ok && p.HasCandidate {
-			return name
-		}
-
-		if bare, _, found := strings.Cut(key, ":"); found {
-			if p, ok := c.entries[bare]; ok && p.HasCandidate {
-				return name
-			}
-		}
+	if c.hasAvailable(name) {
+		return name
 	}
 
-	if providers := c.providers[name]; len(providers) > 0 {
-		return providers[0]
+	providers := slices.Clone(c.providers[name])
+	providers = slices.DeleteFunc(providers, func(p *pkg) bool { return !p.available() })
+
+	if len(providers) == 0 {
+		return name
 	}
 
-	return name
+	slices.SortStableFunc(providers, providerOrder)
+
+	return providers[0].Name
 }
 
 // InstalledNames returns the names, without architecture qualifier, of the
@@ -250,214 +541,11 @@ func (c *Cache) InstalledNames() map[string]bool {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	out := make(map[string]bool)
+	out := make(map[string]bool, len(c.installed))
 
-	for _, info := range c.entries {
-		if !info.Installed {
-			continue
-		}
-
-		name, _, _ := strings.Cut(info.Name, ":")
-		out[name] = true
+	for _, p := range c.installed {
+		out[p.Name] = true
 	}
 
 	return out
-}
-
-// ResolveDeps resolves the transitive dependencies of seeds. It returns the
-// packages to download in dependency order (dependencies before dependents),
-// and the names that are not in the index.
-//
-// Installed packages are not listed, but their dependencies are still walked.
-// Virtual packages resolve to their first provider, alternatives to their first
-// option, and version constraints are ignored. A seed may carry an
-// architecture qualifier ("libc6-dev:arm64"); it is inherited by every
-// dependency, so that resolution is consistent when several architectures'
-// indexes are loaded. A chain deeper than a few thousand packages fails with
-// ErrDependencyDepth.
-func (c *Cache) ResolveDeps(seeds []string) ([]*PackageInfo, []string, error) {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-
-	r := &resolver{c: c, visited: make(map[string]bool), emitted: make(map[string]bool)}
-
-	for _, seed := range seeds {
-		seed = strings.TrimSpace(seed)
-
-		name, arch, _ := strings.Cut(seed, ":")
-
-		if i := strings.Index(arch, "("); i >= 0 {
-			arch = strings.TrimSpace(arch[:i])
-		}
-
-		if i := strings.Index(name, "("); i >= 0 {
-			name = strings.TrimSpace(name[:i])
-		}
-
-		if err := r.visit(name, arch); err != nil {
-			return nil, nil, err
-		}
-	}
-
-	return r.order, r.unresolved, nil
-}
-
-// resolver is the state of one ResolveDeps walk, a post-order DFS keyed by
-// name:arch. Cycles end at the visited set, which is filled before recursing.
-type resolver struct {
-	c       *Cache
-	visited map[string]bool
-	// emitted dedupes on the resolved entry. visited is keyed by the requested
-	// name:arch, but several requests can land on one entry (architecture all
-	// packages, host-only or Multi-Arch: foreign packages reached as both
-	// :arm64 and :amd64); listing it twice would make the download stage fetch
-	// one .deb twice, concurrently, into one file.
-	emitted    map[string]bool
-	order      []*PackageInfo
-	unresolved []string
-	depth      int
-}
-
-func (r *resolver) visit(name, arch string) error {
-	name = strings.TrimSpace(name)
-	if name == "" {
-		return nil
-	}
-
-	if arch == "" {
-		arch = r.c.hostArch
-	}
-
-	key := entryKey(name, arch)
-	if r.visited[key] {
-		return nil
-	}
-
-	r.visited[key] = true
-
-	if r.depth >= maxResolveDepth {
-		return ErrDependencyDepth
-	}
-
-	r.depth++
-	defer func() { r.depth-- }()
-
-	info, ok := r.c.find(name, arch)
-	if !ok {
-		if resolved := r.c.tryResolveVirtual(name); resolved != "" {
-			return r.visit(resolved, arch)
-		}
-
-		r.unresolved = append(r.unresolved, name)
-
-		return nil
-	}
-
-	info, arch = r.c.redirectForeignToHost(info, name, arch)
-
-	// A package found for another architecture than requested (an arm64 entry
-	// for an amd64 request) hands its own architecture to its dependencies.
-	if info.Architecture != "" && info.Architecture != arch && info.Architecture != archAll {
-		arch = info.Architecture
-	}
-
-	for _, d := range info.PreDepends {
-		if err := r.visit(d, arch); err != nil {
-			return err
-		}
-	}
-
-	for _, d := range info.Depends {
-		if err := r.visit(d, arch); err != nil {
-			return err
-		}
-	}
-
-	if info.Installed {
-		return nil
-	}
-
-	if id := resolvedEntryID(info); !r.emitted[id] {
-		r.emitted[id] = true
-
-		r.order = append(r.order, info)
-	}
-
-	return nil
-}
-
-// find locates the entry for name and arch: the exact key, the bare name
-// (architecture all), the host architecture, then any architecture. The host
-// fallback covers a host-only package that a cross build qualified with the
-// target architecture (gcc-aarch64-linux-gnu has no arm64 variant).
-func (c *Cache) find(name, arch string) (*PackageInfo, bool) {
-	if info, ok := c.entries[entryKey(name, arch)]; ok {
-		return info, true
-	}
-
-	if info, ok := c.entries[name]; ok {
-		return info, true
-	}
-
-	if info, ok := c.entries[name+":"+c.hostArch]; ok {
-		return info, true
-	}
-
-	return c.scanEntryByName(name)
-}
-
-// resolvedEntryID identifies a concrete index entry independently of the
-// name:arch it was requested under. The pool Filename is unique per package,
-// version and architecture.
-func resolvedEntryID(info *PackageInfo) string {
-	if info.Filename != "" {
-		return info.Filename
-	}
-
-	return info.Name + ":" + info.Architecture + "=" + info.Version
-}
-
-// redirectForeignToHost sends Multi-Arch: foreign packages to the host
-// architecture. One copy of such a package serves every architecture, and by
-// definition it is a host tool (gawk, perl, m4, autoconf): pulling the arm64
-// build into a cross-extract would overlay an arm64 gawk on the host's and
-// break later configure scripts with "Exec format error".
-func (c *Cache) redirectForeignToHost(info *PackageInfo, name, arch string) (*PackageInfo, string) {
-	if !info.MultiArchForeign() || arch == c.hostArch {
-		return info, arch
-	}
-
-	hostInfo, ok := c.entries[entryKey(name, c.hostArch)]
-	if !ok {
-		return info, arch
-	}
-
-	return hostInfo, c.hostArch
-}
-
-// tryResolveVirtual returns the first provider of a virtual package, or "".
-func (c *Cache) tryResolveVirtual(name string) string {
-	if providers := c.providers[name]; len(providers) > 0 {
-		return providers[0]
-	}
-
-	return ""
-}
-
-// scanEntryByName returns the first architecture qualified entry of a bare
-// name.
-func (c *Cache) scanEntryByName(name string) (*PackageInfo, bool) {
-	keys := c.byBareName[name]
-	if len(keys) == 0 {
-		return nil, false
-	}
-
-	info, ok := c.entries[keys[0]]
-
-	return info, ok
-}
-
-// versionWins reports whether candidate is a strictly higher Debian version.
-func versionWins(candidate, existing string) bool {
-	return deb.CompareVersions(candidate, existing) > 0
 }

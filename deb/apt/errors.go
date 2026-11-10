@@ -2,6 +2,7 @@ package apt
 
 import (
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -30,7 +31,115 @@ var (
 	// ErrInvalidIndexEntry reports an index entry that cannot be downloaded
 	// safely: a malformed SHA256, an out-of-range Size, or an unsafe Filename.
 	ErrInvalidIndexEntry = errors.New("apt: invalid package index entry")
+	// ErrDependencyDepth is returned by ResolveDeps for a dependency chain
+	// deeper than maxResolveDepth, which only a hostile or corrupt index
+	// produces.
+	ErrDependencyDepth = errors.New("apt: dependency chain too deep")
+	// ErrResolveLimit is returned by ResolveDeps when backtracking over
+	// alternatives and versions exceeds its step budget, which only a hostile
+	// or corrupt index produces.
+	ErrResolveLimit = errors.New("apt: dependency resolution exceeded its step limit")
+	// ErrUnsatisfiable is matched by an [UnsatisfiedError]: a dependency no
+	// available package satisfies.
+	ErrUnsatisfiable = errors.New("apt: unsatisfiable dependency")
+	// ErrConflict is matched by a [ConflictError]: a package that conflicts
+	// with, or breaks, an installed or selected one.
+	ErrConflict = errors.New("apt: conflicting packages")
 )
+
+// UnsatisfiedError reports a dependency that no available package satisfies:
+// no version of the name meets the constraint, or every candidate was refused
+// (see Causes). It matches [ErrUnsatisfiable].
+type UnsatisfiedError struct {
+	// Package is the package whose dependency it is ("name:arch version"), or
+	// "" for a name given to ResolveDeps.
+	Package string
+	// Dependency is the dependency as written ("foo (>= 2) | bar").
+	Dependency string
+	// Reason says why nothing satisfied it when no candidate was tried.
+	Reason string
+	// Causes are the errors of the candidates that were tried, in order.
+	Causes []error
+}
+
+// maxShownCauses bounds how many candidate failures Error prints.
+const maxShownCauses = 4
+
+// Error describes the dependency and, when there are any, the reasons.
+func (e *UnsatisfiedError) Error() string {
+	var sb strings.Builder
+
+	sb.WriteString("apt: cannot satisfy ")
+	sb.WriteString(e.Dependency)
+
+	if e.Package != "" {
+		sb.WriteString(" of ")
+		sb.WriteString(e.Package)
+	}
+
+	if e.Reason != "" {
+		sb.WriteString(": ")
+		sb.WriteString(e.Reason)
+	}
+
+	for i, cause := range e.Causes {
+		if i == maxShownCauses {
+			fmt.Fprintf(&sb, "\n\t... and %d more", len(e.Causes)-i)
+
+			break
+		}
+
+		sb.WriteString("\n\t")
+		sb.WriteString(strings.ReplaceAll(cause.Error(), "\n", "\n\t"))
+	}
+
+	return sb.String()
+}
+
+// Is matches ErrUnsatisfiable.
+func (e *UnsatisfiedError) Is(target error) bool { return target == ErrUnsatisfiable }
+
+// Unwrap exposes the candidate failures to errors.Is and errors.As.
+func (e *UnsatisfiedError) Unwrap() []error { return e.Causes }
+
+// ConflictError reports a package that cannot be installed because it
+// conflicts with, or breaks, a package that is installed or already selected,
+// or the other way round. It matches [ErrConflict].
+type ConflictError struct {
+	// Package is the package that was refused ("name:arch version").
+	Package string
+	// With is the package it clashes with.
+	With string
+	// WithInstalled is true when With is installed, false when it was selected
+	// earlier in the same resolution.
+	WithInstalled bool
+	// Kind is "Conflicts" or "Breaks".
+	Kind string
+	// Relation is the relation as written in the declaring package.
+	Relation string
+	// Reverse is true when With declares the relation and Package is the
+	// target; false when Package declares it.
+	Reverse bool
+}
+
+// Error names both packages and the relation.
+func (e *ConflictError) Error() string {
+	state := "selected"
+	if e.WithInstalled {
+		state = "installed"
+	}
+
+	if e.Reverse {
+		return fmt.Sprintf("apt: cannot install %s: %s package %s %s %s",
+			e.Package, state, e.With, strings.ToLower(e.Kind), e.Relation)
+	}
+
+	return fmt.Sprintf("apt: cannot install %s: it %s %s, which is %s as %s",
+		e.Package, strings.ToLower(e.Kind), e.Relation, state, e.With)
+}
+
+// Is matches ErrConflict.
+func (e *ConflictError) Is(target error) bool { return target == ErrConflict }
 
 // UpdateError is the error Update returns when sources fail: one error for
 // each (source, architecture) or component that did not update. The indexes
