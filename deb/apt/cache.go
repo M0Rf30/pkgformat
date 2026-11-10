@@ -33,7 +33,7 @@ type PackageInfo struct {
 	// MultiArch is the Multi-Arch field ("same", "foreign", "allowed" or "").
 	MultiArch string
 	// Installed is true when the dpkg status database reports the package as
-	// "install ok installed".
+	// installed (see [deb.Status.Installed]).
 	Installed bool
 	// HasCandidate is true when the package has a version in an apt index, that
 	// is, it is a real installable package and not a pure virtual one.

@@ -22,6 +22,7 @@ Requires Go 1.27 or later.
 | --- | --- |
 | Write `.pkg.tar.zst`, `.xz`, `.gz` | `Spec`, `PkgInfo`, `BuildInfo`, `Scriptlets`, `File`, `ScanDir`, `Spec.Write`, `Spec.WriteFile` |
 | Read packages | `ReadPackage`, `ParsePkgInfo`, `ParseBuildInfo` |
+| Installed packages | `FindLocalDB`, `OpenLocalDB`, `NewLocalDB`, `(*LocalDB)`: `Packages`, `List`, `InstalledNames`, `InstalledProvides` |
 | Sync databases | `ReadDB`, `ReadFileLists`, `WriteDB`, `NewDBEntry`, `DBEntry` |
 | Versions and dependencies | `Vercmp`, `ParseDependency`, `Dependency.Allows` |
 | Signatures | `SignDetached`, `NormalizeSignature`, verification through [`gpg`](../gpg/README.md) |
@@ -91,6 +92,28 @@ db, err := client.FetchDB(ctx, cfg.Repos[0])
 entries, err := db.Entries()
 path, err := client.DownloadPackage(ctx, cfg.Repos[0], &entries[0], "cache")
 ```
+
+## The local database
+
+`OpenLocalDB` reads `/var/lib/pacman/local`, read-only and without locking:
+`FindLocalDB("/")` gives the path under a root, and `NewLocalDB` reads any
+`fs.FS`. Each `<name>-<version>` directory yields an `InstalledPackage` from
+its `desc` (name, version, base, description, URL, architecture, packager,
+build and install dates, installed size, install reason, licenses, groups,
+validation, `xdata`, and the dependency, provides, conflicts and replaces
+lists) and its `files` (`%FILES%` and `%BACKUP%`). `desc` is read with the
+parser of the sync database. The `mtree` member is not read.
+
+The name of a package is its `%NAME%`, never part of the directory name.
+Symbolic links inside the database that point out of it are not followed. A
+directory without a valid `desc`, with a malformed value, a path that climbs
+out of the root, or over a limit is skipped and logged at debug level. An
+`ALPM_DB_VERSION` other than 9 is `ErrUnsupportedLocalDB`. `InstalledNames`
+and `InstalledProvides` do not read the `files` members: they list the names,
+and the provides without version constraints and with each package's own name.
+`LocalDBOptions` bounds the packages and the file records of one package, and
+`SkipFiles` leaves the file lists out. pacman writes `(null)` as the checksum
+of a `%BACKUP%` file it has none for; `BackupFile.MD5` keeps it.
 
 ## Security notes
 

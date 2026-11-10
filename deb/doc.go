@@ -37,6 +37,17 @@
 // checks against a version. NormalizeDependency converts a "name>=version"
 // dependency to control-file syntax.
 //
+// # Installed packages
+//
+// OpenStatus and NewStatusDB read a dpkg status file, bounded and read-only.
+// StatusDB.Entries yields each stanza as a StatusEntry: the parsed Package, the
+// Status (want, flag and state, as in "install ok installed") and the
+// ControlFile with every field. Status.Installed is true only for the state
+// "installed", so packages that are unpacked, half-configured or removed with
+// their configuration kept are not installed. StatusDB.InstalledNames and
+// StatusDB.InstalledProvides list the installed names and capabilities, and
+// ReadInfoList reads a package's file list from /var/lib/dpkg/info.
+//
 // # Repository indexes and Release files
 //
 // Index builds a Packages file from IndexEntry values (EntryFromControl makes

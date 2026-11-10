@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/M0Rf30/pkgformat/apk"
@@ -105,4 +106,36 @@ func ExampleClient() {
 	}
 
 	fmt.Println(paths)
+}
+
+// Read the packages an apk system has installed, with the files they own. On
+// a host, FindInstalled("/") and OpenInstalled give the real database.
+func ExampleInstalledDB() {
+	const text = `C:Q1qvTGHdzF6KLavt4PO0gs2a6pQ00=
+P:busybox
+V:1.37.0-r31
+A:x86_64
+p:cmd:busybox=1.37.0-r31 /bin/sh
+F:bin
+R:busybox
+a:0:0:755
+Z:Q1y5VcgN7Y1x2d9E1Gp7BkG5mZYGM=
+
+`
+
+	db := apk.NewInstalledDB(strings.NewReader(text), int64(len(text)), apk.InstalledOptions{})
+
+	for pkg, err := range db.Packages(context.Background()) {
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(pkg.Name, pkg.Version, pkg.FilePaths())
+	}
+
+	provides, _ := db.InstalledProvides(context.Background())
+	fmt.Println(provides)
+	// Output:
+	// busybox 1.37.0-r31 [bin/busybox]
+	// [/bin/sh busybox cmd:busybox]
 }

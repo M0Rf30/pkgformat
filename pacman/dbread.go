@@ -270,6 +270,18 @@ func parseFileList(body []byte) []string {
 func parseDesc(body []byte) (*DBEntry, error) {
 	e := &DBEntry{}
 
+	if err := scanBlocks(body, e.setField); err != nil {
+		return nil, err
+	}
+
+	return e, nil
+}
+
+// scanBlocks walks the "%FIELD%" blocks of a desc-style member: a header line
+// "%KEY%", the value lines that follow, ended by a blank line, the next header
+// or the end of the body. It calls set for each block, and stops at its first
+// error.
+func scanBlocks(body []byte, set func(key string, values []string) error) error {
 	var (
 		key    string
 		values []string
@@ -280,7 +292,7 @@ func parseDesc(body []byte) (*DBEntry, error) {
 			return nil
 		}
 
-		err := e.setField(key, values)
+		err := set(key, values)
 		key, values = "", nil
 
 		return err
@@ -292,24 +304,20 @@ func parseDesc(body []byte) (*DBEntry, error) {
 		switch {
 		case len(line) > 2 && line[0] == '%' && line[len(line)-1] == '%':
 			if err := flush(); err != nil {
-				return nil, err
+				return err
 			}
 
 			key = line[1 : len(line)-1]
 		case line == "":
 			if err := flush(); err != nil {
-				return nil, err
+				return err
 			}
 		case key != "":
 			values = append(values, line)
 		}
 	}
 
-	if err := flush(); err != nil {
-		return nil, err
-	}
-
-	return e, nil
+	return flush()
 }
 
 // setField stores one block of a desc member. Unknown fields are ignored.

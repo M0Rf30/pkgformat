@@ -16,6 +16,7 @@ github.com/M0Rf30/pkgformat/deb/apt    apt client: update, load, resolve, downlo
 | deb822 | `ParseControlFile` (strict, one paragraph), `ScanControl` (lenient, every paragraph), `ControlFile` |
 | Versions | `CompareVersions` (the dpkg algorithm), `ValidVersion`, `StripEpoch` |
 | Relations | `ParseRelations`, `DependencyNames`, `NormalizeDependency` |
+| Installed packages | `FindStatus`, `OpenStatus`, `(*StatusDB)`: `Entries`, `List`, `InstalledNames`, `InstalledProvides`; `ParseStatus`; `ReadInfoList` for `/var/lib/dpkg/info/*.list` |
 | Repository indexes | `Index` (Packages writer, plain and compressed), `ScanPackages`, `OpenIndex` (gz, bz2, xz, lz4, zst) |
 | Release | `Release`, `ParseRelease`, `SignRelease`, `Trust` (InRelease and Release.gpg verification policy) |
 | apt client | `apt.Update`, `apt.Load`, `(*apt.Cache)`: `Lookup`, `ResolveVirtual`, `ResolveDeps`, `Download`, `DownloadClosure` |
@@ -30,6 +31,28 @@ Compression of written packages: `gzip`, `xz`, `zstd` (default) or none. Index d
 * **Extraction cannot escape.** `Extract` resolves every path under the target directory, including symlink chains (see the `safepath` package).
 * **Errors are values.** `fmt.Errorf("deb: ...: %w")` with exported sentinels; `errors.Is` works.
 * **No globals, no host paths.** The apt client takes the lists directory, the dpkg status file, the keyring paths and the HTTP client as options. `*slog.Logger` is optional.
+
+## The installed database
+
+`OpenStatus` (or `NewStatusDB` over an `io.ReaderAt`) reads a dpkg `status` file
+read-only, in bounded memory, one stanza at a time. `FindStatus("/")` gives the
+path under a root. Each `StatusEntry` has the parsed `Package`, the `Status`
+split into want, flag and state (`install ok installed`), and the `ControlFile`
+with every field, which `ControlFile.String` writes back as dpkg wrote it
+(a `Conffiles:` list included).
+
+`Status.Installed()` is true only when the state is `installed`, as in apt's
+and dpkg's own notion of an installed package: a package that is `unpacked`,
+`half-configured`, `half-installed`, `triggers-awaited`, `triggers-pending` or
+`config-files` (removed, configuration kept) is not. The want does not matter,
+so a package on hold is installed. `InstalledNames` and `InstalledProvides`
+count those only; the provides include the names of versioned provides
+(`Provides: foo (= 1)` gives `foo`) and the name of the package itself, and
+names carry no architecture qualifier. `ReadInfoList` reads the file list
+`<name>:<arch>.list` (or `<name>.list`) from an `fs.FS` rooted at
+`/var/lib/dpkg/info`. A stanza with no `Package` is skipped and logged at debug
+level; the file size and the number of stanzas are limits
+(`StatusOptions.MaxBytes`, `MaxEntries`).
 
 ## Verification policy
 
@@ -53,4 +76,4 @@ Compression of written packages: `gzip`, `xz`, `zstd` (default) or none. Index d
 
 ## Not included
 
-Writing the dpkg status database and running maintainer scripts are the installer's job and live outside this module. The parser reads a dpkg status file given by path so that installed packages can be skipped when resolving.
+Writing the dpkg status database and running maintainer scripts are the installer's job and live outside this module. The status reader is read only.

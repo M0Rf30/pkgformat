@@ -232,6 +232,14 @@ func scanParagraphs(r io.Reader, fn func(text string) error) error {
 	return flush()
 }
 
+// trimValue strips the blanks around a field value. A newline in front of the
+// first line is kept: "Conffiles:" followed by one entry per continuation line
+// has an empty first line, and rendering the value must not fold the first
+// entry up to the field name.
+func trimValue(v string) string {
+	return strings.TrimRight(strings.TrimLeft(v, " \t"), " \t\r\n")
+}
+
 // parseParagraph builds a ControlFile from the text of one paragraph.
 func parseParagraph(text string, strict bool) (*ControlFile, error) {
 	cf := NewControlFile()
@@ -250,7 +258,7 @@ func parseParagraph(text string, strict bool) (*ControlFile, error) {
 			cf.Order = append(cf.Order, field)
 		}
 
-		cf.Fields[field] = strings.TrimSpace(value.String())
+		cf.Fields[field] = trimValue(value.String())
 
 		field = ""
 
@@ -343,20 +351,23 @@ type Package struct {
 // ParsePackage extracts the package fields. Package, Version and Architecture
 // are required.
 func (cf *ControlFile) ParsePackage() (*Package, error) {
-	pkg := &Package{Custom: make(map[string]string)}
-
-	var err error
-
-	if pkg.Package, err = cf.GetRequired("Package"); err != nil {
-		return nil, err
+	for _, field := range [...]string{"Package", "Version", "Architecture"} {
+		if _, err := cf.GetRequired(field); err != nil {
+			return nil, err
+		}
 	}
 
-	if pkg.Version, err = cf.GetRequired("Version"); err != nil {
-		return nil, err
-	}
+	return cf.parsePackage(), nil
+}
 
-	if pkg.Architecture, err = cf.GetRequired("Architecture"); err != nil {
-		return nil, err
+// parsePackage extracts the package fields without requiring any: the
+// required ones are what the paragraph holds, possibly empty.
+func (cf *ControlFile) parsePackage() *Package {
+	pkg := &Package{
+		Package:      cf.Get("Package"),
+		Version:      cf.Get("Version"),
+		Architecture: cf.Get("Architecture"),
+		Custom:       make(map[string]string),
 	}
 
 	for _, name := range cf.Order {
@@ -367,7 +378,7 @@ func (cf *ControlFile) ParsePackage() (*Package, error) {
 		}
 	}
 
-	return pkg, nil
+	return pkg
 }
 
 // setField stores a known field and reports whether name was one.

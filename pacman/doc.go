@@ -20,6 +20,14 @@
 // repo-add does, from entries NewDBEntry builds out of package files.
 // Vercmp compares versions like libalpm.
 //
+// # The local database
+//
+// OpenLocalDB, NewLocalDB and FindLocalDB read the installed packages of
+// /var/lib/pacman/local, read-only: LocalDB.Packages yields an InstalledPackage
+// for each package directory, from its desc and files members, named by its
+// %NAME%. LocalDB.InstalledNames and LocalDB.InstalledProvides list the
+// installed names and capabilities.
+//
 // # Repositories
 //
 // ParseConfig and ParseMirrorlist read pacman.conf and mirrorlist text; they

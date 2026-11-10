@@ -27,6 +27,7 @@ Requires Go 1.27 or later.
 | Sign and verify | `SignPackage`, `WriteOptions.Signer`, `VerifyPackage`. RSA with PKCS#1 v1.5, SHA-1 (`.SIGN.RSA.`) or SHA-256 (`.SIGN.RSA256.`). |
 | Indexes | `BuildIndex`, `RenderIndex`, `ParseIndex`, `VerifyIndex`. |
 | Keys | `GenerateKey`, `ParsePrivateKeyPEM`, `ParsePublicKeyPEM`, `Keyring`, `LoadKeyring` for an apk keys directory. |
+| Installed packages | `FindInstalled`, `OpenInstalled`, `(*InstalledDB)`: `Packages`, `List`, `InstalledNames`, `InstalledProvides`. Reads `/lib/apk/db/installed`, with the file lists. |
 | Repositories | `ParseRepositories`; `Client` fetches and verifies the indexes and downloads packages; `Index` resolves names, capabilities and dependencies. |
 
 A package written by `WritePackage` has, as abuild writes it: an optional
@@ -79,6 +80,27 @@ res, err := index.ResolveDeps([]string{"curl"})
 paths, err := client.Download(ctx, "/var/cache/apk", res.Packages...)
 ```
 
+## The installed database
+
+`OpenInstalled` (or `NewInstalledDB` over an `io.ReaderAt`) reads
+`/lib/apk/db/installed`, read-only and in bounded memory: `FindInstalled("/")`
+gives the path under a root. Each `InstalledPackage` has the fields of an index
+entry (the same single-letter lines as an `APKINDEX`) plus `Replaces`,
+`ReplacesPriority` and the `Files` the package owns: directories (`F:`) and
+files (`R:`) with their checksum (`Z:`) and, from the `a:` and `M:` lines, owner
+and mode. The files are read with apk 2 and apk 3 databases alike.
+
+Unlike `ParseIndex` the reader is lenient: a record that is not valid (a
+missing `P`, `V` or `A`, a repeated field, a path that climbs out of the root,
+an ACL that is not `uid:gid:mode`) is skipped and logged at debug level, as a
+database written by an installer is not an index a client rejects as a whole. A
+name may start with a dot (`apk add --virtual .build-deps`) and a checksum may
+be of any algorithm. `InstalledNames` and `InstalledProvides` list the names
+and the capabilities (`so:libc.musl-x86_64.so.1`, `cmd:sh`), without versions
+and with the package's own name; they do not keep the file lists.
+`InstalledOptions` bounds the file size, the packages and the file records of
+one package, and `SkipFiles` leaves the file lists out.
+
 ## Signature types
 
 There is no default signature type. `NewSigner` takes the `SigAlgorithm`, and
@@ -117,8 +139,8 @@ notion of `@tag` pinning; the tag of a repository is only carried along.
 - `Info.License` is one string (abuild joins several licenses with a space).
 - Entries of the data segment are directories, regular files, symbolic links
   and named pipes. Devices and hard links are refused.
-- Installing packages, the apk database, version comparison and `@tag`
-  repository pinning are out of scope.
+- Installing packages, writing the installed database, version comparison and
+  `@tag` repository pinning are out of scope.
 
 ## Security notes
 

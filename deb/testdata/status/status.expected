@@ -1,0 +1,91 @@
+apt	3.0.4	amd64	ii 	install ok installed	apt-transport-https (= 3.0.4)
+base-files	13.8+deb13u7	amd64	ii 	install ok installed	base, usr-is-merged
+base-passwd	3.6.7	amd64	ii 	install ok installed	
+bash	5.2.37-2+b10	amd64	ii 	install ok installed	
+bsdutils	1:2.41.5-0+deb13u1	amd64	ii 	install ok installed	
+coreutils	9.7-3	amd64	ii 	install ok installed	
+dash	0.5.12-12	amd64	ii 	install ok installed	
+debconf	1.5.91	all	ii 	install ok installed	debconf-2.0
+debian-archive-keyring	2025.1	all	ii 	install ok installed	
+debianutils	5.23.2	amd64	ii 	install ok installed	
+diffutils	1:3.10-4	amd64	ii 	install ok installed	
+dpkg	1.22.22	amd64	ii 	install ok installed	
+findutils	4.10.0-3	amd64	ii 	install ok installed	
+gcc-14-base	14.2.0-19	amd64	ii 	install ok installed	
+gcc-14-base	14.2.0-19	i386	ii 	install ok installed	
+grep	3.11-4	amd64	ii 	install ok installed	rgrep
+gzip	1.13-1+deb13u1	amd64	ii 	install ok installed	
+hello	2.10-5	amd64	hi 	hold ok installed	
+hostname	3.25	amd64	ii 	install ok installed	
+init-system-helpers	1.69~deb13u1	all	ii 	install ok installed	
+less	668-1	amd64	iU 	install ok unpacked	
+libacl1	2.3.2-2+b1	amd64	ii 	install ok installed	
+libapt-pkg7.0	3.0.4	amd64	ii 	install ok installed	libapt-pkg (= 3.0.4)
+libattr1	1:2.5.2-3	amd64	ii 	install ok installed	
+libaudit-common	1:4.0.2-2+deb13u1	all	ii 	install ok installed	
+libaudit1	1:4.0.2-2+deb13u1	amd64	ii 	install ok installed	
+libblkid1	2.41.5-0+deb13u1	amd64	ii 	install ok installed	
+libbsd0	0.12.2-2	amd64	ii 	install ok installed	
+libbz2-1.0	1.0.8-6	amd64	ii 	install ok installed	
+libc-bin	2.41-12+deb13u4	amd64	ii 	install ok installed	
+libc6	2.41-12+deb13u4	amd64	ii 	install ok installed	
+libc6	2.41-12+deb13u4	i386	ii 	install ok installed	libc6-i686
+libcap-ng0	0.8.5-4+b1	amd64	ii 	install ok installed	
+libcap2	1:2.75-10+deb13u1+b3	amd64	ii 	install ok installed	
+libcrypt1	1:4.4.38-1	amd64	ii 	install ok installed	
+libdb5.3t64	5.3.28+dfsg2-9	amd64	ii 	install ok installed	libdb5.3 (= 5.3.28+dfsg2-9)
+libdebconfclient0	0.280	amd64	ii 	install ok installed	
+libffi8	3.4.8-2	amd64	ii 	install ok installed	libffi8ubuntu1 (= 3.4.8-2)
+libgcc-s1	14.2.0-19	amd64	ii 	install ok installed	libgcc1 (= 1:14.2.0-19)
+libgcc-s1	14.2.0-19	i386	ii 	install ok installed	libgcc1 (= 1:14.2.0-19)
+libgmp10	2:6.3.0+dfsg-3	amd64	ii 	install ok installed	
+libgnutls30t64	3.8.9-3+deb13u4	amd64	ii 	install ok installed	libgnutls30 (= 3.8.9-3+deb13u4)
+libhogweed6t64	3.10.1-1	amd64	ii 	install ok installed	libhogweed6 (= 3.10.1-1)
+libidn2-0	2.3.8-2	amd64	ii 	install ok installed	
+liblastlog2-2	2.41.5-0+deb13u1	amd64	ii 	install ok installed	
+liblz4-1	1.10.0-4	amd64	ii 	install ok installed	
+liblzma5	5.8.1-1+deb13u2	amd64	ii 	install ok installed	
+libmd0	1.1.0-2+b1	amd64	ii 	install ok installed	
+libmount1	2.41.5-0+deb13u1	amd64	ii 	install ok installed	
+libnettle8t64	3.10.1-1	amd64	ii 	install ok installed	libnettle8 (= 3.10.1-1)
+libp11-kit0	0.25.5-3	amd64	ii 	install ok installed	
+libpam-modules	1.7.0-5	amd64	ii 	install ok installed	libpam-mkhomedir, libpam-motd, libpam-umask
+libpam-modules-bin	1.7.0-5	amd64	ii 	install ok installed	
+libpam-runtime	1.7.0-5	all	ii 	install ok installed	
+libpam0g	1.7.0-5	amd64	ii 	install ok installed	
+libpcre2-8-0	10.46-1~deb13u3	amd64	ii 	install ok installed	
+libpsl5t64	0.21.2-1.1+b1	amd64	ii 	install ok installed	libpsl5 (= 0.21.2-1.1+b1)
+libseccomp2	2.6.0-2	amd64	ii 	install ok installed	
+libselinux1	3.8.1-1	amd64	ii 	install ok installed	
+libsemanage-common	3.8.1-1	all	ii 	install ok installed	
+libsemanage2	3.8.1-1	amd64	ii 	install ok installed	
+libsepol2	3.8.1-1	amd64	ii 	install ok installed	
+libsmartcols1	2.41.5-0+deb13u1	amd64	ii 	install ok installed	
+libsqlite3-0	3.46.1-7+deb13u2	amd64	ii 	install ok installed	
+libssl3t64	3.5.7-1~deb13u3	amd64	ii 	install ok installed	libssl3 (= 3.5.7-1~deb13u3)
+libstdc++6	14.2.0-19	amd64	ii 	install ok installed	
+libsystemd0	257.13-1~deb13u1	amd64	ii 	install ok installed	
+libtasn1-6	4.20.0-2+deb13u1	amd64	ii 	install ok installed	
+libtinfo6	6.5+20250216-2	amd64	ii 	install ok installed	
+libudev1	257.13-1~deb13u1	amd64	ii 	install ok installed	
+libunistring5	1.3-2	amd64	ii 	install ok installed	
+libuuid1	2.41.5-0+deb13u1	amd64	ii 	install ok installed	libuuid1t64 (= 2.41.5-0+deb13u1)
+libxxhash0	0.8.3-2	amd64	ii 	install ok installed	
+libzstd1	1.5.7+dfsg-1	amd64	ii 	install ok installed	
+login	1:4.16.0-2+really2.41.5-0+deb13u1	amd64	ii 	install ok installed	
+login.defs	1:4.17.4-2	all	ii 	install ok installed	
+mawk	1.3.4.20250131-1	amd64	ii 	install ok installed	awk
+mount	2.41.5-0+deb13u1	amd64	ii 	install ok installed	
+ncurses-base	6.5+20250216-2	all	ii 	install ok installed	ncurses-runtime
+ncurses-bin	6.5+20250216-2	amd64	ii 	install ok installed	
+openssl-provider-legacy	3.5.7-1~deb13u3	amd64	ii 	install ok installed	
+passwd	1:4.17.4-2	amd64	ii 	install ok installed	
+perl-base	5.40.1-6+deb13u1	amd64	ii 	install ok installed	libfile-path-perl (= 2.18), libfile-temp-perl (= 0.2311), libio-socket-ip-perl (= 0.42), libscalar-list-utils-perl (= 1:1.63), libsocket-perl (= 2.038), libxsloader-perl (= 0.32), perlapi-5.40.0, perlapi-5.40.1
+sed	4.9-2+deb13u1	amd64	ii 	install ok installed	
+sqv	1.3.0-3+b2	amd64	ii 	install ok installed	
+sysvinit-utils	3.14-4	amd64	ii 	install ok installed	lsb-base (= 11.1.0)
+tar	1.35+dfsg-3.1	amd64	ii 	install ok installed	
+tzdata	2026f-0+deb13u1	all	ii 	install ok installed	tzdata-trixie
+util-linux	2.41.5-0+deb13u1	amd64	ii 	install ok installed	hardlink
+wget	1.25.0-2	amd64	rc 	deinstall ok config-files	
+zlib1g	1:1.3.dfsg+really1.3.1-1+b1	amd64	ii 	install ok installed	libz1

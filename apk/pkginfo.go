@@ -225,6 +225,12 @@ func (p *Package) validateFields() error {
 		return err
 	}
 
+	return p.validateRest()
+}
+
+// validateRest checks everything validateFields does but the name, version
+// and architecture.
+func (p *Package) validateRest() error {
 	for _, f := range [...]struct{ name, val string }{
 		{"pkgdesc", p.Description}, {"url", p.URL}, {"license", p.License},
 		{"origin", p.Origin}, {"maintainer", p.Maintainer}, {"commit", p.Commit},

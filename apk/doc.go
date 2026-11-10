@@ -26,6 +26,14 @@
 // a [Keyring] ([LoadKeyring] reads an apk keys directory). Nothing defaults to
 // SHA-1.
 //
+// # The installed database
+//
+// OpenInstalled and NewInstalledDB read /lib/apk/db/installed, read-only: an
+// [InstalledPackage] per record, with the index fields and the directories and
+// files it owns, their checksums, owners and modes. A record that is not valid
+// is skipped. [InstalledDB.InstalledNames] and [InstalledDB.InstalledProvides]
+// list the installed names and capabilities.
+//
 // # Indexes
 //
 // [BuildIndex] and [RenderIndex] write an APKINDEX.tar.gz or its text,

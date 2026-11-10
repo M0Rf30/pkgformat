@@ -2,8 +2,11 @@ package pacman_test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
+	"log"
 	"strings"
+	"testing/fstest"
 	"time"
 
 	"github.com/M0Rf30/pkgformat/pacman"
@@ -73,4 +76,30 @@ func Example() {
 	// hello-1.0-1-x86_64.pkg.tar.zst [glibc] [usr/ usr/bin/ usr/bin/hello]
 	// local 1.0-1 <nil> -1
 	// https://mirror.example/core/os/x86_64
+}
+
+// Read the packages a pacman system has installed. On a host, FindLocalDB("/")
+// and OpenLocalDB give the real database.
+func ExampleLocalDB() {
+	fsys := fstest.MapFS{
+		"ALPM_DB_VERSION":   {Data: []byte("9\n")},
+		"acl-2.4.0-1/desc":  {Data: []byte("%NAME%\nacl\n\n%VERSION%\n2.4.0-1\n\n%REASON%\n1\n\n%PROVIDES%\nlibacl.so=1-64\n\n")},
+		"acl-2.4.0-1/files": {Data: []byte("%FILES%\nusr/\nusr/bin/\nusr/bin/chacl\n")},
+	}
+
+	db := pacman.NewLocalDB(fsys, pacman.LocalDBOptions{})
+
+	for pkg, err := range db.Packages(context.Background()) {
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(pkg.Name, pkg.Version, pkg.Reason == pacman.ReasonDependency, pkg.Files)
+	}
+
+	provides, _ := db.InstalledProvides(context.Background())
+	fmt.Println(provides)
+	// Output:
+	// acl 2.4.0-1 true [usr/ usr/bin/ usr/bin/chacl]
+	// [acl libacl.so]
 }

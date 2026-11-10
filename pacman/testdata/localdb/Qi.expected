@@ -1,0 +1,200 @@
+Name            : acl
+Version         : 2.4.0-1
+Description     : Access control list utilities, libraries and headers
+Architecture    : x86_64
+URL             : https://savannah.nongnu.org/projects/acl
+Licenses        : LGPL-2.1-or-later AND GPL-2.0-or-later
+Groups          : None
+Provides        : libacl.so=1-64
+Depends On      : glibc
+Optional Deps   : None
+Required By     : None
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 345.21 KiB
+Packager        : Christian Hesse <eworm@archlinux.org>
+Build Date      : Mon Jun 29 13:16:29 2026
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : attr
+Version         : 2.6.0-1
+Description     : Extended attribute support library for ACL support
+Architecture    : x86_64
+URL             : https://savannah.nongnu.org/projects/attr
+Licenses        : LGPL-2.1-or-later AND GPL-2.0-or-later
+Groups          : None
+Provides        : libattr.so=1-64
+Depends On      : glibc
+Optional Deps   : None
+Required By     : None
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 234.66 KiB
+Packager        : Christian Hesse <eworm@archlinux.org>
+Build Date      : Mon Jun 29 13:12:57 2026
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : bash
+Version         : 5.3.20-1
+Description     : The GNU Bourne Again shell
+Architecture    : x86_64
+URL             : https://www.gnu.org/software/bash/bash.html
+Licenses        : GPL-3.0-or-later
+Groups          : None
+Provides        : sh
+Depends On      : readline  libreadline.so=8-64  glibc  ncurses
+Optional Deps   : bash-completion: for tab completion
+Required By     : ca-certificates-utils  pacman
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 9.59 MiB
+Packager        : Tobias Powalowski <tpowa@archlinux.org>
+Build Date      : Tue Sep 15 19:47:19 2026
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : Yes
+Validated By    : Signature
+
+Name            : binutils
+Version         : 2.47-4
+Description     : A set of programs to assemble and manipulate binary and object files
+Architecture    : x86_64
+URL             : https://www.gnu.org/software/binutils/
+Licenses        : GPL-2.0-or-later  GPL-3.0-or-later  LGPL-2.0-or-later  LGPL-3.0-or-later  GFDL-1.3  FSFAP
+Groups          : None
+Provides        : libctf.so=0-64  libgprofng.so=0-64  libsframe.so=3-64
+Depends On      : glibc  jansson  libelf  libgcc  libstdc++  zlib  zstd
+Optional Deps   : debuginfod: for debuginfod server/client functionality
+                  perl: for gprofng-display-html
+Required By     : None
+Optional For    : None
+Conflicts With  : binutils-multilib
+Replaces        : binutils-multilib
+Installed Size  : 43.76 MiB
+Packager        : Lukas Fleischer <lfleischer@archlinux.org>
+Build Date      : Tue Aug 11 15:28:32 2026
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : ca-certificates-utils
+Version         : 20240618-1
+Description     : Common CA certificates (utilities)
+Architecture    : any
+URL             : https://src.fedoraproject.org/rpms/ca-certificates
+Licenses        : GPL-2.0-or-later
+Groups          : None
+Provides        : ca-certificates  ca-certificates-java
+Depends On      : bash  coreutils  findutils  p11-kit
+Optional Deps   : None
+Required By     : None
+Optional For    : None
+Conflicts With  : ca-certificates-java
+Replaces        : ca-certificates-java
+Installed Size  : 13.63 KiB
+Packager        : Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+Build Date      : Tue Jun 18 18:36:40 2024
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : Yes
+Validated By    : Signature
+
+Name            : filesystem
+Version         : 2025.10.12-1
+Description     : Base Arch Linux files
+Architecture    : any
+URL             : https://archlinux.org
+Licenses        : 0BSD
+Groups          : None
+Provides        : None
+Depends On      : iana-etc
+Optional Deps   : None
+Required By     : None
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 23.98 KiB
+Packager        : David Runge <dvzrv@archlinux.org>
+Build Date      : Sun Oct 12 16:21:41 2025
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : pacman
+Version         : 7.1.0.r9.g54d9411-3
+Description     : A library-based package manager with dependency support
+Architecture    : x86_64
+URL             : https://www.archlinux.org/pacman/
+Licenses        : GPL-2.0-or-later
+Groups          : None
+Provides        : libalpm.so=16-64
+Depends On      : bash  coreutils  curl  libcurl.so=4-64  gawk  gettext  glibc  gnupg  gpgme  libgpgme.so=45-64  grep  libarchive  libarchive.so=13-64  openssl  libcrypto.so=3-64  pacman-mirrorlist  systemd  libmakepkg-dropins
+Optional Deps   : base-devel: required to use makepkg
+                  perl-locale-gettext: translation support in makepkg-template
+Required By     : None
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 5.04 MiB
+Packager        : Christian Hesse <eworm@archlinux.org>
+Build Date      : Thu Oct 15 08:27:03 2026
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : pacman-mirrorlist
+Version         : 20260610-1
+Description     : Arch Linux mirror list for use by pacman
+Architecture    : any
+URL             : https://www.archlinux.org/mirrorlist/
+Licenses        : GPL-2.0-or-later
+Groups          : None
+Provides        : None
+Depends On      : None
+Optional Deps   : None
+Required By     : pacman
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 26.65 KiB
+Packager        : Tobias Powalowski <tpowa@archlinux.org>
+Build Date      : Wed Jun 10 04:33:38 2026
+Install Date    : Sun Nov  8 00:00:00 2026
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : tree
+Version         : 2.3.2-1
+Description     : A directory listing program displaying a depth indented list of files
+Architecture    : x86_64
+URL             : https://gitlab.com/OldManProgrammer/unix-tree
+Licenses        : GPL-2.0-or-later
+Groups          : None
+Provides        : None
+Depends On      : glibc
+Optional Deps   : None
+Required By     : None
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 94.00 KiB
+Packager        : Jelle van der Waa <jelle@archlinux.org>
+Build Date      : Sun Mar 29 14:23:02 2026
+Install Date    : Tue Nov 10 16:39:23 2026
+Install Reason  : Explicitly installed
+Install Script  : No
+Validated By    : Signature
+

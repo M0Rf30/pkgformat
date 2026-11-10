@@ -1,9 +1,9 @@
 package apt
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
 	"maps"
 	"os"
@@ -55,7 +55,7 @@ func Load(opts LoadOptions) (*Cache, error) {
 	}
 
 	if opts.StatusFile != "" {
-		if err := c.parseFile(opts.StatusFile, true, ""); err != nil {
+		if err := c.parseStatus(opts.StatusFile, opts.Logger); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -124,7 +124,7 @@ func (c *Cache) loadLists(opts LoadOptions) error {
 		wg.Go(func() {
 			for idx := range jobCh {
 				local := NewCache(c.hostArch)
-				fileErrs[idx] = local.parseFile(jobs[idx].path, false, jobs[idx].baseURL)
+				fileErrs[idx] = local.parseFile(jobs[idx].path, jobs[idx].baseURL)
 				partials[idx] = local
 
 				if opts.Logger != nil {
@@ -258,11 +258,9 @@ func copyInfoArtifacts(existing, info *PackageInfo) {
 	}
 }
 
-// parseFile reads a deb822 file, compressed or not by its extension, into the
-// cache. dpkgStatus selects the status database flavour, where the Status field
-// sets Installed and the index-only fields are ignored. baseURL is the
-// repository URL of an apt index.
-func (c *Cache) parseFile(path string, dpkgStatus bool, baseURL string) error {
+// parseFile reads an apt Packages index, compressed or not by its extension,
+// into the cache. baseURL is the repository URL of the index.
+func (c *Cache) parseFile(path, baseURL string) error {
 	f, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("apt: open index: %w", err)
@@ -270,26 +268,46 @@ func (c *Cache) parseFile(path string, dpkgStatus bool, baseURL string) error {
 
 	defer func() { _ = f.Close() }()
 
-	var r io.Reader = f
-
-	if !dpkgStatus {
-		rc, err := deb.OpenIndex(f, path)
-		if err != nil {
-			return fmt.Errorf("apt: open %s: %w", filepath.Base(path), err)
-		}
-
-		defer func() { _ = rc.Close() }()
-
-		r = rc
+	rc, err := deb.OpenIndex(f, path)
+	if err != nil {
+		return fmt.Errorf("apt: open %s: %w", filepath.Base(path), err)
 	}
 
-	err = deb.ScanControl(r, func(cf *deb.ControlFile) error {
-		c.flushStanza(stanzaOf(cf, dpkgStatus, baseURL), dpkgStatus)
+	defer func() { _ = rc.Close() }()
+
+	err = deb.ScanControl(rc, func(cf *deb.ControlFile) error {
+		c.flushStanza(stanzaOf(cf, baseURL), false)
 
 		return nil
 	})
 	if err != nil {
 		return fmt.Errorf("apt: parse %s: %w", filepath.Base(path), err)
+	}
+
+	return nil
+}
+
+// parseStatus overlays the dpkg status database at path: every stanza adds its
+// package, and the ones whose state is installed set Installed. The
+// index-only fields of a status stanza are ignored. A nil logger is silent.
+func (c *Cache) parseStatus(path string, logger *slog.Logger) error {
+	db, err := deb.OpenStatus(path, deb.StatusOptions{Logger: logger})
+	if err != nil {
+		return fmt.Errorf("apt: open status: %w", err)
+	}
+
+	defer func() { _ = db.Close() }()
+
+	for entry, err := range db.Entries(context.Background()) {
+		if err != nil {
+			return fmt.Errorf("apt: parse %s: %w", filepath.Base(path), err)
+		}
+
+		s := stanzaOf(entry.Control, "")
+		s.installed = entry.Status.Installed()
+		s.sha256, s.size = "", 0
+
+		c.flushStanza(s, true)
 	}
 
 	return nil
@@ -313,7 +331,9 @@ type stanza struct {
 	baseURL    string
 }
 
-func stanzaOf(cf *deb.ControlFile, dpkgStatus bool, baseURL string) *stanza {
+// stanzaOf reads the fields of a paragraph of an index or of the status
+// database; the index-only ones are empty for a status stanza.
+func stanzaOf(cf *deb.ControlFile, baseURL string) *stanza {
 	s := &stanza{
 		baseURL:    baseURL,
 		pkgName:    cf.Get("Package"),
@@ -328,13 +348,6 @@ func stanzaOf(cf *deb.ControlFile, dpkgStatus bool, baseURL string) *stanza {
 	}
 
 	s.hasVersion = s.version != ""
-
-	if dpkgStatus {
-		s.installed = cf.Get("Status") == "install ok installed"
-
-		return s
-	}
-
 	s.sha256 = cf.Get("SHA256")
 	s.size, _ = strconv.ParseInt(cf.Get("Size"), 10, 64)
 
@@ -433,13 +446,8 @@ func copyStanzaArtifacts(existing *PackageInfo, s *stanza) {
 
 // flushProvides records the Provides of a package in the reverse index.
 func (c *Cache) flushProvides(pkgName, provides string) {
-	for prov := range strings.SplitSeq(provides, ",") {
-		// "foo (= 1.0)" provides foo.
-		vname, _, _ := strings.Cut(strings.TrimSpace(prov), " (")
-		vname, _, _ = strings.Cut(vname, ":")
-
-		if vname = strings.TrimSpace(vname); vname != "" {
-			c.providers[vname] = append(c.providers[vname], pkgName)
-		}
+	// "foo (= 1.0)" provides foo, "foo:any" too.
+	for _, vname := range deb.DependencyNames(provides) {
+		c.providers[vname] = append(c.providers[vname], pkgName)
 	}
 }

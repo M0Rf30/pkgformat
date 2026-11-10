@@ -111,18 +111,22 @@ func TestLoadStatusOverlay(t *testing.T) {
 	assert.Equal(t, "ok.deb", ok.Filename, "the status database does not change artifact fields of the index")
 	assert.Zero(t, ok.Size)
 
-	for _, n := range []string{"removed", "half", "wanthold", "notindexed"} {
+	for _, n := range []string{"removed", "half", "notindexed"} {
 		info, found := c.Lookup(n)
 		require.True(t, found, n)
 		assert.False(t, info.Installed, n)
 	}
+
+	held, found := c.Lookup("wanthold")
+	require.True(t, found)
+	assert.True(t, held.Installed, "a package on hold is installed")
 
 	only, found := c.Lookup("only-status")
 	require.True(t, found)
 	assert.True(t, only.Installed)
 	assert.Empty(t, only.BaseURL, "a status-only package cannot be downloaded")
 
-	assert.Equal(t, map[string]bool{"ok": true, "only-status": true}, c.InstalledNames())
+	assert.Equal(t, map[string]bool{"ok": true, "only-status": true, "wanthold": true}, c.InstalledNames())
 }
 
 func TestLoadMergeRules(t *testing.T) {

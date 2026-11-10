@@ -2,8 +2,10 @@ package deb_test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/M0Rf30/pkgformat/deb"
@@ -171,4 +173,38 @@ func ExampleTrust_VerifyInRelease() {
 	// signed by the trusted key: "Suite: stable\nCodename: bookworm" <nil>
 	// forged: true
 	// deb: no usable trust anchor for source
+}
+
+// Read the packages a dpkg status file records as installed. On a host,
+// FindStatus("/") and OpenStatus give the real file.
+func ExampleStatusDB() {
+	const text = `Package: hello
+Status: hold ok installed
+Version: 2.10-5
+Architecture: amd64
+Provides: greeter (= 1)
+
+Package: wget
+Status: deinstall ok config-files
+Version: 1.25.0-2
+Architecture: amd64
+`
+
+	db := deb.NewStatusDB(strings.NewReader(text), int64(len(text)), deb.StatusOptions{})
+
+	for entry, err := range db.Entries(context.Background()) {
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(entry.Package.Package, entry.Package.Version, entry.Status, entry.Status.Installed())
+	}
+
+	names, _ := db.InstalledNames(context.Background())
+	provides, _ := db.InstalledProvides(context.Background())
+	fmt.Println(names, provides)
+	// Output:
+	// hello 2.10-5 hold ok installed true
+	// wget 1.25.0-2 deinstall ok config-files false
+	// [hello] [greeter hello]
 }
