@@ -104,7 +104,10 @@ func (rpm *Rpm) ExpandPayloadWithOptions(dest string, opts *ExpandOptions) error
 	if c, ok := pld.(io.Closer); ok {
 		defer c.Close()
 	}
-	return cpio.ExtractWithOptions(pld, dest, co)
+	if err := cpio.ExtractWithOptions(pld, dest, co); err != nil {
+		return err
+	}
+	return verifyPayloadEnd(pld)
 }
 
 // fileMetas converts the header file list to what the cpio extractor needs.

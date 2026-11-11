@@ -50,7 +50,7 @@ func nastyPackage(rng *rand.Rand) pkgrpm.Package {
 
 			out[i] = pkgrpm.Dependency{
 				Name:    pick() + "(GLIBC_2." + string(rune('0'+rng.IntN(9))) + ")",
-				Flags:   flagSet[rng.IntN(len(flagSet))],
+				Flags:   pkgrpm.Sense(flagSet[rng.IntN(len(flagSet))]),
 				Version: ver,
 				Epoch:   uint32(rng.IntN(3)),
 			}

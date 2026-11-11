@@ -120,6 +120,11 @@ func payloadLayout(files []FileInfo) (sizes []int64, nlinks []int, isLink []bool
 func (pr *payloadReader) Next() (FileInfo, error) {
 	hdr, err := pr.cr.Next()
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			if verr := verifyPayloadEnd(pr.stream); verr != nil {
+				err = verr
+			}
+		}
 		// close decompressor on EOF or error, zstd in particular leaks
 		// goroutines otherwise
 		if c, ok := pr.stream.(io.Closer); ok {

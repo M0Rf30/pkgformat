@@ -30,37 +30,96 @@ type Rpm struct {
 	Header *RpmHeader
 	f      io.Reader
 
-	maxPayload int64
+	maxPayload    int64
+	verifyDigest  bool
+	compressedSum *payloadHasher
 }
 
 // ErrPayloadTooLarge is returned when the decompressed payload is larger than
 // the limit set with [Rpm.SetMaxPayloadSize].
 var ErrPayloadTooLarge = errors.New("rpm payload exceeds the configured size limit")
 
+// ErrPayloadDigest is returned at the end of the payload when its digest
+// differs from the one the header records (see [Rpm.SetVerifyPayloadDigest]).
+var ErrPayloadDigest = errors.New("rpm payload digest mismatch")
+
+// DefaultMaxPayloadSize bounds the decompressed payload of a package that
+// declares no payload size.
+const DefaultMaxPayloadSize = 4 << 30
+
 // SetMaxPayloadSize bounds the number of bytes the decompressed payload may
 // produce through ExpandPayload, PayloadReader and PayloadReaderExtended. Once
 // the payload yields more than limit bytes, reads fail with
-// [ErrPayloadTooLarge]. A limit of zero or less removes the limit, which is the
-// default.
+// [ErrPayloadTooLarge].
 //
-// RPM payloads are compressed and come from untrusted sources: a few KiB of
-// compressed data can expand to many GiB. Callers handling untrusted packages
-// should set a limit derived from their own policy (the PAYLOADSIZE declared
-// in the header, see [RpmHeader.PayloadSize], is attacker-controlled too).
+// A limit of zero restores the default: [DefaultMaxPayloadSize], or twice the
+// payload size the header declares (see [RpmHeader.PayloadSize]) when that is
+// larger. The declared size is attacker-controlled, so callers handling
+// untrusted packages should check it against their own policy before
+// expanding. A negative limit removes the bound.
 func (rpm *Rpm) SetMaxPayloadSize(limit int64) {
 	rpm.maxPayload = limit
 }
 
+// SetVerifyPayloadDigest makes the payload readers hash the compressed payload
+// and compare it, once the decompressed payload has been read to its end, to
+// the PAYLOADDIGEST of the header; a mismatch ends the read with
+// [ErrPayloadDigest] instead of io.EOF. Packages without a payload digest
+// (older than rpm 4.14) are not checked. Signature verification ([Verify])
+// covers the payload digest through the signed header, so verifying both
+// proves the payload authentic.
+func (rpm *Rpm) SetVerifyPayloadDigest(verify bool) {
+	rpm.verifyDigest = verify
+}
+
+// payloadLimit returns the effective decompressed payload bound, or -1.
+func (rpm *Rpm) payloadLimit() int64 {
+	switch {
+	case rpm.maxPayload < 0:
+		return -1
+	case rpm.maxPayload > 0:
+		return rpm.maxPayload
+	}
+
+	// Writers disagree on what the declared size counts (some record the sum
+	// of the file sizes), so it only raises the bound for large packages.
+	if n, err := rpm.Header.PayloadSize(); err == nil && n > DefaultMaxPayloadSize/2 {
+		return 2 * n
+	}
+
+	return DefaultMaxPayloadSize
+}
+
 // uncompressedPayload returns the decompressed payload stream with the configured
-// size limit applied.
+// size limit and digest check applied.
 func (rpm *Rpm) uncompressedPayload() (io.Reader, error) {
-	pld, err := uncompressRpmPayloadReader(rpm.f, rpm.Header)
+	src := rpm.f
+
+	if rpm.verifyDigest {
+		h, err := newPayloadHasher(rpm.Header, src)
+		if err != nil {
+			return nil, err
+		}
+
+		if h != nil {
+			rpm.compressedSum = h
+			src = h
+		}
+	}
+
+	pld, err := uncompressRpmPayloadReader(src, rpm.Header)
 	if err != nil {
 		return nil, err
 	}
-	if rpm.maxPayload > 0 {
-		pld = newLimitedReader(pld, rpm.maxPayload)
+
+	if limit := rpm.payloadLimit(); limit >= 0 {
+		pld = newLimitedReader(pld, limit)
 	}
+
+	if rpm.compressedSum != nil {
+		pld = &digestCheckReader{r: pld, h: rpm.compressedSum}
+	}
+
 	return pld, nil
 }
 

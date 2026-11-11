@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"path"
 	"strings"
 
 	"github.com/M0Rf30/pkgformat/internal/pathseg"
@@ -40,7 +41,74 @@ type FileEntry struct {
 	Size  int64  `json:"size,omitempty"`
 	User  string `json:"user,omitempty"`
 	Group string `json:"group,omitempty"`
+
+	// Caps is the file capability set in the text form of cap_to_text(3),
+	// for example "cap_net_raw=ep" (FILECAPS); empty for most files.
+	Caps string `json:"caps,omitempty"`
+	// Nlink is the number of hard links of the file within the package
+	// (FILENLINKS). Older packages lack the tag: Nlink is then derived from
+	// the device and inode numbers, and stays 0 when those are missing too.
+	Nlink uint32 `json:"nlink,omitempty"`
+	// Device and Inode are the numbers recorded when the package was built;
+	// files with the same pair are hard links of each other. Rdev is the
+	// device number of a device node.
+	Device uint32 `json:"device,omitempty"`
+	Inode  uint32 `json:"inode,omitempty"`
+	Rdev   uint32 `json:"rdev,omitempty"`
+	// Lang is the %lang of the file (FILELANGS), for example "de".
+	Lang string `json:"lang,omitempty"`
+	// Class is the description of the file type, as file(1) classifies it
+	// (FILECLASS looked up in CLASSDICT), for example "directory".
+	Class string `json:"class,omitempty"`
+	// VerifyFlags are the checks "rpm -V" applies to the file: a mask of the
+	// tag.RPMVERIFY_* bits (FILEVERIFYFLAGS), all bits set for the default.
+	VerifyFlags uint32 `json:"verifyFlags,omitempty"`
+	// Context is the SELinux context of the file (FILECONTEXTS).
+	Context string `json:"context,omitempty"`
+	// IMASignature is the IMA file signature (FILESIGNATURES), hex encoded;
+	// see [Package.IMASignatureLength] and [VerifyIMASignature].
+	IMASignature string `json:"imaSignature,omitempty"`
+	// VeritySignature is the fs-verity signature of the file
+	// (VERITYSIGNATURES of the signature header), hex encoded; see
+	// [Package.VeritySignatureAlgorithm] and [VerifyVeritySignature].
+	VeritySignature string `json:"veritySignature,omitempty"`
+	// Depends lists the dependencies of the package that the file gave rise
+	// to (FILEDEPENDSX, FILEDEPENDSN and DEPENDSDICT): the provides and
+	// requires that the dependency generators found in it.
+	Depends []FileDependency `json:"depends,omitempty"`
 }
+
+// FileDependency refers to a dependency of the package that was generated
+// from a file.
+type FileDependency struct {
+	// Provide is true for an entry of Package.Provides, false for one of
+	// Package.Requires.
+	Provide bool `json:"provide,omitempty"`
+	// Index is the position in that list.
+	Index int `json:"index"`
+}
+
+// Dependency returns the dependency a file dependency refers to, and whether
+// pkg has it.
+func (d FileDependency) Dependency(pkg *Package) (Dependency, bool) {
+	list := pkg.Requires
+	if d.Provide {
+		list = pkg.Provides
+	}
+
+	if d.Index < 0 || d.Index >= len(list) {
+		return Dependency{}, false
+	}
+
+	return list[d.Index], true
+}
+
+// Verifies reports whether "rpm -V" applies every check of mask (the
+// tag.RPMVERIFY_* bits) to the file.
+func (f FileEntry) Verifies(mask uint32) bool { return f.VerifyFlags&mask == mask }
+
+// IsSpec reports whether the entry is the spec file of a source package.
+func (f FileEntry) IsSpec() bool { return f.Flags&tag.RPMFILE_SPECFILE != 0 }
 
 // ChangelogEntry is one entry of the changelog of a package.
 type ChangelogEntry struct {
@@ -101,6 +169,81 @@ type Package struct {
 
 	Files      []FileEntry      `json:"files,omitempty"`
 	Changelogs []ChangelogEntry `json:"changelogs,omitempty"`
+
+	// Distribution, OS, BugURL and VCS are the tags of the same name.
+	Distribution string `json:"distribution,omitempty"`
+	OS           string `json:"os,omitempty"`
+	BugURL       string `json:"bugUrl,omitempty"`
+	VCS          string `json:"vcs,omitempty"`
+	// RPMVersion is the version of rpm that built the package.
+	RPMVersion string `json:"rpmVersion,omitempty"`
+	// Format is the package format: 4, or 6 for the packages of rpm 6.
+	Format int `json:"format,omitempty"`
+	// Prefixes are the paths a relocatable package may be moved from.
+	Prefixes []string `json:"prefixes,omitempty"`
+	// ModularityLabel is the module stream the package belongs to,
+	// "name:stream:version:context".
+	ModularityLabel string `json:"modularityLabel,omitempty"`
+	// DistTag is the %{dist} of the release (".fc41") and DistURL the
+	// location the package was distributed from.
+	DistTag string `json:"distTag,omitempty"`
+	DistURL string `json:"distUrl,omitempty"`
+	// BuildArchs are the architectures a source package is built for.
+	BuildArchs []string `json:"buildArchs,omitempty"`
+	// Cookie identifies the build ("host timestamp").
+	Cookie string `json:"cookie,omitempty"`
+	// Platform is the platform triplet the package was built for, for
+	// example "x86_64-redhat-linux-gnu", and OptFlags the compiler flags.
+	Platform string `json:"platform,omitempty"`
+	OptFlags string `json:"optFlags,omitempty"`
+	// Policies are the SELinux policy modules of the package.
+	Policies []Policy `json:"policies,omitempty"`
+	// SysUsers are the sysusers.d lines the package declares (%sysusers).
+	SysUsers []string `json:"sysUsers,omitempty"`
+	// Order lists the packages that must be installed in this transaction
+	// before this one, as a dependency list (the ORDER* tags).
+	Order []Dependency `json:"order,omitempty"`
+	// IsSource is true for a source package.
+	IsSource bool `json:"source,omitempty"`
+	// ExcludeArch, ExclusiveArch, ExcludeOS and ExclusiveOS restrict where
+	// the package is built (source packages).
+	ExcludeArch   []string `json:"excludeArch,omitempty"`
+	ExclusiveArch []string `json:"exclusiveArch,omitempty"`
+	ExcludeOS     []string `json:"excludeOs,omitempty"`
+	ExclusiveOS   []string `json:"exclusiveOs,omitempty"`
+	// Sources and Patches list the sources and the patches of a source
+	// package, including those it does not ship (%NoSource, %NoPatch).
+	Sources []SourceFile `json:"sources,omitempty"`
+	Patches []SourceFile `json:"patches,omitempty"`
+	// Spec is the text of the spec file (a tag of rpm 6 source packages).
+	Spec string `json:"spec,omitempty"`
+
+	// Scripts are the scriptlets, Triggers the package triggers and
+	// FileTriggers the file triggers and transaction file triggers.
+	Scripts      Scripts       `json:"scripts,omitempty"`
+	Triggers     []Trigger     `json:"triggers,omitempty"`
+	FileTriggers []FileTrigger `json:"fileTriggers,omitempty"`
+
+	// PayloadFormat, PayloadCompressor and PayloadFlags describe the
+	// payload: "cpio", "zstd" and the compression level ("19").
+	PayloadFormat     string `json:"payloadFormat,omitempty"`
+	PayloadCompressor string `json:"payloadCompressor,omitempty"`
+	PayloadFlags      string `json:"payloadFlags,omitempty"`
+	// PayloadDigests are the digests of the payload, one per algorithm; see
+	// [Rpm.SetVerifyPayloadDigest] for their use.
+	PayloadDigests []PayloadDigest `json:"payloadDigests,omitempty"`
+	// FileDigestAlgorithm is the number of the hash of Files[i].Digest
+	// (FILEDIGESTALGO, 1 = MD5 for packages without the tag) and
+	// FileDigestName its name, for example "sha256".
+	FileDigestAlgorithm uint32 `json:"fileDigestAlgorithm,omitempty"`
+	FileDigestName      string `json:"fileDigestName,omitempty"`
+	// IMASignatureLength is the length in bytes of the IMA signatures of the
+	// files (FILESIGNATURELENGTH); 0 when the package has none.
+	IMASignatureLength uint32 `json:"imaSignatureLength,omitempty"`
+	// VeritySignatureAlgorithm is the fs-verity digest algorithm of the
+	// fs-verity signatures of the files: 1 for SHA-256, 2 for SHA-512; 0 when
+	// the package has none.
+	VeritySignatureAlgorithm uint32 `json:"veritySignatureAlgorithm,omitempty"`
 
 	// FilesTruncated is true when the header declared more files than
 	// PackageLimits.MaxArrayEntries or their strings exceeded
@@ -204,10 +347,105 @@ func (hdr *RpmHeader) buildPackage(lim PackageLimits, requireArch bool) (*Packag
 		return nil, err
 	}
 
-	pkg.Files, pkg.FilesTruncated = gen.files(lim)
+	pkg.Files, pkg.FilesTruncated = gen.files(lim, hdr.sigHeader)
 	pkg.Changelogs = gen.changelogs(lim.MaxArrayEntries)
 
+	if err := pkg.readMetadata(hdr, lim); err != nil {
+		return nil, err
+	}
+
 	return pkg, nil
+}
+
+// readMetadata fills the fields of the package beyond its identity,
+// dependencies and files.
+func (p *Package) readMetadata(hdr *RpmHeader, lim PackageLimits) error {
+	gen := hdr.genHeader
+	limit := lim.MaxArrayEntries
+
+	p.Distribution = gen.firstString(tag.DISTRIBUTION)
+	p.OS = gen.firstString(tag.OS)
+	p.BugURL = gen.firstString(tag.BUGURL)
+	p.VCS = gen.firstString(tag.VCS)
+	p.RPMVersion = gen.firstString(tag.RPMVERSION)
+	p.Format = hdr.Format()
+	p.Prefixes, _ = gen.stringsPrefix(tag.PREFIXES, limit)
+	p.ModularityLabel = gen.firstString(tag.MODULARITYLABEL)
+	p.DistTag = gen.firstString(tag.DISTTAG)
+	p.DistURL = gen.firstString(tag.DISTURL)
+	p.BuildArchs, _ = gen.stringsPrefix(tag.BUILDARCHS, limit)
+	p.Cookie = gen.firstString(tag.COOKIE)
+	p.Platform = gen.firstString(tag.PLATFORM)
+	p.OptFlags = gen.firstString(tag.OPTFLAGS)
+	p.Policies = gen.policies(limit)
+	p.SysUsers, _ = gen.stringsPrefix(tag.SYSUSERS, limit)
+	p.Order, _ = gen.dependencies(tag.ORDERNAME, tag.ORDERFLAGS, tag.ORDERVERSION, limit)
+	p.IsSource = hdr.isSource || gen.firstNumber(tag.SOURCEPACKAGE) != 0
+	p.ExcludeArch, _ = gen.stringsPrefix(tag.EXCLUDEARCH, limit)
+	p.ExclusiveArch, _ = gen.stringsPrefix(tag.EXCLUSIVEARCH, limit)
+	p.ExcludeOS, _ = gen.stringsPrefix(tag.EXCLUDEOS, limit)
+	p.ExclusiveOS, _ = gen.stringsPrefix(tag.EXCLUSIVEOS, limit)
+	p.Spec = gen.firstString(tag.SPEC)
+	p.PayloadFormat = gen.firstString(tag.PAYLOADFORMAT)
+	p.PayloadCompressor = gen.firstString(tag.PAYLOADCOMPRESSOR)
+	p.PayloadFlags = gen.firstString(tag.PAYLOADFLAGS)
+	p.PayloadDigests = gen.payloadDigests()
+	p.FileDigestAlgorithm = uint32(gen.firstNumber(tag.FILEDIGESTALGO))
+
+	if p.FileDigestAlgorithm == 0 && len(p.Files) > 0 {
+		p.FileDigestAlgorithm = tag.HASH_MD5
+	}
+
+	p.FileDigestName = DigestAlgorithmName(p.FileDigestAlgorithm)
+	p.IMASignatureLength = uint32(gen.firstNumber(tag.FILESIGNATURELENGTH))
+	p.VeritySignatureAlgorithm = uint32(hdr.sigHeader.firstNumber(tag.SIG_VERITYSIGNATUREALGO))
+
+	if p.IsSource {
+		ghosts := map[string]bool{}
+
+		for _, f := range p.Files {
+			if f.IsGhost() {
+				ghosts[path.Base(f.Path)] = true
+			}
+		}
+
+		p.Sources = gen.readSources(tag.SOURCE, tag.NOSOURCE, limit, ghosts)
+		p.Patches = gen.readSources(tag.PATCH, tag.NOPATCH, limit, ghosts)
+	}
+
+	p.Scripts = gen.scripts()
+
+	var err error
+	if p.Triggers, err = gen.triggers(limit); err != nil {
+		return err
+	}
+
+	p.FileTriggers, err = gen.fileTriggers(limit)
+
+	return err
+}
+
+// BuildRequires returns the build requirements of a source package: its
+// Requires list, which for a source package holds the BuildRequires of the
+// spec file, including the rpmlib(...) features needed to build it. It is nil
+// for a binary package.
+func (p *Package) BuildRequires() []Dependency {
+	if !p.IsSource {
+		return nil
+	}
+
+	return p.Requires
+}
+
+// BuildConflicts returns the build conflicts of a source package: its
+// Conflicts list, which holds the BuildConflicts of the spec file. It is nil
+// for a binary package.
+func (p *Package) BuildConflicts() []Dependency {
+	if !p.IsSource {
+		return nil
+	}
+
+	return p.Conflicts
 }
 
 // archiveSize returns the uncompressed payload size: format 4 packages carry
@@ -306,7 +544,7 @@ func (p *Package) readDependencies(h *rpmHeader, limit int) error {
 
 // files decodes the file list. It keeps at most lim.MaxArrayEntries files and
 // lim.MaxFileListBytes of strings, and reports whether it stopped early.
-func (hdr *rpmHeader) files(lim PackageLimits) (files []FileEntry, truncated bool) {
+func (hdr *rpmHeader) files(lim PackageLimits, sig *rpmHeader) (files []FileEntry, truncated bool) {
 	bases, declared := hdr.stringsPrefix(tag.BASENAMES, lim.MaxArrayEntries)
 	if len(bases) == 0 {
 		return nil, false
@@ -387,7 +625,98 @@ func (hdr *rpmHeader) files(lim PackageLimits) (files []FileEntry, truncated boo
 		files = append(files, entry)
 	}
 
+	hdr.fileExtras(files, sig)
+
 	return files, truncated
+}
+
+// fileExtras fills the per-file metadata beyond the basic attributes.
+func (hdr *rpmHeader) fileExtras(files []FileEntry, sig *rpmHeader) {
+	n := len(files)
+	caps, _ := hdr.stringsPrefix(tag.FILECAPS, n)
+	nlinks, _ := hdr.numbersPrefix(tag.FILENLINKS, n)
+	devices, _ := hdr.numbersPrefix(tag.FILEDEVICES, n)
+	inodes, _ := hdr.numbersPrefix(tag.FILEINODES, n)
+	rdevs, _ := hdr.numbersPrefix(tag.FILERDEVS, n)
+	langs, _ := hdr.stringsPrefix(tag.FILELANGS, n)
+	classIdx, _ := hdr.numbersPrefix(tag.FILECLASS, n)
+	classDict, _ := hdr.stringsPrefix(tag.CLASSDICT, n+1024)
+	verify, _ := hdr.numbersPrefix(tag.FILEVERIFYFLAGS, n)
+	contexts, _ := hdr.stringsPrefix(tag.FILECONTEXTS, n)
+	imaSigs, _ := hdr.stringsPrefix(tag.FILESIGNATURES, n)
+	depX, _ := hdr.numbersPrefix(tag.FILEDEPENDSX, n)
+	depN, _ := hdr.numbersPrefix(tag.FILEDEPENDSN, n)
+	depDict, _ := hdr.numbersPrefix(tag.DEPENDSDICT, 1<<20)
+
+	var veritySigs []string
+	if sig != nil {
+		veritySigs, _ = sig.stringsPrefix(tag.SIG_VERITYSIGNATURES, n)
+	}
+
+	at := func(s []string, i int) string {
+		if i < len(s) {
+			return s[i]
+		}
+
+		return ""
+	}
+
+	links := map[[2]uint64]uint32{}
+
+	for i := range files {
+		f := &files[i]
+		f.Caps = at(caps, i)
+		f.Lang = at(langs, i)
+		f.Context = at(contexts, i)
+		f.IMASignature = at(imaSigs, i)
+		f.VeritySignature = at(veritySigs, i)
+
+		if i < len(devices) {
+			f.Device = uint32(devices[i])
+		}
+
+		if i < len(inodes) {
+			f.Inode = uint32(inodes[i])
+		}
+
+		if i < len(rdevs) {
+			f.Rdev = uint32(rdevs[i])
+		}
+
+		if i < len(verify) {
+			f.VerifyFlags = uint32(verify[i])
+		}
+
+		if i < len(classIdx) && classIdx[i] < uint64(len(classDict)) {
+			f.Class = classDict[classIdx[i]]
+		}
+
+		if i < len(depX) && i < len(depN) {
+			start, count := depX[i], depN[i]
+			for j := start; j < start+count && j < uint64(len(depDict)); j++ {
+				v := uint32(depDict[j])
+				f.Depends = append(f.Depends, FileDependency{
+					Provide: v>>24 == 'P',
+					Index:   int(v & 0x00ffffff),
+				})
+			}
+		}
+
+		if i < len(nlinks) {
+			f.Nlink = uint32(nlinks[i])
+		} else if i < len(devices) && i < len(inodes) {
+			links[[2]uint64{devices[i], inodes[i]}]++
+		}
+	}
+
+	if len(nlinks) == 0 && len(links) > 0 {
+		for i := range files {
+			f := &files[i]
+			if f.Inode != 0 {
+				f.Nlink = links[[2]uint64{uint64(f.Device), uint64(f.Inode)}]
+			}
+		}
+	}
 }
 
 func (hdr *rpmHeader) changelogs(limit int) []ChangelogEntry {

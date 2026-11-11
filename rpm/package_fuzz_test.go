@@ -72,8 +72,13 @@ func FuzzReadRawHeader(f *testing.F) {
 		}
 
 		_, _ = h.dependencies(tag.REQUIRENAME, tag.REQUIREFLAGS, tag.REQUIREVERSION, 16)
-		_, _ = h.files(PackageLimits{MaxArrayEntries: 16, MaxFileListBytes: 1 << 10})
+		_, _ = h.files(PackageLimits{MaxArrayEntries: 16, MaxFileListBytes: 1 << 10}, h)
 		_ = h.changelogs(16)
+		_ = h.scripts()
+		_, _ = h.triggers(16)
+		_, _ = h.fileTriggers(16)
+		_ = h.payloadDigests()
+		_ = h.policies(16)
 	})
 }
 

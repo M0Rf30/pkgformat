@@ -1,0 +1,1168 @@
+{
+ "meta-v4.nosrc.rpm": {
+  "bugurl": "https://example.invalid/bugs",
+  "cookie": "localhost 1700000000",
+  "distribution": "Example Linux",
+  "disttag": ".exl9",
+  "excludearch": [
+   "s390x"
+  ],
+  "excludeos": [
+   "windows"
+  ],
+  "exclusivearch": [
+   "x86_64",
+   "aarch64"
+  ],
+  "exclusiveos": [
+   "linux"
+  ],
+  "files": [
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "a.tar",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "b.dat",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "c-nosource.tar",
+    "rdev": 0,
+    "verify": 4294967256
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "meta.spec",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "p0.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "p1.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "p2-nosource.patch",
+    "rdev": 0,
+    "verify": 4294967256
+   }
+  ],
+  "filetriggerpriorities": [],
+  "filetriggerscripts": [],
+  "modularitylabel": "meta:1:20240101:abcd1234",
+  "nopatch": [
+   2
+  ],
+  "nosource": [
+   2
+  ],
+  "patches": [
+   "p0.patch",
+   "p1.patch",
+   "p2-nosource.patch"
+  ],
+  "payloadflags": "19",
+  "platform": "",
+  "requires": [
+   {
+    "flags": 0,
+    "name": "(make or gmake)"
+   },
+   {
+    "flags": 12,
+    "name": "gcc"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(CompressedFileNames)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(FileDigests)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PayloadIsZstd)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(RichDependencies)"
+   }
+  ],
+  "scripts": {},
+  "source": true,
+  "sources": [
+   "a.tar",
+   "b.dat",
+   "c-nosource.tar"
+  ],
+  "transfiletriggerpriorities": [],
+  "transfiletriggerscripts": [],
+  "triggers": [],
+  "triggerscripts": [],
+  "vcs": "git:https://example.invalid/meta.git"
+ },
+ "meta-v4.rpm": {
+  "bugurl": "https://example.invalid/bugs",
+  "cookie": "",
+  "distribution": "Example Linux",
+  "disttag": ".exl9",
+  "excludearch": [],
+  "excludeos": [],
+  "exclusivearch": [],
+  "exclusiveos": [],
+  "files": [
+   {
+    "caps": "",
+    "class": "ASCII text",
+    "lang": "",
+    "nlink": 1,
+    "path": "/etc/meta.conf",
+    "rdev": 0,
+    "verify": 4294967260
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/bin/fifo",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "cap_net_raw=ep",
+    "class": "ASCII text",
+    "lang": "",
+    "nlink": 3,
+    "path": "/usr/bin/hard1",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "ASCII text",
+    "lang": "",
+    "nlink": 3,
+    "path": "/usr/bin/hard2",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "ASCII text",
+    "lang": "",
+    "nlink": 3,
+    "path": "/usr/bin/hard3",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "POSIX shell script, ASCII text executable",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/bin/ping-like",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/bin/plink",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "directory",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/share/locale/de/LC_MESSAGES",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "ASCII text",
+    "lang": "de",
+    "nlink": 1,
+    "path": "/usr/share/locale/de/LC_MESSAGES/meta.mo",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "ASCII text",
+    "lang": "fr",
+    "nlink": 1,
+    "path": "/usr/share/locale/fr/LC_MESSAGES/meta.mo",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/var/lib/meta-state",
+    "rdev": 0,
+    "verify": 4294967256
+   }
+  ],
+  "filetriggerpriorities": [
+   1000000,
+   100,
+   1000000
+  ],
+  "filetriggerscripts": [
+   "echo ftin",
+   "print(\"ftun\")",
+   "echo ftpostun"
+  ],
+  "modularitylabel": "meta:1:20240101:abcd1234",
+  "nopatch": [],
+  "nosource": [],
+  "patches": [],
+  "payloadflags": "19",
+  "platform": "x86_64-vendor-linux",
+  "requires": [
+   {
+    "flags": 0,
+    "name": "(libfoo if foo)"
+   },
+   {
+    "flags": 256,
+    "name": "/bin/bash"
+   },
+   {
+    "flags": 1280,
+    "name": "/bin/bash"
+   },
+   {
+    "flags": 256,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 288,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 768,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 4352,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 8448,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 16384,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 1048832,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 2304,
+    "name": "/usr/bin/python3"
+   },
+   {
+    "flags": 12,
+    "name": "bash"
+   },
+   {
+    "flags": 268435464,
+    "name": "config(meta-test)"
+   },
+   {
+    "flags": 1024,
+    "name": "coreutils"
+   },
+   {
+    "flags": 8192,
+    "name": "findutils"
+   },
+   {
+    "flags": 128,
+    "name": "glibc"
+   },
+   {
+    "flags": 4096,
+    "name": "grep"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(BuiltinLuaScripts)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(CompressedFileNames)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(FileCaps)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(FileDigests)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PartialHardlinkSets)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PayloadFilesHavePrefix)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PayloadIsZstd)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(RichDependencies)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(ScriptletExpansion)"
+   },
+   {
+    "flags": 2048,
+    "name": "sed"
+   },
+   {
+    "flags": 512,
+    "name": "shadow-utils"
+   },
+   {
+    "flags": 32,
+    "name": "zlib"
+   }
+  ],
+  "scripts": {
+   "post": {
+    "body": "echo post meta-test",
+    "flags": 1,
+    "prog": [
+     "/bin/bash"
+    ]
+   },
+   "posttrans": {
+    "body": "echo posttrans",
+    "flags": 3,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "postun": {
+    "body": "echo postun",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "postuntrans": {
+    "body": "print(\"postuntrans\")",
+    "flags": 0,
+    "prog": [
+     "<lua>"
+    ]
+   },
+   "pre": {
+    "body": "echo pre",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "pretrans": {
+    "body": "print(\"pretrans\")",
+    "flags": 0,
+    "prog": [
+     "<lua>"
+    ]
+   },
+   "preun": {
+    "body": "print(\"preun\")",
+    "flags": 0,
+    "prog": [
+     "/usr/bin/python3"
+    ]
+   },
+   "preuntrans": {
+    "body": "echo preuntrans",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "verify": {
+    "body": "echo verify",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   }
+  },
+  "source": false,
+  "sources": [],
+  "transfiletriggerpriorities": [
+   7,
+   1000000,
+   1000000
+  ],
+  "transfiletriggerscripts": [
+   "echo tftin",
+   "echo tftun",
+   "echo tftpostun"
+  ],
+  "triggers": [
+   "bar",
+   "baz",
+   "foo",
+   "old",
+   "qux"
+  ],
+  "triggerscripts": [
+   "echo triggerprein",
+   "echo triggerin",
+   "echo triggerun",
+   "echo triggerpostun"
+  ],
+  "vcs": "git:https://example.invalid/meta.git"
+ },
+ "meta-v6.nosrc.rpm": {
+  "bugurl": "https://example.invalid/bugs",
+  "cookie": "localhost 1700000000",
+  "distribution": "Example Linux",
+  "disttag": ".exl9",
+  "excludearch": [
+   "s390x"
+  ],
+  "excludeos": [
+   "windows"
+  ],
+  "exclusivearch": [
+   "x86_64",
+   "aarch64"
+  ],
+  "exclusiveos": [
+   "linux"
+  ],
+  "files": [
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "a.tar",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "b.dat",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "c-nosource.tar",
+    "rdev": 0,
+    "verify": 4294967256
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "meta.spec",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "p0.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "p1.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "p2-nosource.patch",
+    "rdev": 0,
+    "verify": 4294967256
+   }
+  ],
+  "filetriggerpriorities": [],
+  "filetriggerscripts": [],
+  "modularitylabel": "meta:1:20240101:abcd1234",
+  "nopatch": [
+   2
+  ],
+  "nosource": [
+   2
+  ],
+  "patches": [
+   "p0.patch",
+   "p1.patch",
+   "p2-nosource.patch"
+  ],
+  "payloadflags": "19",
+  "platform": "",
+  "requires": [
+   {
+    "flags": 0,
+    "name": "(make or gmake)"
+   },
+   {
+    "flags": 12,
+    "name": "gcc"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(LargeFiles)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PayloadIsZstd)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(RichDependencies)"
+   }
+  ],
+  "scripts": {},
+  "source": true,
+  "sources": [
+   "a.tar",
+   "b.dat",
+   "c-nosource.tar"
+  ],
+  "transfiletriggerpriorities": [],
+  "transfiletriggerscripts": [],
+  "triggers": [],
+  "triggerscripts": [],
+  "vcs": "git:https://example.invalid/meta.git"
+ },
+ "meta-v6.rpm": {
+  "bugurl": "https://example.invalid/bugs",
+  "cookie": "",
+  "distribution": "Example Linux",
+  "disttag": ".exl9",
+  "excludearch": [],
+  "excludeos": [],
+  "exclusivearch": [],
+  "exclusiveos": [],
+  "files": [
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/etc/meta.conf",
+    "rdev": 0,
+    "verify": 4294967260
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/bin/fifo",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "cap_net_raw=ep",
+    "class": "",
+    "lang": "",
+    "nlink": 3,
+    "path": "/usr/bin/hard1",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 3,
+    "path": "/usr/bin/hard2",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 3,
+    "path": "/usr/bin/hard3",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/bin/ping-like",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/bin/plink",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/usr/share/locale/de/LC_MESSAGES",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "de",
+    "nlink": 1,
+    "path": "/usr/share/locale/de/LC_MESSAGES/meta.mo",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "fr",
+    "nlink": 1,
+    "path": "/usr/share/locale/fr/LC_MESSAGES/meta.mo",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "/var/lib/meta-state",
+    "rdev": 0,
+    "verify": 4294967256
+   }
+  ],
+  "filetriggerpriorities": [
+   1000000,
+   100,
+   1000000
+  ],
+  "filetriggerscripts": [
+   "echo ftin",
+   "print(\"ftun\")",
+   "echo ftpostun"
+  ],
+  "modularitylabel": "meta:1:20240101:abcd1234",
+  "nopatch": [],
+  "nosource": [],
+  "patches": [],
+  "payloadflags": "19",
+  "platform": "x86_64-vendor-linux",
+  "requires": [
+   {
+    "flags": 0,
+    "name": "(libfoo if foo)"
+   },
+   {
+    "flags": 256,
+    "name": "/bin/bash"
+   },
+   {
+    "flags": 1280,
+    "name": "/bin/bash"
+   },
+   {
+    "flags": 256,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 288,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 768,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 4352,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 8448,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 16384,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 1048832,
+    "name": "/bin/sh"
+   },
+   {
+    "flags": 2304,
+    "name": "/usr/bin/python3"
+   },
+   {
+    "flags": 12,
+    "name": "bash"
+   },
+   {
+    "flags": 268435464,
+    "name": "config(meta-test)"
+   },
+   {
+    "flags": 1024,
+    "name": "coreutils"
+   },
+   {
+    "flags": 8192,
+    "name": "findutils"
+   },
+   {
+    "flags": 128,
+    "name": "glibc"
+   },
+   {
+    "flags": 4096,
+    "name": "grep"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(BuiltinLuaScripts)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(FileCaps)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(LargeFiles)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PayloadIsZstd)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(RichDependencies)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(ScriptletExpansion)"
+   },
+   {
+    "flags": 2048,
+    "name": "sed"
+   },
+   {
+    "flags": 512,
+    "name": "shadow-utils"
+   },
+   {
+    "flags": 32,
+    "name": "zlib"
+   }
+  ],
+  "scripts": {
+   "post": {
+    "body": "echo post meta-test",
+    "flags": 1,
+    "prog": [
+     "/bin/bash"
+    ]
+   },
+   "posttrans": {
+    "body": "echo posttrans",
+    "flags": 3,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "postun": {
+    "body": "echo postun",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "postuntrans": {
+    "body": "print(\"postuntrans\")",
+    "flags": 0,
+    "prog": [
+     "<lua>"
+    ]
+   },
+   "pre": {
+    "body": "echo pre",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "pretrans": {
+    "body": "print(\"pretrans\")",
+    "flags": 0,
+    "prog": [
+     "<lua>"
+    ]
+   },
+   "preun": {
+    "body": "print(\"preun\")",
+    "flags": 0,
+    "prog": [
+     "/usr/bin/python3"
+    ]
+   },
+   "preuntrans": {
+    "body": "echo preuntrans",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   },
+   "verify": {
+    "body": "echo verify",
+    "flags": 0,
+    "prog": [
+     "/bin/sh"
+    ]
+   }
+  },
+  "source": false,
+  "sources": [],
+  "transfiletriggerpriorities": [
+   7,
+   1000000,
+   1000000
+  ],
+  "transfiletriggerscripts": [
+   "echo tftin",
+   "echo tftun",
+   "echo tftpostun"
+  ],
+  "triggers": [
+   "bar",
+   "baz",
+   "foo",
+   "old",
+   "qux"
+  ],
+  "triggerscripts": [
+   "echo triggerprein",
+   "echo triggerin",
+   "echo triggerun",
+   "echo triggerpostun"
+  ],
+  "vcs": "git:https://example.invalid/meta.git"
+ },
+ "src-v4.src.rpm": {
+  "bugurl": "",
+  "cookie": "localhost 1700000000",
+  "distribution": "",
+  "disttag": "",
+  "excludearch": [],
+  "excludeos": [],
+  "exclusivearch": [],
+  "exclusiveos": [],
+  "files": [
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "fix-a.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "fix-b.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "s0.tar",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "s5.dat",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "src-test.service",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "srcpkg.spec",
+    "rdev": 0,
+    "verify": 4294967295
+   }
+  ],
+  "filetriggerpriorities": [],
+  "filetriggerscripts": [],
+  "modularitylabel": "",
+  "nopatch": [],
+  "nosource": [],
+  "patches": [
+   "fix-a.patch",
+   "fix-b.patch"
+  ],
+  "payloadflags": "19",
+  "platform": "",
+  "requires": [
+   {
+    "flags": 0,
+    "name": "(cmake or meson)"
+   },
+   {
+    "flags": 12,
+    "name": "gcc"
+   },
+   {
+    "flags": 0,
+    "name": "make"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(CompressedFileNames)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(FileDigests)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PayloadIsZstd)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(RichDependencies)"
+   }
+  ],
+  "scripts": {},
+  "source": true,
+  "sources": [
+   "s0.tar",
+   "s5.dat",
+   "src-test.service"
+  ],
+  "transfiletriggerpriorities": [],
+  "transfiletriggerscripts": [],
+  "triggers": [],
+  "triggerscripts": [],
+  "vcs": ""
+ },
+ "src-v6.src.rpm": {
+  "bugurl": "",
+  "cookie": "localhost 1700000000",
+  "distribution": "",
+  "disttag": "",
+  "excludearch": [],
+  "excludeos": [],
+  "exclusivearch": [],
+  "exclusiveos": [],
+  "files": [
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "fix-a.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "fix-b.patch",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "s0.tar",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "s5.dat",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "src-test.service",
+    "rdev": 0,
+    "verify": 4294967295
+   },
+   {
+    "caps": "",
+    "class": "",
+    "lang": "",
+    "nlink": 1,
+    "path": "srcpkg.spec",
+    "rdev": 0,
+    "verify": 4294967295
+   }
+  ],
+  "filetriggerpriorities": [],
+  "filetriggerscripts": [],
+  "modularitylabel": "",
+  "nopatch": [],
+  "nosource": [],
+  "patches": [
+   "fix-a.patch",
+   "fix-b.patch"
+  ],
+  "payloadflags": "19",
+  "platform": "",
+  "requires": [
+   {
+    "flags": 0,
+    "name": "(cmake or meson)"
+   },
+   {
+    "flags": 12,
+    "name": "gcc"
+   },
+   {
+    "flags": 0,
+    "name": "make"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(LargeFiles)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(PayloadIsZstd)"
+   },
+   {
+    "flags": 16777226,
+    "name": "rpmlib(RichDependencies)"
+   }
+  ],
+  "scripts": {},
+  "source": true,
+  "sources": [
+   "s0.tar",
+   "s5.dat",
+   "src-test.service"
+  ],
+  "transfiletriggerpriorities": [],
+  "transfiletriggerscripts": [],
+  "triggers": [],
+  "triggerscripts": [],
+  "vcs": ""
+ }
+}

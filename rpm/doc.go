@@ -59,10 +59,11 @@
 // # Untrusted input
 //
 // Headers are parsed with limits on the number of tags and on their size, and
-// the payload extraction is confined to the destination directory. Decompression
-// is the exception: a small payload can expand to a huge one, so set a limit
-// with Rpm.SetMaxPayloadSize before expanding or reading a package that is not
-// trusted.
+// payload extraction is confined to the destination directory. Decompression is
+// bounded by DefaultMaxPayloadSize unless the header declares a larger payload;
+// set a policy-specific bound with Rpm.SetMaxPayloadSize for untrusted input,
+// and Rpm.SetVerifyPayloadDigest to check the payload against the digest of the
+// (signed) header.
 //
 // Packages are written by the pack package; repositories are written and read
 // by the repodata package and used by the dnf package.
