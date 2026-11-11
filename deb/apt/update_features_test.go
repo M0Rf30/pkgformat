@@ -14,6 +14,7 @@ import (
 
 	"github.com/M0Rf30/pkgformat/deb"
 	"github.com/M0Rf30/pkgformat/download"
+	"github.com/M0Rf30/pkgformat/gpg"
 )
 
 // publishedBytes is the uncompressed Packages index of a component as the
@@ -1047,4 +1048,250 @@ func TestTransportFailureUnwraps(t *testing.T) {
 
 	assert.Equal(t, "boom", err.Error())
 	require.ErrorIs(t, err, inner)
+}
+
+// weakOnly keeps only the weak digests of every Release entry.
+func weakOnly(keepSHA1, keepMD5 bool) func(r *deb.Release) {
+	return func(r *deb.Release) {
+		for p, fi := range r.Files {
+			fi.SHA256, fi.SHA512 = "", ""
+			if !keepSHA1 {
+				fi.SHA1 = ""
+			}
+
+			if !keepMD5 {
+				fi.MD5sum = ""
+			}
+
+			r.Files[p] = fi
+		}
+	}
+}
+
+func TestUpdateWeakDigestsNeedAllowWeak(t *testing.T) {
+	t.Parallel()
+
+	for name, mutate := range map[string]func(*deb.Release){
+		"sha1": weakOnly(true, false),
+		"md5":  weakOnly(false, true),
+		"both": weakOnly(true, true),
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			f := newFixture(t)
+			f.addPackage("main", "alpha", "1.0")
+			f.mutate = mutate
+			f.publish()
+
+			n, err := Update(context.Background(), []Source{f.source()}, f.opts())
+			require.ErrorIs(t, err, ErrWeakDigest)
+			assert.Zero(t, n)
+			assert.Zero(t, f.repo.count(f.distPath(f.indexRel("main", ".xz"))), "nothing is fetched without a digest to check it by")
+
+			src := f.source()
+			src.AllowWeak = SwitchYes
+
+			n, err = Update(context.Background(), []Source{src}, f.opts())
+			require.NoError(t, err)
+			assert.Equal(t, 1, n)
+
+			cache, err := f.load()
+			require.NoError(t, err)
+
+			_, ok := cache.Lookup("alpha")
+			assert.True(t, ok)
+		})
+	}
+}
+
+func TestUpdateAllowWeakStillChecksTheDigest(t *testing.T) {
+	t.Parallel()
+
+	f := newFixture(t)
+	f.addPackage("main", "alpha", "1.0")
+	f.mutate = weakOnly(true, false)
+	f.publish()
+
+	// Corrupt every variant after the Release was signed.
+	for _, ext := range []string{".xz", ".gz", ""} {
+		f.repo.put(f.distPath(f.indexRel("main", ext)), []byte("Package: evil\n"))
+	}
+
+	src := f.source()
+	src.AllowWeak = SwitchYes
+
+	_, err := Update(context.Background(), []Source{src}, f.opts())
+	require.Error(t, err)
+
+	for _, ext := range []string{"", ".xz", ".gz"} {
+		data, _ := os.ReadFile(f.listPath("main", ext))
+		assert.NotContains(t, string(data), "evil")
+	}
+}
+
+func TestPickDigestOrder(t *testing.T) {
+	t.Parallel()
+
+	all := deb.FileInfo{MD5sum: "m", SHA1: "s1", SHA256: "s256", SHA512: "s512"}
+
+	d, ok := pickDigest(all, true)
+	require.True(t, ok)
+	assert.Equal(t, indexDigest{alg: "sha256", hex: "s256"}, d)
+
+	all.SHA256 = ""
+	d, _ = pickDigest(all, false)
+	assert.Equal(t, "sha512", d.alg)
+
+	all.SHA512 = ""
+	_, ok = pickDigest(all, false)
+	assert.False(t, ok)
+
+	d, _ = pickDigest(all, true)
+	assert.Equal(t, indexDigest{alg: "sha1", hex: "s1", weak: true}, d)
+
+	all.SHA1 = ""
+	d, _ = pickDigest(all, true)
+	assert.Equal(t, "md5", d.alg)
+
+	assert.False(t, hasWeakDigest(deb.FileInfo{SHA256: "x"}))
+	assert.False(t, fileMatchesWith("/nonexistent", 1, indexDigest{alg: "nope", hex: "00"}))
+}
+
+// signedByFixture is a fixture whose keyring directory holds its signing key
+// and a second one.
+type signedByFixture struct {
+	*fixture
+	keys  string
+	other *gpg.LocalSigner
+}
+
+func newSignedByFixture(t *testing.T, field string, mode string) *signedByFixture {
+	t.Helper()
+
+	f := newFixture(t)
+	f.sign = mode
+	f.addPackage("main", "alpha", "1.0")
+
+	sf := &signedByFixture{fixture: f, keys: t.TempDir(), other: newSigner(t)}
+	writeKeyring(t, sf.keys, f.signer)
+	writeKeyring(t, sf.keys, sf.other)
+
+	f.mutate = func(r *deb.Release) {
+		r.SignedBy = strings.NewReplacer("@SIGNER@", f.signer.KeyFingerprint(), "@OTHER@", sf.other.KeyFingerprint()).Replace(field)
+	}
+	f.publish()
+
+	return sf
+}
+
+func (sf *signedByFixture) update(src Source) (int, error) {
+	o := sf.opts()
+	o.DefaultKeyrings = []string{sf.keys}
+	src.SignedBy = ""
+
+	return Update(context.Background(), []Source{src}, o)
+}
+
+func TestUpdateEnforcesReleaseSignedBy(t *testing.T) {
+	t.Parallel()
+
+	for _, mode := range []string{signInRelease, signDetached} {
+		t.Run(mode+"/allowed", func(t *testing.T) {
+			t.Parallel()
+
+			sf := newSignedByFixture(t, "@SIGNER@, @OTHER@", mode)
+			n, err := sf.update(sf.source())
+			require.NoError(t, err)
+			assert.Equal(t, 1, n)
+		})
+
+		t.Run(mode+"/other key only", func(t *testing.T) {
+			t.Parallel()
+
+			sf := newSignedByFixture(t, "@OTHER@", mode)
+			n, err := sf.update(sf.source())
+			require.ErrorIs(t, err, ErrReleaseSignedBy)
+			require.ErrorIs(t, err, deb.ErrUnknownSigner)
+			assert.Zero(t, n)
+		})
+	}
+
+	t.Run("key missing from the keyrings", func(t *testing.T) {
+		t.Parallel()
+
+		sf := newSignedByFixture(t, "0123456789ABCDEF0123456789ABCDEF01234567", signInRelease)
+		_, err := sf.update(sf.source())
+		require.ErrorIs(t, err, ErrReleaseSignedBy)
+
+		var kn *KeyNotFoundError
+		require.ErrorAs(t, err, &kn)
+	})
+
+	t.Run("paths are not fingerprints", func(t *testing.T) {
+		t.Parallel()
+
+		sf := newSignedByFixture(t, "/etc/apt/keyrings/x.gpg", signInRelease)
+		_, err := sf.update(sf.source())
+		require.ErrorIs(t, err, ErrReleaseSignedBy)
+		require.ErrorIs(t, err, ErrInvalidSignedBy)
+	})
+
+	t.Run("garbage", func(t *testing.T) {
+		t.Parallel()
+
+		sf := newSignedByFixture(t, "not a key", signInRelease)
+		_, err := sf.update(sf.source())
+		require.ErrorIs(t, err, ErrInvalidSignedBy)
+	})
+
+	t.Run("the source option wins", func(t *testing.T) {
+		t.Parallel()
+
+		sf := newSignedByFixture(t, "@OTHER@", signInRelease)
+		o := sf.opts()
+		src := sf.source() // Signed-By: the signer's key file
+
+		n, err := Update(context.Background(), []Source{src}, o)
+		require.NoError(t, err)
+		assert.Equal(t, 1, n)
+	})
+
+	t.Run("not enforced when the signature is accepted unverified", func(t *testing.T) {
+		t.Parallel()
+
+		sf := newSignedByFixture(t, "@OTHER@", signInRelease)
+
+		// A keyring that lacks the signer: the Release is accepted only
+		// because verification is waived.
+		onlyOther := t.TempDir()
+		writeKeyring(t, onlyOther, sf.other)
+
+		o := sf.opts()
+		o.DefaultKeyrings = []string{onlyOther}
+		o.AllowUnverified = true
+
+		src := sf.source()
+		src.SignedBy = ""
+
+		n, err := Update(context.Background(), []Source{src}, o)
+		require.NoError(t, err)
+		assert.Equal(t, 1, n)
+	})
+
+	t.Run("an unsigned repository has nothing to enforce", func(t *testing.T) {
+		t.Parallel()
+
+		sf := newSignedByFixture(t, "@OTHER@", signNone)
+		o := sf.opts()
+		o.DefaultKeyrings = []string{sf.keys}
+		o.AllowUnverified = true
+
+		src := sf.source()
+		src.SignedBy = ""
+
+		n, err := Update(context.Background(), []Source{src}, o)
+		require.NoError(t, err)
+		assert.Equal(t, 1, n)
+	})
 }

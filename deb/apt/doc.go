@@ -44,6 +44,13 @@
 // error; a missing trust anchor, an unknown signer or an unsigned repository
 // is accepted only with Trusted, Allow-Insecure or UpdateOptions.AllowUnverified.
 //
+// Without a Signed-By option on the source, the Signed-By field of the Release
+// itself limits the keys that may have signed it to the listed fingerprints
+// (ErrReleaseSignedBy otherwise), as in apt 2.3 and later. Indexes are checked
+// by their SHA-256 (or SHA-512) digest; a Release that lists only MD5 or SHA-1
+// digests gives ErrWeakDigest, unless the source sets Allow-Weak, which makes
+// Update verify by SHA-1 or MD5.
+//
 // # Reading
 //
 // Load builds a Cache from a lists directory, and optionally a dpkg status

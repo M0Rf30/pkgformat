@@ -198,14 +198,17 @@ func (u *updater) fetchIndex(ctx context.Context, src *Source, fr *fetchedReleas
 		return fmt.Errorf("%w: %s", ErrNoPackagesIndex, task.what)
 	}
 
-	// Warm cache: a list file that already has the size and SHA-256 of the
+	allowWeak := src.AllowWeak == SwitchYes
+
+	// Warm cache: a list file that already has the size and digest of the
 	// freshly verified Release entry needs no download.
 	for _, v := range variants {
-		if v.Info.SHA256 == "" {
+		d, ok := pickDigest(v.Info, allowWeak)
+		if !ok {
 			continue
 		}
 
-		if dest, err := u.listPath(src, v.Path); err == nil && fileMatches(dest, v.Info.Size, v.Info.SHA256) {
+		if dest, err := u.listPath(src, v.Path); err == nil && fileMatchesWith(dest, v.Info.Size, d) {
 			return nil
 		}
 	}
@@ -216,11 +219,13 @@ func (u *updater) fetchIndex(ctx context.Context, src *Source, fr *fetchedReleas
 
 	var lastErr error
 
-	tried := false
+	tried, weakOnly := false, false
 
 	for _, v := range variants {
-		if v.Info.SHA256 == "" {
-			continue // only a weaker digest is listed; cannot verify
+		if _, ok := pickDigest(v.Info, allowWeak); !ok {
+			weakOnly = weakOnly || hasWeakDigest(v.Info)
+
+			continue
 		}
 
 		tried = true
@@ -245,7 +250,10 @@ func (u *updater) fetchIndex(ctx context.Context, src *Source, fr *fetchedReleas
 		return fmt.Errorf("apt: %s: no usable index", task.what)
 	}
 
-	// Only digests too weak to verify: the index counts as not listed.
+	if weakOnly {
+		return fmt.Errorf("%w: %s", ErrWeakDigest, task.what)
+	}
+
 	return fmt.Errorf("%w: %s", ErrNoPackagesIndex, task.what)
 }
 
@@ -293,13 +301,18 @@ func (u *updater) fetchIndexVariant(
 	defer unlock()
 
 	// Also makes duplicate sources queued behind the path lock a no-op.
-	if fileMatches(dest, entry.Size, entry.SHA256) {
+	digest, _ := pickDigest(entry, src.AllowWeak == SwitchYes)
+	if fileMatchesWith(dest, entry.Size, digest) {
 		return true, nil
 	}
 
-	sum, err := download.ParseChecksum("sha256", entry.SHA256)
+	sum, err := download.ParseChecksum(digest.alg, digest.hex)
 	if err != nil || entry.Size < 0 || entry.Size > maxIndexBytes {
-		return true, fmt.Errorf("%w: %s lists size %d, sha256 %q", ErrInvalidIndexEntry, v.Path, entry.Size, entry.SHA256)
+		return true, fmt.Errorf("%w: %s lists size %d, %s %q", ErrInvalidIndexEntry, v.Path, entry.Size, digest.alg, digest.hex)
+	}
+
+	if digest.weak {
+		u.warn("apt: index verified with a weak digest (Allow-Weak)", "path", v.Path, "digest", digest.alg)
 	}
 
 	urls := u.indexURLs(src, fr, v.Path)
@@ -395,3 +408,35 @@ func readList(path string) ([]byte, error) {
 
 	return limitio.ReadAll(io.Reader(rc), deb.MaxIndexBytes, ErrTooLarge)
 }
+
+// ErrWeakDigest is returned for an index that the Release lists with MD5 or
+// SHA1 digests only: they cannot vouch for it unless the source sets
+// Allow-Weak.
+var ErrWeakDigest = errors.New("apt: index listed with weak digests only")
+
+// indexDigest is the digest an index is verified with.
+type indexDigest struct {
+	alg, hex string
+	weak     bool
+}
+
+// pickDigest chooses the digest of a Release entry to verify the file with:
+// SHA-256, else SHA-512, and with allowWeak SHA-1, else MD5. ok is false when
+// none is usable.
+func pickDigest(fi deb.FileInfo, allowWeak bool) (indexDigest, bool) {
+	switch {
+	case fi.SHA256 != "":
+		return indexDigest{alg: "sha256", hex: fi.SHA256}, true
+	case fi.SHA512 != "":
+		return indexDigest{alg: "sha512", hex: fi.SHA512}, true
+	case allowWeak && fi.SHA1 != "":
+		return indexDigest{alg: "sha1", hex: fi.SHA1, weak: true}, true
+	case allowWeak && fi.MD5sum != "":
+		return indexDigest{alg: "md5", hex: fi.MD5sum, weak: true}, true
+	}
+
+	return indexDigest{}, false
+}
+
+// hasWeakDigest reports whether the entry lists a weak digest.
+func hasWeakDigest(fi deb.FileInfo) bool { return fi.SHA1 != "" || fi.MD5sum != "" }
