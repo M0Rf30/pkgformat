@@ -65,6 +65,11 @@ The tests assert every file priority, every version priority and candidate in
 - `Package: x:*`, `x:any` and `x:linux-any` select architectures by wildcard;
   an architecture-all version belongs to the native architecture's package.
 
+A preferences.d name that ends in a dot (scenario `d-ignored-names`) cannot be
+part of a Go module zip, so it is committed as `trailing.DOT`; the test copies
+the scenario preferences and `container.sh` renames the file before apt reads
+them.
+
 ## Regenerating
 
 ```

@@ -62,6 +62,11 @@ for dir in /scenarios/*/; do
 	[ -f "$dir/preferences" ] && cp "$dir/preferences" /etc/apt/preferences
 	if [ -d "$dir/preferences.d" ]; then
 		cp -a "$dir/preferences.d/." /etc/apt/preferences.d/
+		# A name with a trailing dot cannot be committed (module zips refuse it):
+		# scenarios store it with a ".DOT" suffix in place of the dot.
+		for f in /etc/apt/preferences.d/*.DOT; do
+			if [ -e "$f" ]; then mv "$f" "${f%DOT}"; fi
+		done
 	fi
 
 	status=$(sed -n 's/^status: //p' "$dir/scenario")
