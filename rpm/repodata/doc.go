@@ -13,8 +13,21 @@
 // repomd.xml records; [GenerateRepomdXML] writes the index, and [SignRepomdXML]
 // signs it for clients that check repo_gpgcheck.
 //
-// The output is accepted by createrepo_c's own tools and equals what it writes
-// for the same packages, up to formatting and an explicit epoch of 0.
+// The output of the primary, filelists, filelists-ext and other writers, and of
+// [Repomd.Marshal], equals byte for byte what createrepo_c writes for the same
+// packages; testdata/createrepo holds a corpus of real packages and the
+// reference output.
+//
+// # Other metadata
+//
+// Besides the three core documents the package reads and writes comps.xml
+// ([Comps], with environments, langpacks and localized names), updateinfo.xml
+// ([Advisory], [MergeUpdateinfo]), modules.yaml, prestodelta.xml ([DeltaInfo]),
+// filelists-ext.xml, the SQLite databases of schema version 10
+// ([WriteSQLite], [OpenSQLite]) and zchunk files ([NewZchunkWriter],
+// [ReadZchunkHeader], [NewZchunkReader]; the [Zchunk] compression).
+// [NewRecord], [AddRecord] and [RemoveRecord] do what modifyrepo_c does,
+// including for the AppStream records.
 //
 // # Reading
 //
