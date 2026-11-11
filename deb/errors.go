@@ -66,6 +66,9 @@ var (
 	// ErrInvalidSpec is returned by the package writer for a Spec that cannot
 	// be turned into a valid .deb.
 	ErrInvalidSpec = errors.New("deb: invalid package spec")
+	// ErrUnsupportedEntryType is returned by the package writer for a payload
+	// entry of a type a tar archive cannot hold, such as a socket.
+	ErrUnsupportedEntryType = errors.New("deb: unsupported entry type")
 	// ErrUnsupportedCompression is returned for a compression name the writer
 	// does not know.
 	ErrUnsupportedCompression = errors.New("deb: unsupported compression")

@@ -257,13 +257,13 @@ func TestWriteInstalledSize(t *testing.T) {
 
 func TestWriteRelationLists(t *testing.T) {
 	spec := minimalSpec()
-	spec.Depends = []string{" libc6 (>= 2.31) ", "", "  ", "bash | dash"}
-	spec.Provides = []string{"", " "}
+	spec.Depends = rels(" libc6 (>= 2.31) ", "bash | dash")
+	spec.Provides = []deb.Alternatives{}
 
 	f := parseWritten(t, spec, nil)
 	assert.Equal(t, "libc6 (>= 2.31), bash | dash", f.Package.Depends)
 	_, ok := f.ControlFile.Lookup("Provides")
-	assert.False(t, ok, "a list of blanks writes no field")
+	assert.False(t, ok, "an empty list writes no field")
 }
 
 func TestWriteMultiArch(t *testing.T) {
@@ -360,7 +360,6 @@ func TestWriteEntryPaths(t *testing.T) {
 		"dotdot only":          {Path: "..", Mode: fs.ModeDir | 0o755},
 		"newline":              {Path: "a\nb", Mode: 0o644},
 		"nul":                  {Path: "a\x00b", Mode: 0o644},
-		"fifo":                 {Path: "p", Mode: fs.ModeNamedPipe | 0o644},
 		"socket":               {Path: "s", Mode: fs.ModeSocket | 0o644},
 		"symlink without dest": {Path: "l", Mode: fs.ModeSymlink | 0o777},
 	} {
@@ -884,11 +883,11 @@ func TestSpecValidate(t *testing.T) {
 		"source newline":       func(s *deb.Spec) { s.SourcePkg = "x\ny" },
 		"priority newline":     func(s *deb.Spec) { s.Priority = "x\ny" },
 		"multiarch newline":    func(s *deb.Spec) { s.MultiArch = "x\ny" },
-		"depends newline":      func(s *deb.Spec) { s.Depends = []string{"a", "b\nEvil: 1"} },
+		"depends newline":      func(s *deb.Spec) { s.Depends = []deb.Alternatives{{{Name: "b\nEvil: 1"}}} },
 		"conffile newline":     func(s *deb.Spec) { s.Conffiles = []string{"/etc/a\n/etc/b"} },
 		"license newline":      func(s *deb.Spec) { s.Licenses = []string{"MIT\nX: y"} },
-		"provides CR":          func(s *deb.Spec) { s.Provides = []string{"a\r"} },
-		"built-using newline":  func(s *deb.Spec) { s.BuiltUsing = []string{"a\nb"} },
+		"provides CR":          func(s *deb.Spec) { s.Provides = []deb.Alternatives{{{Name: "ab", Version: "1\r", Op: "="}}} },
+		"built-using newline":  func(s *deb.Spec) { s.BuiltUsing = []deb.Alternatives{{{Name: "ab", Version: "1\n2", Op: "="}}} },
 	}
 
 	for name, mutate := range invalid {
@@ -994,9 +993,11 @@ func FuzzValidateSpec(f *testing.F) {
 	f.Add("lib+x.y-z", "0", "~", "~", "linux-any", "#", ".", "|")
 
 	f.Fuzz(func(t *testing.T, name, epoch, version, release, arch, maintainer, desc, dep string) {
+		depends, _ := deb.ParseRelations(dep)
+
 		spec := &deb.Spec{
 			Name: name, Epoch: epoch, Version: version, Release: release, Architecture: arch,
-			Maintainer: maintainer, Description: desc, Depends: []string{dep}, Compression: "none",
+			Maintainer: maintainer, Description: desc, Depends: depends, Compression: "none",
 		}
 
 		var buf bytes.Buffer

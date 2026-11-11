@@ -82,6 +82,12 @@
 //     all are errors unless AllowUnverified is set, in which case the document
 //     is accepted and a warning goes to Logger.
 //
+// Packages are signed with SignPackage: SchemeDebsigs appends the _gpgorigin
+// member debsig-verify checks (DebsigPolicy renders its policy file),
+// SchemeDpkgSig the clear-signed manifest dpkg-sig writes. DebFile.Signatures
+// holds the members of a parsed package and DebFile.VerifySignatures checks
+// them against a gpg.Keyring.
+//
 // Nothing in this package reads keys from the host: the caller supplies the
 // gpg.Keyring and decides what to trust.
 //

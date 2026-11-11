@@ -12,7 +12,8 @@ github.com/M0Rf30/pkgformat/deb/apt    apt client: update, load, resolve, downlo
 | Area | API |
 | --- | --- |
 | Write a `.deb` | `Write`, `WriteFile` with a plain `Spec` and `[]Entry` (or `FSEntries` over an `fs.FS`) |
-| Read a `.deb` | `ParseDebFileAt`, `ParseDebFile`, `(*DebFile).Extract`, `OpenData`, `Conffiles` |
+| Read a `.deb` | `ParseDebFileAt`, `ParseDebFile`, `(*DebFile).Extract`, `OpenData`, `Conffiles`, `Triggers`, `Shlibs`, `Symbols`, `Signatures` |
+| Sign a `.deb` | `SignPackage` (debsigs `_gpgorigin` for `debsig-verify`, dpkg-sig `_gpgbuilder` manifests), `(*DebFile).VerifySignatures`, `DebsigPolicy` (policy file for `debsig-verify`) |
 | deb822 | `ParseControlFile` (strict, one paragraph), `ScanControl` (lenient, every paragraph), `ControlFile` |
 | Versions | `CompareVersions` (the dpkg algorithm), `ValidVersion`, `StripEpoch` |
 | Relations | `ParseRelations` (keeps `:any`/`:native` qualifiers, `[arch]` and `<profile>` restrictions), `FormatRelations`, `Relation.AppliesTo`, `ActiveRelations`, `ArchMatches` (architecture wildcards), `DependencyNames`, `NormalizeDependency` |
@@ -63,6 +64,17 @@ level; the file size and the number of stanzas are limits
 * `Valid-Until` is checked separately by `Release.CheckValidity`; `apt.Update` calls it with `UpdateOptions.Now`.
 
 `apt.IsVerificationError` separates these trust failures from network ones in the joined error `Update` returns.
+
+## Package signatures
+
+`SignPackage` copies a package and appends one signature member; it takes any `gpg.Signer`, so the key can live in a KMS or an agent.
+
+* `SchemeDebsigs` (default, role `origin`): `_gpgorigin` holds a detached signature of `debian-binary`, the control archive and the data archive concatenated. `DebsigPolicy.Marshal` renders the `.pol` file `debsig-verify` needs next to a keyring of the public key.
+* `SchemeDpkgSig` (role `builder` by default): `_gpgbuilder` holds a clear-signed manifest with the size, MD5 and SHA-1 of each core member, as `dpkg-sig` writes it. Signing again picks the suffixes `0`-`9`, `A`-`Z` like dpkg-sig.
+
+`(*DebFile).VerifySignatures(keyring)` checks every `_gpg*` member and returns one `PackageSignature` each. A member that does not verify fails with `ErrInvalidPackageSignature` (and `gpg.ErrUnknownSigner` for a key outside the keyring); no member at all is `ErrNoPackageSignature`. The caller decides which keys to trust.
+
+`dpkg-sig` and `debsig-verify` reject what they cannot read: `dpkg-sig --verify` knows only `gzip`, `xz` and `bzip2` members, and `debsig-verify` rejects SHA-1 signatures, which `gpg.Signer` implementations here do not make. `testdata/sign` holds packages signed by the reference tools and `generate.sh` rebuilds them in a Debian container; the tests also hand packages signed by this module to `debsig-verify` and `dpkg-sig` there.
 
 ## Behaviour to know
 

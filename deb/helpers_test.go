@@ -170,3 +170,13 @@ func debWithData(tb testing.TB, dataTar []byte) []byte {
 func parseDeb(raw []byte) (*deb.DebFile, error) {
 	return deb.ParseDebFileAt(bytes.NewReader(raw), int64(len(raw)))
 }
+
+// rels parses control-file relations for a Spec literal.
+func rels(entries ...string) []deb.Alternatives {
+	list, err := deb.ParseRelationList(entries...)
+	if err != nil {
+		panic(err)
+	}
+
+	return list
+}

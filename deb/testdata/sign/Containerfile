@@ -1,0 +1,8 @@
+FROM docker.io/library/debian:bookworm
+ADD https://deb.debian.org/debian/pool/main/d/dpkg-sig/dpkg-sig_0.13.1+nmu4_all.deb /tmp/dpkg-sig.deb
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      dpkg-dev debsigs debsig-verify lintian gnupg file ca-certificates xz-utils zstd \
+      libconfig-file-perl libdigest-md5-perl \
+ && dpkg -i /tmp/dpkg-sig.deb \
+ && rm -rf /var/lib/apt/lists/* /tmp/dpkg-sig.deb

@@ -37,14 +37,14 @@ type WriteOptions struct {
 // installs, to w as a .deb: the ar archive made of debian-binary, the control
 // archive and the data archive. Entries are written in the given order; the
 // missing parent directories of an entry are added before it, and so is the
-// root "./". Owners are root:root. The md5sums file and, when Spec.InstalledSize
+// root "./". Owners are root:root unless an entry names others, which is what
+// "dpkg-deb --root-owner-group" produces for a tree of root-owned files. The
+// md5sums file and, when Spec.InstalledSize
 // is zero, the Installed-Size are computed from the payload.
 func Write(w io.Writer, spec *Spec, payload []Entry, opts WriteOptions) error {
 	if err := spec.Validate(); err != nil {
 		return err
 	}
-
-	comp, _ := ParseCompression(spec.Compression) // validated above
 
 	entries, err := withChangelog(spec, payload)
 	if err != nil {
@@ -61,7 +61,7 @@ func Write(w io.Writer, spec *Spec, payload []Entry, opts WriteOptions) error {
 		_ = os.Remove(staging.Name())
 	}()
 
-	stats, err := writeDataArchive(staging, comp, spec, entries)
+	stats, err := writeDataArchive(staging, spec, entries)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func Write(w io.Writer, spec *Spec, payload []Entry, opts WriteOptions) error {
 		return fmt.Errorf("deb: staging data archive: %w", err)
 	}
 
-	control, err := buildControlArchive(spec, comp, stats)
+	control, err := buildControlArchive(spec, stats)
 	if err != nil {
 		return err
 	}
@@ -85,17 +85,18 @@ func Write(w io.Writer, spec *Spec, payload []Entry, opts WriteOptions) error {
 		return err
 	}
 
-	ext := comp.Extension()
+	dataComp, _ := spec.dataCompression()
+	ctrlComp, _ := spec.controlCompression()
 
 	if err := aw.member("debian-binary", int64(len(debianBinary)), spec.ModTime, strings.NewReader(debianBinary)); err != nil {
 		return err
 	}
 
-	if err := aw.member(controlTarName+ext, int64(len(control)), spec.ModTime, bytes.NewReader(control)); err != nil {
+	if err := aw.member(controlTarName+ctrlComp.Extension(), int64(len(control)), spec.ModTime, bytes.NewReader(control)); err != nil {
 		return err
 	}
 
-	return aw.member(dataTarName+ext, dataSize, spec.ModTime, staging)
+	return aw.member(dataTarName+dataComp.Extension(), dataSize, spec.ModTime, staging)
 }
 
 // WriteFile writes the package to path through a temporary file in the same
@@ -185,18 +186,29 @@ func cleanEntryPath(p string) (string, error) {
 	return c, nil
 }
 
+// dataWriter writes the entries of the data archive.
+type dataWriter struct {
+	tw    *tar.Writer
+	spec  *Spec
+	stats *dataStats
+	// regular maps the path of every regular file written, hard links
+	// included, to the md5 sum of its content.
+	regular map[string]string
+}
+
 // writeDataArchive writes the tar of the payload, compressed, to w.
-func writeDataArchive(w io.Writer, comp Compression, spec *Spec, entries []Entry) (*dataStats, error) {
-	zw, err := compressWriter(w, comp)
+func writeDataArchive(w io.Writer, spec *Spec, entries []Entry) (*dataStats, error) {
+	comp, level := spec.dataCompression()
+
+	zw, err := compressWriterLevel(w, comp, level)
 	if err != nil {
 		return nil, err
 	}
 
-	tw := tar.NewWriter(zw)
-	stats := &dataStats{}
+	dw := &dataWriter{tw: tar.NewWriter(zw), spec: spec, stats: &dataStats{}, regular: make(map[string]string)}
 	seen := map[string]bool{"": true}
 
-	if err := writeDir(tw, "", 0o755, spec.ModTime); err != nil {
+	if err := writeDir(dw.tw, "", 0o755, spec.ModTime); err != nil {
 		return nil, err
 	}
 
@@ -237,22 +249,17 @@ func writeDataArchive(w io.Writer, comp Compression, spec *Spec, entries []Entry
 		for _, dir := range missingParents(p, seen, explicit) {
 			seen[dir] = true
 
-			if err := writeDir(tw, dir, 0o755, spec.ModTime); err != nil {
+			if err := writeDir(dw.tw, dir, 0o755, spec.ModTime); err != nil {
 				return nil, err
 			}
 		}
 
-		mtime := e.ModTime
-		if mtime.IsZero() {
-			mtime = spec.ModTime
-		}
-
-		if err := writeEntry(tw, p, e, mtime, stats); err != nil {
+		if err := dw.entry(p, e); err != nil {
 			return nil, err
 		}
 	}
 
-	if err := tw.Close(); err != nil {
+	if err := dw.tw.Close(); err != nil {
 		return nil, fmt.Errorf("deb: closing data archive: %w", err)
 	}
 
@@ -260,7 +267,7 @@ func writeDataArchive(w io.Writer, comp Compression, spec *Spec, entries []Entry
 		return nil, fmt.Errorf("deb: closing data archive: %w", err)
 	}
 
-	return stats, nil
+	return dw.stats, nil
 }
 
 // missingParents lists the ancestors of p that have not been written and are
@@ -301,20 +308,26 @@ func tarMode(m fs.FileMode) int64 {
 	return mode
 }
 
+// writeDir writes a directory entry owned by root:root.
 func writeDir(tw *tar.Writer, p string, mode int64, mtime time.Time) error {
 	name := "./"
 	if p != "" {
 		name = "./" + p + "/"
 	}
 
-	return writeHeader(tw, &tar.Header{
+	return writeHeader(tw, asRoot(&tar.Header{
 		Typeflag: tar.TypeDir, Name: name, Mode: mode, ModTime: mtime,
-	})
+	}))
+}
+
+func asRoot(hdr *tar.Header) *tar.Header {
+	hdr.Uid, hdr.Gid = 0, 0
+	hdr.Uname, hdr.Gname = "root", "root"
+
+	return hdr
 }
 
 func writeHeader(tw *tar.Writer, hdr *tar.Header) error {
-	hdr.Uid, hdr.Gid = 0, 0
-	hdr.Uname, hdr.Gname = "root", "root"
 	hdr.Format = tar.FormatGNU
 
 	if err := tw.WriteHeader(hdr); err != nil {
@@ -324,30 +337,139 @@ func writeHeader(tw *tar.Writer, hdr *tar.Header) error {
 	return nil
 }
 
-func writeEntry(tw *tar.Writer, p string, e *Entry, mtime time.Time, stats *dataStats) error {
-	switch {
-	case e.Mode.IsDir():
-		return writeHeader(tw, &tar.Header{
-			Typeflag: tar.TypeDir, Name: "./" + p + "/", Mode: tarMode(e.Mode), ModTime: mtime,
-		})
-	case e.Mode&fs.ModeSymlink != 0:
+// modTime is the time of an entry: its own, else the spec's, never later than
+// the spec's when ClampMTime is set.
+func (dw *dataWriter) modTime(e *Entry) time.Time {
+	mtime := e.ModTime
+	if mtime.IsZero() {
+		mtime = dw.spec.ModTime
+	}
+
+	if dw.spec.ClampMTime && mtime.After(dw.spec.ModTime) {
+		mtime = dw.spec.ModTime
+	}
+
+	return mtime
+}
+
+// header starts the tar header of an entry with its mode, time and owner.
+func (dw *dataWriter) header(typ byte, name string, e *Entry) (*tar.Header, error) {
+	if e.UID < 0 || e.GID < 0 {
+		return nil, invalidSpec("entry %q has a negative owner id", name)
+	}
+
+	if strings.ContainsAny(e.User+e.Group, "\x00\n") {
+		return nil, invalidSpec("entry %q has an invalid owner name", name)
+	}
+
+	hdr := &tar.Header{
+		Typeflag: typ, Name: "./" + name, Mode: tarMode(e.Mode), ModTime: dw.modTime(e),
+		Uid: e.UID, Gid: e.GID, Uname: e.User, Gname: e.Group,
+	}
+
+	if e.UID == 0 && e.User == "" {
+		hdr.Uname = "root"
+	}
+
+	if e.GID == 0 && e.Group == "" {
+		hdr.Gname = "root"
+	}
+
+	return hdr, nil
+}
+
+func (dw *dataWriter) entry(p string, e *Entry) error {
+	if e.Hardlink != "" {
+		return dw.hardlink(p, e)
+	}
+
+	switch e.Mode.Type() {
+	case fs.ModeDir:
+		hdr, err := dw.header(tar.TypeDir, p+"/", e)
+		if err != nil {
+			return err
+		}
+
+		return writeHeader(dw.tw, hdr)
+	case fs.ModeSymlink:
 		if e.Linkname == "" {
 			return invalidSpec("symlink %q has no target", p)
 		}
 
-		stats.size += int64(len(e.Linkname))
+		hdr, err := dw.header(tar.TypeSymlink, p, e)
+		if err != nil {
+			return err
+		}
 
-		return writeHeader(tw, &tar.Header{
-			Typeflag: tar.TypeSymlink, Name: "./" + p, Linkname: e.Linkname, Mode: 0o777, ModTime: mtime,
-		})
-	case e.Mode.IsRegular():
-		return writeFile(tw, p, e, mtime, stats)
+		hdr.Mode, hdr.Linkname = 0o777, e.Linkname
+		dw.stats.size += int64(len(e.Linkname))
+
+		return writeHeader(dw.tw, hdr)
+	case 0:
+		return dw.file(p, e)
+	case fs.ModeNamedPipe:
+		hdr, err := dw.header(tar.TypeFifo, p, e)
+		if err != nil {
+			return err
+		}
+
+		return writeHeader(dw.tw, hdr)
+	case fs.ModeDevice, fs.ModeDevice | fs.ModeCharDevice:
+		return dw.device(p, e)
 	}
 
-	return invalidSpec("entry %q has unsupported type %s", p, e.Mode.Type())
+	return fmt.Errorf("%w: %w: entry %q has type %s", ErrInvalidSpec, ErrUnsupportedEntryType, p, e.Mode.Type())
 }
 
-func writeFile(tw *tar.Writer, p string, e *Entry, mtime time.Time, stats *dataStats) error {
+func (dw *dataWriter) device(p string, e *Entry) error {
+	typ := byte(tar.TypeBlock)
+	if e.Mode&fs.ModeCharDevice != 0 {
+		typ = tar.TypeChar
+	}
+
+	if e.DevMajor < 0 || e.DevMinor < 0 {
+		return invalidSpec("device %q has a negative number", p)
+	}
+
+	hdr, err := dw.header(typ, p, e)
+	if err != nil {
+		return err
+	}
+
+	hdr.Devmajor, hdr.Devminor = e.DevMajor, e.DevMinor
+
+	return writeHeader(dw.tw, hdr)
+}
+
+// hardlink writes a hard link to the regular file that an earlier entry wrote.
+func (dw *dataWriter) hardlink(p string, e *Entry) error {
+	if e.Mode.Type() != 0 || e.Data != nil || e.Open != nil || e.Size != 0 {
+		return invalidSpec("hard link %q must be a regular entry without content", p)
+	}
+
+	target, err := cleanEntryPath(e.Hardlink)
+	if err != nil {
+		return err
+	}
+
+	sum, ok := dw.regular[target]
+	if !ok {
+		return invalidSpec("hard link %q points to %q, which is not an earlier regular file", p, e.Hardlink)
+	}
+
+	hdr, err := dw.header(tar.TypeLink, p, e)
+	if err != nil {
+		return err
+	}
+
+	hdr.Linkname = "./" + target
+	dw.regular[p] = sum
+	dw.stats.md5s = append(dw.stats.md5s, md5Line{path: p, sum: sum})
+
+	return writeHeader(dw.tw, hdr)
+}
+
+func (dw *dataWriter) file(p string, e *Entry) error {
 	var (
 		body io.Reader
 		size = e.Size
@@ -369,15 +491,20 @@ func writeFile(tw *tar.Writer, p string, e *Entry, mtime time.Time, stats *dataS
 		body, size = bytes.NewReader(nil), 0
 	}
 
-	if err := writeHeader(tw, &tar.Header{
-		Typeflag: tar.TypeReg, Name: "./" + p, Mode: tarMode(e.Mode), Size: size, ModTime: mtime,
-	}); err != nil {
+	hdr, err := dw.header(tar.TypeReg, p, e)
+	if err != nil {
+		return err
+	}
+
+	hdr.Size = size
+
+	if err := writeHeader(dw.tw, hdr); err != nil {
 		return err
 	}
 
 	h := md5.New() //nolint:gosec // see import
 
-	n, err := io.Copy(io.MultiWriter(tw, h), io.LimitReader(body, size))
+	n, err := io.Copy(io.MultiWriter(dw.tw, h), io.LimitReader(body, size))
 	if err != nil {
 		return fmt.Errorf("deb: writing %q: %w", p, err)
 	}
@@ -386,55 +513,78 @@ func writeFile(tw *tar.Writer, p string, e *Entry, mtime time.Time, stats *dataS
 		return fmt.Errorf("deb: writing %q: %w: %d of %d bytes", p, io.ErrUnexpectedEOF, n, size)
 	}
 
-	stats.size += size
-	stats.md5s = append(stats.md5s, md5Line{path: p, sum: hex.EncodeToString(h.Sum(nil))})
+	sum := hex.EncodeToString(h.Sum(nil))
+	dw.stats.size += size
+	dw.regular[p] = sum
+	dw.stats.md5s = append(dw.stats.md5s, md5Line{path: p, sum: sum})
 
 	return nil
 }
 
-// buildControlArchive returns the compressed control archive.
-func buildControlArchive(spec *Spec, comp Compression, stats *dataStats) ([]byte, error) {
-	type member struct {
-		name string
-		mode int64
-		body string
+// controlMember is one file of the control archive as it is written.
+type controlMember struct {
+	name string
+	mode int64
+	body string
+}
+
+// controlMembers lists the files of the control archive in the order they are
+// written.
+func controlMembers(spec *Spec, stats *dataStats) []controlMember {
+	members := []controlMember{{"control", 0o644, controlFile(spec, stats)}}
+
+	add := func(name string, mode fs.FileMode, def int64, body string) {
+		if body == "" {
+			return
+		}
+
+		m := def
+		if mode != 0 {
+			m = int64(mode)
+		}
+
+		members = append(members, controlMember{name, m, body})
 	}
 
-	members := []member{{"control", 0o644, controlFile(spec, stats)}}
-
-	if conf := conffilesContent(spec.Conffiles); conf != "" {
-		members = append(members, member{"conffiles", 0o644, conf})
-	}
-
-	if sums := md5sumsContent(stats.md5s); sums != "" {
-		members = append(members, member{"md5sums", 0o644, sums})
-	}
+	add("conffiles", 0, 0o644, conffilesContent(spec.Conffiles))
+	add("md5sums", 0, 0o644, md5sumsContent(stats.md5s))
 
 	if len(spec.Licenses) > 0 {
-		members = append(members, member{"copyright", 0o644, copyrightContent(spec)})
+		add("copyright", 0, 0o644, copyrightContent(spec))
 	}
 
-	sc := spec.Scripts
+	add("triggers", 0, 0o644, FormatTriggers(spec.Triggers))
+	add("shlibs", 0, 0o644, FormatShlibs(spec.Shlibs))
+	add("symbols", 0, 0o644, FormatSymbols(spec.Symbols))
 
-	for _, s := range []struct {
-		name, body string
-		mode       int64
-	}{
-		{"preinst", sc.Preinst, 0o755},
-		{"postinst", sc.Postinst, 0o755},
-		{"prerm", withHeader(sc.Prerm), 0o755},
-		{"postrm", withHeader(sc.Postrm), 0o755},
-		{"config", sc.Config, 0o755},
-		{"templates", sc.Templates, 0o644},
-	} {
-		if s.body != "" {
-			members = append(members, member{s.name, s.mode, s.body})
+	sc, modes := spec.Scripts, spec.Scripts.Modes
+	add("preinst", modes.Preinst, 0o755, sc.Preinst)
+	add("postinst", modes.Postinst, 0o755, sc.Postinst)
+	add("prerm", modes.Prerm, 0o755, withHeader(sc.Prerm))
+	add("postrm", modes.Postrm, 0o755, withHeader(sc.Postrm))
+	add("config", modes.Config, 0o755, sc.Config)
+	add("templates", modes.Templates, 0o644, sc.Templates)
+
+	for _, m := range spec.ExtraControl {
+		mode := m.Mode
+		if mode == 0 {
+			mode = 0o644
 		}
+
+		// An empty file is still a member, unlike the generated ones.
+		members = append(members, controlMember{m.Name, int64(mode), string(m.Data)})
 	}
 
+	return members
+}
+
+// buildControlArchive returns the compressed control archive.
+func buildControlArchive(spec *Spec, stats *dataStats) ([]byte, error) {
 	var buf bytes.Buffer
 
-	zw, err := compressWriter(&buf, comp)
+	comp, level := spec.controlCompression()
+
+	zw, err := compressWriterLevel(&buf, comp, level)
 	if err != nil {
 		return nil, err
 	}
@@ -445,10 +595,10 @@ func buildControlArchive(spec *Spec, comp Compression, stats *dataStats) ([]byte
 		return nil, err
 	}
 
-	for _, m := range members {
-		if err := writeHeader(tw, &tar.Header{
+	for _, m := range controlMembers(spec, stats) {
+		if err := writeHeader(tw, asRoot(&tar.Header{
 			Typeflag: tar.TypeReg, Name: "./" + m.name, Mode: m.mode, Size: int64(len(m.body)), ModTime: spec.ModTime,
-		}); err != nil {
+		})); err != nil {
 			return nil, err
 		}
 
@@ -486,22 +636,25 @@ func controlFile(spec *Spec, stats *dataStats) string {
 		}
 	}
 
-	list := func(name string, values []string) {
-		var kept []string
-
-		for _, v := range values {
-			if v = strings.TrimSpace(v); v != "" {
-				kept = append(kept, v)
-			}
+	list := func(name string, rels []Alternatives) {
+		if len(rels) > 0 {
+			field(name, FormatRelations(rels))
 		}
-
-		field(name, strings.Join(kept, ", "))
 	}
 
 	field("Package", spec.Name)
 	field("Version", spec.FullVersion())
 	field("Section", spec.Section)
 	field("Priority", spec.Priority)
+
+	if spec.Essential {
+		field("Essential", "yes")
+	}
+
+	if spec.Protected {
+		field("Protected", "yes")
+	}
+
 	field("Architecture", spec.Architecture)
 
 	multiArch := spec.MultiArch
@@ -530,8 +683,14 @@ func controlFile(spec *Spec, stats *dataStats) string {
 	list("Suggests", spec.Suggests)
 	list("Enhances", spec.Enhances)
 	list("Built-Using", spec.BuiltUsing)
+	list("Static-Built-Using", spec.StaticBuiltUsing)
 	field("Homepage", spec.URL)
 	field("Bugs", spec.Bugs)
+
+	for _, f := range spec.Fields {
+		writeField(&sb, f.Name, f.Value)
+	}
+
 	field("Description", strings.TrimSpace(spec.Description))
 
 	return sb.String()

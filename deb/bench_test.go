@@ -16,7 +16,7 @@ func benchDeb(b *testing.B) []byte {
 
 	spec := &deb.Spec{
 		Name: "bench", Version: "1.0", Release: "1", Architecture: "amd64", Maintainer: "Bench <b@example.org>",
-		Description: "Benchmark package\nwith a longer description", Depends: []string{"libc6 (>= 2.31)", "bash"},
+		Description: "Benchmark package\nwith a longer description", Depends: rels("libc6 (>= 2.31)", "bash"),
 		Compression: "gzip",
 	}
 

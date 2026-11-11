@@ -20,7 +20,7 @@ func ExampleWrite() {
 		Architecture: "amd64",
 		Maintainer:   "Jane Doe <jane@example.org>",
 		Description:  "Say hello\nA friendly greeter.",
-		Depends:      []string{"libc6 (>= 2.31)"},
+		Depends:      rels("libc6 (>= 2.31)"),
 		ModTime:      time.Unix(1700000000, 0),
 	}
 
@@ -224,4 +224,51 @@ func ExampleActiveRelations() {
 	// Output:
 	// debhelper-compat (= 13), dh-golang, libgtk-3-dev | libgtk-dev
 	// debhelper-compat (= 13), libhurd-dev, gcc-for-host, libgtk-dev
+}
+
+func ExampleSignPackage() {
+	entity, err := gpg.GenerateEntity("Release Bot", "", "bot@example.org", gpg.AlgorithmED25519)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	signer, err := gpg.NewLocalSignerFromEntity(entity)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	keyring, err := signer.Keyring()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	spec := &deb.Spec{
+		Name: "hello", Version: "1.0", Release: "1", Architecture: "all",
+		Maintainer: "Jane Doe <jane@example.org>", Description: "Say hello",
+		ModTime: time.Unix(1700000000, 0),
+	}
+
+	var plain bytes.Buffer
+	if err := deb.Write(&plain, spec, nil, deb.WriteOptions{}); err != nil {
+		log.Fatal(err)
+	}
+
+	var signed bytes.Buffer
+	if err := deb.SignPackage(&signed, bytes.NewReader(plain.Bytes()), int64(plain.Len()), signer, deb.SignOptions{}); err != nil {
+		log.Fatal(err)
+	}
+
+	pkg, err := deb.ParseDebFileAt(bytes.NewReader(signed.Bytes()), int64(signed.Len()))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	results, err := pkg.VerifySignatures(keyring)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(results[0].Member, results[0].Role, results[0].Err == nil)
+	// Output:
+	// _gpgorigin origin true
 }

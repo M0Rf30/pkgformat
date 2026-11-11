@@ -30,6 +30,34 @@ type Scripts struct {
 	// Config is the debconf config script and Templates the debconf templates.
 	Config    string
 	Templates string
+
+	// Modes are the permissions of the members; zero selects 0755 for the
+	// scripts and Config and 0644 for Templates. dpkg refuses a maintainer
+	// script (Preinst, Postinst, Prerm, Postrm) whose mode is not between 0555
+	// and 0775 with no special bits, which Validate checks.
+	Modes ScriptModes
+}
+
+// ScriptModes holds the permission bits of the script members of the control
+// archive. See Scripts.Modes.
+type ScriptModes struct {
+	Preinst   fs.FileMode
+	Postinst  fs.FileMode
+	Prerm     fs.FileMode
+	Postrm    fs.FileMode
+	Config    fs.FileMode
+	Templates fs.FileMode
+}
+
+// ControlMember is a file of the control archive that Spec has no member for.
+type ControlMember struct {
+	// Name is the file name in the control archive: one path element made of
+	// letters, digits and ". _ + -".
+	Name string
+	// Mode holds the permission bits; zero means 0644.
+	Mode fs.FileMode
+	// Data is the content, at most MaxControlFileSize bytes.
+	Data []byte
 }
 
 // Spec describes a binary package to write. It carries everything the control
@@ -67,22 +95,50 @@ type Spec struct {
 	// from the payload.
 	InstalledSize int64
 
-	// Relationship fields. Entries are in control-file syntax (see
-	// NormalizeDependency to convert PKGBUILD syntax) and are joined with ", ".
-	Provides   []string
-	PreDepends []string
-	Depends    []string
-	Conflicts  []string
-	Breaks     []string
-	Replaces   []string
-	Recommends []string
-	Suggests   []string
-	Enhances   []string
-	BuiltUsing []string
+	// Essential and Protected set the fields of that name to "yes".
+	Essential bool
+	Protected bool
+
+	// Relationship fields, typed as ParseRelations returns them (see
+	// ParseRelationList to build them from control-file syntax and
+	// NormalizeDependency to convert PKGBUILD syntax). A binary package may not
+	// carry architecture or profile restrictions, Provides and Built-Using
+	// take only "=", and only Depends, Pre-Depends, Recommends, Suggests and
+	// Enhances take alternatives; Validate enforces it.
+	Provides   []Alternatives
+	PreDepends []Alternatives
+	Depends    []Alternatives
+	Conflicts  []Alternatives
+	Breaks     []Alternatives
+	Replaces   []Alternatives
+	Recommends []Alternatives
+	Suggests   []Alternatives
+	Enhances   []Alternatives
+	BuiltUsing []Alternatives
+	// StaticBuiltUsing is the Static-Built-Using field: like BuiltUsing, for
+	// the sources of what a statically linked binary embeds.
+	StaticBuiltUsing []Alternatives
+
+	// Fields are further control fields, written in their order after the
+	// fields above and before Description: Rules-Requires-Root, Important,
+	// Build-Essential, Origin, Original-Maintainer, Tag, Description-md5,
+	// Vcs-*, X-* and any other well-formed name. The fields the members of
+	// Spec write are rejected here. Fields with a defined syntax are checked.
+	Fields []Field
 
 	// Conffiles lists the configuration files; a leading "/" is added when
 	// missing.
 	Conffiles []string
+
+	// Triggers, Shlibs and Symbols fill the triggers, shlibs and symbols
+	// members of the control archive; a member is written when its list is
+	// not empty.
+	Triggers []Trigger
+	Shlibs   []Shlib
+	Symbols  []SymbolsLibrary
+
+	// ExtraControl holds further members of the control archive, in order.
+	ExtraControl []ControlMember
 
 	// Licenses and Copyrights fill the copyright file of the control archive. The
 	// file is written when Licenses is not empty.
@@ -98,11 +154,28 @@ type Spec struct {
 	// Compression is the compression of the control and data archives: "zstd"
 	// (the default when empty), "gzip", "xz" or "none".
 	Compression string
+	// CompressionLevel is the level of the data archive compression: 1 is the
+	// fastest, MaxGzipLevel, MaxXZLevel and MaxZstdLevel the smallest output;
+	// zero is the default of the method. "none" takes only zero.
+	CompressionLevel int
+
+	// ControlCompression and ControlCompressionLevel choose the compression of
+	// the control archive on its own. An empty ControlCompression is
+	// Compression, and the level is then CompressionLevel; set a level only
+	// together with a method.
+	ControlCompression      string
+	ControlCompressionLevel int
 
 	// ModTime is the modification time of the ar members, of the control
 	// archive entries and of the generated changelog; zero is the Unix epoch.
-	// Set it from SOURCE_DATE_EPOCH for reproducible output.
+	// Set it from SOURCE_DATE_EPOCH (see SourceDateEpoch) for reproducible
+	// output.
 	ModTime time.Time
+	// ClampMTime limits the modification time of every data entry to ModTime,
+	// as "dpkg-deb --clamp-mtime" does: an entry that is older keeps its time,
+	// a newer one gets ModTime. It is what makes a build from a source tree
+	// reproducible when files are newer than SOURCE_DATE_EPOCH.
+	ClampMTime bool
 }
 
 var (
@@ -154,33 +227,69 @@ func (s *Spec) Validate() error {
 		return invalidSpec("architecture %q is not valid", s.Architecture)
 	}
 
-	if _, err := ParseCompression(s.Compression); err != nil {
+	if s.ClampMTime && s.ModTime.IsZero() {
+		return invalidSpec("ClampMTime needs ModTime, the time to clamp to")
+	}
+
+	if err := s.validateFields(); err != nil {
 		return err
 	}
 
-	single := map[string]string{
-		"MultiArch": s.MultiArch, "Section": s.Section, "Priority": s.Priority,
-		"Maintainer": s.Maintainer, "SourcePkg": s.SourcePkg, "URL": s.URL, "Bugs": s.Bugs,
+	if err := s.validateRelations(); err != nil {
+		return err
 	}
 
-	for name, v := range single {
-		if strings.ContainsAny(v, "\r\n") {
-			return invalidSpec("%s holds a line break", name)
+	if err := s.validateControlMembers(); err != nil {
+		return err
+	}
+
+	return s.validateCompression()
+}
+
+func (s *Spec) validateFields() error {
+	for _, f := range [...]struct{ name, v string }{
+		{"MultiArch", s.MultiArch}, {"Section", s.Section}, {"Priority", s.Priority},
+		{"Maintainer", s.Maintainer}, {"SourcePkg", s.SourcePkg}, {"URL", s.URL}, {"Bugs", s.Bugs},
+	} {
+		if err := checkSingleLine(f.name, f.v); err != nil {
+			return err
 		}
 	}
 
-	lists := map[string][]string{
-		"Provides": s.Provides, "PreDepends": s.PreDepends, "Depends": s.Depends,
-		"Conflicts": s.Conflicts, "Breaks": s.Breaks, "Replaces": s.Replaces,
-		"Recommends": s.Recommends, "Suggests": s.Suggests, "Enhances": s.Enhances,
-		"BuiltUsing": s.BuiltUsing, "Conffiles": s.Conffiles, "Licenses": s.Licenses,
+	for _, list := range [...]struct {
+		name   string
+		values []string
+	}{{"Conffiles", s.Conffiles}, {"Licenses", s.Licenses}} {
+		for _, v := range list.values {
+			if strings.ContainsAny(v, "\r\n") {
+				return invalidSpec("%s entry %q holds a line break", list.name, v)
+			}
+		}
 	}
 
-	for name, list := range lists {
-		for _, v := range list {
-			if strings.ContainsAny(v, "\r\n") {
-				return invalidSpec("%s entry %q holds a line break", name, v)
-			}
+	return validateFields(s.Fields)
+}
+
+func (s *Spec) validateRelations() error {
+	for _, r := range [...]struct {
+		name  string
+		list  []Alternatives
+		rules relationRules
+	}{
+		{"Provides", s.Provides, provideRules},
+		{"Pre-Depends", s.PreDepends, depRules},
+		{"Depends", s.Depends, depRules},
+		{"Recommends", s.Recommends, depRules},
+		{"Suggests", s.Suggests, depRules},
+		{"Enhances", s.Enhances, depRules},
+		{"Conflicts", s.Conflicts, conflictRules},
+		{"Breaks", s.Breaks, conflictRules},
+		{"Replaces", s.Replaces, replaceRules},
+		{"Built-Using", s.BuiltUsing, builtRules},
+		{"Static-Built-Using", s.StaticBuiltUsing, builtRules},
+	} {
+		if err := validateRelations(r.name, r.list, r.rules); err != nil {
+			return err
 		}
 	}
 
@@ -192,11 +301,32 @@ type Entry struct {
 	// Path is the slash-separated path inside the package, relative to the
 	// root: "usr/bin/tool". A leading "./" or "/" is ignored.
 	Path string
-	// Mode holds the permission bits and the type: fs.ModeDir for a
-	// directory, fs.ModeSymlink for a symlink; any other type is rejected.
+	// Mode holds the permission bits, with fs.ModeSetuid, fs.ModeSetgid and
+	// fs.ModeSticky, and the type: fs.ModeDir for a directory, fs.ModeSymlink
+	// for a symlink, fs.ModeNamedPipe for a FIFO, fs.ModeDevice for a block
+	// device and fs.ModeDevice|fs.ModeCharDevice for a character device; no
+	// type is a regular file. A socket cannot be stored in a tar archive and
+	// fails with ErrUnsupportedEntryType, as does any other type.
 	Mode fs.FileMode
-	// Linkname is the target of a symlink.
+	// Linkname is the target of a symlink: stored as given.
 	Linkname string
+	// Hardlink, when not empty, makes the entry a hard link to the regular
+	// file of that path, which must be an earlier entry of the payload (or
+	// itself a hard link to one). The entry has no content of its own; Mode is
+	// recorded as given and should repeat the mode of the target, which is what
+	// dpkg applies.
+	Hardlink string
+	// DevMajor and DevMinor are the device numbers of a device node.
+	DevMajor int64
+	DevMinor int64
+
+	// UID and GID are the numeric owner and group, zero (root) by default.
+	// User and Group are their names; when empty they are "root" for id zero
+	// and absent otherwise. dpkg installs by name when the system knows it and
+	// falls back to the numbers.
+	UID, GID    int
+	User, Group string
+
 	// ModTime is the modification time; zero means the Spec's ModTime.
 	ModTime time.Time
 	// Data is the content of a regular file. When nil, Open provides it.
