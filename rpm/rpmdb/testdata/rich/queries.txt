@@ -1,0 +1,127 @@
+label	qdb-lib
+label	qdb-lib-1.5
+label	qdb-lib-1.5-2.q1
+label	qdb-lib-1.4-1.q1
+label	qdb-lib.i686
+label	qdb-lib.x86_64
+label	qdb-lib-1.5.i686
+label	qdb-lib-1.5-2.q1.x86_64
+label	qdb-lib-1.5-2.q1.i686
+label	qdb-base-1.2.3
+label	qdb-base-1:1.2.3
+label	qdb-base-1:1.2.3-1.q1
+label	qdb-base-0:1.2.3-1.q1
+label	qdb-base-2:1.2.3-1.q1
+label	qdb-base-1:1.2.3-1.q1.noarch
+label	qdb-base-1.2.4
+label	qdb-base-1.2.3-2.q1
+label	shared-mime-info
+label	nosuchpackage
+label	qdb
+file	/usr/share/qdb/a.txt
+file	/usr/share/qdb/dir/b.txt
+file	/usr/share/qdb
+file	/usr/share/qdb/dir
+file	/etc/qdb.conf
+file	/var/lib/qdb/state
+file	/usr/bin/qdb
+file	/usr/share/doc/qdb-base/README
+file	/usr/share/doc/qdb-x/NOTES
+file	/usr/lib/qdb/libqdb.so.1.5
+file	/usr/lib64/qdb/libqdb.so.1.5
+file	/usr/lib64/qdb/libqdb.so.1.4
+file	/usr/share/qdb/x.txt
+file	/usr/share/qdb/old.txt
+whatprovides	/usr/share/qdb/old.txt
+file	/usr/bin/bash
+file	/nonexistent/path
+whatprovides	qdb-virt
+whatprovides	qdb-multi
+whatprovides	qdb-plain
+whatprovides	qdb-base
+whatprovides	qdb-lib
+whatprovides	qdb-lib-api
+whatprovides	libqdb.so.1()(64bit)
+whatprovides	config(qdb-base)
+whatprovides	/usr/share/qdb/a.txt
+whatprovides	/var/lib/qdb/state
+whatprovides	/usr/bin/bash
+whatprovides	nosuchcapability
+whatrequires	qdb-lib
+whatrequires	qdb-virt
+whatrequires	qdb-multi
+whatrequires	qdb-plain
+whatrequires	qdb-base
+whatrequires	qdb-opt
+whatrequires	qdb-x
+whatrequires	qdb-alt
+whatrequires	qdb-other
+whatrequires	/bin/sh
+whatrequires	/usr/share/qdb/a.txt
+whatrequires	nosuchcapability
+whatrecommends	qdb-extra
+whatsuggests	qdb-docs
+whatsupplements	qdb-x
+whatenhances	qdb-x
+whatconflicts	qdb-old
+whatconflicts	qdb-clash
+whatconflicts	qdb-base
+whatobsoletes	qdb-legacy
+whatobsoletes	qdb-ancient
+whatobsoletes	qdb-base
+v:provides	qdb-virt
+v:provides	qdb-virt >= 1.5
+v:provides	qdb-virt > 2.0-1
+v:provides	qdb-virt >= 2.0-1
+v:provides	qdb-virt = 2.0
+v:provides	qdb-virt < 1.0
+v:provides	qdb-virt <= 1.0-1
+v:provides	qdb-virt = 0.4
+v:provides	qdb-virt = 0:0.4-1
+v:provides	qdb-virt = 1:0.4
+v:provides	qdb-multi >= 3.0
+v:provides	qdb-multi >= 1:3.0
+v:provides	qdb-multi > 1:3.0
+v:provides	qdb-multi = 2:1.0
+v:provides	qdb-multi < 1:3.5
+v:provides	qdb-lib = 1.5-2.q1
+v:provides	qdb-lib = 1.5
+v:provides	qdb-lib >= 1.4-2
+v:provides	qdb-lib < 1.5
+v:provides	qdb-lib-api >= 1.4
+v:provides	qdb-lib-api > 1.5
+v:provides	qdb-base = 1:1.2.3-1.q1
+v:provides	qdb-base = 1.2.3-1.q1
+v:provides	qdb-base = 1:1.2.3
+v:provides	qdb-base >= 2:0
+v:requires	qdb-lib = 1.5-2.q1
+v:requires	qdb-lib = 0.9
+v:requires	qdb-lib = 2.0
+v:requires	qdb-lib
+v:requires	qdb-virt = 2.0-1
+v:requires	qdb-virt = 1.9
+v:requires	qdb-virt = 0.3
+v:requires	qdb-multi = 1:3.0
+v:requires	qdb-multi = 1:1.0
+v:requires	qdb-multi = 3.0
+v:requires	qdb-base = 1:1.2.3-1.q1
+v:requires	qdb-base = 1:1.2.4
+v:requires	qdb-base = 1.2.3-1.q1
+v:recommends	qdb-extra = 2
+v:recommends	qdb-extra = 1
+v:recommends	qdb-extra = 3.4-1
+v:enhances	qdb-x = 3.1
+v:enhances	qdb-x = 2.0
+v:enhances	qdb-x = 3
+v:conflicts	qdb-old = 0.4
+v:conflicts	qdb-old = 0.5
+v:conflicts	qdb-old = 0.1
+v:conflicts	qdb-old = 0.4-1.q1
+v:conflicts	qdb-clash = 9
+v:conflicts	qdb-base = 1.0
+v:obsoletes	qdb-legacy = 0.9
+v:obsoletes	qdb-legacy = 1.0
+v:obsoletes	qdb-legacy = 2.0
+v:obsoletes	qdb-ancient = 1.0
+v:obsoletes	qdb-ancient = 5.0
+v:obsoletes	qdb-ancient

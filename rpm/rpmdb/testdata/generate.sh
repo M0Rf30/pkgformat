@@ -2,7 +2,15 @@
 # Regenerates the fixture databases in this directory from distribution
 # containers. Needs podman or docker and network access.
 #
-#   ./generate.sh [bdb|ndb|sqlite]...      (default: all three)
+#   ./generate.sh [bdb|ndb|sqlite|rich]...      (default: all four)
+#
+# The rich fixture is different: rich/build.sh builds small packages from the
+# specs in rich/ (scriptlets, triggers, file triggers, versioned and rich
+# dependencies, several versions and architectures of one name) and registers
+# them with a few distribution packages; rich.sqlite.scripts and
+# rich.sqlite.queries hold what rpm prints for --scripts --triggers
+# --filetriggers and for the -q, -qf, --whatprovides, --whatrequires,
+# --whatconflicts ... queries listed in rich/queries.txt.
 #
 # Each fixture is the rpm database of a throw-away root into which a few small
 # packages were registered with `rpm -i --justdb` (nothing is unpacked). Next
@@ -19,7 +27,7 @@ set -eu
 
 cd "$(dirname "$0")"
 engine=${ENGINE:-$(command -v podman || command -v docker)}
-[ "$#" -gt 0 ] || set -- bdb ndb sqlite
+[ "$#" -gt 0 ] || set -- bdb ndb sqlite rich
 
 QF='P\t%{NAME}\t%{EPOCHNUM}\t%{VERSION}\t%{RELEASE}\t%{ARCH}\t%{INSTALLTIME}\n'
 QF=$QF'[D\t%{=NAME}\t%{PROVIDENAME}\t%{PROVIDEFLAGS}\t%{PROVIDEVERSION}\n]'
@@ -59,6 +67,16 @@ for f in "$@"; do
 	sqlite)
 		IMPORT= fixture rpmdb.sqlite docker.io/library/fedora:latest sqlite rpmdb.sqlite \
 			"dnf -y download --destdir /tmp/rpms setup ncurses-base which"
+		;;
+	rich)
+		out=$(mktemp -d)
+		"$engine" run --rm -v "$PWD/rich:/rich:ro,Z" -v "$out:/out:Z" \
+			registry.fedoraproject.org/fedora:43 sh /rich/build.sh
+		for part in db:rich.sqlite expected:rich.sqlite.expected info:rich.sqlite.info \
+			scripts:rich.sqlite.scripts queries:rich.sqlite.queries; do
+			mv "$out/${part%%:*}" "${part#*:}"
+		done
+		rmdir "$out"
 		;;
 	esac
 done
