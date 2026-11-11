@@ -1,0 +1,6 @@
+Origin: Debian
+Label: Debian
+Suite: unstable
+Codename: sid
+Architectures: amd64
+Components: main

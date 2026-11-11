@@ -1,0 +1,4 @@
+Package: hello
+Pin: version *
+Pin-Priority: 600
+

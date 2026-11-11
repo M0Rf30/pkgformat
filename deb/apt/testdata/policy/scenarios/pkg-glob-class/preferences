@@ -1,0 +1,4 @@
+Package: lib[bf]*
+Pin: release a=testing
+Pin-Priority: 711
+

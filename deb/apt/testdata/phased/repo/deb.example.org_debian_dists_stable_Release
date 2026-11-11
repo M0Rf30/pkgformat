@@ -1,0 +1,6 @@
+Origin: Debian
+Label: Debian
+Suite: stable
+Codename: bookworm
+Architectures: amd64
+Components: main

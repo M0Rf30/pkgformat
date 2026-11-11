@@ -1,0 +1,4 @@
+Package: src:foosrc
+Pin: release a=testing
+Pin-Priority: 730
+

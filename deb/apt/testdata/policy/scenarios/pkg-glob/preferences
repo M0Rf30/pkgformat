@@ -1,0 +1,4 @@
+Package: lib*
+Pin: release a=testing
+Pin-Priority: 710
+

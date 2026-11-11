@@ -1,0 +1,4 @@
+Package: *
+Pin: release b=i386
+Pin-Priority: 910
+

@@ -1,0 +1,6 @@
+Origin: Debian
+Label: Debian
+Suite: testing
+Codename: trixie
+Architectures: amd64
+Components: main

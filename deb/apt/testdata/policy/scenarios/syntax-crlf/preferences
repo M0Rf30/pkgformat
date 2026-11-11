@@ -1,0 +1,7 @@
+Package: hello
+Pin: release a=testing
+Pin-Priority: 665
+
+Package: libfoo1
+Pin: release a=unstable
+Pin-Priority: 666

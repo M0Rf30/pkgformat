@@ -1,0 +1,8 @@
+Origin: Debian
+Label: Debian Backports
+Suite: bookworm-backports
+Codename: bookworm-backports
+NotAutomatic: yes
+ButAutomaticUpgrades: yes
+Architectures: amd64
+Components: main

@@ -1,0 +1,4 @@
+Package: *
+Pin: release v=22.04
+Pin-Priority: 760
+

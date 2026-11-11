@@ -1,0 +1,7 @@
+Origin: Debian
+Label: Debian-Security
+Suite: stable-security
+Codename: bookworm-security
+Version: 12
+Architectures: amd64
+Components: main

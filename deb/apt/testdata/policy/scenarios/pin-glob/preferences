@@ -1,0 +1,12 @@
+Package: *
+Pin: release a=*-backports
+Pin-Priority: 410
+
+Package: *
+Pin: release n=tr[a-z]*
+Pin-Priority: 420
+
+Package: *
+Pin: release a=exp?rimental
+Pin-Priority: 430
+

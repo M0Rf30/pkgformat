@@ -1,0 +1,101 @@
+Package: hello
+Version: 2.10-2
+Architecture: amd64
+Filename: pool/main/hello_2.10-2_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package hello
+
+Package: libfoo1
+Version: 1.2-1
+Architecture: amd64
+Source: foosrc
+Filename: pool/main/libfoo1_1.2-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libfoo1
+
+Package: libfoo-dev
+Version: 1.2-1
+Architecture: amd64
+Source: foosrc
+Filename: pool/main/libfoo-dev_1.2-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libfoo-dev
+
+Package: foo-tools
+Version: 1.2-1
+Architecture: amd64
+Source: foosrc
+Filename: pool/main/foo-tools_1.2-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package foo-tools
+
+Package: libbar-dev
+Version: 3.1-1
+Architecture: amd64
+Source: libbar
+Filename: pool/main/libbar-dev_3.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libbar-dev
+
+Package: epoched
+Version: 1:1.0-1
+Architecture: amd64
+Filename: pool/main/epoched_1%3a1.0-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package epoched
+
+Package: multi
+Version: 1.0-1
+Architecture: amd64
+Multi-Arch: same
+Filename: pool/main/multi_1.0-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package multi
+
+Package: docs-common
+Version: 1.0-1
+Architecture: all
+Filename: pool/main/docs-common_1.0-1_all.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package docs-common
+

@@ -1,0 +1,8 @@
+Package: hello
+Pin: release a=unstable
+Pin-Priority: 100
+
+Package: hello
+Pin: version 2.10-4
+Pin-Priority: 950
+

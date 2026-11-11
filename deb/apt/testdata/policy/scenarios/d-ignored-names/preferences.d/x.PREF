@@ -1,0 +1,4 @@
+Package: docs-common
+Pin: release a=testing
+Pin-Priority: 812
+

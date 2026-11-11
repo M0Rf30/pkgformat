@@ -1,0 +1,4 @@
+Package: hello
+Pin: release a=testing,
+ o=Debian
+Pin-Priority: 673

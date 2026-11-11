@@ -1,0 +1,25 @@
+Package: hello
+Version: 2.10-2+deb12u1
+Architecture: amd64
+Filename: pool/main/hello_2.10-2+deb12u1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package hello
+
+Package: libbar-dev
+Version: 3.1-1+deb12u1
+Architecture: amd64
+Source: libbar
+Filename: pool/main/libbar-dev_3.1-1+deb12u1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libbar-dev
+

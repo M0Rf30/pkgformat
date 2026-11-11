@@ -1,0 +1,10 @@
+deb [trusted=yes] http://deb.example.org/debian stable main contrib
+deb [trusted=yes] http://deb.example.org/debian testing main
+deb [trusted=yes] http://deb.example.org/debian unstable main
+deb [trusted=yes] http://deb.example.org/debian experimental main
+deb [trusted=yes] http://deb.example.org/debian bookworm-backports main
+deb [trusted=yes] http://security.example.org/debian-security stable-security main
+deb [trusted=yes] http://ppa.vendor.example/ubuntu jammy main restricted
+deb [trusted=yes] file:/repo/local local main
+deb [trusted=yes] http://bau.example.org/repo bau-only main
+deb [trusted=yes] http://mini.example.org/x nov main

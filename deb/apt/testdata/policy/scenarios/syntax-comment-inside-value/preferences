@@ -1,0 +1,4 @@
+Package: hello
+Pin: release a=testing
+# comment inside
+Pin-Priority: 661

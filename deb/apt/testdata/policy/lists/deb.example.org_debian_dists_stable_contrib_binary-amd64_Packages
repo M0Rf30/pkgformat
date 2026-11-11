@@ -1,0 +1,24 @@
+Package: contribpkg
+Version: 1.0-1
+Architecture: amd64
+Filename: pool/main/contribpkg_1.0-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package contribpkg
+
+Package: hello
+Version: 2.10-2
+Architecture: amd64
+Filename: pool/main/hello_2.10-2_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package hello
+

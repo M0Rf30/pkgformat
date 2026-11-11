@@ -1,0 +1,61 @@
+Package: hello
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 3.0-1
+Description: fixture package hello
+
+Package: libfoo1
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.3-2
+Description: fixture package libfoo1
+
+Package: epoched
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 3:1.0-1
+Description: fixture package epoched
+
+Package: foo-tools
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.2-1
+Description: fixture package foo-tools
+
+Package: docs-common
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: all
+Version: 1.0-1
+Description: fixture package docs-common
+
+Package: multi
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 2.0-1
+Multi-Arch: same
+Description: fixture package multi
+

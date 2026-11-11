@@ -1,0 +1,8 @@
+Package: hello
+Pin: version 2.10-2~bpo12+1
+Pin-Priority: 1001
+
+Package: *
+Pin: release a=bookworm-backports
+Pin-Priority: never
+

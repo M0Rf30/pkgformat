@@ -1,0 +1,4 @@
+Package: hello
+Pin: version 2.10-2
+Pin-Priority: 999
+

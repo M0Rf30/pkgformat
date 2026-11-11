@@ -1,0 +1,4 @@
+Package: *
+Pin: origin deb.example.org
+Pin-Priority: 710
+

@@ -1,0 +1,4 @@
+Package: src:libfoo1
+Pin: release a=testing
+Pin-Priority: 732
+

@@ -1,0 +1,7 @@
+Package: hello
+Pin: ReLeAsE a=testing
+Pin-Priority: 663
+
+Package: libfoo1
+Pin: ORIGIN deb.example.org
+Pin-Priority: 664

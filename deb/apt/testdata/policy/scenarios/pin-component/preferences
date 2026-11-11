@@ -1,0 +1,4 @@
+Package: *
+Pin: release c=contrib
+Pin-Priority: 900
+

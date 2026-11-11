@@ -1,0 +1,4 @@
+Package: *
+Pin: origin DEB.EXAMPLE.ORG
+Pin-Priority: 745
+

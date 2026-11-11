@@ -1,0 +1,7 @@
+Origin: Vendor PPA
+Label: Vendor: Tools
+Suite: jammy
+Codename: jammy
+Version: 22.04
+Architectures: amd64
+Components: main restricted

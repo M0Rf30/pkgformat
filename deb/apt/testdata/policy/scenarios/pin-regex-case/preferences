@@ -1,0 +1,4 @@
+Package: *
+Pin: release a=/^STABLE/
+Pin-Priority: 450
+

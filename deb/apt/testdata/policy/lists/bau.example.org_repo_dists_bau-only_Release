@@ -1,0 +1,4 @@
+Suite: bau-only
+ButAutomaticUpgrades: yes
+Architectures: amd64
+Components: main

@@ -1,0 +1,2 @@
+E: /etc/apt/preferences: The special 'Pin-Priority: never' can only be used for 'Package: *' records
+E: /etc/apt/preferences: The special 'Pin-Priority: never' can only be used for 'Package: *' records

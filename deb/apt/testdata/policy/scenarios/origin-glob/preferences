@@ -1,0 +1,4 @@
+Package: *
+Pin: origin *.example.org
+Pin-Priority: 720
+

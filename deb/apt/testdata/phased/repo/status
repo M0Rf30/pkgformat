@@ -1,0 +1,230 @@
+Package: pa0
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa0
+
+Package: pa1
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa1
+
+Package: pa10
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa10
+
+Package: pa25
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa25
+
+Package: pa37
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa37
+
+Package: pa50
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa50
+
+Package: pa63
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa63
+
+Package: pa75
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa75
+
+Package: pa90
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa90
+
+Package: pa99
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa99
+
+Package: pa100
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pa100
+
+Package: pb10
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pb10
+
+Package: pb50
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pb50
+
+Package: pb90
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pb90
+
+Package: pc37
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pc37
+
+Package: pc50
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pc50
+
+Package: pd-none
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pd-none
+
+Package: pd-101
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pd-101
+
+Package: pd-text
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pd-text
+
+Package: psec-self
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture psec-self
+
+Package: psec-mid
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture psec-mid
+
+Package: psec-old
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.1-1
+Description: phasing fixture psec-old
+
+Package: pmulti
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: phasing fixture pmulti
+

@@ -1,0 +1,4 @@
+Package: src:foosrc
+Pin: source-version 1.2-1
+Pin-Priority: 960
+

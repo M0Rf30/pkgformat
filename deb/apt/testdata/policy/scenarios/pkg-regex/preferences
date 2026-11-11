@@ -1,0 +1,4 @@
+Package: /^lib(foo|bar)/
+Pin: release a=testing
+Pin-Priority: 720
+

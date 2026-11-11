@@ -1,0 +1,4 @@
+Package: libbar-dev
+Pin: release a=stable-security
+Pin-Priority: 807
+

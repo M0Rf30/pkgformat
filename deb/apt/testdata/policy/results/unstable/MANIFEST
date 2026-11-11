@@ -1,0 +1,4 @@
+image: Debian GNU/Linux unstable
+apt: apt 3.3.6 (amd64)
+captured: 2026-11-11T03:10:04Z
+image-reference: docker.io/library/debian:unstable-slim

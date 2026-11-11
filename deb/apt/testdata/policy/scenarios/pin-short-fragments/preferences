@@ -1,0 +1,4 @@
+Package: *
+Pin: release a=stable,x,,o
+Pin-Priority: 334
+

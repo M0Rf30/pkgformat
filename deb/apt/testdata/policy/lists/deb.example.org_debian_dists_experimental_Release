@@ -1,0 +1,7 @@
+Origin: Debian
+Label: Debian
+Suite: experimental
+Codename: experimental
+NotAutomatic: yes
+Architectures: amd64
+Components: main

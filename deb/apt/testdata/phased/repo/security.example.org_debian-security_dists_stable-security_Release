@@ -1,0 +1,6 @@
+Origin: Debian
+Label: Debian-Security
+Suite: stable-security
+Codename: bookworm-security
+Architectures: amd64
+Components: main

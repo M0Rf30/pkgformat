@@ -1,0 +1,28 @@
+Package: psec-self
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc3
+Phased-Update-Percentage: 10
+Filename: pool/main/psec-self_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture psec-self
+
+Package: psec-mid
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc4
+Filename: pool/main/psec-mid_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture psec-mid
+
+Package: psec-old
+Version: 1.0-1+deb12u1
+Architecture: amd64
+Source: phsrc5
+Filename: pool/main/psec-old_1.0-1+deb12u1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture psec-old
+

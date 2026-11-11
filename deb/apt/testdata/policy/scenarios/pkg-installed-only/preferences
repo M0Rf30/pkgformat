@@ -1,0 +1,8 @@
+Package: gone
+Pin: release a=now
+Pin-Priority: 400
+
+Package: gone
+Pin: version 1.0-1
+Pin-Priority: 410
+

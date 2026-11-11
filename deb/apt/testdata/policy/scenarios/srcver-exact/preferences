@@ -1,0 +1,4 @@
+Package: libfoo1
+Pin: source-version 1.3*
+Pin-Priority: 950
+

@@ -1,0 +1,8 @@
+Package: *
+Pin: release a=experimental
+Pin-Priority: 450
+
+Package: *
+Pin: release a=bookworm-backports
+Pin-Priority: 460
+
