@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestParseRepoFile(t *testing.T) {
@@ -38,12 +39,15 @@ baseurl=https://evil.example/
 
 	want := []Repo{
 		{
-			ID: "base", Enabled: true, Priority: 99,
+			ID: "base", Name: "Base", Enabled: true, Priority: 99, Cost: 1000, MetadataExpire: 48 * time.Hour,
 			BaseURLs: []string{"https://a.example/os", "https://b.example/os", "https://c.example/os"},
 			GPGKeys:  []string{"https://keys.example/key", "https://keys.example/other"},
 		},
-		{ID: "extras", Enabled: false, Priority: 99, MirrorList: "https://m.example/list?repo=extras"},
-		{ID: "no-urls", Enabled: true, Priority: 99},
+		{
+			ID: "extras", Enabled: false, Priority: 99, Cost: 1000, MetadataExpire: 48 * time.Hour,
+			MirrorList: "https://m.example/list?repo=extras",
+		},
+		{ID: "no-urls", Name: "nothing", Enabled: true, Priority: 99, Cost: 1000, MetadataExpire: 48 * time.Hour},
 	}
 
 	if !reflect.DeepEqual(repos, want) {

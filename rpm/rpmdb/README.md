@@ -52,8 +52,8 @@ for pkg, err := range db.Packages(ctx) {
 
 `List` returns the same packages as a slice. `InstalledNames` and
 `InstalledProvides` return the sorted, distinct names of the installed packages
-and of what they provide (a package provides its own name); `*DB` therefore
-satisfies [`dnf.Installed`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/dnf#Installed),
+and of what they provide (a package provides its own name). `InstalledPackages`
+returns the packages with their versioned dependencies, so `*DB` satisfies [`dnf.Installed`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/dnf#Installed),
 the installed-package list of the dnf client.
 
 `Find` looks, under the root, at `var/lib/rpm` and `usr/lib/sysimage/rpm` for

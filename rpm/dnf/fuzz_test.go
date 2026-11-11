@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/M0Rf30/pkgformat/internal/pathseg"
-	"github.com/M0Rf30/pkgformat/rpm/repodata"
 )
 
 func FuzzParseRepoFile(f *testing.F) {
@@ -27,7 +26,7 @@ func FuzzParseRepoFile(f *testing.F) {
 			}
 
 			// patterns of any content must be matchable
-			r.excludes(&repodata.PrimaryPackage{Name: "n", Version: "1", Release: "2", Arch: "x86_64"})
+			DefaultConfig().allowed(&r, "n", "0", "1", "2", "x86_64")
 		}
 	})
 }
@@ -65,19 +64,78 @@ func checkMirrors(t *testing.T, secure, plain []string) {
 	}
 }
 
-func FuzzDependencyNames(f *testing.F) {
-	f.Add("(gcc-plugin-annobin if gcc)")
-	f.Add("glibc >= 2.17")
-	f.Add("(a and (b or rpmlib(X) >= 1))")
+func FuzzParseConfig(f *testing.F) {
+	f.Add("[main]\ngpgcheck=1\nexclude=a* b\n  c\ninstall_weak_deps=False\nmetadata_expire=6h\nmultilib_policy=all\n")
+	f.Add("[main]\nvarsdir=/a /b\nproxy=http://p\nsslverify=0\nmetadata_expire=never\n[x]\nbest=1\n")
+	f.Add("[main\nk\n=\n")
 
 	f.Fuzz(func(t *testing.T, in string) {
-		_ = StripRPMConstraint(in)
+		cfg, err := ParseConfig(strings.NewReader(in))
+		if err != nil {
+			return
+		}
 
-		for _, tok := range ExpandBooleanDep(in) {
-			if tok == "" || strings.ContainsAny(tok, " \t\n") {
-				t.Fatalf("token %q from %q", tok, in)
+		if cfg.MultilibPolicy != MultilibBest && cfg.MultilibPolicy != MultilibAll {
+			t.Fatalf("multilib policy %q", cfg.MultilibPolicy)
+		}
+
+		repos, err := parseRepoFile(strings.NewReader(in), cfg.Defaults)
+		if err != nil {
+			return
+		}
+
+		for _, r := range repos {
+			cfg.allowed(&r, "n", "0", "1", "2", "x86_64")
+		}
+	})
+}
+
+func FuzzParseExpire(f *testing.F) {
+	f.Add("6h")
+	f.Add("never")
+	f.Add("-1")
+	f.Add("99999999999999999999d")
+
+	f.Fuzz(func(t *testing.T, in string) {
+		if d, ok := parseExpire(in); ok && d < MetadataExpireNever {
+			t.Fatalf("%q -> %v", in, d)
+		}
+	})
+}
+
+func FuzzMatchSpec(f *testing.F) {
+	f.Add("foo-1.0-2.x86_64")
+	f.Add("1:foo-2.0-1.i686")
+	f.Add("py.12")
+	f.Add("-:-.-")
+
+	ix := testIndex(nil,
+		tpkg{name: "foo", version: "1.0", release: "2"},
+		tpkg{name: "foo", version: "2.0", release: "1", epoch: 1, arch: "i686"},
+		tpkg{name: "py.12", version: "3"},
+	)
+
+	f.Fuzz(func(t *testing.T, in string) {
+		for _, p := range ix.Match(in) {
+			if _, ok := ix.Lookup(p.Name); !ok {
+				t.Fatalf("matched %v, not in the index", p)
 			}
 		}
+	})
+}
+
+func FuzzReadFilelists(f *testing.F) {
+	f.Add(`<filelists><package pkgid="abc" name="a" arch="x"><version epoch="0" ver="1" rel="1"/><file>/usr/bin/a</file><file type="dir">/usr/share/a</file></package></filelists>`)
+	f.Add(`<package pkgid="x"><file>/a</file>`)
+
+	f.Fuzz(func(t *testing.T, in string) {
+		wanted := map[string]struct{}{"/usr/bin/a": {}, "/a": {}}
+
+		_ = readFilelists(strings.NewReader(in), wanted, func(pkgid, file string) {
+			if _, ok := wanted[file]; !ok {
+				t.Fatalf("%q reported but not wanted", file)
+			}
+		})
 	})
 }
 

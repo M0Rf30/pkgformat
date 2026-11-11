@@ -25,12 +25,43 @@ import (
 // mirrors are tried in order until one serves a complete, verified set of
 // metadata: repomd.xml and the files it names always come from the same mirror.
 // Only then are repomd.xml and the winning mirror written to the cache, so a
-// failed update leaves the previous metadata intact.
+// failed update leaves the previous metadata intact. A repository with
+// repo_gpgcheck=1 is only accepted when repomd.xml.asc is a valid signature of
+// repomd.xml by one of its gpgkey keys ([ErrRepoSignature]); the metadata types
+// of its enabled_metadata are fetched along with primary and modules.
 //
 // A repository that answers with an HTTP 4xx (not found, forbidden) on every
-// mirror is logged and skipped; any other failure is returned, joined with the
+// mirror is logged and skipped, and so is any repository that fails when it
+// sets skip_if_unavailable=1; any other failure is returned, joined with the
 // others, after all repositories were tried.
 func (c *Client) Update(ctx context.Context) error {
+	return c.update(ctx, false)
+}
+
+// UpdateExpired is [Client.Update] for the repositories whose cached metadata
+// is expired ([Client.Expired]) or missing; the others are left alone without a
+// request.
+func (c *Client) UpdateExpired(ctx context.Context) error {
+	return c.update(ctx, true)
+}
+
+// Expired reports whether the cached metadata of repo is older than its
+// metadata_expire, or absent. Metadata of a repository with
+// metadata_expire=never does not expire once it is cached.
+func (c *Client) Expired(repo *Repo) bool {
+	fi, err := os.Stat(filepath.Join(c.repoCacheDir(repo.ID), repodataDir, repomdName))
+	if err != nil {
+		return true
+	}
+
+	if repo.MetadataExpire < 0 {
+		return false
+	}
+
+	return c.now().Sub(fi.ModTime()) > repo.MetadataExpire
+}
+
+func (c *Client) update(ctx context.Context, onlyExpired bool) error {
 	if c.opts.CacheDir == "" {
 		return ErrNoCacheDir
 	}
@@ -48,6 +79,10 @@ func (c *Client) Update(ctx context.Context) error {
 
 	for i := range repos {
 		group.Go(func() error {
+			if onlyExpired && !c.Expired(&repos[i]) {
+				return nil
+			}
+
 			errs[i] = c.fetchRepo(ctx, &repos[i])
 
 			return nil
@@ -61,7 +96,7 @@ func (c *Client) Update(ctx context.Context) error {
 	for i, err := range errs {
 		switch {
 		case err == nil:
-		case isNonFatal(err):
+		case repos[i].SkipIfUnavailable || isNonFatal(err):
 			c.opts.Logger.Warn("repository unavailable", "repo", repos[i].ID, "error", err)
 		default:
 			fatal = append(fatal, err)
@@ -78,6 +113,10 @@ func (c *Client) Update(ctx context.Context) error {
 // isNonFatal reports whether err is an HTTP 4xx answer: a repository that is
 // gone or private must not fail the refresh of the others.
 func isNonFatal(err error) bool {
+	if errors.Is(err, ErrRepoSignature) {
+		return false
+	}
+
 	if se, ok := errors.AsType[*httpclient.HTTPStatusError](err); ok {
 		return se.IsClientError()
 	}
@@ -151,6 +190,12 @@ func (c *Client) fetchRepoFrom(
 		}
 	}
 
+	if repo.RepoGPGCheck {
+		if err := c.checkRepomdSignature(ctx, hc, repo, base, repomdXML); err != nil {
+			return err
+		}
+	}
+
 	md, err := repodata.ParseRepomd(bytes.NewReader(repomdXML))
 	if err != nil {
 		return fmt.Errorf("dnf: %s: %w", base, err)
@@ -170,6 +215,24 @@ func (c *Client) fetchRepoFrom(
 	if modules, ok := md.Find("modules"); ok && modules.Location != "" {
 		if err := c.fetchMetadataFile(ctx, hc, base, dataDir, &modules); err != nil {
 			c.opts.Logger.Warn("module metadata not fetched", "repo", repo.ID, "error", err)
+		}
+	}
+
+	// Further metadata only enlarges what a resolution can do; losing it must
+	// not lose the repository.
+	for _, kind := range repo.EnabledMetadata {
+		kind = strings.ToLower(kind)
+		if kind == "primary" || kind == "modules" {
+			continue
+		}
+
+		entry, ok := md.Find(kind)
+		if !ok || entry.Location == "" {
+			continue
+		}
+
+		if err := c.fetchMetadataFile(ctx, hc, base, dataDir, &entry); err != nil {
+			c.opts.Logger.Warn("metadata not fetched", "repo", repo.ID, "type", kind, "error", err)
 		}
 	}
 

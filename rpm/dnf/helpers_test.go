@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -19,6 +20,7 @@ import (
 	"github.com/M0Rf30/pkgformat/httpclient"
 	"github.com/M0Rf30/pkgformat/rpm"
 	"github.com/M0Rf30/pkgformat/rpm/repodata"
+	"github.com/M0Rf30/pkgformat/rpm/tag"
 )
 
 // repoPkg is a package of a test repository: its metadata and the bytes the
@@ -26,13 +28,13 @@ import (
 type repoPkg struct {
 	pkg  rpm.Package
 	body []byte
+	// listed are the files only filelists.xml names.
+	listed []string
 }
 
 func pkgOf(name, version string, requires ...string) repoPkg {
 	p := rpm.Package{Name: name, Version: version, Release: "1", Arch: "x86_64"}
-	for _, r := range requires {
-		p.Requires = append(p.Requires, rpm.Dependency{Name: r})
-	}
+	p.Requires = deps(requires...)
 
 	return repoPkg{pkg: p, body: []byte("rpm body of " + name + "-" + version)}
 }
@@ -124,6 +126,22 @@ func (r *testRepo) publish(pkgs []repoPkg, modulesYAML string) {
 
 	entries[0].Location = "repodata/" + primary.SHA256 + "-primary.xml.gz"
 
+	if fl := filelistsXML(pkgs, list); fl != nil {
+		packed, err := repodata.CompressMetadataStream(repodata.Gzip, func(w io.Writer) error {
+			_, err := w.Write(fl)
+
+			return err
+		})
+		if err != nil {
+			r.t.Fatal(err)
+		}
+
+		e := entryFor("filelists", packed.SHA256, packed.Data)
+		e.Location = "repodata/" + packed.SHA256 + "-filelists.xml.gz"
+		entries = append(entries, e)
+		files["/"+e.Location] = packed.Data
+	}
+
 	repomd, err := repodata.GenerateRepomdXML("1", entries)
 	if err != nil {
 		r.t.Fatal(err)
@@ -134,6 +152,42 @@ func (r *testRepo) publish(pkgs []repoPkg, modulesYAML string) {
 	r.mu.Lock()
 	r.files = files
 	r.mu.Unlock()
+}
+
+// filelistsXML renders the filelists.xml of the packages that have listed
+// files, nil when none has.
+func filelistsXML(pkgs []repoPkg, list []rpm.Package) []byte {
+	var buf bytes.Buffer
+
+	hasLists := false
+
+	buf.WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<filelists xmlns=\"http://linux.duke.edu/metadata/filelists\">\n")
+
+	for i, rp := range pkgs {
+		if len(rp.listed) == 0 {
+			continue
+		}
+
+		hasLists = true
+
+		p := list[i]
+		buf.WriteString("<package pkgid=\"" + p.SHA256 + "\" name=\"" + p.Name + "\" arch=\"" + p.Arch + "\">")
+		buf.WriteString("<version epoch=\"0\" ver=\"" + p.Version + "\" rel=\"" + p.Release + "\"/>")
+
+		for _, f := range rp.listed {
+			buf.WriteString("<file>" + f + "</file>")
+		}
+
+		buf.WriteString("</package>\n")
+	}
+
+	buf.WriteString("</filelists>\n")
+
+	if !hasLists {
+		return nil
+	}
+
+	return buf.Bytes()
 }
 
 func entryFor(kind, sum string, data []byte) repodata.RepomdData {
@@ -226,16 +280,123 @@ func baseurlSection(urls ...string) string {
 	return "[test]\nname=Test\nenabled=1\nbaseurl=" + strings.Join(urls, " ") + "\n"
 }
 
-// fakeInstalled is an Installed over fixed lists.
+// fakeInstalled is an Installed over a fixed list.
 type fakeInstalled struct {
-	names, provides []string
-	err             error
+	pkgs []*rpm.Package
+	err  error
 }
 
-func (f fakeInstalled) InstalledNames(_ context.Context) ([]string, error) { return f.names, f.err }
+func (f fakeInstalled) InstalledPackages(_ context.Context) ([]*rpm.Package, error) {
+	return f.pkgs, f.err
+}
 
-func (f fakeInstalled) InstalledProvides(_ context.Context) ([]string, error) {
-	return f.provides, f.err
+// dep reads a dependency as written in a spec: "name", "name >= 1:2.0-3", or a
+// rich dependency in parentheses.
+func dep(s string) rpm.Dependency {
+	if strings.HasPrefix(s, "(") {
+		return rpm.Dependency{Name: s}
+	}
+
+	fields := strings.Fields(s)
+	d := rpm.Dependency{Name: fields[0]}
+
+	if len(fields) == 3 {
+		d.Flags = map[string]uint32{
+			"<": tag.RPMSENSE_LESS, "<=": tag.RPMSENSE_LESS | tag.RPMSENSE_EQUAL, "=": tag.RPMSENSE_EQUAL,
+			">=": tag.RPMSENSE_GREATER | tag.RPMSENSE_EQUAL, ">": tag.RPMSENSE_GREATER,
+		}[fields[1]]
+
+		d.Version = fields[2]
+		if e, v, ok := strings.Cut(fields[2], ":"); ok {
+			n, _ := strconv.ParseUint(e, 10, 32)
+			d.Epoch, d.Version = uint32(n), v
+		}
+	}
+
+	return d
+}
+
+func deps(specs ...string) []rpm.Dependency {
+	var out []rpm.Dependency
+
+	for _, s := range specs {
+		out = append(out, dep(s))
+	}
+
+	return out
+}
+
+// tpkg describes a package of a unit test with dependency specs as strings.
+type tpkg struct {
+	name, version, release, arch  string
+	epoch                         uint32
+	requires, provides, conflicts []string
+	obsoletes, recommends, files  []string
+	priority, cost                int
+	repo                          *Repo
+}
+
+func (t tpkg) build() *Package {
+	p := &Package{
+		Name: t.name, Version: t.version, Release: t.release, Arch: t.arch, Epoch: t.epoch,
+		Provides: deps(t.provides...), Requires: deps(t.requires...), Conflicts: deps(t.conflicts...),
+		Obsoletes: deps(t.obsoletes...), Recommends: deps(t.recommends...), Files: t.files,
+		Priority: t.priority, Cost: t.cost, Repo: "test", Location: "Packages/" + t.name + ".rpm",
+		repo: t.repo,
+	}
+
+	if p.Version == "" {
+		p.Version = "1"
+	}
+
+	if p.Release == "" {
+		p.Release = "1"
+	}
+
+	if p.Arch == "" {
+		p.Arch = "x86_64"
+	}
+
+	if p.Priority == 0 {
+		p.Priority = defaultPriority
+	}
+
+	if p.Cost == 0 {
+		p.Cost = defaultCost
+	}
+
+	p.addSelfProvide()
+
+	return p
+}
+
+// installedPkg builds a package of the host's database.
+func installedPkg(t tpkg) *rpm.Package {
+	p := t.build()
+	out := &rpm.Package{
+		Name: p.Name, Version: p.Version, Release: p.Release, Arch: p.Arch, Epoch: p.Epoch,
+		Provides: p.Provides, Requires: p.Requires, Conflicts: p.Conflicts, Obsoletes: p.Obsoletes,
+	}
+
+	for _, f := range t.files {
+		out.Files = append(out.Files, fileEntry(f))
+	}
+
+	return out
+}
+
+// testIndex builds an index of the given packages without a repository.
+func testIndex(installed Installed, pkgs ...tpkg) *Index {
+	c := New(Options{Arch: "x86_64", Installed: installed})
+	ix := newIndex(c, DefaultConfig())
+
+	for _, t := range pkgs {
+		ix.add(t.build())
+	}
+
+	ix.finalize()
+
+	return ix
 }
 
 func fileEntry(p string) rpm.FileEntry { return rpm.FileEntry{Path: p} }

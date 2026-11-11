@@ -29,8 +29,8 @@
 // name, epoch, version, release and architecture, the dependencies, the file
 // list with modes, sizes, digests, link targets, owners and times, and the
 // install time. [DB.List] collects them. [DB.InstalledNames] and
-// [DB.InstalledProvides] answer the two questions a dependency resolver asks,
-// and make a *DB usable as a [dnf.Installed].
+// [DB.InstalledProvides] list the names and capabilities, and
+// [DB.InstalledPackages] makes a *DB usable as a [dnf.Installed].
 //
 // # Queries
 //

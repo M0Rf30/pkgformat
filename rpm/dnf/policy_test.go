@@ -11,11 +11,10 @@ import (
 	"testing"
 
 	"github.com/M0Rf30/pkgformat/httpclient"
-	"github.com/M0Rf30/pkgformat/rpm/repodata"
 )
 
 func TestRepoExcludes(t *testing.T) {
-	pp := &repodata.PrimaryPackage{Name: "foo", Version: "1.2", Release: "3.el9", Arch: "x86_64", Epoch: 2}
+	cfg := DefaultConfig()
 
 	for pattern, want := range map[string]bool{
 		"foo":                      true,
@@ -38,13 +37,25 @@ func TestRepoExcludes(t *testing.T) {
 		"2:foo-1.2-3.el9.x86_64.x": false,
 	} {
 		r := &Repo{Exclude: []string{pattern}}
-		if got := r.excludes(pp); got != want {
+		if got := !cfg.allowed(r, "foo", "2", "1.2", "3.el9", "x86_64"); got != want {
 			t.Errorf("exclude=%q: got %v, want %v", pattern, got, want)
 		}
 	}
 
-	if (&Repo{}).excludes(pp) {
+	if !cfg.allowed(&Repo{}, "foo", "2", "1.2", "3.el9", "x86_64") {
 		t.Error("a repository without patterns excluded a package")
+	}
+
+	// includepkgs of the repository and of dnf.conf both have to match
+	incl := &Repo{IncludePkgs: []string{"foo*"}}
+	if !cfg.allowed(incl, "foo", "2", "1.2", "3.el9", "x86_64") || cfg.allowed(incl, "bar", "0", "1", "1", "noarch") {
+		t.Error("includepkgs of the repository")
+	}
+
+	global := &Config{IncludePkgs: []string{"bar"}, Exclude: []string{"baz"}}
+	if global.allowed(incl, "foo", "2", "1.2", "3.el9", "x86_64") || global.allowed(&Repo{}, "baz", "0", "1", "1", "noarch") ||
+		!global.allowed(&Repo{}, "bar", "0", "1", "1", "noarch") {
+		t.Error("includepkgs and exclude of dnf.conf")
 	}
 }
 
@@ -129,22 +140,17 @@ func TestPriorityLowerNumberWins(t *testing.T) {
 }
 
 func TestPriorityDecidesProviders(t *testing.T) {
-	ix := newIndex("x86_64", nil, nil)
-	near := &Package{Name: "near", Arch: "x86_64", Priority: 10}
-	far := &Package{Name: "far", Arch: "x86_64", Priority: 99}
-	noarch := &Package{Name: "generic", Arch: "noarch", Priority: 10}
+	ix := testIndex(nil,
+		tpkg{name: "app", requires: []string{"cap"}},
+		tpkg{name: "near", provides: []string{"cap"}, priority: 10},
+		tpkg{name: "far", provides: []string{"cap"}, priority: 99},
+		tpkg{name: "generic", arch: "noarch", provides: []string{"cap"}, priority: 10},
+	)
 
-	// the host architecture of a worse repository does not beat a better one
-	if got := ix.pickProvider([]*Package{far, noarch}); got != noarch {
-		t.Errorf("picked %s", got.Name)
-	}
-
-	if got := ix.pickProvider([]*Package{far, near, noarch}); got != near {
-		t.Errorf("picked %s", got.Name)
-	}
-
-	if got := ix.pickProvider([]*Package{far}); got != far {
-		t.Errorf("picked %s", got.Name)
+	// the repository of the better priority wins; of its packages the host's
+	// architecture comes before noarch
+	if res := resolve(t, ix, "app"); pkgNames(res.Packages) != "near app" {
+		t.Errorf("packages = %v", res.Packages)
 	}
 }
 
@@ -249,7 +255,7 @@ func TestProxyNeedsAnHTTPTransport(t *testing.T) {
 	hc := httpclient.New(httpclient.Options{Transport: roundTripFunc(http.DefaultTransport.RoundTrip)})
 	env := newEnv(t, baseurlSection(repo.url())+"proxy=http://proxy.example:3128\n", func(o *Options) { o.HTTP = hc })
 
-	if err := env.Update(context.Background()); !errors.Is(err, ErrProxyUnsupported) {
+	if err := env.Update(context.Background()); !errors.Is(err, ErrTransportUnsupported) {
 		t.Errorf("err = %v", err)
 	}
 }

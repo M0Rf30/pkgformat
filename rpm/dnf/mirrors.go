@@ -31,7 +31,12 @@ func (c *Client) candidates(ctx context.Context, hc *httpclient.Client, repo *Re
 			err     error
 		)
 
-		mirrors, info, err = c.resolveMirrors(ctx, hc, c.expandVars(repo.MirrorList))
+		list := c.expandVars(repo.MirrorList)
+		if flag := c.countmeFlag(repo); flag != "" {
+			list = withQuery(list, flag)
+		}
+
+		mirrors, info, err = c.resolveMirrors(ctx, hc, list)
 		if err != nil {
 			return nil, nil, fmt.Errorf("dnf: repository %s: %w", repo.ID, err)
 		}
