@@ -301,7 +301,7 @@ func dep(s string) rpm.Dependency {
 	d := rpm.Dependency{Name: fields[0]}
 
 	if len(fields) == 3 {
-		d.Flags = map[string]uint32{
+		d.Flags = map[string]rpm.Sense{
 			"<": tag.RPMSENSE_LESS, "<=": tag.RPMSENSE_LESS | tag.RPMSENSE_EQUAL, "=": tag.RPMSENSE_EQUAL,
 			">=": tag.RPMSENSE_GREATER | tag.RPMSENSE_EQUAL, ">": tag.RPMSENSE_GREATER,
 		}[fields[1]]

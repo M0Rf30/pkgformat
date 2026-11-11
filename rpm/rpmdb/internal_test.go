@@ -15,7 +15,7 @@ import (
 
 func TestTriggerKinds(t *testing.T) {
 	for _, tc := range []struct {
-		flags uint32
+		flags rpm.Sense
 		kind  TriggerKind
 		text  string
 	}{

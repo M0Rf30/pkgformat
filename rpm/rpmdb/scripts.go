@@ -63,7 +63,7 @@ func (k TriggerKind) String() string {
 }
 
 // kindOf reads the kind from the flags of a trigger condition.
-func kindOf(flags uint32) TriggerKind {
+func kindOf(flags rpm.Sense) TriggerKind {
 	switch {
 	case flags&tag.RPMSENSE_TRIGGERIN != 0:
 		return TriggerIn
