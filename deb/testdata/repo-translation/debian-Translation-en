@@ -1,0 +1,142 @@
+Package: 0ad
+Description-md5: d943033bedada21853d2ae54a2578a7b
+Description-en: Real-time strategy game of ancient warfare
+ 0 A.D. (pronounced "zero ey-dee") is a free, open-source, cross-platform
+ real-time strategy (RTS) game of ancient warfare. In short, it is a
+ historically-based war/economy game that allows players to relive or rewrite
+ the history of Western civilizations, focusing on the years between 500 B.C.
+ and 500 A.D. The project is highly ambitious, involving state-of-the-art 3D
+ graphics, detailed artwork, sound, and a flexible and powerful custom-built
+ game engine.
+
+Package: 0ad-data
+Description-md5: 26581e685027d5ae84824362a4ba59ee
+Description-en: Real-time strategy game of ancient warfare (data files)
+ 0 A.D. (pronounced "zero ey-dee") is a free, open-source, cross-platform
+ real-time strategy (RTS) game of ancient warfare. In short, it is a
+ historically-based war/economy game that allows players to relive or rewrite
+ the history of Western civilizations, focusing on the years between 500 B.C.
+ and 500 A.D. The project is highly ambitious, involving state-of-the-art 3D
+ graphics, detailed artwork, sound, and a flexible and powerful custom-built
+ game engine.
+ .
+ This package contains the main data files required by 0 A.D.
+
+Package: 0ad-data-common
+Description-md5: 8d014b839c4c4e9b6f82c7512d7e3496
+Description-en: Real-time strategy game of ancient warfare (common data files)
+ 0 A.D. (pronounced "zero ey-dee") is a free, open-source, cross-platform
+ real-time strategy (RTS) game of ancient warfare. In short, it is a
+ historically-based war/economy game that allows players to relive or rewrite
+ the history of Western civilizations, focusing on the years between 500 B.C.
+ and 500 A.D. The project is highly ambitious, involving state-of-the-art 3D
+ graphics, detailed artwork, sound, and a flexible and powerful custom-built
+ game engine.
+ .
+ This package contains the data files (configuration and tools) required by
+ 0 A.D.
+
+Package: lib0install-solver-ocaml
+Description-md5: 465bf898bf589fe3d72bb78fc78e96d3
+Description-en: package dependency solver (runtime)
+ A package dependency resolver based on a SAT solver. This was
+ originally written for the 0install package manager, but is now
+ generic and is also used as a solver backend for opam. The SAT solver
+ is based on MiniSat (http://minisat.se/Papers.html) and the
+ application to package management is based on OPIUM (Optimal Package
+ Install/Uninstall Manager). 0install-solver uses a (novel?) strategy
+ to find the optimal solution extremely quickly (even for a SAT-based
+ solver).
+ .
+ This package contains runtime files.
+
+Package: lib0install-solver-ocaml-dev
+Description-md5: 6610aa5fde511cc6345bdd27fdf1efb3
+Description-en: package dependency solver (dev)
+ A package dependency resolver based on a SAT solver. This was
+ originally written for the 0install package manager, but is now
+ generic and is also used as a solver backend for opam. The SAT solver
+ is based on MiniSat (http://minisat.se/Papers.html) and the
+ application to package management is based on OPIUM (Optimal Package
+ Install/Uninstall Manager). 0install-solver uses a (novel?) strategy
+ to find the optimal solution extremely quickly (even for a SAT-based
+ solver).
+ .
+ This package contains development files.
+
+Package: 0xffff
+Description-md5: 183c49f6505eb3432d1b069800f1f5b6
+Description-en: Open Free Fiasco Firmware Flasher
+ The ‘Open Free Fiasco Firmware Flasher’ aka 0xFFFF utility implements
+ a free userspace handler for the NOLO bootloader and extended features
+ for flashing, dumping and getting information for the Nokia Internet
+ Tablets. Thus it's a free alternative to Nokia's closed source flashing
+ utility called flasher.
+ .
+ Supported operations currently include, but are not limited to:
+  * generating and unpacking FIASCO images on local device
+  * editing Maemo firmware packages
+  * flashing any kind image type to Maemo devices via USB
+  * "cold" flashing for devices with bricked bootloaders
+  * direct kernel boot without flashing it to NAND
+  * changing configuration of Maemo device (R&D flags, HW revision strings, ...)
+ .
+ Supported are the Nokia 770, N800, N810, N810w, N900, N950 and N9.
+
+Package: 2048
+Description-md5: 2d3a24661b5ec0391d6bd1aedf7c20b7
+Description-en: Slide and add puzzle game for text mode
+ The 2048 game is a mathematics based puzzle game where you have to
+ slide tiles in a 4x4 board in any of the four possible directions.
+ Touching tiles with the same value are then merged into tiles with the
+ added value of the merged ones. You start with a couple of 2-valued
+ tiles and new tiles appear randomly after sliding. The target of the
+ game is to reach a tile with a value of 2048 before the board is full.
+
+Package: 2048-qt
+Description-md5: 0f25c2ca95ceff4500fde9f651d74f2e
+Description-en: mathematics based puzzle game
+ 2048 puzzle is mathematics based puzzle game where you have to slide
+ tiles on a grid to combine them and create a tile with the number 2048.
+ You have to merge the similar number tiles (2n) by moving the arrow keys
+ in four different directions. When two tiles with the same number touch,
+ they will merge into one.
+
+Package: 2ping
+Description-md5: 2543c220a763445976d1348c5b593743
+Description-en: Ping utility to determine directional packet loss
+ 2ping is a bi-directional ping utility. It uses 3-way pings (akin to
+ TCP SYN, SYN/ACK, ACK) and after-the-fact state comparison between a
+ 2ping listener and a 2ping client to determine which direction packet
+ loss occurs.
+
+Package: 2vcard
+Description-md5: 772b42c5a35b82967966265253189059
+Description-en: convert an addressbook to VCARD file format
+ 2vcard converts address books and alias files into the widely-used
+ vCard format. Currently it can convert from abook, Eudora, Juno,
+ LDIF, mutt, mh and pine.
+ .
+ 2vcard was developed using Perl.
+
+Package: fonts-3270
+Description-md5: ee5f05e9172509d63dcb4f7ecb71ae03
+Description-en: monospaced font based on IBM 3270 terminals
+ This font is derived from the x3270 font, which, in turn, was translated
+ from the one in Georgia Tech's 3270tool, which was itself hand-copied
+ from a 3270 terminal.
+ .
+ While looking reasonably close to its bitmap ancestors, this is a vector
+ font that looks good at any size.  Its recommended use is, obviously, a
+ text terminal, same as nearly half a century ago.
+
+Package: 389-ds
+Description-md5: 72b0f037b5c7bab3e3a681a127817467
+Description-en: 389 Directory Server suite - metapackage
+ Based on the Lightweight Directory Access Protocol (LDAP), the 389
+ Directory Server is designed to manage large directories of users and
+ resources robustly and scalably.
+ .
+ This is a metapackage depending on the LDAPv3 server and a Cockpit UI plugin
+ for administration.
+

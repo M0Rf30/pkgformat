@@ -26,7 +26,8 @@ const (
 	// maxReleaseFiles bounds the files a Release lists.
 	maxReleaseFiles = 1 << 20
 
-	releaseDateFormat = "Mon, 02 Jan 2006 15:04:05 MST"
+	releaseDateFormat        = "Mon, 02 Jan 2006 15:04:05 MST"
+	releaseDateFormatNumeric = "Mon, 02 Jan 2006 15:04:05 -0700"
 )
 
 // ErrReleaseExpired is returned by Release.CheckValidity for a Release whose
@@ -168,48 +169,98 @@ func (r *Release) AddFile(fi FileInfo) {
 	r.Files[fi.Path] = fi
 }
 
-// Marshal renders the Release. Files are listed by path, in the MD5Sum, SHA1,
-// SHA256 and SHA512 sections, and only with the digests they have. Empty
-// header fields and zero dates are omitted.
-func (r *Release) Marshal() []byte {
-	var sb strings.Builder
+// ReleaseStyle selects the layout Release.MarshalStyle writes. Both are valid
+// for every client; they differ in the order of the header fields and in the
+// width of the size column, which is what makes a rendered Release
+// byte-identical to the one the matching tool writes.
+type ReleaseStyle int
 
-	field := func(name, value string) {
+const (
+	// ReleaseStyleDebian is the layout of the Debian archive (dak): the fields
+	// in the conventional order (Origin, Label, Suite, Version, Codename,
+	// Changelogs, Snapshots, Date, Valid-Until, NotAutomatic,
+	// ButAutomaticUpgrades, Acquire-By-Hash, Signed-By,
+	// No-Support-for-Architecture-all, Architectures, Components, Description,
+	// then unknown fields by name) and sizes right-aligned in 8 columns.
+	ReleaseStyleDebian ReleaseStyle = iota
+	// ReleaseStyleAptFTPArchive is the layout of apt-ftparchive release (apt
+	// 2.6): the header fields sorted by name, dates with a numeric zone
+	// ("+0000") and sizes right-aligned in 16 columns. apt-ftparchive writes
+	// only the fields Origin, Label, Suite, Version, Codename, Date,
+	// Valid-Until, NotAutomatic, ButAutomaticUpgrades, Acquire-By-Hash,
+	// Architectures, Components and Description; the other fields of the type
+	// are rendered too, in name order.
+	ReleaseStyleAptFTPArchive
+)
+
+// dateFormat is the layout of Date and Valid-Until: the Debian archive writes
+// the zone name ("UTC"), apt-ftparchive the numeric offset ("+0000").
+func (s ReleaseStyle) dateFormat() string {
+	if s == ReleaseStyleAptFTPArchive {
+		return releaseDateFormatNumeric
+	}
+
+	return releaseDateFormat
+}
+
+// sizeWidth is the width of the size column of the style.
+func (s ReleaseStyle) sizeWidth() int {
+	if s == ReleaseStyleAptFTPArchive {
+		return 16
+	}
+
+	return 8
+}
+
+// Marshal renders the Release in the layout of the Debian archive, see
+// ReleaseStyleDebian. Files are listed by path, in the MD5Sum, SHA1, SHA256
+// and SHA512 sections, and only with the digests they have. Empty header
+// fields and zero dates are omitted.
+func (r *Release) Marshal() []byte { return r.MarshalStyle(ReleaseStyleDebian) }
+
+// MarshalStyle renders the Release in the given layout.
+func (r *Release) MarshalStyle(style ReleaseStyle) []byte {
+	type kv struct{ name, value string }
+
+	var fields []kv
+
+	add := func(name, value string) {
 		if value != "" {
-			writeField(&sb, name, value)
+			fields = append(fields, kv{name, value})
 		}
-	}
-
-	field("Origin", r.Origin)
-	field("Label", r.Label)
-	field("Suite", r.Suite)
-	field("Version", r.Version)
-	field("Codename", r.Codename)
-
-	if !r.Date.IsZero() {
-		field("Date", r.Date.UTC().Format(releaseDateFormat))
-	}
-
-	if !r.ValidUntil.IsZero() {
-		field("Valid-Until", r.ValidUntil.UTC().Format(releaseDateFormat))
 	}
 
 	yes := func(name string, v bool) {
 		if v {
-			writeField(&sb, name, "yes")
+			add(name, "yes")
 		}
 	}
 
+	date := func(t time.Time) string {
+		if t.IsZero() {
+			return ""
+		}
+
+		return t.UTC().Format(style.dateFormat())
+	}
+
+	add("Origin", r.Origin)
+	add("Label", r.Label)
+	add("Suite", r.Suite)
+	add("Version", r.Version)
+	add("Codename", r.Codename)
+	add("Changelogs", r.Changelogs)
+	add("Snapshots", r.Snapshots)
+	add("Date", date(r.Date))
+	add("Valid-Until", date(r.ValidUntil))
 	yes("NotAutomatic", r.NotAutomatic)
 	yes("ButAutomaticUpgrades", r.ButAutomaticUpgrades)
 	yes("Acquire-By-Hash", r.AcquireByHash)
-	field("Signed-By", r.SignedBy)
-	field("No-Support-for-Architecture-all", r.NoSupportForArchitectureAll)
-	field("Changelogs", r.Changelogs)
-	field("Snapshots", r.Snapshots)
-	field("Architectures", strings.Join(r.Architectures, " "))
-	field("Components", strings.Join(r.Components, " "))
-	field("Description", r.Description)
+	add("Signed-By", r.SignedBy)
+	add("No-Support-for-Architecture-all", r.NoSupportForArchitectureAll)
+	add("Architectures", strings.Join(r.Architectures, " "))
+	add("Components", strings.Join(r.Components, " "))
+	add("Description", r.Description)
 
 	extra := make([]string, 0, len(r.Extra))
 
@@ -222,10 +273,20 @@ func (r *Release) Marshal() []byte {
 	sort.Strings(extra)
 
 	for _, k := range extra {
-		field(k, r.Extra[k])
+		add(k, r.Extra[k])
 	}
 
-	writeSections(&sb, r.Files)
+	if style == ReleaseStyleAptFTPArchive {
+		sort.SliceStable(fields, func(i, j int) bool { return fields[i].name < fields[j].name })
+	}
+
+	var sb strings.Builder
+
+	for _, f := range fields {
+		writeField(&sb, f.name, f.value)
+	}
+
+	writeSections(&sb, r.Files, style.sizeWidth())
 
 	return []byte(sb.String())
 }
@@ -256,8 +317,9 @@ func sectionSpecs() []struct {
 }
 
 // writeSections writes the MD5Sum, SHA1, SHA256 and SHA512 sections for files,
-// by path, with only the digests each has.
-func writeSections(sb *strings.Builder, files map[string]FileInfo) {
+// by path, with only the digests each has and the sizes right-aligned in
+// sizeWidth columns.
+func writeSections(sb *strings.Builder, files map[string]FileInfo, sizeWidth int) {
 	paths := make([]string, 0, len(files))
 	for p := range files {
 		paths = append(paths, p)
@@ -282,7 +344,7 @@ func writeSections(sb *strings.Builder, files map[string]FileInfo) {
 				any = true
 			}
 
-			fmt.Fprintf(sb, " %s %10d %s\n", d, fi.Size, p)
+			fmt.Fprintf(sb, " %s %*d %s\n", d, sizeWidth, fi.Size, p)
 		}
 	}
 }
@@ -417,14 +479,15 @@ func firstParagraph(body []byte) (*ControlFile, error) {
 // writes: RFC 1123 with a zone name or a numeric offset, with or without a
 // zero-padded day. It returns the zero time for anything else.
 func parseReleaseTime(s string) time.Time {
-	s = strings.TrimSpace(s)
+	// Ubuntu pads a one-digit day or hour with a blank ("Tue, 10 Nov 2026  7:42:48 UTC").
+	s = strings.Join(strings.Fields(s), " ")
 	if s == "" {
 		return time.Time{}
 	}
 
 	for _, layout := range []string{time.RFC1123, time.RFC1123Z, "Mon, 2 Jan 2006 15:04:05 MST", "Mon, 2 Jan 2006 15:04:05 -0700"} {
 		if t, err := time.Parse(layout, s); err == nil {
-			return t
+			return t.UTC()
 		}
 	}
 
@@ -439,44 +502,6 @@ func (r *Release) CheckValidity(now time.Time) error {
 	}
 
 	return nil
-}
-
-// packagesSuffixes lists the compressions of a Packages index, best first.
-func packagesSuffixes() []string { return []string{".xz", ".zst", ".gz", ".bz2", ".lz4", ""} }
-
-// PackagesVariants lists the paths of the Packages index of component comp
-// and architecture arch that the Release lists, best compression first.
-func (r *Release) PackagesVariants(comp, arch string) []string {
-	base := comp + "/binary-" + arch + "/Packages"
-
-	var out []string
-
-	for _, ext := range packagesSuffixes() {
-		if _, ok := r.Files[base+ext]; ok {
-			out = append(out, base+ext)
-		}
-	}
-
-	return out
-}
-
-// HasIndex reports whether the Release lists a Packages index for comp and
-// arch in any compression.
-func (r *Release) HasIndex(comp, arch string) bool {
-	return len(r.PackagesVariants(comp, arch)) > 0
-}
-
-// PackagesCandidates is PackagesVariants, except that a Release listing none
-// of them (one that only carries by-hash entries) yields the usual
-// .xz, .gz and plain paths to try.
-func (r *Release) PackagesCandidates(comp, arch string) []string {
-	if v := r.PackagesVariants(comp, arch); len(v) > 0 {
-		return v
-	}
-
-	base := comp + "/binary-" + arch + "/Packages"
-
-	return []string{base + ".xz", base + ".gz", base}
 }
 
 // StripClearsign returns the signed text of a clear-signed document, with the

@@ -1,0 +1,154 @@
+Package: 0ad
+Source: 0ad (0.27.0-2)
+Version: 0.27.0-2+b1
+Installed-Size: 54427
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: 0ad-data (>= 0.27.0), 0ad-data (<= 0.27.0-2), 0ad-data-common (>= 0.27.0), 0ad-data-common (<= 0.27.0-2), libboost-filesystem1.83.0 (>= 1.83.0), libc6 (>= 2.39), libcurl3t64-gnutls (>= 7.32.0), libenet7 (>= 1.3), libfmt10 (>= 10.1.1+ds1), libfreetype6 (>= 2.2.1), libgcc-s1 (>= 4.2), libgloox18 (>= 1.0.28), libicu76 (>= 76.1-1~), libminiupnpc18 (>= 2.2.8), libopenal1 (>= 1.14), libpng16-16t64 (>= 1.6.46), libsdl2-2.0-0 (>= 2.0.12), libsodium23 (>= 1.0.14), libstdc++6 (>= 14), libvorbisfile3 (>= 1.1.2), libwxbase3.2-1t64 (>= 3.2.6+dfsg), libwxgtk-gl3.2-1t64 (>= 3.2.6+dfsg), libwxgtk3.2-1t64 (>= 3.2.6+dfsg), libx11-6, libxml2 (>= 2.9.0), zlib1g (>= 1:1.2.0)
+Pre-Depends: dpkg (>= 1.15.6~)
+Description: Real-time strategy game of ancient warfare
+Homepage: https://play0ad.com/
+Description-md5: d943033bedada21853d2ae54a2578a7b
+Tag: game::strategy, interface::graphical, interface::x11, role::program,
+ uitoolkit::sdl, uitoolkit::wxwidgets, use::gameplaying,
+ x11::application
+Section: games
+Priority: optional
+Filename: pool/main/0/0ad/0ad_0.27.0-2+b1_amd64.deb
+Size: 15478892
+MD5sum: def4e9fbaca705a3ef4e16904cdd6dc5
+SHA256: 704dae7df79a35ed1bd3a0a8d5d1b9ce7a4ecdef74ddff72114d9523d63710eb
+
+Package: 0ad-data
+Version: 0.27.0-1
+Installed-Size: 3433612
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: all
+Pre-Depends: dpkg (>= 1.15.6~)
+Suggests: 0ad
+Description: Real-time strategy game of ancient warfare (data files)
+Multi-Arch: foreign
+Homepage: https://play0ad.com/
+Description-md5: 26581e685027d5ae84824362a4ba59ee
+Tag: role::app-data
+Section: games
+Priority: optional
+Filename: pool/main/0/0ad-data/0ad-data_0.27.0-1_all.deb
+Size: 1389812248
+MD5sum: 8bc5ae2a785f8a88e4c6a1ecc1e0e245
+SHA256: 7a25d66175bdc75cbd6a90e98b71dcb0d76f7763c589bd71880503f1c6185e4c
+
+Package: 0ad-data-common
+Source: 0ad-data
+Version: 0.27.0-1
+Installed-Size: 2429
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: all
+Replaces: 0ad-data (<< 0.0.12-1~)
+Depends: fonts-dejavu-core | ttf-dejavu-core, fonts-freefont-ttf | ttf-freefont, fonts-texgyre | tex-gyre
+Pre-Depends: dpkg (>= 1.15.6~)
+Suggests: 0ad
+Breaks: 0ad-data (<< 0.0.12-1~)
+Description: Real-time strategy game of ancient warfare (common data files)
+Multi-Arch: foreign
+Homepage: https://play0ad.com/
+Description-md5: 8d014b839c4c4e9b6f82c7512d7e3496
+Tag: game::strategy, role::app-data, role::program, use::gameplaying
+Section: games
+Priority: optional
+Filename: pool/main/0/0ad-data/0ad-data-common_0.27.0-1_all.deb
+Size: 779452
+MD5sum: ba44c5d8f88845662e2be65011d44b0b
+SHA256: 90f8919a2c976214c7fdc289c8ea9063e521e0bb46af3968e7ee9f2b5fb3fd26
+
+Package: lib0install-solver-ocaml
+Source: 0install-solver (2.18-1)
+Version: 2.18-1+b4
+Installed-Size: 422
+Maintainer: Debian OCaml Maintainers <debian-ocaml-maint@lists.debian.org>
+Architecture: amd64
+Provides: lib0install-solver-ocaml-uvb17
+Depends: libstdlib-ocaml-m4xw9, ocaml-base-5.3.0
+Description: package dependency solver (runtime)
+Homepage: https://docs.0install.net/developers/solver/
+Description-md5: 465bf898bf589fe3d72bb78fc78e96d3
+Section: ocaml
+Priority: optional
+Filename: pool/main/0/0install-solver/lib0install-solver-ocaml_2.18-1+b4_amd64.deb
+Size: 211344
+MD5sum: d1f45ed7570cc5d33c4596e1e2bd77a0
+SHA256: 1047cc7df5b50a3b3b2db16c6270da90ad91cdb2ba7e011c6938467ea1fb3f94
+
+Package: lib0install-solver-ocaml-dev
+Source: 0install-solver (2.18-1)
+Version: 2.18-1+b4
+Installed-Size: 949
+Maintainer: Debian OCaml Maintainers <debian-ocaml-maint@lists.debian.org>
+Architecture: amd64
+Provides: lib0install-solver-ocaml-dev-uvb17
+Depends: lib0install-solver-ocaml-uvb17, libstdlib-ocaml-dev-m4xw9, ocaml-5.3.0
+Description: package dependency solver (dev)
+Homepage: https://docs.0install.net/developers/solver/
+Description-md5: 6610aa5fde511cc6345bdd27fdf1efb3
+Section: ocaml
+Priority: optional
+Filename: pool/main/0/0install-solver/lib0install-solver-ocaml-dev_2.18-1+b4_amd64.deb
+Size: 505048
+MD5sum: 39610388694c1c3a4ddab8b0ffb0cec2
+SHA256: e503a9dd8068a1f6e5eacd61a4d8b7c5b21669e401e33595b15056b50134e399
+
+Package: 0xffff
+Source: 0xffff (0.9-1)
+Version: 0.9-1+b1
+Installed-Size: 167
+Maintainer: Sebastian Reichel <sre@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libusb-0.1-4 (>= 2:0.1.12)
+Description: Open Free Fiasco Firmware Flasher
+Multi-Arch: foreign
+Homepage: https://github.com/pali/0xFFFF
+Description-md5: 183c49f6505eb3432d1b069800f1f5b6
+Tag: admin::hardware, hardware::usb, implemented-in::c,
+ interface::commandline, role::program, scope::utility, works-with::file
+Section: misc
+Priority: optional
+Filename: pool/main/0/0xffff/0xffff_0.9-1+b1_amd64.deb
+Size: 58660
+MD5sum: 71f299ac99fa5b7ef97f7254b5da5a30
+SHA256: 1a50bcb6b41e418b4b5447cb4b47e9f50e1f75176126cdff653260a53a58593c
+
+Package: 2048
+Version: 1.0.3-1
+Installed-Size: 45
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34)
+Description: Slide and add puzzle game for text mode
+Homepage: https://github.com/mevdschee/2048.c
+Description-md5: 2d3a24661b5ec0391d6bd1aedf7c20b7
+Section: games
+Priority: optional
+Filename: pool/main/2/2048/2048_1.0.3-1_amd64.deb
+Size: 15556
+MD5sum: 6e9d9df0b49320db6427fecb608870ba
+SHA256: 72a1659aaa2171bd0bd47f0f7cda5ba82611f3597a7343299c52d3574ef56f9f
+
+Package: 2048-qt
+Source: 2048-qt (0.1.6-2)
+Version: 0.1.6-2+b4
+Installed-Size: 3817
+Maintainer: Alejandro Garrido Mota <alejandro@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.0), libqt5core5t64 (>= 5.15.1), libqt5qml5 (>= 5.1.0), libqt5widgets5t64 (>= 5.0.2), libstdc++6 (>= 5), qml-module-qtquick-controls, qml-module-qtquick-dialogs
+Description: mathematics based puzzle game
+Homepage: https://github.com/xiaoyong/2048-Qt
+Description-md5: 0f25c2ca95ceff4500fde9f651d74f2e
+Tag: game::puzzle, interface::graphical, interface::x11, role::program,
+ uitoolkit::qt, use::gameplaying, x11::application
+Section: games
+Priority: optional
+Filename: pool/main/2/2048-qt/2048-qt_0.1.6-2+b4_amd64.deb
+Size: 1392600
+MD5sum: a37f765a2e6eae40bc0d8b0675840cc8
+SHA256: 584e2b935bbad319e5b3af1adc4143532c2b93c1517783b8e5c94473285f21ac
+

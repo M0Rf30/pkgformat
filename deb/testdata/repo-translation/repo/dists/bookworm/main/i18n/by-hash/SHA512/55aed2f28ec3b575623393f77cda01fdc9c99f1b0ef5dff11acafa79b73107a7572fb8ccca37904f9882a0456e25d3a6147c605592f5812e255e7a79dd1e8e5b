@@ -1,0 +1,12 @@
+Package: hello
+Description-md5: bcd4c8837a698fc65eeb3fcaf65b8f13
+Description-en: friendly greeter
+ Prints a greeting.
+ .
+ Second paragraph.
+
+Package: hello-doc
+Description-md5: fd18f24ccc9701c44657d7330570a77d
+Description-en: documentation of hello
+ The manual.
+

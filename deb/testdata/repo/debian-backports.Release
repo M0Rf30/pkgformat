@@ -1,0 +1,18 @@
+Origin: Debian Backports
+Label: Debian Backports
+Suite: oldstable-backports
+Codename: bookworm-backports
+Changelogs: https://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog
+Date: Tue, 10 Nov 2026 20:25:11 UTC
+Valid-Until: Tue, 17 Nov 2026 20:25:11 UTC
+NotAutomatic: yes
+ButAutomaticUpgrades: yes
+Acquire-By-Hash: yes
+No-Support-for-Architecture-all: Packages
+Architectures: all amd64 arm64 armel armhf i386 mips64el mipsel ppc64el s390x
+Components: main contrib non-free-firmware non-free
+Description: Debian bookworm - Backports
+SHA256:
+ 96f7a1dd7412d0f16cb3ea07beccab9676226f1b6f3203a8cf7f81161a181015  1906411 main/binary-amd64/Packages
+ 15ea2d47fcdc8af66d12436432ce2520aec9076fa2e1b31026aa22c31a0e6769    63339 main/binary-amd64/Packages.diff/Index
+ b74b5bbca6f4701df6c5db54793a68449fb267ac10a9314e761b972ac63b3760   300424 main/binary-amd64/Packages.xz

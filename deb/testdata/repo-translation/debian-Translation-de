@@ -1,0 +1,116 @@
+Package: 0ad
+Description-md5: d943033bedada21853d2ae54a2578a7b
+Description-de: Echtzeit-Strategiespiel über antike Kriegsführung
+ 0 A.D. ist ein freies, quelloffenes, plattformübergreifendes
+ Echtzeit-Strategiespiel (RTS) über antike Kriegsführung. In Kürze: es ist
+ ein Kriegs-/Wirtschaftsspiel in dem Spieler die Geschichte westlicher
+ Zivilisationen zwischen 500 vor Christus und 500 nach Christus nacherleben
+ oder neu schreiben können. Das Projekt ist sehr ambitioniert, verfügt über
+ aktuelle 3D-Grafiken, detailliertes Artwork, Sound sowie eine flexible und
+ leistungsfähige selbst erstellte Spielengine.
+
+Package: 0ad-data
+Description-md5: 26581e685027d5ae84824362a4ba59ee
+Description-de: Echtzeit-Strategiespiel über antike Kriegsführung (Datendateien)
+ 0 A.D. ist ein freies, quelloffenes, plattformübergreifendes
+ Echtzeit-Strategiespiel (RTS) über antike Kriegsführung. In Kürze: es ist
+ ein Kriegs-/Wirtschaftsspiel, in dem Spieler die Geschichte westlicher
+ Zivilisationen zwischen 500 vor Christus und 500 nach Christus nacherleben
+ oder neu schreiben können. Das Projekt ist sehr ambitioniert, verfügt über
+ aktuelle 3D-Grafiken, detailliertes Artwork, Sound sowie eine flexible und
+ leistungsfähige selbst erstellte Spielengine.
+ .
+ Dieses Paket enthält die wichtigsten von 0 A.D. benötigten Datendateien.
+
+Package: 0ad-data-common
+Description-md5: 8d014b839c4c4e9b6f82c7512d7e3496
+Description-de: Echtzeit-Strategiespiel über antike Kriegsführung (gemeinsame Datendateien)
+ 0 A.D. ist ein freies, quelloffenes, plattformübergreifendes
+ Echtzeit-Strategiespiel (RTS) über antike Kriegsführung. In Kürze: es ist
+ ein Kriegs-/Wirtschaftsspiel, in dem Spieler die Geschichte westlicher
+ Zivilisationen zwischen 500 vor Christus und 500 nach Christus nacherleben
+ oder neu schreiben können. Das Projekt ist sehr ambitioniert, verfügt über
+ aktuelle 3D-Grafiken, detailliertes Artwork, Sound sowie eine flexible und
+ leistungsfähige selbst erstellte Spielengine.
+ .
+ Dieses Paket enthält die von 0 A.D. benötigten Datendateien (Konfiguration
+ und Werkzeuge).
+
+Package: 2048-qt
+Description-md5: 0f25c2ca95ceff4500fde9f651d74f2e
+Description-de: Mathematik-Rätselspiel
+ 2048 puzzle ist ein Mathematik-Rätselspiel, in dem Sie Kacheln in einem
+ Raster umherschieben und kombinieren, um eine Kachel mit der Zahl 2048 zu
+ erzeugen. Sie müssen die Kacheln mit gleichen Zahlen (2n) vereinen, indem
+ Sie die Pfeiltasten in vier verschiedene Richtungen bewegen. Wenn
+ sich zwei Kacheln mit der gleichen Zahl berühren, werden sie zu einer
+ Kachel vereint.
+
+Package: 2ping
+Description-md5: 2543c220a763445976d1348c5b593743
+Description-de: Ping-Hilfswerkzeug, um gerichteten Paketverlust zu bestimmen
+ 2ping ist ein bidirektionales Ping-Hilfswerkzeug. Es verwendet 3-Weg-Pings
+ (akin zu TCP SYN, SYN/ACK, ACK) und nachträglichen Statusvergleich zwischen
+ einem 2ping-Empfänger und einem 2ping-Client, um zu bestimmen, in welcher
+ Richtung der Paketverlust auftritt.
+
+Package: 2vcard
+Description-md5: 772b42c5a35b82967966265253189059
+Description-de: Konvertierung eines Adressbuches in das Dateiformat vCard
+ 2vcard konvertiert Adressbücher und alias-Dateien in das populäre Dateiformat
+ vCard. Derzeit kann 2vcard die folgenden Formate konvertieren: abook, Eudora,
+ Juno, LDIF, mutt, mh und pine.
+ .
+ 2vcard wurde mit Perl entwickelt.
+
+Package: 3270-common
+Description-md5: a1fad8fe7f911b2c01164ff75d013e53
+Description-de: Gemeinsame Dateien für IBM 3270 Emulatoren und pr3287
+ "3270-common" enthält Dateien, auf die andere "3270" Pakete verweisen.
+
+Package: 3dchess
+Description-md5: 12d01b96d7645ee302ebc29cde999e92
+Description-de: Spielen Sie Schach auf 3 Brettern
+ Das Spiel verfügt über drei vertikal gestapelte Schachbretter; 96
+ Spielsteine, die meisten davon traditionelle Schachfiguren mit einigen
+ Erweiterungen; 26 mögliche Richtungen, in die gezogen werden kann. Es
+ bietet für die meisten Spieler (außer ein paar sehr erfahrenen und guten
+ Spielern) eine Herausforderung.
+
+Package: 3depict
+Description-md5: 246db3da16c5305f24976464271087a5
+Description-de: Visualisierung und Analyse für einwertige Punktdaten
+ Dieses Programm stellt eine grafische Oberfläche bereit, um reellwertige
+ Punktdaten (x,y,z;Wert) wissenschaftlich zu untersuchen. Dabei zielt es
+ auf Anwendungen für tomographische Atomsonden ab. Das Programm kann jedoch
+ auch für andere Anwendungen nützlich sein.
+
+Package: 4g8
+Description-md5: 08a3e421414ebaacb3294625688dc573
+Description-de: Pakete in geswitchten Netzwerken aufzeichnen und abfangen
+ 4G8 ermöglicht es Ihnen den Datenverkehr eines Dritten auf Kosten einer
+ leicht erhöhten Latenz zu diesem Host-PC in einer geswitchten Umgebung
+ aufzuzeichnen. Dabei nutzt es das Senden von gefälschten ARP-Paketen
+ (ARP-Spoofing) und Paketaufzeichnungs- und -rekonstruktionstechniken aus.
+ 4G8 funktioniert mit fast allen TCP, ICMP und UDP IPv4 Datenströmen.
+
+Package: 6tunnel
+Description-md5: 860002e3477a2706be336a14451bba8e
+Description-de: TCP-Proxy für nicht IPv6-fähige Anwendungen
+ 6tunnel ermöglicht Ihnen die Nutzung von Diensten, die von IPv6-Hosts zur
+ Verfügung gestellt werden, mit reinen IPv4-Anwendungen und umgekehrt. Er
+ kann an jede Ihrer IPv4- oder IPv6-Adressen gebunden werden und leitet
+ alle Daten zum IPv4- oder IPv6-Host weiter.
+ .
+ Tunneln für Anwendungen, die kein IPv6 sprechen. 6tunnel kann
+ beispielsweise als IPv6-fähiger IRC-Proxy in einem anderen Netzwerk
+ verwendet werden.
+
+Package: 9menu
+Description-md5: 33212022c95de2da6fad4458526c39d8
+Description-de: Erzeugt Menüs für X aus einer Shell
+ Dies ist ein einfaches Programm, das es Ihnen ermöglicht, Menüs für X aus
+ einer Shell heraus zu erstellen. Jeder Menüeintrag stellt ein ausführbares
+ Programm dar. 9menu wurde für den Windowmanager 9wm erstellt, kann jedoch
+ auch mit jedem anderen Windowmanager benutzt werden.
+

@@ -1,0 +1,31 @@
+Package: hello
+Version: 1.0-1
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Section: utils
+Priority: optional
+Filename: pool/main/h/hello/hello_1.0-1_amd64.deb
+Size: 780
+MD5sum: bf3e974b80aa7e8f216666abc2fdefa4
+SHA1: 13a7414ba4f539ea6395c872025027ad8396dd4e
+SHA256: f0c4ff7ae8d62644e0b11a49c8583c14dc2801c2936ac75543f1f3e9ad5b92ac
+SHA512: 13581cae0c7ddabcf7195bf14d664d09c8baccfc88b1ad21d870e24917749c336f59ca9a4ea406989ff158d661cccdbc1d2d80ec5ff40f2381c7dbdbccec1980
+Description: friendly greeter
+Description-md5: bcd4c8837a698fc65eeb3fcaf65b8f13
+
+Package: hello-doc
+Version: 1.0-1
+Architecture: all
+Maintainer: Test <test@example.org>
+Multi-Arch: foreign
+Section: doc
+Priority: optional
+Filename: pool/main/h/hello-doc/hello-doc_1.0-1_all.deb
+Size: 776
+MD5sum: 55ab5520217f45911537135f2aead844
+SHA1: d0200d7ccbe5fd25d70833d60329763bf5b82541
+SHA256: 6e4d0ce66400e5a20dc3e5beeca092433350b96bf952ce0dab57f12465c6dde6
+SHA512: 82d9e3386c71308bcd38ed5d914bcc543de3946f03e01ecaf8aa308d98ddf65d978051a6d6c60cefebd87e1f9cf66efc304d3f39192868d234291b5ec9481b91
+Description: documentation of hello
+Description-md5: fd18f24ccc9701c44657d7330570a77d
+

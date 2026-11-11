@@ -3,11 +3,20 @@ package deb
 import (
 	"crypto/md5" //nolint:gosec // Description-md5 is a lookup key of the format, not a security control
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
+	"iter"
 	"sort"
 	"strings"
 )
+
+// MaxTranslationEntries bounds the descriptions ParseTranslation reads.
+const MaxTranslationEntries = 1 << 22
+
+// ErrInvalidTranslation is returned for a language or entry that cannot be
+// written to a Translation file.
+var ErrInvalidTranslation = errors.New("deb: invalid translation")
 
 // TranslationEntry is one package description of a Translation-<lang> file.
 type TranslationEntry struct {
@@ -75,117 +84,218 @@ func (e IndexEntry) TranslationEntry() TranslationEntry {
 
 // MarshalTranslation renders a Translation-<lang> file for the entries, in the
 // order given: a paragraph per package with Package, Description-md5 and
-// Description-<lang>.
+// Description-<lang>. An entry without a DescriptionMD5 gets the md5 of its own
+// description, which is the key only for English.
 func MarshalTranslation(lang string, entries []TranslationEntry) []byte {
 	var sb strings.Builder
 
 	for _, e := range entries {
-		writeField(&sb, "Package", e.Package)
-
-		md5sum := e.DescriptionMD5
-		if md5sum == "" {
-			md5sum = DescriptionMD5(e.Description)
-		}
-
-		writeField(&sb, "Description-md5", md5sum)
-		writeField(&sb, "Description-"+lang, e.Description)
-		sb.WriteString("\n")
+		appendTranslation(&sb, lang, e)
 	}
 
 	return []byte(sb.String())
+}
+
+func appendTranslation(sb *strings.Builder, lang string, e TranslationEntry) {
+	writeField(sb, "Package", e.Package)
+
+	md5sum := e.DescriptionMD5
+	if md5sum == "" {
+		md5sum = DescriptionMD5(e.Description)
+	}
+
+	writeField(sb, "Description-md5", md5sum)
+	writeField(sb, "Description-"+lang, e.Description)
+	sb.WriteString("\n")
 }
 
 // TranslationFileName is the name of a Translation file in the i18n directory
 // of a component: "Translation-de.xz".
 func TranslationFileName(lang, ext string) string { return "Translation-" + lang + ext }
 
-// ScanTranslation calls fn for each entry of a Translation-<lang> file (read
-// decompressed), in order. Entries without a Package or without a description
-// in the language are skipped. fn returning an error stops the scan with it.
-func ScanTranslation(r io.Reader, lang string, fn func(TranslationEntry) error) error {
-	field := "Description-" + lang
+// TranslationBuilder accumulates the descriptions of one language and renders
+// them as a Translation-<lang> file the way a repository publishes it: one
+// paragraph per distinct description (Description-md5), sorted by package name
+// then md5, so the same input gives the same bytes. The zero value is not
+// usable; create one with NewTranslationBuilder.
+type TranslationBuilder struct {
+	lang    string
+	byMD5   map[string]TranslationEntry
+	invalid error
+}
 
-	return ScanControl(r, func(cf *ControlFile) error {
-		pkg, desc := cf.Get("Package"), cf.Get(field)
-		if pkg == "" || desc == "" {
-			return nil
+// NewTranslationBuilder returns a builder for the language: "en", "de",
+// "pt_BR". A language that is not a plain code makes every Add fail with
+// ErrInvalidTranslation.
+func NewTranslationBuilder(lang string) *TranslationBuilder {
+	b := &TranslationBuilder{lang: lang, byMD5: make(map[string]TranslationEntry)}
+
+	if !validLanguage(lang) {
+		b.invalid = fmt.Errorf("%w: language %q", ErrInvalidTranslation, lang)
+	}
+
+	return b
+}
+
+// Language is the language of the builder.
+func (b *TranslationBuilder) Language() string { return b.lang }
+
+// Add records a description. An entry that has no DescriptionMD5 is keyed by
+// the md5 of its own description (right for English); one without a package
+// name or a description fails with ErrInvalidTranslation. A description that is
+// already there (same md5) is kept as first added: packages that share a
+// description share one paragraph.
+func (b *TranslationBuilder) Add(e TranslationEntry) error {
+	if b.invalid != nil {
+		return b.invalid
+	}
+
+	if e.Package == "" || strings.TrimSpace(e.Description) == "" {
+		return fmt.Errorf("%w: entry %q needs a package and a description", ErrInvalidTranslation, e.Package)
+	}
+
+	if e.DescriptionMD5 == "" {
+		e.DescriptionMD5 = DescriptionMD5(e.Description)
+	}
+
+	e.DescriptionMD5 = strings.ToLower(e.DescriptionMD5)
+
+	if _, dup := b.byMD5[e.DescriptionMD5]; dup {
+		return nil
+	}
+
+	if len(b.byMD5) >= MaxTranslationEntries {
+		return fmt.Errorf("%w: more than %d descriptions", ErrTooLarge, MaxTranslationEntries)
+	}
+
+	b.byMD5[e.DescriptionMD5] = e
+
+	return nil
+}
+
+// AddIndexEntry records the description of a package of a Packages index (the
+// English one, for a Translation-en builder). A package without a description
+// is skipped.
+func (b *TranslationBuilder) AddIndexEntry(e IndexEntry) error {
+	te := e.TranslationEntry()
+	if te.Description == "" {
+		return nil
+	}
+
+	return b.Add(te)
+}
+
+// Len is the number of descriptions.
+func (b *TranslationBuilder) Len() int { return len(b.byMD5) }
+
+// Entries returns the descriptions in file order.
+func (b *TranslationBuilder) Entries() []TranslationEntry {
+	out := make([]TranslationEntry, 0, len(b.byMD5))
+	for _, e := range b.byMD5 {
+		out = append(out, e)
+	}
+
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Package != out[j].Package {
+			return out[i].Package < out[j].Package
 		}
 
-		return fn(TranslationEntry{Package: pkg, DescriptionMD5: strings.ToLower(cf.Get("Description-md5")), Description: desc})
+		return out[i].DescriptionMD5 < out[j].DescriptionMD5
 	})
+
+	return out
+}
+
+// Bytes renders the Translation file.
+func (b *TranslationBuilder) Bytes() []byte { return MarshalTranslation(b.lang, b.Entries()) }
+
+// Compressed renders the file compressed with c.
+func (b *TranslationBuilder) Compressed(c Compression) ([]byte, error) {
+	var buf sliceWriter
+
+	if _, err := b.WriteTo(&buf, c); err != nil {
+		return nil, err
+	}
+
+	return buf.b, nil
+}
+
+// WriteTo writes the file compressed with c to w and returns the number of
+// bytes written to w.
+func (b *TranslationBuilder) WriteTo(w io.Writer, c Compression) (int64, error) {
+	cw := &countingWriter{w: w}
+
+	zw, err := compressWriter(cw, c)
+	if err != nil {
+		return 0, err
+	}
+
+	if _, err := zw.Write(b.Bytes()); err != nil {
+		_ = zw.Close()
+
+		return cw.n, fmt.Errorf("deb: writing translation: %w", err)
+	}
+
+	if err := zw.Close(); err != nil {
+		return cw.n, fmt.Errorf("deb: closing translation: %w", err)
+	}
+
+	return cw.n, nil
+}
+
+// ScanTranslation yields each entry of a Translation-<lang> file (read
+// decompressed), in order. Entries without a Package or without a description
+// in the language are skipped. The limits of ScanControl apply.
+func ScanTranslation(r io.Reader, lang string) iter.Seq2[TranslationEntry, error] {
+	field := "Description-" + lang
+
+	return func(yield func(TranslationEntry, error) bool) {
+		stopped := errors.New("stop")
+
+		err := ScanControl(r, func(cf *ControlFile) error {
+			pkg, desc := cf.Get("Package"), cf.Get(field)
+			if pkg == "" || desc == "" {
+				return nil
+			}
+
+			if !yield(TranslationEntry{Package: pkg, DescriptionMD5: strings.ToLower(cf.Get("Description-md5")), Description: desc}, nil) {
+				return stopped
+			}
+
+			return nil
+		})
+		if err != nil && !errors.Is(err, stopped) {
+			yield(TranslationEntry{}, err)
+		}
+	}
 }
 
 // ParseTranslation reads a whole Translation file into a map from
 // Description-md5 to the description in the language, which is how apt looks
 // translations up. An entry without a Description-md5 is keyed by the md5 of
-// its description, which only matches when the file is in English.
+// its description, which only matches when the file is in English. More than
+// MaxTranslationEntries entries fail with ErrTooLarge.
 func ParseTranslation(r io.Reader, lang string) (map[string]TranslationEntry, error) {
 	out := make(map[string]TranslationEntry)
 
-	err := ScanTranslation(r, lang, func(e TranslationEntry) error {
+	for e, err := range ScanTranslation(r, lang) {
+		if err != nil {
+			return nil, err
+		}
+
 		key := e.DescriptionMD5
 		if key == "" {
 			key = DescriptionMD5(e.Description)
 		}
 
-		out[key] = e
+		if _, known := out[key]; !known && len(out) >= MaxTranslationEntries {
+			return nil, fmt.Errorf("%w: more than %d descriptions", ErrTooLarge, MaxTranslationEntries)
+		}
 
-		return nil
-	})
-	if err != nil {
-		return nil, err
+		out[key] = e
 	}
 
 	return out, nil
-}
-
-// I18nIndex is the content of the i18n/Index file of a component: the
-// checksums of the Translation files next to it, so that a client can tell a
-// translation it has is current without fetching the Release again.
-type I18nIndex struct {
-	// Files lists the Translation files by name, relative to the i18n directory
-	// ("Translation-en.xz").
-	Files map[string]FileInfo
-}
-
-// AddFile records a Translation file in the index.
-func (ix *I18nIndex) AddFile(fi FileInfo) {
-	if ix.Files == nil {
-		ix.Files = make(map[string]FileInfo)
-	}
-
-	ix.Files[fi.Path] = fi
-}
-
-// Marshal renders the index: the checksum sections of a Release, SHA1 and
-// SHA256 here, with the digests the files have.
-func (ix *I18nIndex) Marshal() []byte {
-	var sb strings.Builder
-
-	writeSections(&sb, ix.Files)
-
-	return []byte(sb.String())
-}
-
-// Languages lists the languages the index has a Translation file for, sorted
-// and without duplicates.
-func (ix *I18nIndex) Languages() []string {
-	seen := make(map[string]bool)
-
-	for name := range ix.Files {
-		if lang, ok := translationLanguage(name); ok {
-			seen[lang] = true
-		}
-	}
-
-	out := make([]string, 0, len(seen))
-	for l := range seen {
-		out = append(out, l)
-	}
-
-	sort.Strings(out)
-
-	return out
 }
 
 // translationLanguage extracts "de" from "Translation-de.xz".
@@ -200,26 +310,4 @@ func translationLanguage(name string) (string, bool) {
 	}
 
 	return rest, rest != ""
-}
-
-// ParseI18nIndex parses an i18n/Index file.
-func ParseI18nIndex(data []byte) (*I18nIndex, error) {
-	if len(data) > MaxReleaseBytes {
-		return nil, fmt.Errorf("%w: i18n index over %d bytes", ErrTooLarge, MaxReleaseBytes)
-	}
-
-	cf, err := firstParagraph(StripClearsign(data))
-	if err != nil {
-		return nil, err
-	}
-
-	ix := &I18nIndex{Files: make(map[string]FileInfo)}
-
-	for _, sec := range sectionSpecs() {
-		if err := addSection(ix.Files, cf.Get(sec.field), sec.length, sec.set); err != nil {
-			return nil, fmt.Errorf("%s: %w", sec.field, err)
-		}
-	}
-
-	return ix, nil
 }

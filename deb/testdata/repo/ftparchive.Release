@@ -1,0 +1,53 @@
+Acquire-By-Hash: yes
+Architectures: amd64
+ButAutomaticUpgrades: yes
+Codename: x
+Components: main
+Date: Wed, 11 Nov 2026 02:48:58 +0000
+Description: A test archive
+Label: Test
+NotAutomatic: yes
+Origin: Test
+Suite: testing
+Valid-Until: Fri, 11 Dec 2026 02:48:58 +0000
+Version: 1.5
+MD5Sum:
+ 43265d7600cf806f3bff6ccb696c882e               35 Contents-amd64
+ 9f22ad56a0b50a8066647dd3e6612bcf               46 Contents-amd64.gz
+ 5ab25270d47fd5d02da56a6fa6fac99e              132 main/binary-amd64/Packages
+ 4a1ac6a4a05b930f8add0dc54ab9db12              133 main/binary-amd64/Packages.gz
+ 67736a51e83ba49dc968e3064511e094              188 main/binary-amd64/Packages.xz
+ feb10e0cabdcdd644e6cc87060baa605               90 main/i18n/Translation-en
+ aca438d5521ac45127cd070bc7e631ad              114 main/i18n/Translation-en.bz2
+ a0fd1897629cb63bd35d980a52d88bbd               29 main/source/Sources
+ 519b03c9686f1ab517d599f2f21a4040               49 main/source/Sources.gz
+SHA1:
+ abf104cd5fbd802ab585fcadbd6bb903ab17cb7d               35 Contents-amd64
+ 5ef84030163e468e05fe6744ceb5d55f60a687a9               46 Contents-amd64.gz
+ 152d10826fe29c90c174c4b98d9c67691784a5a4              132 main/binary-amd64/Packages
+ 13de42b93b04d121f988b1fc3a4953962a99ddcb              133 main/binary-amd64/Packages.gz
+ 0d877113e09d7ffbedcfe1b54876b316d3f04e6d              188 main/binary-amd64/Packages.xz
+ 01f805129114bfb4261b69b342c57dfd42bf5b4e               90 main/i18n/Translation-en
+ d0b3d67cebae22b535620a0290fbb6b90613b111              114 main/i18n/Translation-en.bz2
+ a06f608ed616eda7c0935a9691215cf6158edb11               29 main/source/Sources
+ 5b8791ea731ee3bb4311994d08605aa364f863f4               49 main/source/Sources.gz
+SHA256:
+ 4667972e343f2c49ed48c15f99b0a548bacf4c623d62c37ddd234e2e458a29b4               35 Contents-amd64
+ 31f23d15718dce7fe2151c9b2326627ec5a9a66b36830e9df4455271580d4949               46 Contents-amd64.gz
+ 91969f4dafb5d51750b632c9770c60414fb9ceae4b4253710f7b540cc2bdd94c              132 main/binary-amd64/Packages
+ 749333e67cdc5e64c7ad65af1bd2b1674066509821adbf4ead501153ea295a2f              133 main/binary-amd64/Packages.gz
+ 0fce6d834f2f4a8a85f956d22340a6cd91b2a6f14a1665f3c22f2dafb16a3887              188 main/binary-amd64/Packages.xz
+ 194f12002616673f15a6952dc7cf77df23935e3783d425728241a070c0adf9f1               90 main/i18n/Translation-en
+ d3f665094a1a82012257fdd7c8c2c4ed524652055a914b3a6ce76106558d924f              114 main/i18n/Translation-en.bz2
+ a07a4c7d1ee9e2e2b18c58fec766bbc80d5a66a9bea0e4e09e50cf0b696e89f3               29 main/source/Sources
+ 6d5dbe706d6347b3ac88b2d3bb07691c2b8f48ff23022fb3687024b0f97c2069               49 main/source/Sources.gz
+SHA512:
+ 95d2271940d1b04300793bf15f2e68206632f7ae842e5e071303787ccbbbf99e4854aa1e44756782730617433d5bc1b12bf914aa49f28026fea9c0b31bf5f34e               35 Contents-amd64
+ 65a1c882ccdbb6fdad9b6cd54d200d5ad50f0f55407545ed8d1cdf0472e21f068595a01549935d631ce7351c01dc048be9e54bc0d61a756639cbfad5a811b5f1               46 Contents-amd64.gz
+ f36b307a672a7608a2db56a6e481ed176286d2c2882babc5ed04b08e1e6c233b616e9dbe490b5bd04a8324b572744ad4225ffe579b5972e43ce2fad5475837a8              132 main/binary-amd64/Packages
+ 83c0d16163dda4a1153104bae8b93a9c04f760dcf5a16bea0c64baa5ca0f241547de9d6b603e0555270c60c4acb38fddcace91f56e4fef725070be720491b1c7              133 main/binary-amd64/Packages.gz
+ 583a2afe1d0d0548dd7ce9179754033556b9eb81d668a0feeb83d33899005beb6b2d6f2aa993fb70e5b2d7d4f2a12e32fdee217807a7117577a0c8c4c45696ee              188 main/binary-amd64/Packages.xz
+ a6aa7ee9084cdc613912d422c050dfe66f029207314276ecc6b9f9d8500165a498cf773e13bc4d2c6d0ddf12d3f55d70da932a594190e0e5610237cb31ee9ed8               90 main/i18n/Translation-en
+ fe79a96620f507dc11fc8193f4f41c01c99e06b12379cc06fe9d8ee4f822951a5205c3a86bc5f7b067da8ed6f088a1fd48f204707a1365244f35aa078ae83e04              114 main/i18n/Translation-en.bz2
+ 06255b3b8ee6a9f0f2307f9f00b77fa49fc2106893a19dd8f8792abecbabe255e65b26beb17281f2e3a03ac5bee8de85a477dea82f53a90ef82b920bb7423bdc               29 main/source/Sources
+ 4783c8052985e1a50d8399568f16541c81fcc87b1a763218d85ec6194922f3a92245fb8a0b5e818191b8bfe06f34577d7ec6f9d5ae626abbe0c5561c61152522               49 main/source/Sources.gz

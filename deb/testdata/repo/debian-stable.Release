@@ -1,0 +1,40 @@
+Origin: Debian
+Label: Debian
+Suite: stable
+Version: 13.7
+Codename: trixie
+Changelogs: https://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog
+Date: Sat, 12 Sep 2026 07:55:41 UTC
+Acquire-By-Hash: yes
+No-Support-for-Architecture-all: Packages
+Architectures: all amd64 arm64 armel armhf i386 ppc64el riscv64 s390x
+Components: main contrib non-free-firmware non-free
+Description: Debian 13.7 Released 12 September 2026
+MD5Sum:
+ a32f5a51fd67faec3742db5976656b49   133992 contrib/Contents-all.gz
+ 020afcc992493de0f222e3ce4f656c95 169867985 main/Contents-amd64
+ 28de400dfa7efef5fa35072adedede3d 12698511 main/Contents-amd64.gz
+ 4f5b89e3bdf558340ef0abf3b457098e   593728 main/Contents-udeb-amd64
+ 5f6ff09ca1352c4d8da080a56ba8da58    40695 main/Contents-udeb-amd64.gz
+ e08be5a2aa84e0f84bd976c3ce580092 56620099 main/binary-amd64/Packages
+ 1c7c4d1c34c2b2022bae744c346926f6 13332733 main/binary-amd64/Packages.gz
+ 2d47057a46b268c5f031facecf74b20a  9678380 main/binary-amd64/Packages.xz
+ 4ba3dc4aa086e6e2d2682371f2c90bff  1673278 main/i18n/Translation-de.bz2
+ 1c502a6744282bc49529718e78d2c2bf  6485704 main/i18n/Translation-en.xz
+ d73e388fe6edfc0ff83a0fc9975cfdaf 57389881 main/source/Sources
+ 28967979c17a02a1e89c84b9681cf277 14147569 main/source/Sources.gz
+ 0ec31b144b694650cf847e16912a73dc 10540436 main/source/Sources.xz
+SHA256:
+ bc5f52133abdd71a99a9caeea3b890a8c024713f2baf2fe4d62014f1a1af4a12   133992 contrib/Contents-all.gz
+ a89dc2f8070839cea67e071774e7f5208477a5756d541630714221ab045f7356 169867985 main/Contents-amd64
+ 3d3e6930908db0b53f780dd7397b9589e27db88b59205c331a76d76d6726e419 12698511 main/Contents-amd64.gz
+ 26b646d777ebd75e6bc220c9d725634337b205e23e176a283ee254daaf81e419   593728 main/Contents-udeb-amd64
+ 63855ddeb39aa792f13b6566981360fb06ab43d5528f0bf874c9540ba4471fea    40695 main/Contents-udeb-amd64.gz
+ 4f2c68d67001d595fbd343f6dbad44468953a51c4d9dec3a4803249f6e295940 56620099 main/binary-amd64/Packages
+ 42c23aaca08e8225ed0449360724b92531952cbe4ce3bbf189298a7108f40a85 13332733 main/binary-amd64/Packages.gz
+ 7778d3e3f303b7ddb8ce0fe7c8d57473a076c6bf2e8f241f75421d2396352498  9678380 main/binary-amd64/Packages.xz
+ d770db8a3e9d99169f2e0d78f72742431c7cb359064f782c787463bd6f1b1a58  1673278 main/i18n/Translation-de.bz2
+ 800dd225bc6fabe4dfc0b039c7b33a8f0cd52309d34dc69a24959daa31af6251  6485704 main/i18n/Translation-en.xz
+ ae99131b13c7e61c53a52c33a2f9088a1bc5db15a664f5d90cc3753ad9b65606 57389881 main/source/Sources
+ bc2bbea10795a8d6cb719675a6fdb45774db16fb230ac713af35e7674413d5b9 14147569 main/source/Sources.gz
+ 6002f81f463a2d976d84b34170367cc16da2d60bd0ba9ab9d868d6e1c1a935d9 10540436 main/source/Sources.xz

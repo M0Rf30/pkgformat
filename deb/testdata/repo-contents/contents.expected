@@ -1,0 +1,8 @@
+etc/beta.conf						    beta
+usr/bin/alpha						    alpha,beta
+usr/bin/alpha-link					    alpha
+usr/bin/beta						    beta
+usr/lib/gamma/libgamma.so.1				    gamma
+usr/lib/gamma/libgamma.so.1.0				    gamma
+usr/share/doc/alpha/copyright				    alpha
+usr/share/with space/file one.txt			    alpha

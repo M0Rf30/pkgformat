@@ -1,0 +1,12 @@
+Package: hello
+Description-md5: bcd4c8837a698fc65eeb3fcaf65b8f13
+Description-de: freundlicher Gruesser
+ Gibt einen Gruss aus.
+ .
+ Zweiter Absatz.
+
+Package: hello-doc
+Description-md5: fd18f24ccc9701c44657d7330570a77d
+Description-de: Dokumentation von hello
+ Das Handbuch.
+
