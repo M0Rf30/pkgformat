@@ -57,7 +57,7 @@ func readGzFile(t testing.TB, path string) []byte {
 	return data
 }
 
-func fileSHA256(t testing.TB, path string) string {
+func sqliteFileSHA256(t testing.TB, path string) string {
 	t.Helper()
 
 	data, err := os.ReadFile(path)
@@ -89,7 +89,7 @@ func refCorpus(t testing.TB) ([]rpm.Package, SQLiteOptions) {
 func refOpts(t testing.TB, opts SQLiteOptions, name string) SQLiteOptions {
 	t.Helper()
 
-	opts.XMLChecksum = fileSHA256(t, filepath.Join(refRepo, name+".xml.gz"))
+	opts.XMLChecksum = sqliteFileSHA256(t, filepath.Join(refRepo, name+".xml.gz"))
 
 	return opts
 }
@@ -411,12 +411,12 @@ func TestWriteSQLiteTempDirError(t *testing.T) {
 	}
 }
 
-type failWriter struct{}
+type sqliteFailWriter struct{}
 
-func (failWriter) Write([]byte) (int, error) { return 0, io.ErrClosedPipe }
+func (sqliteFailWriter) Write([]byte) (int, error) { return 0, io.ErrClosedPipe }
 
 func TestWriteSQLiteWriterError(t *testing.T) {
-	err := WriteSQLite(failWriter{}, DocOther, nil, SQLiteOptions{})
+	err := WriteSQLite(sqliteFailWriter{}, DocOther, nil, SQLiteOptions{})
 	if !errors.Is(err, io.ErrClosedPipe) {
 		t.Errorf("err = %v, want io.ErrClosedPipe", err)
 	}
@@ -645,10 +645,10 @@ func TestCompressSQLiteEntries(t *testing.T) {
 	}
 }
 
-// buildRepo lays out a repository the way createrepo_c --simple-md-filenames
+// sqliteBuildRepo lays out a repository the way createrepo_c --simple-md-filenames
 // does: the compressed XML documents, and with withDBs the databases, and the
 // repomd.xml that lists them. It returns the checksum of each XML document.
-func buildRepo(t *testing.T, pkgs []rpm.Package, opts SQLiteOptions, withDBs bool) (string, map[string]string) {
+func sqliteBuildRepo(t *testing.T, pkgs []rpm.Package, opts SQLiteOptions, withDBs bool) (string, map[string]string) {
 	t.Helper()
 
 	repo := t.TempDir()
@@ -750,7 +750,7 @@ func TestSQLiteAcceptedByCreaterepoTools(t *testing.T) {
 	}
 
 	pkgs, opts := refCorpus(t)
-	repo, sums := buildRepo(t, pkgs, opts, false)
+	repo, sums := sqliteBuildRepo(t, pkgs, opts, false)
 
 	if out, err := exec.Command("sqliterepo_c", "--compress-type=gz", repo).CombinedOutput(); err != nil {
 		t.Fatalf("sqliterepo_c: %v\n%s", err, out)
@@ -768,15 +768,15 @@ func TestSQLiteRepositoryReadByCreaterepoTools(t *testing.T) {
 	}
 
 	pkgs, opts := refCorpus(t)
-	repo, sums := buildRepo(t, pkgs, opts, true)
-	before := fileSHA256(t, filepath.Join(repo, "repodata", "primary.sqlite.gz"))
+	repo, sums := sqliteBuildRepo(t, pkgs, opts, true)
+	before := sqliteFileSHA256(t, filepath.Join(repo, "repodata", "primary.sqlite.gz"))
 
 	out, err := exec.Command("sqliterepo_c", "--compress-type=gz", repo).CombinedOutput()
 	if err == nil || !strings.Contains(string(out), "already has sqlitedb present in repomd.xml") {
 		t.Errorf("sqliterepo_c did not recognise the databases: %v\n%s", err, out)
 	}
 
-	if after := fileSHA256(t, filepath.Join(repo, "repodata", "primary.sqlite.gz")); after != before {
+	if after := sqliteFileSHA256(t, filepath.Join(repo, "repodata", "primary.sqlite.gz")); after != before {
 		t.Error("sqliterepo_c rewrote primary.sqlite.gz")
 	}
 

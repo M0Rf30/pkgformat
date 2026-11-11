@@ -74,7 +74,7 @@ func TestReadCreaterepoPrimaryDatabase(t *testing.T) {
 		t.Fatalf("kind %d, info %+v", db.Kind(), db.Info())
 	}
 
-	if want := fileSHA256(t, filepath.Join(refRepo, "primary.xml.gz")); db.Info().Checksum != want {
+	if want := sqliteFileSHA256(t, filepath.Join(refRepo, "primary.xml.gz")); db.Info().Checksum != want {
 		t.Errorf("db_info checksum %s, want the checksum of primary.xml.gz %s", db.Info().Checksum, want)
 	}
 

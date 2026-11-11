@@ -589,9 +589,9 @@ func TestZchunkWriterOptions(t *testing.T) {
 	}
 }
 
-type failWriter struct{ left int }
+type zckFailWriter struct{ left int }
 
-func (f *failWriter) Write(p []byte) (int, error) {
+func (f *zckFailWriter) Write(p []byte) (int, error) {
 	if len(p) > f.left {
 		return 0, errors.New("disk full")
 	}
@@ -632,7 +632,7 @@ func TestZchunkWriterLifecycle(t *testing.T) {
 	}
 
 	for _, left := range []int{0, 100} {
-		zw, err := NewZchunkWriter(&failWriter{left: left}, ZchunkOptions{})
+		zw, err := NewZchunkWriter(&zckFailWriter{left: left}, ZchunkOptions{})
 		if err != nil {
 			t.Fatal(err)
 		}

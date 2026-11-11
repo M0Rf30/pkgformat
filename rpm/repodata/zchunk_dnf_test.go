@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-const dnfImage = "localhost/s3tools:latest"
+const zckDNFImage = "localhost/s3tools:latest"
 
 // A repository whose repomd.xml, written by Repomd.Marshal, lists the zchunk
 // files and a gzip primary that is not served: dnf refreshes its metadata from
@@ -27,8 +27,8 @@ func TestZchunkDnfMakecache(t *testing.T) {
 
 	podman := needTool(t, "podman")
 
-	if exec.Command(podman, "image", "exists", dnfImage).Run() != nil {
-		t.Skipf("image %s is not available", dnfImage)
+	if exec.Command(podman, "image", "exists", zckDNFImage).Run() != nil {
+		t.Skipf("image %s is not available", zckDNFImage)
 	}
 
 	oldPrimary, _ := readZchunk(t, zfixture(t, "createrepo-primary-old.xml.zck"), ZchunkReadOptions{})
@@ -111,7 +111,7 @@ func TestZchunkDnfMakecache(t *testing.T) {
 		current, log = files, nil
 		mu.Unlock()
 
-		cmd := exec.Command(podman, "run", "--rm", "--network=host", "-v", cache+":/cache", dnfImage,
+		cmd := exec.Command(podman, "run", "--rm", "--network=host", "-v", cache+":/cache", zckDNFImage,
 			"dnf5", "--repofrompath=zck,"+srv.URL, "--repo=zck", "--setopt=zck.gpgcheck=0",
 			"--setopt=cachedir=/cache", "--setopt=zck.zchunk=1", "makecache", "--refresh")
 

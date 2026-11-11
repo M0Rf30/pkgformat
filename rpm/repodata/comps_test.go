@@ -552,9 +552,9 @@ func TestWriteCompsXMLInvalid(t *testing.T) {
 	}
 }
 
-type failWriter struct{ after int }
+type compsFailWriter struct{ after int }
 
-func (w *failWriter) Write(p []byte) (int, error) {
+func (w *compsFailWriter) Write(p []byte) (int, error) {
 	if w.after <= 0 {
 		return 0, errDisk
 	}
@@ -574,13 +574,13 @@ func TestWriteCompsXMLWriteError(t *testing.T) {
 	}
 
 	for _, after := range []int{0, 1 << 17} {
-		if err := WriteCompsXML(&failWriter{after: after}, c); !errors.Is(err, errDisk) {
+		if err := WriteCompsXML(&compsFailWriter{after: after}, c); !errors.Is(err, errDisk) {
 			t.Errorf("after %d bytes: err = %v, want the write error", after, err)
 		}
 	}
 
 	// A small document fails at Close.
-	if err := WriteCompsXML(&failWriter{}, testComps()); !errors.Is(err, errDisk) {
+	if err := WriteCompsXML(&compsFailWriter{}, testComps()); !errors.Is(err, errDisk) {
 		t.Errorf("small document: err = %v", err)
 	}
 }

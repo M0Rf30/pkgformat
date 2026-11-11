@@ -457,9 +457,9 @@ func TestWriteUpdateinfoInvalid(t *testing.T) {
 	}
 }
 
-type failWriter struct{ after int }
+type updFailWriter struct{ after int }
 
-func (f *failWriter) Write(p []byte) (int, error) {
+func (f *updFailWriter) Write(p []byte) (int, error) {
 	if f.after <= 0 {
 		return 0, errors.New("disk full")
 	}
@@ -495,7 +495,7 @@ func TestUpdateinfoWriterStreaming(t *testing.T) {
 }
 
 func TestUpdateinfoWriterWriteError(t *testing.T) {
-	w := NewUpdateinfoWriter(&failWriter{})
+	w := NewUpdateinfoWriter(&updFailWriter{})
 	desc := strings.Repeat("d", 1<<10)
 
 	var addErr error

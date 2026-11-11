@@ -99,7 +99,7 @@ func TestDnfAdvisoriesMatchCreaterepo(t *testing.T) {
 	}
 }
 
-func fileSHA256(t *testing.T, path string) (string, int64) {
+func updFileSHA256(t *testing.T, path string) (string, int64) {
 	t.Helper()
 
 	data, err := os.ReadFile(path)
@@ -136,7 +136,7 @@ func readRegistered(t *testing.T, repo string) []Advisory {
 	}
 
 	path := filepath.Join(repo, filepath.FromSlash(entry.Location))
-	if sum, size := fileSHA256(t, path); sum != entry.Checksum || size != entry.Size {
+	if sum, size := updFileSHA256(t, path); sum != entry.Checksum || size != entry.Size {
 		t.Errorf("%s: sha256 %s, size %d; repomd.xml says %s, %d", entry.Location, sum, size, entry.Checksum, entry.Size)
 	}
 
@@ -221,7 +221,7 @@ func TestModifyrepoAcceptsUpdateinfo(t *testing.T) {
 	}
 }
 
-const dnfImage = "localhost/s3tools:latest"
+const updDNFImage = "localhost/s3tools:latest"
 
 // TestDnfListsAdvisories serves a repository whose repomd.xml registers the
 // updateinfo.xml this package wrote (gzip, zstd and xz compressed) and asks
@@ -232,8 +232,8 @@ func TestDnfListsAdvisories(t *testing.T) {
 		t.Skip("podman is not installed")
 	}
 
-	if err := exec.Command("podman", "image", "exists", dnfImage).Run(); err != nil {
-		t.Skipf("the %s image is not available", dnfImage)
+	if err := exec.Command("podman", "image", "exists", updDNFImage).Run(); err != nil {
+		t.Skipf("the %s image is not available", updDNFImage)
 	}
 
 	wantList, err := os.ReadFile(filepath.Join(updateinfoTestdata, "dnf-updateinfo-list.txt"))
@@ -248,13 +248,13 @@ func TestDnfListsAdvisories(t *testing.T) {
 
 	for _, comp := range []Compression{Gzip, Zstd, XZ} {
 		t.Run(comp.String(), func(t *testing.T) {
-			repo := buildRepo(t, comp)
+			repo := updBuildRepo(t, comp)
 
 			for _, c := range []struct {
 				verb string
 				want []byte
 			}{{"list", wantList}, {"info", wantInfo}} {
-				out, err := exec.Command("podman", "run", "--rm", "--network=none", "-v", repo+":/repo:ro", dnfImage,
+				out, err := exec.Command("podman", "run", "--rm", "--network=none", "-v", repo+":/repo:ro", updDNFImage,
 					"dnf5", "-q", "-y", "--setopt=cachedir=/tmp/c", "--repofrompath=t,file:///repo", "--repo=t",
 					"--no-gpgchecks", "updateinfo", c.verb, "--available").Output()
 				if err != nil {
@@ -269,9 +269,9 @@ func TestDnfListsAdvisories(t *testing.T) {
 	}
 }
 
-// buildRepo writes a repository of one package whose repomd.xml registers the
+// updBuildRepo writes a repository of one package whose repomd.xml registers the
 // updateinfo.xml of dnfAdvisories, compressed with comp.
-func buildRepo(t *testing.T, comp Compression) string {
+func updBuildRepo(t *testing.T, comp Compression) string {
 	t.Helper()
 
 	repo := t.TempDir()

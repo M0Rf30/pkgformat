@@ -9,8 +9,8 @@ import (
 	"testing"
 )
 
-// dnfImage is a Fedora image with dnf5; the test skips when it is not present.
-const dnfImage = "localhost/s3tools:latest"
+// sqliteDNFImage is a Fedora image with dnf5; the test skips when it is not present.
+const sqliteDNFImage = "localhost/s3tools:latest"
 
 // dnfScript serves /repo over HTTP, points dnf5 at it, lists the packages, and
 // prints the requests the server saw after a marker line.
@@ -32,7 +32,7 @@ grep -o 'GET [^ ]*' /tmp/http.log
 func runDnf(t *testing.T, repo string) (output string, requests []string) {
 	t.Helper()
 
-	cmd := exec.Command("podman", "run", "--rm", "-v", repo+":/repo:ro,Z", dnfImage, "sh", "-c", dnfScript)
+	cmd := exec.Command("podman", "run", "--rm", "-v", repo+":/repo:ro,Z", sqliteDNFImage, "sh", "-c", dnfScript)
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -60,12 +60,12 @@ func TestSQLiteRepositoryWithDnf(t *testing.T) {
 		t.Skip("podman is not installed")
 	}
 
-	if err := exec.Command("podman", "image", "exists", dnfImage).Run(); err != nil {
-		t.Skipf("image %s is not present", dnfImage)
+	if err := exec.Command("podman", "image", "exists", sqliteDNFImage).Run(); err != nil {
+		t.Skipf("image %s is not present", sqliteDNFImage)
 	}
 
 	pkgs, opts := refCorpus(t)
-	repo, _ := buildRepo(t, pkgs, opts, true)
+	repo, _ := sqliteBuildRepo(t, pkgs, opts, true)
 
 	// The packages the metadata points at, so that the repository is whole.
 	if err := os.CopyFS(filepath.Join(repo, "Packages"), os.DirFS(filepath.Join("testdata", "createrepo", "Packages"))); err != nil {
