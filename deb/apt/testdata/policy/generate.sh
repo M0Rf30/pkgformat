@@ -1,5 +1,5 @@
 #!/bin/bash
-# Regenerates results/<label>/ : what real apt makes of every scenario in
+# Regenerates results/<label>.tar.gz : what real apt makes of every scenario in
 # scenarios/ over the repository in lists/ and the dpkg states in status/.
 #
 # Needs podman or docker and network access to pull the image. Run from
@@ -30,8 +30,12 @@ for entry in $images; do
 		-v "$here/sources.list:/repo/sources.list:Z,ro" \
 		-v "$here/scenarios:/scenarios:Z,ro" \
 		"$image" bash /container.sh
-	rm -rf "$here/results/$label"
+	echo "image-reference: $image" >>"$work/MANIFEST"
 	mkdir -p "$here/results"
-	mv "$work" "$here/results/$label"
-	echo "image-reference: $image" >>"$here/results/$label/MANIFEST"
+	# One reproducible archive per image keeps the tree small: results/<label>.tar.gz
+	# holds MANIFEST and scenarios/<name>/<file>.
+	rm -rf "$here/results/$label" "$here/results/$label.tar.gz"
+	tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -C "$work" -cf - MANIFEST scenarios |
+		gzip -n -9 >"$here/results/$label.tar.gz"
+	rm -rf "$work"
 done

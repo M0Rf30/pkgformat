@@ -1,4 +1,0 @@
-image: Debian GNU/Linux 13
-apt: apt 3.0.4 (amd64)
-captured: 2026-11-11T03:10:04Z
-image-reference: docker.io/library/debian:stable-slim

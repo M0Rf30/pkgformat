@@ -231,7 +231,7 @@ func enforceReleaseSignedBy(rel *deb.Release, parts []releasePart, trust deb.Tru
 	full.AllowUnverified = false
 
 	if err := verifyParts(full, parts); err != nil {
-		return nil // accepted without verification: nothing to restrict
+		return nil //nolint:nilerr // accepted without verification: nothing to restrict
 	}
 
 	restrictedTrust := full

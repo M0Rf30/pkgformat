@@ -1,4 +1,0 @@
-image: Debian GNU/Linux 12
-apt: apt 2.6.2 (amd64)
-captured: 2026-11-11T03:10:04Z
-image-reference: docker.io/library/debian:bookworm
