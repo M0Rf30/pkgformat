@@ -1,0 +1,4 @@
+install bash-5.3.9-r1
+install libncursesw-6.6_p20260516-r0
+install ncurses-terminfo-base-6.6_p20260516-r0
+install readline-8.3.3-r1

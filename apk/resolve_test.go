@@ -3,6 +3,7 @@ package apk
 import (
 	"errors"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -12,7 +13,7 @@ func resolveIndex() *Index {
 	edge := Repo{URL: "https://example.org/edge", Tag: "edge"}
 
 	idx.Add(main, "x86_64", []Package{
-		{Name: "app", Version: "1-r0", Depends: []string{"libfoo>=1.0", "so:libbar.so.1", "!conflict", "/bin/sh", "", "missing<2", "cycle-a"}},
+		{Name: "app", Version: "1-r0", Depends: []string{"libfoo>=1", "so:libbar.so.1", "!conflict", "cycle-a"}},
 		{Name: "libfoo", Version: "1-r0", Depends: []string{"libbar"}},
 		{Name: "libbar", Version: "1-r0", Provides: []string{"so:libbar.so.1=1", "cmd:bar"}},
 		{Name: "cycle-a", Version: "1-r0", Depends: []string{"cycle-b"}},
@@ -69,47 +70,119 @@ func TestIndex_lookup(t *testing.T) {
 		t.Fatal("unknown name found")
 	}
 
-	if n, c := idx.Stats(); n != 9 || c != 3 {
+	if n, c := idx.Stats(); n != 10 || c != 3 {
 		t.Fatalf("stats %d %d", n, c)
 	}
 }
 
-func TestIndex_resolveDeps(t *testing.T) {
+func TestIndex_solve(t *testing.T) {
 	idx := resolveIndex()
 
-	res, err := idx.ResolveDeps([]string{"app"})
+	sol, err := idx.Solve(SolveRequest{World: []string{"app"}})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if got, want := names(res.Packages), []string{"libbar", "libfoo", "cycle-b", "cycle-a", "app"}; !reflect.DeepEqual(got, want) {
-		t.Fatalf("order %q, want %q", got, want)
+	got := names(sol.Packages)
+	pos := map[string]int{}
+
+	for i, n := range got {
+		pos[n] = i
 	}
 
-	if want := []string{"so:libbar.so.1"}; !reflect.DeepEqual(res.Virtual, want) {
-		t.Fatalf("virtual %q", res.Virtual)
+	if len(got) != 5 || pos["libbar"] > pos["libfoo"] || pos["libfoo"] > pos["app"] {
+		t.Fatalf("order %q", got)
 	}
 
-	if want := []string{"missing"}; !reflect.DeepEqual(res.Unresolved, want) {
-		t.Fatalf("unresolved %q", res.Unresolved)
+	if len(sol.Changes) != 5 || sol.Changes[0].Kind() != ChangeInstall {
+		t.Fatalf("changes %+v", sol.Changes)
 	}
 
 	// The same package by name and by capability appears once.
-	res, err = idx.ResolveDeps([]string{"cmd:bar", "libbar", "libfoo"})
+	sol, err = idx.Solve(SolveRequest{World: []string{"cmd:bar", "libbar", "libfoo"}})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if got := names(res.Packages); !reflect.DeepEqual(got, []string{"libbar", "libfoo"}) {
+	if got := names(sol.Packages); !reflect.DeepEqual(got, []string{"libbar", "libfoo"}) {
 		t.Fatalf("got %q", got)
 	}
 
-	if _, err := idx.ResolveDeps([]string{"app", "absent>=1"}); !errors.Is(err, ErrPackageNotFound) {
+	_, err = idx.Solve(SolveRequest{World: []string{"app", "absent>=1"}})
+
+	var se *SolveError
+	if !errors.Is(err, ErrUnsatisfiable) || !errors.As(err, &se) || se.Problems[0].Name != "absent" ||
+		!strings.Contains(err.Error(), "required by") {
 		t.Fatalf("got %v", err)
 	}
 
-	if res, err := idx.ResolveDeps(nil); err != nil || len(res.Packages) != 0 {
-		t.Fatalf("empty request: %v %v", res, err)
+	if _, err := idx.Solve(SolveRequest{World: []string{"libfoo@nope"}}); !errors.Is(err, ErrUnsatisfiable) {
+		t.Fatalf("unknown tag: %v", err)
+	}
+
+	if _, err := idx.Solve(SolveRequest{World: []string{"bad name"}}); !errors.Is(err, ErrUnsatisfiable) {
+		t.Fatalf("invalid entry: %v", err)
+	}
+
+	if sol, err := idx.Solve(SolveRequest{}); err != nil || len(sol.Packages) != 0 {
+		t.Fatalf("empty request: %v %v", sol, err)
+	}
+}
+
+func TestSolve_stepLimit(t *testing.T) {
+	// Every a<i> needs a b that conflicts with the next choice: exponential
+	// backtracking that must stop at the budget.
+	var pkgs []Package
+
+	const n = 24
+
+	for i := range n {
+		is := itoa(i)
+		pkgs = append(pkgs,
+			Package{Name: "x" + is, Version: "1", Depends: []string{"y" + is + "=1"}},
+			Package{Name: "y" + is, Version: "1", Depends: []string{"!z"}, Provides: []string{"y" + is + "=1"}},
+			Package{Name: "y" + is, Version: "2", Provides: []string{"y" + is + "=2"}, Depends: []string{"!z"}},
+		)
+	}
+
+	pkgs = append(pkgs, Package{Name: "z", Version: "1"})
+
+	idx := NewIndex()
+	idx.Add(Repo{URL: "https://example.org"}, "x86_64", pkgs)
+
+	var world []string
+	for i := range n {
+		world = append(world, "x"+itoa(i))
+	}
+
+	world = append(world, "z")
+
+	if _, err := idx.Solve(SolveRequest{World: world}); err == nil {
+		t.Fatal("conflicting world must fail")
+	}
+}
+
+func TestChangeKind(t *testing.T) {
+	old := &Package{Name: "a", Version: "1"}
+
+	for _, tc := range []struct {
+		c    Change
+		want ChangeKind
+		str  string
+	}{
+		{Change{New: &RepoPackage{Package: Package{Version: "1"}}}, ChangeInstall, "install"},
+		{Change{Old: old}, ChangeRemove, "remove"},
+		{Change{Old: old, New: &RepoPackage{Package: Package{Version: "2"}}}, ChangeUpgrade, "upgrade"},
+		{Change{Old: &Package{Version: "3"}, New: &RepoPackage{Package: Package{Version: "2"}}}, ChangeDowngrade, "downgrade"},
+		{Change{Old: old, New: &RepoPackage{Package: Package{Version: "1"}}}, ChangeReinstall, "reinstall"},
+	} {
+		if k := tc.c.Kind(); k != tc.want || k.String() != tc.str {
+			t.Errorf("%v: %v", tc.want, k)
+		}
+	}
+
+	if ChangeKind(0).String() != "unknown" {
+		t.Error("zero kind")
 	}
 }
 
@@ -149,9 +222,9 @@ func TestIndex_largeDependencyChain(t *testing.T) {
 
 	idx.Add(Repo{URL: "https://example.org"}, "x86_64", pkgs)
 
-	res, err := idx.ResolveDeps([]string{"p0"})
-	if err != nil || len(res.Packages) != depth {
-		t.Fatalf("%d packages, %v", len(res.Packages), err)
+	sol, err := idx.Solve(SolveRequest{World: []string{"p0"}})
+	if err != nil || len(sol.Packages) != depth {
+		t.Fatalf("%v, %v", sol, err)
 	}
 }
 

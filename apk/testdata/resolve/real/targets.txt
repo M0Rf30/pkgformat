@@ -1,0 +1,15 @@
+curl
+git
+nginx
+python3
+openssh
+busybox-extras
+postgresql17
+nodejs
+bash
+ca-certificates
+iputils
+wireshark-common
+build-base
+docker-cli
+vim

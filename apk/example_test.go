@@ -95,7 +95,7 @@ func ExampleClient() {
 		log.Fatal(err)
 	}
 
-	res, err := index.ResolveDeps([]string{"curl"})
+	res, err := index.Solve(apk.SolveRequest{World: []string{"curl"}})
 	if err != nil {
 		log.Fatal(err)
 	}

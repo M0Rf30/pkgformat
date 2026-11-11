@@ -1,0 +1,9 @@
+incoming-replaces yes
+owner-replaces no
+plain conflict
+priority-incoming yes
+priority-owner no
+provides-only conflict
+same-origin yes
+version-match yes
+version-mismatch conflict

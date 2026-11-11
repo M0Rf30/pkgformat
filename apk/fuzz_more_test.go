@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"io/fs"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -138,7 +140,7 @@ func FuzzParsePublicKeyPEM(f *testing.F) {
 	})
 }
 
-func FuzzResolveDeps(f *testing.F) {
+func FuzzSolve(f *testing.F) {
 	f.Add(RenderIndex(samplePackages()), "hello")
 	f.Add([]byte("P:a\nV:1\nA:noarch\nD:b c>=1 !d\np:x=1\n\nP:b\nV:1\nA:noarch\nD:a\n"), "a")
 
@@ -156,9 +158,9 @@ func FuzzResolveDeps(f *testing.F) {
 			seeds = append(seeds, pkgs[i].Name)
 		}
 
-		res, err := idx.ResolveDeps(seeds)
+		res, err := idx.Solve(SolveRequest{World: seeds})
 		if err != nil {
-			if !errors.Is(err, ErrPackageNotFound) {
+			if !errors.Is(err, ErrUnsatisfiable) && !errors.Is(err, ErrSolveLimit) {
 				t.Fatalf("untyped error: %v", err)
 			}
 
@@ -211,6 +213,72 @@ func FuzzWritePackage(f *testing.F) {
 
 		if got.Name != pkg.Name || got.Version != pkg.Version || got.Checksum != pkg.Checksum || got.DataHash != pkg.DataHash {
 			t.Fatalf("parsed %+v\nwritten %+v", got, pkg)
+		}
+	})
+}
+
+// FuzzArchive checks that reading and extracting arbitrary bytes never
+// panics, never writes outside the target directory and fails with an error
+// or succeeds.
+func FuzzArchive(f *testing.F) {
+	for _, name := range []string{"fping-5.2-r0.apk", "iputils-ping-20240117-r0.apk", "interop-1.2.3-r4.apk"} {
+		raw, err := os.ReadFile(filepath.Join("testdata", "extract", name))
+		if err != nil {
+			f.Fatal(err)
+		}
+
+		f.Add(raw)
+	}
+
+	f.Fuzz(func(t *testing.T, data []byte) {
+		a, err := OpenArchive(bytes.NewReader(data), int64(len(data)))
+		if err != nil {
+			return
+		}
+
+		_, _ = a.Files()
+
+		root := t.TempDir()
+		out := filepath.Join(root, "out")
+
+		if err := os.Mkdir(out, 0o755); err != nil {
+			t.Fatal(err)
+		}
+
+		_ = a.Extract(out, ExtractOptions{MaxBytes: 1 << 20, MaxEntries: 1000})
+
+		// Nothing may appear next to the extraction directory.
+		des, err := os.ReadDir(root)
+		if err != nil || len(des) != 1 {
+			t.Fatalf("extraction wrote outside its directory: %v %v", des, err)
+		}
+	})
+}
+
+// FuzzParseWorld checks that ParseWorld, WorldAdd and RenderWorld agree.
+func FuzzParseWorld(f *testing.F) {
+	f.Add("busybox libfoo@edge>=1.2 !bad\nalpine-base")
+	f.Add("")
+
+	f.Fuzz(func(t *testing.T, text string) {
+		w, err := ParseWorld(strings.NewReader(text))
+		if err != nil {
+			if !errors.Is(err, ErrInvalidWorld) {
+				t.Fatalf("untyped error: %v", err)
+			}
+
+			return
+		}
+
+		back, err := ParseWorld(bytes.NewReader(RenderWorld(w)))
+		if err != nil || len(back) != len(w) {
+			t.Fatalf("render does not parse back: %v", err)
+		}
+
+		if len(w) > 0 {
+			if _, err := WorldAdd(w, w[0]); err != nil {
+				t.Fatal(err)
+			}
 		}
 	})
 }

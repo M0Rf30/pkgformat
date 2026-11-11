@@ -1,0 +1,10 @@
+install libedit-20260508.3.1-r1
+install libncursesw-6.6_p20260516-r0
+install ncurses-terminfo-base-6.6_p20260516-r0
+install openssh-10.3_p1-r2
+install openssh-client-common-10.3_p1-r2
+install openssh-client-default-10.3_p1-r2
+install openssh-keygen-10.3_p1-r2
+install openssh-server-10.3_p1-r2
+install openssh-server-common-10.3_p1-r2
+install openssh-sftp-server-10.3_p1-r2

@@ -1,0 +1,17 @@
+install gdbm-1.26-r0
+install libbz2-1.0.8-r6
+install libexpat-2.10.0-r0
+install libffi-3.5.2-r1
+install libgcc-15.2.0-r5
+install libncursesw-6.6_p20260516-r0
+install libpanelw-6.6_p20260516-r0
+install libstdc++-15.2.0-r5
+install mpdecimal-4.0.1-r0
+install ncurses-terminfo-base-6.6_p20260516-r0
+install pyc-3.14.10-r1
+install python3-3.14.10-r1
+install python3-pyc-3.14.10-r1
+install python3-pycache-pyc0-3.14.10-r1
+install readline-8.3.3-r1
+install sqlite-libs-3.53.4-r0
+install xz-libs-5.8.4-r0

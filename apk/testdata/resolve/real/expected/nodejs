@@ -1,0 +1,14 @@
+install ada-libs-4.0.0-r0
+install brotli-libs-1.2.1-r0
+install c-ares-1.34.9-r0
+install ca-certificates-20261020-r0
+install icu-data-en-78.1-r0
+install icu-libs-78.1-r0
+install libgcc-15.2.0-r5
+install libstdc++-15.2.0-r5
+install nghttp2-libs-1.70.0-r0
+install nodejs-24.22.1-r1
+install simdjson-4.2.4-r0
+install simdutf-9.0.0-r0
+install sqlite-libs-3.53.4-r0
+install zstd-libs-1.5.7-r2

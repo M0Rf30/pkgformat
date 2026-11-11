@@ -1,0 +1,61 @@
+# name | installed (name-version ...) | world | apk command
+# main/edge: the two repositories of main.index and edge.index (edge is tagged @edge)
+simple-app            |                          |            | add app
+app-old               |                          |            | add app<2
+app-eq                |                          |            | add app=1.0-r0
+app-conflict-installed|                          |            | add app oldapp
+libfoo-latest         |                          |            | add libfoo
+libfoo-lt             |                          |            | add libfoo<1.5
+libfoo-fuzzy          |                          |            | add fuzzy-user
+libfoo-eq-user        |                          |            | add eq-user
+libfoo-lt-user        |                          |            | add lt-user
+multi-constraints     |                          |            | add multi
+world-conflict        |                          |            | add libfoo !libfoo
+conflict-pair         |                          |            | add conflict-a conflict-b
+conflict-pair-one     |                          |            | add conflict-a
+conflict-world        |                          |            | add conflict-b !conflict-a
+conflict-provides     |                          |            | add conflict-c conflict-d
+conflict-versioned    |                          |            | add conflict-ver libfoo
+conflict-versioned-ok |                          |            | add conflict-ver libfoo<2
+conflict-versioned-bad|                          |            | add conflict-ver needs-foo2
+provider-priority     |                          |            | add needs-editor
+provider-version      |                          |            | add needs-editor3
+provider-named        |                          |            | add needs-editor-a
+provider-direct       |                          |            | add editor-a
+virtual-no-priority   |                          |            | add needs-virt
+virtual-direct        |                          |            | add cmd:virt
+virtual-so            |                          |            | add so:libbar.so.1
+virtual-so-versioned  |                          |            | add so:libbar.so.1>=2
+virtual-sh            |                          |            | add needs-sh
+virtual-priority-win  |                          |            | add cmd:sh
+virtual-z             |                          |            | add uses-z
+virtual-version       |                          |            | add needs-svc
+virtual-version-eq    |                          |            | add svc=1
+cycle                 |                          |            | add cyc-a
+chain                 |                          |            | add chain-a
+backtrack             |                          |            | add bt-c
+install-if            |                          |            | add app
+install-if-both       |                          |            | add app docs-base
+install-if-none       |                          |            | add docs-base
+pre-release           |                          |            | add tool
+pre-release-lt        |                          |            | add tool<1.1
+tag-explicit          |                          |            | add libfoo@edge
+tag-implicit          |                          |            | add libfoo
+tag-deps              |                          |            | add edge-tool@edge
+tag-untagged-only     |                          |            | add edge-tool
+tag-app               |                          |            | add app@edge
+tag-mixed             |                          |            | add app libfoo@edge
+tag-tool              |                          |            | add tool@edge
+tag-edge-only         |                          |            | add edge-only@edge
+tag-unknown           |                          |            | add libfoo@nope
+missing               |                          |            | add nonexistent
+missing-version       |                          |            | add libfoo>=9
+keep-installed        | libfoo-1.2-r0            |            | add app
+keep-installed-world  | libfoo-1.0-r0 app-1.0-r0 | libfoo app | add libbar
+installed-upgrade     | libfoo-1.0-r0 app-1.0-r0 | libfoo app | upgrade
+installed-constraint  | libfoo-1.0-r0            | libfoo     | add app=2.0-r0
+installed-downgrade   | libfoo-2.0-r0            | libfoo     | add libfoo<2
+installed-keep-tag    | libfoo-1.5-r0 libbar-1.0-r0 | libfoo  | add tool
+purge-orphans         | libfoo-1.0-r0 tool-0.9-r3 | libfoo    | add libbar
+upgrade-tag           | libfoo-1.2-r0            | libfoo@edge | upgrade
+upgrade-all           | tool-1.0-r0 libfoo-1.2-r0 | tool libfoo | upgrade

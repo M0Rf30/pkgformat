@@ -71,6 +71,12 @@ func parsePKGINFO(data []byte) (*Package, error) {
 			}
 
 			continue
+		case "triggers":
+			if err := appendTokens(&p.Triggers, key, val); err != nil {
+				return nil, bad("%v", err)
+			}
+
+			continue
 		}
 
 		known, err := p.setSingular(key, val)
@@ -145,7 +151,7 @@ func (p *Package) setSingular(key, val string) (bool, error) {
 		if err := appendTokens(&p.InstallIf, key, val); err != nil {
 			return true, err
 		}
-	case "builddate", "size", "provider_priority":
+	case "builddate", "size", "provider_priority", "replaces_priority":
 		return true, p.setNumber(key, val)
 	default:
 		return false, nil
@@ -170,7 +176,11 @@ func (p *Package) setNumber(key, val string) error {
 			return invalidField(key, "exceeds %d", maxProviderPrio)
 		}
 
-		p.ProviderPriority = int(n)
+		if key == "replaces_priority" {
+			p.ReplacesPriority = int(n)
+		} else {
+			p.ProviderPriority = int(n)
+		}
 	}
 
 	return nil
@@ -246,6 +256,7 @@ func (p *Package) validateRest() error {
 		val  []string
 	}{
 		{"depend", p.Depends}, {"provides", p.Provides}, {"replaces", p.Replaces}, {"install_if", p.InstallIf},
+		{"triggers", p.Triggers},
 	} {
 		if err := validateTokens(f.name, f.val); err != nil {
 			return err
@@ -258,6 +269,10 @@ func (p *Package) validateRest() error {
 
 	if p.ProviderPriority < 0 || p.ProviderPriority > maxProviderPrio {
 		return invalidField("provider_priority", "out of range")
+	}
+
+	if p.ReplacesPriority < 0 || p.ReplacesPriority > maxProviderPrio {
+		return invalidField("replaces_priority", "out of range")
 	}
 
 	return nil

@@ -77,12 +77,9 @@ type InstalledFile struct {
 // installed package.
 type InstalledPackage struct {
 	// Package holds the index fields, P, V, A, S, I, T, U, L, o, m, t, c, D,
-	// p, i and k, and "r" (Replaces). Checksum is the "C:" value; it is empty
+	// p, i and k, "r" (Replaces) and "q" (ReplacesPriority). Checksum is the "C:" value; it is empty
 	// for a package without one.
 	Package
-	// ReplacesPriority is the "q" field: which of two packages that own the
-	// same file wins.
-	ReplacesPriority int
 	// Files are the directories and files of the package, in the order of the
 	// database: a directory, then the files in it.
 	Files []InstalledFile
@@ -505,7 +502,9 @@ func (s *installedStanza) finish() (*InstalledPackage, error) {
 		return nil, err
 	}
 
-	return &InstalledPackage{Package: *p, ReplacesPriority: s.replacesPriority, Files: s.files}, nil
+	p.ReplacesPriority = s.replacesPriority
+
+	return &InstalledPackage{Package: *p, Files: s.files}, nil
 }
 
 // List returns every installed package: [InstalledDB.Packages] collected into
