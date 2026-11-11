@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -95,7 +96,10 @@ func (c *Cache) loadLists(opts LoadOptions) error {
 	type job struct {
 		path    string
 		baseURL string
+		release *ReleaseInfo
 	}
+
+	releases := make(map[string]*deb.Release)
 
 	jobs := make([]job, 0, len(dirEntries))
 
@@ -105,7 +109,11 @@ func (c *Cache) loadLists(opts LoadOptions) error {
 			continue
 		}
 
-		jobs = append(jobs, job{path: filepath.Join(opts.ListsDir, name), baseURL: deriveBaseURL(name, bases)})
+		jobs = append(jobs, job{
+			path:    filepath.Join(opts.ListsDir, name),
+			baseURL: deriveBaseURL(name, bases),
+			release: releaseInfoFor(opts.ListsDir, name, bases, releases),
+		})
 	}
 
 	if len(jobs) == 0 {
@@ -129,7 +137,7 @@ func (c *Cache) loadLists(opts LoadOptions) error {
 			for idx := range jobCh {
 				local := NewCache(c.hostArch)
 				local.logger = opts.Logger
-				fileErrs[idx] = local.parseFile(jobs[idx].path, jobs[idx].baseURL)
+				fileErrs[idx] = local.parseFile(jobs[idx].path, jobs[idx].baseURL, jobs[idx].release)
 				partials[idx] = local
 
 				if opts.Logger != nil {
@@ -159,6 +167,67 @@ func deriveBaseURL(filename string, bases map[string]string) string {
 	return bases[prefix]
 }
 
+// releaseInfoFor reads the Release file the lists directory keeps for the
+// index named filename and describes it for pin matching, or returns nil when
+// there is none. Files are parsed once per (source, suite); releases caches
+// them.
+func releaseInfoFor(listsDir, filename string, bases map[string]string, releases map[string]*deb.Release) *ReleaseInfo {
+	prefix, rest, found := strings.Cut(filename, "_dists_")
+	if !found {
+		return nil
+	}
+
+	suite, rest, found := strings.Cut(rest, "_")
+	if !found {
+		return nil
+	}
+
+	comp, rest, found := strings.Cut(rest, "_binary-")
+	if !found {
+		return nil
+	}
+
+	arch, _, _ := strings.Cut(rest, "_")
+	key := prefix + "_dists_" + suite + "_"
+
+	rel, seen := releases[key]
+	if !seen {
+		for _, name := range []string{"InRelease", "Release"} {
+			data, err := readLocal(filepath.Join(listsDir, key+name), deb.MaxReleaseBytes)
+			if err != nil {
+				continue
+			}
+
+			if parsed, err := deb.ParseRelease(data); err == nil {
+				rel = parsed
+
+				break
+			}
+		}
+
+		releases[key] = rel
+	}
+
+	if rel == nil {
+		return nil
+	}
+
+	info := &ReleaseInfo{
+		Origin: rel.Origin, Label: rel.Label, Suite: rel.Suite, Codename: rel.Codename, Version: rel.Version,
+		Component:    strings.ReplaceAll(comp, "_", "/"),
+		Architecture: arch,
+		NotAutomatic: rel.NotAutomatic, ButAutomaticUpgrades: rel.ButAutomaticUpgrades,
+	}
+
+	if base := bases[prefix]; base != "" {
+		if u, err := url.Parse(strings.TrimPrefix(base, "mirror+")); err == nil {
+			info.Site = u.Hostname()
+		}
+	}
+
+	return info
+}
+
 // mergeFrom folds a Cache built by one worker into c, keeping the order its
 // versions were read in, which decides between providers.
 func (c *Cache) mergeFrom(other *Cache) {
@@ -179,8 +248,9 @@ func (c *Cache) mergeFrom(other *Cache) {
 }
 
 // parseFile reads an apt Packages index, compressed or not by its extension,
-// into the cache. baseURL is the repository URL of the index.
-func (c *Cache) parseFile(path, baseURL string) error {
+// into the cache. baseURL is the repository URL of the index and release what
+// is known of its Release file, or nil.
+func (c *Cache) parseFile(path, baseURL string, release *ReleaseInfo) error {
 	f, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("apt: open index: %w", err)
@@ -210,6 +280,10 @@ func (c *Cache) parseFile(path, baseURL string) error {
 		}
 
 		info.HasCandidate = true
+
+		if release != nil {
+			info.Releases = []*ReleaseInfo{release}
+		}
 
 		c.mu.Lock()
 		c.insert(info, true)
@@ -301,6 +375,14 @@ func packageInfoOf(cf *deb.ControlFile, baseURL string) (*PackageInfo, error) {
 
 	info.Size, _ = strconv.ParseInt(cf.Get("Size"), 10, 64)
 
+	info.SourceName, info.SourceVersion = sourceOf(cf, name, info.Version)
+
+	if v := strings.TrimSpace(cf.Get("Phased-Update-Percentage")); v != "" {
+		if pct, err := strconv.Atoi(v); err == nil && pct >= 0 && pct <= 100 {
+			info.PhasedUpdatePercentage = &pct
+		}
+	}
+
 	if info.Filename == "" {
 		info.BaseURL = ""
 	}
@@ -366,4 +448,28 @@ func parseFlat(cf *deb.ControlFile, field string) ([]deb.Relation, error) {
 	}
 
 	return out, nil
+}
+
+// sourceOf reads the Source field of a paragraph: the source package the
+// version was built from and its version, which are the package's own name
+// and version when the field is absent or carries no version.
+func sourceOf(cf *deb.ControlFile, name, version string) (srcName, srcVersion string) {
+	src := strings.TrimSpace(cf.Get("Source"))
+	if src == "" {
+		return name, version
+	}
+
+	srcName, rest, hasVersion := strings.Cut(src, "(")
+	srcName = strings.TrimSpace(srcName)
+
+	if !hasVersion {
+		return srcName, version
+	}
+
+	v, _, _ := strings.Cut(rest, ")")
+	if v = strings.TrimSpace(v); v != "" {
+		return srcName, v
+	}
+
+	return srcName, version
 }

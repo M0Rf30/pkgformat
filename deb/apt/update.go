@@ -4,65 +4,88 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
 	"os"
-	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/M0Rf30/pkgformat/deb"
-	"github.com/M0Rf30/pkgformat/download"
 	"github.com/M0Rf30/pkgformat/httpclient"
 )
 
 // UpdateOptions configures Update. Only ListsDir is required.
 type UpdateOptions struct {
-	// ListsDir is the directory the Packages indexes are written to, under the
-	// names apt gives them. Update creates it. A Cache reads it back through
-	// LoadOptions.ListsDir.
+	// ListsDir is the directory the indexes and Release files are written to,
+	// under the names apt gives them. Update creates it. A Cache reads it back
+	// through LoadOptions.ListsDir.
 	ListsDir string
 	// DefaultArch is the architecture of sources that name none. Empty selects
 	// the one of the running program.
 	DefaultArch string
+	// DefaultLanguages are the Translation languages of sources without a
+	// Languages option (Acquire::Languages). Empty fetches no translations.
+	DefaultLanguages []string
 	// DefaultKeyrings are the keyring files and directories that trust sources
 	// without a Signed-By option (/etc/apt/trusted.gpg.d, /usr/share/keyrings,
 	// /etc/apt/keyrings, /etc/apt/trusted.gpg on a Debian host). See LoadKeyring.
 	DefaultKeyrings []string
 	// AllowUnverified accepts a repository for which no trust anchor exists, a
 	// Release signed by an unknown key, or one without a signature. A signature
-	// that is present and does not verify is rejected regardless.
+	// that is present and does not verify is rejected regardless. The
+	// allow-insecure source option does the same for one source, and
+	// trusted=no refuses it for one source.
 	AllowUnverified bool
+	// DisableByHash stops Update from fetching indexes by their digest, which
+	// it otherwise does for a Release that says Acquire-By-Hash: yes (the
+	// source option By-Hash overrides it per source).
+	DisableByHash bool
+	// DisablePDiffs stops Update from patching an index it already has with
+	// the Packages.diff of the repository instead of fetching it whole
+	// (Acquire::PDiffs); the source option PDiffs overrides it per source.
+	DisablePDiffs bool
 	// Client performs the transfers. Nil builds one with the default policy.
 	Client *httpclient.Client
-	// Concurrency caps the (source, architecture) pairs updated at once. Zero
-	// selects min(2*GOMAXPROCS, 8).
+	// Concurrency caps the sources updated at once. Zero selects
+	// min(2*GOMAXPROCS, 8).
 	Concurrency int
-	// Now is the clock the Valid-Until check of a Release uses. Nil is
+	// Now is the clock the Date and Valid-Until checks of a Release use. Nil is
 	// time.Now.
 	Now func() time.Time
 	// Logger receives progress and warnings. Nil is silent.
 	Logger *slog.Logger
 }
 
-// maxIndexBytes caps one Packages index download, compressed.
+// maxIndexBytes caps one index download, compressed.
 const maxIndexBytes = httpclient.DefaultMaxBytes
 
-// Update fetches the binary Packages index of every component and
-// architecture of every source, verifies the Release signature and every
-// index's size and SHA-256 against it, and writes the indexes to
-// opts.ListsDir.
+// Update fetches the indexes every source asks for, verifies the Release
+// signature and every index's size and SHA-256 against it, and writes the
+// Release files and indexes to opts.ListsDir.
 //
-// Sources whose Release does not list an index for a component and
-// architecture are skipped silently, as apt does. It returns how many
-// (source, component, architecture) indexes are now in place, whether fetched
-// or already current, and an *UpdateError holding everything that failed: a
-// partial failure still reports the successes. Use IsVerificationError to tell
-// trust failures from network ones.
+// For a deb source the indexes are the Packages of every component and
+// architecture (Architectures, Architectures-Add and -Remove), the
+// Translation files of the languages (Languages) and, if Targets names it, the
+// Contents files; for a deb-src source they are the Sources of every
+// component. The Targets, Languages and Architectures options select among
+// them (see Source.EffectiveTargets). Sources reached over http, https, file:
+// and copy:, and through mirror+ lists, are supported; cdrom: and every other
+// scheme fail with ErrUnsupportedScheme.
+//
+// An index is fetched by its digest (by-hash) when the Release says
+// Acquire-By-Hash: yes or the source says By-Hash: force, and falls back to the
+// plain path unless forced. An index the previous update left, in any
+// compression, is brought up to date with the repository's Packages.diff
+// patches when it lists any and they are smaller than the whole file, and
+// fetched whole otherwise.
+//
+// Indexes the Release does not list are skipped silently, as apt does. It
+// returns how many (source, index) pairs are now in place, whether fetched or
+// already current, and an *UpdateError holding everything that failed: a
+// partial failure still reports the successes. Use IsVerificationError to
+// tell trust failures from network ones.
 func Update(ctx context.Context, sources []Source, opts UpdateOptions) (int, error) {
 	if opts.ListsDir == "" {
 		return 0, ErrNoListsDir
@@ -78,38 +101,18 @@ func Update(ctx context.Context, sources []Source, opts UpdateOptions) (int, err
 
 	u := newUpdater(opts)
 
-	type job struct {
-		src  *Source
-		arch string
-	}
-
-	// Every (source, arch) pair is independent, so they all run concurrently;
-	// the shared transport caps per-host parallelism.
-	var jobs []job
-
-	for i := range sources {
-		src := &sources[i]
-
-		archs := src.Architectures
-		if len(archs) == 0 {
-			archs = []string{u.defaultArch}
-		}
-
-		for _, arch := range archs {
-			jobs = append(jobs, job{src: src, arch: arch})
-		}
-	}
-
 	type result struct {
 		n   int
 		err error
 	}
 
-	// Results are stored by job index so the joined error is deterministic.
-	results := make([]result, len(jobs))
-	jobCh := make(chan int, len(jobs))
+	// Every source is independent, so they all run concurrently; the shared
+	// transport caps per-host parallelism. Results are stored by index so the
+	// joined error is deterministic.
+	results := make([]result, len(sources))
+	jobCh := make(chan int, len(sources))
 
-	for i := range jobs {
+	for i := range sources {
 		jobCh <- i
 	}
 
@@ -117,10 +120,11 @@ func Update(ctx context.Context, sources []Source, opts UpdateOptions) (int, err
 
 	var wg sync.WaitGroup
 
-	for range min(u.concurrency, len(jobs)) {
+	for range min(u.concurrency, len(sources)) {
 		wg.Go(func() {
 			for idx := range jobCh {
-				n, err := u.updateSource(ctx, jobs[idx].src, jobs[idx].arch)
+				src := sources[idx].ExpandArch(u.defaultArch)
+				n, err := u.updateSource(ctx, &src)
 				results[idx] = result{n: n, err: err}
 			}
 		})
@@ -137,8 +141,7 @@ func Update(ctx context.Context, sources []Source, opts UpdateOptions) (int, err
 		total += res.n
 
 		if res.err != nil {
-			u.warn("apt: source update failed", "url", jobs[i].src.URL, "suite", jobs[i].src.Suite,
-				"arch", jobs[i].arch, "error", res.err)
+			u.warn("apt: source update failed", "url", sources[i].URL, "suite", sources[i].Suite, "error", res.err)
 
 			errs = append(errs, res.err)
 		}
@@ -192,6 +195,12 @@ func (u *updater) warn(msg string, args ...any) {
 	}
 }
 
+func (u *updater) debug(msg string, args ...any) {
+	if u.opts.Logger != nil {
+		u.opts.Logger.Debug(msg, args...)
+	}
+}
+
 // lockPath serialises work per destination file: duplicate deb lines for one
 // (url, suite, component, arch) would otherwise fetch and write one list file
 // concurrently.
@@ -205,67 +214,41 @@ func (u *updater) lockPath(dest string) (unlock func()) {
 	return mu.Unlock
 }
 
-// updateSource fetches the Release of a source and the indexes of its
-// components for one architecture.
-//
-// The Release is verified against the trust anchor declared by Signed-By, or
-// the default keyrings when unset; a signature that exists and fails to verify
-// is fatal whatever AllowUnverified says.
-func (u *updater) updateSource(ctx context.Context, src *Source, arch string) (int, error) {
-	rel, err := u.releases.fetch(src, u.opts.AllowUnverified, func() (*deb.Release, error) {
-		return u.fetchRelease(ctx, src)
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	// Components fan out too: they hit one mirror, whose connection limit is
-	// what bounds parallelism. Results are stored by component index.
-	compErrs := make([]error, len(src.Components))
-
-	var wg sync.WaitGroup
-
-	for i, comp := range src.Components {
-		wg.Go(func() {
-			compErrs[i] = u.fetchComponentIndex(ctx, src, comp, arch, rel)
-		})
-	}
-
-	wg.Wait()
-
-	n := 0
-
-	var failures []error
-
-	for i, err := range compErrs {
-		if err == nil {
-			n++
-
-			continue
-		}
-
-		// A component the Release does not list is nothing to fetch; every
-		// other failure (network, size or digest mismatch, disk) surfaces.
-		if !errors.Is(err, ErrNoPackagesIndex) {
-			u.warn("apt: component update failed", "url", src.URL, "component", src.Components[i],
-				"arch", arch, "error", err)
-
-			failures = append(failures, err)
-		}
-	}
-
-	return n, newUpdateError(failures)
-}
-
-// distURL is the URL of a file under the dists/<suite> directory of a source.
+// distURL is the URL of a file under the dists/<suite> directory of a source
+// (under the suite directory of a flat one).
 func distURL(src *Source, rel string) string {
-	return strings.TrimRight(src.URL, "/") + "/dists/" + src.Suite + "/" + rel
+	return distURLBase(src.URL, src, rel)
 }
 
-// fetchBytes downloads a small document, retrying once over https when a plain
-// http fetch fails transiently. Some networks (egress proxies, sandboxed CI)
-// reset port 80 and leave 443 alone, and mirrors serve the same content on both.
+// distURLBase is distURL for a base URL other than src.URL: one mirror of a
+// mirror list.
+func distURLBase(base string, src *Source, rel string) string {
+	root := strings.TrimRight(base, "/")
+
+	switch {
+	case src.Suite == "/":
+		return root + "/" + rel
+	case src.Flat():
+		return root + "/" + src.Suite + rel
+	default:
+		return root + "/dists/" + src.Suite + "/" + rel
+	}
+}
+
+// fetchBytes downloads a small document from an http(s) URL, retrying once
+// over https when a plain http fetch fails transiently (some networks, such as
+// egress proxies and sandboxed CI, reset port 80 and leave 443 alone, and
+// mirrors serve the same content on both), or reads it from a file: or copy:
+// URL.
 func (u *updater) fetchBytes(ctx context.Context, rawURL string, maxBytes int64) ([]byte, error) {
+	if p, ok := localPath(rawURL); ok {
+		return readLocal(p, maxBytes)
+	}
+
+	if !isHTTPURL(rawURL) {
+		return nil, schemeError(rawURL)
+	}
+
 	var data []byte
 
 	err := u.withHTTPSFallback(rawURL, func(target string) error {
@@ -301,188 +284,6 @@ func (u *updater) withHTTPSFallback(rawURL string, fn func(target string) error)
 	return nil
 }
 
-// fetchRelease fetches and verifies the Release of a source: InRelease first,
-// then Release with Release.gpg, which many third-party repositories still use.
-func (u *updater) fetchRelease(ctx context.Context, src *Source) (*deb.Release, error) {
-	kr, krErr := LoadKeyring(src.SignedBy, u.opts.DefaultKeyrings)
-	trust := deb.Trust{
-		Keyring:         kr,
-		KeyringErr:      krErr,
-		AllowUnverified: u.opts.AllowUnverified,
-		Logger:          u.opts.Logger,
-		Source:          src.URL,
-	}
-
-	var body []byte
-
-	if data, err := u.fetchBytes(ctx, distURL(src, "InRelease"), deb.MaxReleaseBytes); err == nil {
-		body, err = trust.VerifyInRelease(data)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		plain, err := u.fetchBytes(ctx, distURL(src, "Release"), deb.MaxReleaseBytes)
-		if err != nil {
-			return nil, err
-		}
-
-		sig, sigErr := u.fetchBytes(ctx, distURL(src, "Release.gpg"), deb.MaxReleaseBytes)
-
-		body, err = trust.VerifyReleaseGPG(plain, sig, sigErr)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	rel, err := deb.ParseRelease(body)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := rel.CheckValidity(u.now()); err != nil {
-		return nil, fmt.Errorf("apt: %s %s: %w", src.URL, src.Suite, err)
-	}
-
-	return rel, nil
-}
-
-// releaseCache deduplicates Release fetches within one Update. Stock
-// sources.list files split one (url, suite) over several deb lines (Ubuntu
-// ships main+restricted, universe and multiverse separately), and multi
-// architecture sources fan out one job per architecture; without this every
-// job would download and verify the same InRelease again. Failures are cached
-// too, so a dead mirror fails each duplicate without a retry storm.
-type releaseCache struct {
-	mu sync.Mutex
-	m  map[string]*releaseCacheEntry
-}
-
-type releaseCacheEntry struct {
-	once sync.Once
-	rel  *deb.Release
-	err  error
-}
-
-// fetch returns the Release for the source, running load at most once per key
-// even under concurrent callers.
-func (c *releaseCache) fetch(src *Source, allowUnverified bool, load func() (*deb.Release, error)) (*deb.Release, error) {
-	key := src.URL + "\x00" + src.Suite + "\x00" + src.SignedBy
-	if allowUnverified {
-		key += "\x00u"
-	}
-
-	c.mu.Lock()
-
-	if c.m == nil {
-		c.m = make(map[string]*releaseCacheEntry)
-	}
-
-	e, ok := c.m[key]
-	if !ok {
-		e = &releaseCacheEntry{}
-		c.m[key] = e
-	}
-
-	c.mu.Unlock()
-
-	e.once.Do(func() { e.rel, e.err = load() })
-
-	return e.rel, e.err
-}
-
-// fetchComponentIndex downloads the Packages index of a component and
-// architecture into the lists directory. It tries the variants the Release
-// lists, best compression first. A transport failure falls through to the next
-// variant; if none succeeds the last transport error is returned, so the caller
-// sees the real cause.
-func (u *updater) fetchComponentIndex(ctx context.Context, src *Source, comp, arch string, rel *deb.Release) error {
-	var lastErr error
-
-	tried := false
-
-	for _, relPath := range rel.PackagesVariants(comp, arch) {
-		entry := rel.Files[relPath]
-		if entry.SHA256 == "" {
-			continue // only a weaker digest is listed; cannot verify
-		}
-
-		tried = true
-
-		stop, err := u.fetchIndexVariant(ctx, src, relPath, entry)
-		if err == nil {
-			return nil
-		}
-
-		if stop {
-			return err
-		}
-
-		lastErr = err
-	}
-
-	if lastErr != nil {
-		return lastErr
-	}
-
-	if tried {
-		return fmt.Errorf("apt: component %s arch %s: no usable Packages index", comp, arch)
-	}
-
-	return fmt.Errorf("%w: component %s arch %s", ErrNoPackagesIndex, comp, arch)
-}
-
-// fetchIndexVariant fetches, verifies and atomically stores one Packages
-// variant. stop reports a definitive error (integrity or I/O): no other
-// compression variant is tried. A plain transport error leaves it false.
-func (u *updater) fetchIndexVariant(
-	ctx context.Context, src *Source, relPath string, entry deb.FileInfo,
-) (stop bool, err error) {
-	dest := filepath.Join(u.opts.ListsDir, ListFileName(src.URL, src.Suite, relPath))
-
-	unlock := u.lockPath(dest)
-	defer unlock()
-
-	// Warm cache: a list file that already has the size and SHA-256 of the
-	// freshly verified Release entry needs no download. It also makes duplicate
-	// sources queued behind the path lock a no-op.
-	if fileMatches(dest, entry.Size, entry.SHA256) {
-		return true, nil
-	}
-
-	sum, err := download.ParseChecksum("sha256", entry.SHA256)
-	if err != nil || entry.Size < 0 || entry.Size > maxIndexBytes {
-		return true, fmt.Errorf("%w: %s lists size %d, sha256 %q", ErrInvalidIndexEntry, relPath, entry.Size, entry.SHA256)
-	}
-
-	target := distURL(src, relPath)
-
-	err = u.withHTTPSFallback(target, func(raw string) error {
-		return download.Download(ctx, download.Request{
-			URL:      raw,
-			Dest:     dest,
-			Checksum: sum,
-			MaxBytes: max(entry.Size, 1), // zero would mean uncapped
-		}, download.Options{Client: u.client})
-	})
-	if err != nil {
-		if errors.Is(err, download.ErrChecksumMismatch) || errors.Is(err, download.ErrTooLarge) {
-			return true, fmt.Errorf("%w: %s: %w", ErrIntegrity, target, err)
-		}
-
-		return false, fmt.Errorf("apt: fetch %s: %w", target, err)
-	}
-
-	// The digest matched; a shorter file than declared still means a lying
-	// Release entry, and is refused like a mismatch.
-	if fi, statErr := os.Stat(dest); statErr != nil || fi.Size() != entry.Size {
-		_ = os.Remove(dest)
-
-		return true, fmt.Errorf("%w: %s: size differs from the %d bytes the Release lists", ErrIntegrity, target, entry.Size)
-	}
-
-	return true, nil
-}
-
 // fileMatches reports whether dest exists with the given size and SHA-256. It
 // is the warm cache check; the file is hashed as a stream, so a large index is
 // never held in memory. Any failure is a miss.
@@ -505,4 +306,15 @@ func fileMatches(dest string, size int64, sha256Hex string) bool {
 	}
 
 	return strings.EqualFold(hex.EncodeToString(h.Sum(nil)), sha256Hex)
+}
+
+// listPath is the path of the list file of relPath under the dists directory
+// of src.
+func (u *updater) listPath(src *Source, relPath string) (string, error) {
+	name := ListFileNameFor(src, relPath)
+	if name == "" {
+		return "", fmt.Errorf("%w: %q is not a usable base URL", ErrUnsupportedScheme, src.URL)
+	}
+
+	return u.opts.ListsDir + string(os.PathSeparator) + name, nil
 }

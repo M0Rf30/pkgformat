@@ -295,6 +295,12 @@ func mergeVersion(existing, info *PackageInfo) {
 		existing.MultiArch = info.MultiArch
 	}
 
+	for _, r := range info.Releases {
+		if !slices.ContainsFunc(existing.Releases, func(e *ReleaseInfo) bool { return *e == *r }) {
+			existing.Releases = append(existing.Releases, r)
+		}
+	}
+
 	for _, prov := range info.Provides {
 		if !slices.ContainsFunc(existing.Provides, func(r deb.Relation) bool { return r.String() == prov.String() }) {
 			existing.Provides = append(existing.Provides, prov)
@@ -315,6 +321,8 @@ func mergeVersion(existing, info *PackageInfo) {
 	}
 
 	existing.HasCandidate = true
+	existing.SourceName, existing.SourceVersion = info.SourceName, info.SourceVersion
+	existing.PhasedUpdatePercentage = info.PhasedUpdatePercentage
 	existing.Depends, existing.PreDepends = info.Depends, info.PreDepends
 	existing.Conflicts, existing.Breaks = info.Conflicts, info.Breaks
 
