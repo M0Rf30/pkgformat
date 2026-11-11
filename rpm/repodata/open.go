@@ -20,9 +20,10 @@ import (
 const DefaultMaxDocument int64 = 16 << 30
 
 // OpenMetadata wraps r according to the extension of the file name it was
-// fetched as (.gz, .xz, .zst, .bz2 or none), and decompresses at most maxSize
-// bytes: a document over the limit fails the read with [ErrTooLarge] instead
-// of ending as a silently shortened one. A maxSize of 0 selects
+// fetched as (.gz, .xz, .zst, .zck, .bz2 or none), and decompresses at most
+// maxSize bytes: a document over the limit fails the read with [ErrTooLarge]
+// instead of ending as a silently shortened one; a zchunk file states its
+// size in its header, so it fails here already. A maxSize of 0 selects
 // [DefaultMaxDocument]. Closing the result closes r.
 func OpenMetadata(r io.ReadCloser, name string, maxSize int64) (io.ReadCloser, error) {
 	if maxSize <= 0 {
@@ -49,6 +50,12 @@ func OpenMetadata(r io.ReadCloser, name string, maxSize int64) (io.ReadCloser, e
 
 		if zr, err = zstd.NewReader(r, zstd.WithDecoderConcurrency(1), zstd.WithDecoderMaxMemory(1<<30)); err == nil {
 			dec, stop = zr, zr.Close
+		}
+	case strings.HasSuffix(name, ".zck"):
+		var zr *ZchunkReader
+
+		if zr, err = NewZchunkReader(r, ZchunkReadOptions{MaxSize: maxSize}); err == nil {
+			dec, stop = zr, func() { _ = zr.Close() }
 		}
 	case strings.HasSuffix(name, ".bz2"):
 		dec = bzip2.NewReader(r)

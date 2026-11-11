@@ -28,16 +28,23 @@ const (
 	Zstd
 	// XZ is the smallest; it is slow to compress.
 	XZ
+	// Zchunk is a zchunk file (see [ZchunkWriter]): zstd-compressed chunks,
+	// one per package of a primary, filelists or other document, so a client
+	// that has the previous version downloads only the packages that
+	// changed. dnf and createrepo_c know it as the *_zck data types.
+	Zchunk
 )
 
-// Extension returns the file name suffix of the compression: ".gz", ".zst"
-// or ".xz".
+// Extension returns the file name suffix of the compression: ".gz", ".zst",
+// ".xz" or ".zck".
 func (c Compression) Extension() string {
 	switch c {
 	case Zstd:
 		return ".zst"
 	case XZ:
 		return ".xz"
+	case Zchunk:
+		return ".zck"
 	default:
 		return ".gz"
 	}
@@ -50,6 +57,8 @@ func (c Compression) String() string {
 		return "zstd"
 	case XZ:
 		return "xz"
+	case Zchunk:
+		return "zchunk"
 	default:
 		return "gzip"
 	}
@@ -142,6 +151,8 @@ func newEncoder(c Compression, w io.Writer) (io.WriteCloser, error) {
 		return zstd.NewWriter(w, zstd.WithEncoderConcurrency(1))
 	case XZ:
 		return xz.NewWriter(w)
+	case Zchunk:
+		return NewZchunkWriter(w, ZchunkOptions{Chunking: ZchunkXMLPackages})
 	default:
 		return nil, fmt.Errorf("repodata: unknown compression %d", int(c))
 	}
@@ -175,11 +186,17 @@ func CompressMetadataStream(c Compression, write func(io.Writer) error) (*Compre
 		return nil, fmt.Errorf("repodata: %s compression: %w", c, err)
 	}
 
-	return &CompressedMetadata{
+	cm := &CompressedMetadata{
 		Data:       out.buf.Bytes(),
 		SHA256:     hex.EncodeToString(out.h.Sum(nil)),
 		Size:       int64(out.buf.Len()),
 		OpenSHA256: hex.EncodeToString(src.h.Sum(nil)),
 		OpenSize:   src.n,
-	}, nil
+	}
+
+	if zw, ok := enc.(*ZchunkWriter); ok {
+		cm.HeaderSHA256, cm.HeaderSize = zw.Header().HexChecksum(), zw.Header().Size
+	}
+
+	return cm, nil
 }
