@@ -51,7 +51,10 @@ func setupOpenPGPDigesters(sigHeader, genHeader *rpmHeader, vf *verifier) ([]*Si
 			return nil, nil, err
 		}
 		sig.HeaderOnly = true
-		h := sig.Hash.New()
+		h, err := sig.newHash()
+		if err != nil {
+			return nil, nil, err
+		}
 		h.Write(genHeader.orig)
 		sigs = append(sigs, sig)
 		hashes = append(hashes, h)
@@ -85,7 +88,10 @@ func digestAndVerify(sigHeader, genHeader *rpmHeader, payloadReader io.Reader, v
 			continue
 		}
 		sig.HeaderOnly = true
-		h := sig.Hash.New()
+		h, err := sig.newHash()
+		if err != nil {
+			return nil, nil, err
+		}
 		h.Write(genHeader.orig)
 		sigs = append(sigs, sig)
 		hashes = append(hashes, h)
@@ -100,7 +106,10 @@ func digestAndVerify(sigHeader, genHeader *rpmHeader, payloadReader io.Reader, v
 			continue
 		}
 		sig.HeaderOnly = false
-		h := sig.Hash.New()
+		h, err := sig.newHash()
+		if err != nil {
+			return nil, nil, err
+		}
 		h.Write(genHeader.orig)
 		payloadWriters = append(payloadWriters, h)
 		sigs = append(sigs, sig)

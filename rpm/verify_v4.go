@@ -44,6 +44,8 @@ func parseSignatureV4(genpkt packet.Packet, vf *verifier) (*Signature, error) {
 	if pkt.IssuerKeyId != nil {
 		sig.KeyId = *pkt.IssuerKeyId
 	}
+	// version 6 signatures hash a salt before the data
+	sig.prepare = pkt.PrepareVerify
 	sig.validate = func(h hash.Hash) error {
 		if vf.keys == nil {
 			return nil

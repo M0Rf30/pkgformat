@@ -23,6 +23,17 @@ const (
 	AlgorithmED25519 Algorithm = "ed25519"
 	// AlgorithmRSA4096 is a 4096-bit RSA key, the most widely compatible choice.
 	AlgorithmRSA4096 Algorithm = "rsa4096"
+	// AlgorithmRSA3072 is a 3072-bit RSA key, the GnuPG default size.
+	AlgorithmRSA3072 Algorithm = "rsa3072"
+	// AlgorithmP256 and AlgorithmP384 are ECDSA keys over NIST P-256 and P-384
+	// (OpenPGP algorithm 19).
+	AlgorithmP256 Algorithm = "p256"
+	AlgorithmP384 Algorithm = "p384"
+	// AlgorithmED25519V6 and AlgorithmED448V6 are version 6 keys (RFC 9580)
+	// with the native Ed25519 and Ed448 algorithms (27 and 28), understood
+	// by rpm 6 (Sequoia) and GnuPG-incompatible tools only.
+	AlgorithmED25519V6 Algorithm = "ed25519-v6"
+	AlgorithmED448V6   Algorithm = "ed448-v6"
 )
 
 // Sentinel errors for key parsing.
@@ -53,13 +64,15 @@ type KeyInfo struct {
 
 // ParseAlgorithm validates an algorithm name; the empty string selects ed25519.
 func ParseAlgorithm(s string) (Algorithm, error) {
-	switch Algorithm(strings.ToLower(strings.TrimSpace(s))) {
-	case "", AlgorithmED25519:
+	switch a := Algorithm(strings.ToLower(strings.TrimSpace(s))); a {
+	case "":
 		return AlgorithmED25519, nil
-	case AlgorithmRSA4096:
-		return AlgorithmRSA4096, nil
+	case AlgorithmED25519, AlgorithmRSA4096, AlgorithmRSA3072, AlgorithmP256, AlgorithmP384,
+		AlgorithmED25519V6, AlgorithmED448V6:
+		return a, nil
 	default:
-		return "", fmt.Errorf("%w: %q (use ed25519 or rsa4096)", ErrUnsupportedAlgorithm, s)
+		return "", fmt.Errorf("%w: %q (use ed25519, rsa4096, rsa3072, p256, p384, ed25519-v6 or ed448-v6)",
+			ErrUnsupportedAlgorithm, s)
 	}
 }
 
@@ -73,9 +86,25 @@ func GenerateEntity(name, comment, email string, alg Algorithm) (*openpgp.Entity
 	switch alg {
 	case AlgorithmRSA4096:
 		config.RSABits = 4096
+	case AlgorithmRSA3072:
+		config.RSABits = 3072
 	case AlgorithmED25519:
 		config.Algorithm = packet.PubKeyAlgoEdDSA
 		config.Curve = packet.Curve25519
+	case AlgorithmP256:
+		config.Algorithm = packet.PubKeyAlgoECDSA
+		config.Curve = packet.CurveNistP256
+	case AlgorithmP384:
+		config.Algorithm = packet.PubKeyAlgoECDSA
+		config.Curve = packet.CurveNistP384
+		config.DefaultHash = crypto.SHA384
+	case AlgorithmED25519V6:
+		config.Algorithm = packet.PubKeyAlgoEd25519
+		config.V6Keys = true
+	case AlgorithmED448V6:
+		config.Algorithm = packet.PubKeyAlgoEd448
+		config.V6Keys = true
+		config.DefaultHash = crypto.SHA512
 	default:
 		return nil, fmt.Errorf("%w: %q", ErrUnsupportedAlgorithm, alg)
 	}
@@ -234,7 +263,13 @@ func algorithmName(pk *packet.PublicKey) string {
 		return "rsa"
 	case packet.PubKeyAlgoEdDSA, packet.PubKeyAlgoEd25519:
 		return string(AlgorithmED25519)
+	case packet.PubKeyAlgoEd448:
+		return "ed448"
 	case packet.PubKeyAlgoECDSA:
+		if bits := ecdsaCurveBits(pk); bits != 0 {
+			return fmt.Sprintf("p%d", bits)
+		}
+
 		return "ecdsa"
 	case packet.PubKeyAlgoDSA:
 		return "dsa"

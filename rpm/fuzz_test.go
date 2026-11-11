@@ -180,7 +180,7 @@ func FuzzVerify(f *testing.F) {
 		f.Add(append(sigblob, rest...))
 	}
 	signed("testdata/simple-1.0.1-1.i386.rpm")
-	signed("testdata/nfpm/test-1.0.0.x86_64.rpm")
+	signed("testdata/signed/test-1.0.0.x86_64.rpm")
 	signed("testdata/v6/ref-v6.rpm")
 
 	f.Fuzz(func(t *testing.T, data []byte) {

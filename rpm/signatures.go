@@ -64,26 +64,42 @@ func (opts *SignatureOptions) creationTime() time.Time {
 	return time.Now()
 }
 
-func makeSignature(h hash.Hash, key *packet.PrivateKey, opts *SignatureOptions) ([]byte, error) {
-	hashType := opts.hash()
+// pendingSignature is a signature being computed: data is written to hash,
+// which a version 6 key prefixes with the signature salt.
+type pendingSignature struct {
+	sig  *packet.Signature
+	hash hash.Hash
+}
+
+func newSignature(key *packet.PrivateKey, opts *SignatureOptions) (*pendingSignature, error) {
 	sig := &packet.Signature{
+		Version:      key.Version,
 		SigType:      packet.SigTypeBinary,
 		CreationTime: opts.creationTime(),
 		PubKeyAlgo:   key.PubKeyAlgo,
-		Hash:         hashType,
+		Hash:         opts.hash(),
 		IssuerKeyId:  &key.KeyId,
+	}
+	if key.Version == 6 {
+		sig.IssuerFingerprint = key.Fingerprint
 	}
 	if opts != nil && opts.Lifetime >= time.Second {
 		secs := uint32(min(opts.Lifetime/time.Second, math.MaxUint32))
 		sig.SigLifetimeSecs = &secs
 	}
-	err := sig.Sign(h, key, nil)
+	h, err := sig.PrepareSign(nil)
 	if err != nil {
 		return nil, err
 	}
+	return &pendingSignature{sig: sig, hash: h}, nil
+}
+
+func (p *pendingSignature) finish(key *packet.PrivateKey) ([]byte, error) {
+	if err := p.sig.Sign(p.hash, key, nil); err != nil {
+		return nil, err
+	}
 	var buf bytes.Buffer
-	err = sig.Serialize(&buf)
-	if err != nil {
+	if err := p.sig.Serialize(&buf); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
@@ -161,15 +177,6 @@ func getHashAndType(sigHeader *rpmHeader) (string, crypto.Hash) {
 	return getSha1(sigHeader), crypto.SHA1
 }
 
-func digestForSigning(sigHeader, genHeader *rpmHeader, payloadReader io.Reader, opts *SignatureOptions) (genHash, combinedHash hash.Hash, err error) {
-	genHash, combinedHash = opts.hash().New(), opts.hash().New()
-	// write header
-	genHash.Write(genHeader.orig)
-	combinedHash.Write(genHeader.orig)
-	// write and verify payload
-	err = digestPayload(sigHeader, genHeader, payloadReader, []io.Writer{combinedHash})
-	return genHash, combinedHash, err
-}
 
 // SignRpmStream reads an RPM and signs it, returning the set of headers updated with the new signature.
 func SignRpmStream(stream io.Reader, key *packet.PrivateKey, opts *SignatureOptions) (header *RpmHeader, err error) {
@@ -193,17 +200,47 @@ func SignRpmStream(stream io.Reader, key *packet.PrivateKey, opts *SignatureOpti
 			isSource:  sigHeader.isSource,
 		}, nil
 	}
-	// hash and sign header
-	genHash, combinedHash, err := digestForSigning(sigHeader, genHeader, stream, opts)
+	if key.Version == 6 {
+		// rpm hashes header-plus-payload signatures without the salt a
+		// version 6 signature starts with, so it can only check the
+		// header-only one; rpmsign makes no other with such keys either.
+		if err := digestPayload(sigHeader, genHeader, stream, nil); err != nil {
+			return nil, err
+		}
+		pending, err := newSignature(key, opts)
+		if err != nil {
+			return nil, err
+		}
+		pending.hash.Write(genHeader.orig)
+		sig, err := pending.finish(key)
+		if err != nil {
+			return nil, err
+		}
+		insertSignature(sigHeader, tag.SIG_RSA, sig)
+		delete(sigHeader.entries, tag.SIG_DSA)
+		delete(sigHeader.entries, tag.SIG_PGP-tag.SIGHEADER_TAG_BASE)
+		delete(sigHeader.entries, tag.SIG_GPG-tag.SIGHEADER_TAG_BASE)
+		return &RpmHeader{lead: lead, sigHeader: sigHeader, genHeader: genHeader, isSource: sigHeader.isSource}, nil
+	}
+	// one signature over the header, one over header and payload
+	headerSig, err := newSignature(key, opts)
 	if err != nil {
 		return nil, err
 	}
-	// sign header and payload
-	sigPgp, err := makeSignature(combinedHash, key, opts)
+	combinedSig, err := newSignature(key, opts)
 	if err != nil {
-		return
+		return nil, err
 	}
-	sigRsa, err := makeSignature(genHash, key, opts)
+	headerSig.hash.Write(genHeader.orig)
+	combinedSig.hash.Write(genHeader.orig)
+	if err := digestPayload(sigHeader, genHeader, stream, []io.Writer{combinedSig.hash}); err != nil {
+		return nil, err
+	}
+	sigPgp, err := combinedSig.finish(key)
+	if err != nil {
+		return nil, err
+	}
+	sigRsa, err := headerSig.finish(key)
 	if err != nil {
 		return nil, err
 	}
@@ -233,12 +270,22 @@ func signV6(sigHeader, genHeader *rpmHeader, payload io.Reader, key *packet.Priv
 	if err := digestPayload(sigHeader, genHeader, payload, nil); err != nil {
 		return err
 	}
-	h := opts.hash().New()
-	h.Write(genHeader.orig)
-	sig, err := makeSignature(h, key, opts)
+	pending, err := newSignature(key, opts)
 	if err != nil {
 		return err
 	}
+	pending.hash.Write(genHeader.orig)
+	sig, err := pending.finish(key)
+	if err != nil {
+		return err
+	}
+	setOpenPGPSignature(sigHeader, sig)
+	return nil
+}
+
+// setOpenPGPSignature stores the signature of a format 6 package, replacing
+// the signatures it had.
+func setOpenPGPSignature(sigHeader *rpmHeader, sig []byte) {
 	encoded := base64.StdEncoding.EncodeToString(sig)
 	sigHeader.entries[tag.SIG_OPENPGP] = rpmhdr.Entry{
 		Type:  tag.RPM_STRING_ARRAY_TYPE,
@@ -249,7 +296,6 @@ func signV6(sigHeader, genHeader *rpmHeader, payload io.Reader, key *packet.Priv
 	delete(sigHeader.entries, tag.SIG_DSA)
 	delete(sigHeader.entries, tag.SIG_PGP-tag.SIGHEADER_TAG_BASE)
 	delete(sigHeader.entries, tag.SIG_GPG-tag.SIGHEADER_TAG_BASE)
-	return nil
 }
 
 func getPayloadDigest(header *rpmHeader) (string, crypto.Hash) {

@@ -94,12 +94,40 @@ func TestSigningTwiceReplacesTheSignature(t *testing.T) {
 	require.Error(t, err, "the old signature survived re-signing")
 }
 
-func TestSignRejectsNonRPMAndForeignSigners(t *testing.T) {
+func TestSignRejectsNonRPM(t *testing.T) {
 	signer, _ := newTestSigner(t, gpg.AlgorithmED25519)
 
 	var out bytes.Buffer
 	require.Error(t, Sign(bytes.NewReader([]byte("not an rpm at all, just text")), &out, signer))
-	require.ErrorIs(t, Sign(bytes.NewReader(helloRPM(t)), &out, foreignSigner{}), ErrKeyNotSupported)
+	require.Error(t, Sign(bytes.NewReader([]byte("not an rpm at all, just text")), &out, foreignSigner{signer}))
+}
+
+// TestSignWithOpaqueSigner signs through DetachedSign only, as a signer
+// backed by gpg-agent or a remote service would.
+func TestSignWithOpaqueSigner(t *testing.T) {
+	signer, entity := newTestSigner(t, gpg.AlgorithmED25519)
+
+	for _, name := range []string{"hello.rpm", "v6/ref-v6.rpm"} {
+		orig, err := os.ReadFile(filepath.Join("testdata", name))
+		require.NoError(t, err)
+
+		var signed bytes.Buffer
+		require.NoError(t, Sign(bytes.NewReader(orig), &signed, foreignSigner{signer}), name)
+
+		_, sigs, err := Verify(bytes.NewReader(signed.Bytes()), openpgp.EntityList{entity})
+		require.NoError(t, err, name)
+		require.Len(t, sigs, 1, name)
+
+		keyring, err := signer.Keyring()
+		require.NoError(t, err)
+
+		_, sigs, err = VerifyWithKeyring(bytes.NewReader(signed.Bytes()), keyring, &VerifyOptions{RequireSigned: true})
+		require.NoError(t, err, name)
+		require.Len(t, sigs, 1, name)
+
+		_, _, err = VerifyWithKeyring(bytes.NewReader(orig), keyring, &VerifyOptions{RequireSigned: true})
+		require.Error(t, err, name)
+	}
 }
 
 // TestSignedPackagePassesRpmCheck cross-checks with the real rpm tool when

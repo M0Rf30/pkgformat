@@ -246,7 +246,7 @@ func TestAlgorithmNames(t *testing.T) {
 		pk   *packet.PublicKey
 		want string
 	}{
-		{"ecdsa", ecdsa.PrimaryKey, "ecdsa"},
+		{"ecdsa", ecdsa.PrimaryKey, "p256"},
 		{"ed25519", newEntity(t).PrimaryKey, "ed25519"},
 		{"unknown", unknown.PrimaryKey, "algo99"},
 	}

@@ -115,7 +115,7 @@ func TestSHA256HeaderAndPayload(t *testing.T) {
 	}
 	entity := keyring[0]
 
-	f, err := os.Open("./testdata/nfpm/test-1.0.0.x86_64.rpm")
+	f, err := os.Open("./testdata/signed/test-1.0.0.x86_64.rpm")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -157,7 +157,7 @@ func TestSHA256HeaderAndPayload(t *testing.T) {
 }
 
 func TestReadSha256PayloadHeader(t *testing.T) {
-	f, err := os.Open("./testdata/nfpm/test-1.0.0.x86_64.rpm")
+	f, err := os.Open("./testdata/signed/test-1.0.0.x86_64.rpm")
 	if err != nil {
 		t.Fatal(err)
 	}

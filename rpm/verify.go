@@ -25,6 +25,8 @@ import (
 	"time"
 
 	"github.com/ProtonMail/go-crypto/openpgp"
+
+	"github.com/M0Rf30/pkgformat/gpg"
 )
 
 // Signature describes a PGP signature found within a RPM while verifying it.
@@ -49,6 +51,16 @@ type Signature struct {
 	PrimaryName string
 
 	validate func(hash.Hash) error
+	prepare  func() (hash.Hash, error)
+}
+
+// newHash returns the hash the signed data is written to.
+func (s *Signature) newHash() (hash.Hash, error) {
+	if s.prepare != nil {
+		return s.prepare()
+	}
+
+	return s.Hash.New(), nil
 }
 
 // VerifyOptions tunes [VerifyWithOptions]. The zero value is what [Verify]
@@ -89,6 +101,18 @@ type verifier struct {
 // length of the list, when a signature is mandatory.
 func Verify(stream io.Reader, knownKeys openpgp.EntityList) (header *RpmHeader, sigs []*Signature, err error) {
 	return VerifyWithOptions(stream, knownKeys, nil)
+}
+
+// VerifyWithKeyring is [VerifyWithOptions] with the keys of a [gpg.Keyring],
+// the keyring type the deb, pacman and repository verifiers of this module
+// take. A nil keyring checks digests only, like a nil key list.
+func VerifyWithKeyring(stream io.Reader, keyring *gpg.Keyring, opts *VerifyOptions) (*RpmHeader, []*Signature, error) {
+	var keys openpgp.EntityList
+	if keyring != nil {
+		keys = keyring.Entities()
+	}
+
+	return VerifyWithOptions(stream, keys, opts)
 }
 
 // VerifyWithOptions is [Verify] with options; a nil opts is the zero value.
