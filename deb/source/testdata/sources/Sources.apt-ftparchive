@@ -1,0 +1,378 @@
+Package: cl-pipes
+Format: 1.0
+Binary: cl-pipes
+Architecture: all
+Version: 1.2.1-5.2
+Maintainer: Kevin M. Rosenberg <kmr@debian.org>
+Standards-Version: 3.8.2.0
+Build-Depends: debhelper (>= 7.0.0)
+Build-Depends-Indep: dh-lisp
+Homepage: http://files.b9.com/pipes/
+Vcs-Browser: http://git.b9.com/?p=pipes.git
+Vcs-Git: git://git.b9.com/pipes.git
+Directory: packages/cl-pipes
+Package-List:
+ cl-pipes deb lisp optional arch=all
+Files:
+ 9a2d8f66c914e8d9f7663d2b53cc58ab 1791 cl-pipes_1.2.1-5.2.dsc
+ 2da38c5a7ec929b0f459eb2c6ceb3a77 3275 cl-pipes_1.2.1.orig.tar.gz
+ bea2b856d835383d6328723dde9ce753 3164 cl-pipes_1.2.1-5.2.diff.gz
+Checksums-Sha1:
+ 1a5af447439d24e8433913bf74b95104b79e16ea 1791 cl-pipes_1.2.1-5.2.dsc
+ 26a42d5e6dbf060ca92098b684e0c10a323a56a3 3275 cl-pipes_1.2.1.orig.tar.gz
+ d5c514fe0e1e19b9a1c4ceddffd9d003accd1cad 3164 cl-pipes_1.2.1-5.2.diff.gz
+Checksums-Sha256:
+ 5396c8d4499509ce48cbed2a451762ddcf3f198821c0d9811c796665b583051e 1791 cl-pipes_1.2.1-5.2.dsc
+ 3c44de3813d06a8f83369f6819ede579169a15cc8384c9819895a587f95e3d4c 3275 cl-pipes_1.2.1.orig.tar.gz
+ ed76e5bbdf1b788182c25cdacd77185d1caeafa95296aa30fa96cfd6f4f6d858 3164 cl-pipes_1.2.1-5.2.diff.gz
+Checksums-Sha512:
+ 93bd390ab88cf2df6071ab148b551d67f1c40430ace8f0b361fad5a9ebb8a10c9fab257d377002fffc83ef360ca9dffb4ecacd78c4ffa2caf35c6780b830841b 1791 cl-pipes_1.2.1-5.2.dsc
+ 9bb93764807027fbcb2d92c52072a310b1f3d568625d97dbeee6339cf4222385daa6c00fd751c7a93b8537f49bba2ea77ec1ea34af4a341ad7c22014c6eadbb5 3275 cl-pipes_1.2.1.orig.tar.gz
+ 2ce1ba05a9a0ed07f728c1b1b785eb003b38cd6c53e9a2cf353b8da4add68c3c78f053b3834c80b1d9a7a879ca72d0532085e7f42f06c474655edb5799dd8605 3164 cl-pipes_1.2.1-5.2.diff.gz
+
+Package: hello
+Format: 3.0 (quilt)
+Binary: hello
+Architecture: any
+Version: 2.10-5
+Maintainer: Santiago Vila <sanvila@debian.org>
+Standards-Version: 4.7.2
+Build-Depends: debhelper-compat (= 13), texinfo
+Testsuite: autopkgtest
+Testsuite-Triggers: make
+Homepage: https://www.gnu.org/software/hello/
+Vcs-Browser: https://salsa.debian.org/sanvila/hello
+Vcs-Git: https://salsa.debian.org/sanvila/hello.git
+Directory: packages/hello
+Package-List:
+ hello deb devel optional arch=any
+Files:
+ 899cb9c89e975276f580c445a11db016 1736 hello_2.10-5.dsc
+ 6cd0ffea3884a4e79330338dcc2987d6 725946 hello_2.10.orig.tar.gz
+ e6074bb23a0f184e00fdfb5c546b3bc2 819 hello_2.10.orig.tar.gz.asc
+ e63dd0810a8fb37a4990ebbe54daa567 13112 hello_2.10-5.debian.tar.xz
+Checksums-Sha1:
+ 1dc1cd740d995e4aa1cdeec908749ba271eccd8e 1736 hello_2.10-5.dsc
+ f7bebf6f9c62a2295e889f66e05ce9bfaed9ace3 725946 hello_2.10.orig.tar.gz
+ 9dc7a584db576910856ac7aa5cffbaeefe9cf427 819 hello_2.10.orig.tar.gz.asc
+ f82ee0bbb31eef165b6801016313da5f39e537a7 13112 hello_2.10-5.debian.tar.xz
+Checksums-Sha256:
+ 319f8c377eb48597798b699f72ab853f3439a991583ddd51bf94b415373ffdfe 1736 hello_2.10-5.dsc
+ 31e066137a962676e89f69d1b65382de95a7ef7d914b8cb956f41ea72e0f516b 725946 hello_2.10.orig.tar.gz
+ 4ea69de913428a4034d30dcdcb34ab84f5c4a76acf9040f3091f0d3fac411b60 819 hello_2.10.orig.tar.gz.asc
+ 56a65f83d1bbeb4811e6f61355de5e9f1e3c8c8accbe5acb9721d43f6e7a272a 13112 hello_2.10-5.debian.tar.xz
+Checksums-Sha512:
+ 7e86e5d4a081e20308051708640e0d82162f0d7de1873e88249b8a3433c99ecf7d43368eb4f335788f783d5e53f2ada0618ae6f2127c790925f47483c5e10a4f 1736 hello_2.10-5.dsc
+ e301d785135c52575a8b4c35994c0316f8d366451f604eb5e74c1f907077502aebd5a1a32cd1e26cd7ca32c22f4de5623a335f8ae7e735ac977420df664f01de 725946 hello_2.10.orig.tar.gz
+ 9584e91bc471c69a1e0ecb90fc69649170c0b43c966a3b932cf9c87c12c8b33f142af06520f61039189691a3e16b826f4e79dba17b7174c17f6bd6c77472c18c 819 hello_2.10.orig.tar.gz.asc
+ e4140a764dfa33c1ea8b21b007c017eb1d0356efb465e673239538c03cef98600f95b0f9b45c0562812c7c7f67b611f23384e81dac83cbd35c08691cfe749c81 13112 hello_2.10-5.debian.tar.xz
+
+Package: icingaweb2-module-metapackages
+Format: 3.0 (quilt)
+Binary: icingaweb2-module-recommended
+Architecture: all
+Version: 20210209-2
+Maintainer: David Kunz <david.kunz@dknet.ch>
+Standards-Version: 4.6.1
+Build-Depends: debhelper-compat (= 13)
+Homepage: https://salsa.debian.org/david-guest/icingaweb2-module-metapackages
+Vcs-Browser: https://salsa.debian.org/david.kunz/icingaweb2-module-metapackages
+Vcs-Git: https://salsa.debian.org/david.kunz/icingaweb2-module-metapackages.git
+Directory: packages/icingaweb2-module-metapackages
+Package-List:
+ icingaweb2-module-recommended deb metapackages optional arch=all
+Files:
+ eba5d541c42550c1b944d56da4cec275 2121 icingaweb2-module-metapackages_20210209-2.dsc
+ 9156009c4bc5228f14e6dfd8ad07e1e1 196 icingaweb2-module-metapackages_20210209.orig.tar.xz
+ 18e32cc42d5465e088285b75c33afc6f 1348 icingaweb2-module-metapackages_20210209-2.debian.tar.xz
+Checksums-Sha1:
+ fef26df2731db7831a6759e4da8bdbf48ef6778c 2121 icingaweb2-module-metapackages_20210209-2.dsc
+ f1bd061786fc550c1a4487d693cf19508b30b84d 196 icingaweb2-module-metapackages_20210209.orig.tar.xz
+ 53564b12b5fa53a4b60752b8e6c9dc376928a58c 1348 icingaweb2-module-metapackages_20210209-2.debian.tar.xz
+Checksums-Sha256:
+ a652efe6dfde5bf7f8a2269e37deadefbd8f5718e56ffd166582d3a65005d763 2121 icingaweb2-module-metapackages_20210209-2.dsc
+ b2f42eaccb5e0f4bd3f08dbc907bab3aca269006418e88f17379f5ea445da22f 196 icingaweb2-module-metapackages_20210209.orig.tar.xz
+ 4b63143c016921b8e7f900bc28d9d12b39a7bde08bfa63378355229969676135 1348 icingaweb2-module-metapackages_20210209-2.debian.tar.xz
+Checksums-Sha512:
+ a195a5576b1d9bfa707907f50f44b6f42ba93065aa69976b0d7e60c751fdab4022526a27802732349109cd53ab209c309fafda6322cf00e1bb34e0146f050d19 2121 icingaweb2-module-metapackages_20210209-2.dsc
+ 573abc79aac5162523ec3d1c9750501b5e76c5c8508399f0bb0936d74b3da803d81fc2dc68642cd5c789a2b473732f2f5e631d47ded4bb1024fe107a0b04d43f 196 icingaweb2-module-metapackages_20210209.orig.tar.xz
+ f2b1971600dd58e92ba514de392d1afb3bc7f35d438654556e4b26879ef5230839a0a8e4a11895d77fefc982f63a06f2366efaaa697222b1829d30ac2ad632e3 1348 icingaweb2-module-metapackages_20210209-2.debian.tar.xz
+
+Package: libtemplate-plugin-utf8decode-perl
+Format: 1.0
+Binary: libtemplate-plugin-utf8decode-perl
+Architecture: all
+Version: 0.01-1.1
+Maintainer: Jonas Genannt <jonas.genannt@capi2name.de>
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 8)
+Build-Depends-Indep: perl, libtemplate-perl (>= 2.14)
+Homepage: http://search.cpan.org/dist/Template-Plugin-UTF8Decode/
+Directory: packages/libtemplate-plugin-utf8decode-perl
+Package-List:
+ libtemplate-plugin-utf8decode-perl deb perl optional arch=all
+Files:
+ 8930baf839aa98b6349b70ff0f4029a7 1993 libtemplate-plugin-utf8decode-perl_0.01-1.1.dsc
+ 656a1c28915424e16b648a11ef4e6e7b 1340 libtemplate-plugin-utf8decode-perl_0.01.orig.tar.gz
+ 1b89ab5a2991244ff9c66c80c7cf547a 1246 libtemplate-plugin-utf8decode-perl_0.01-1.1.diff.gz
+Checksums-Sha1:
+ 87d9e5c2ebba1a68019ff09bc5c41d3182ecd7a4 1993 libtemplate-plugin-utf8decode-perl_0.01-1.1.dsc
+ d26214a857c4e79307294f5fbbbf6e6d37dbec52 1340 libtemplate-plugin-utf8decode-perl_0.01.orig.tar.gz
+ b1751020df04d208b608e1200cc9fe04330c84af 1246 libtemplate-plugin-utf8decode-perl_0.01-1.1.diff.gz
+Checksums-Sha256:
+ 638d6a3f71128d68bc444ee39131f53a183198a7c11f6b6f2b18f6f3c38a99e3 1993 libtemplate-plugin-utf8decode-perl_0.01-1.1.dsc
+ be6dd3e69079a87367083b283ef8b3b23e5ef752563ef58ac4e04207e3049ac9 1340 libtemplate-plugin-utf8decode-perl_0.01.orig.tar.gz
+ 8590ca1e9ac75cb06cbdc9cf6c191bbb76c5a21c28ad691e8eee2694fef136d6 1246 libtemplate-plugin-utf8decode-perl_0.01-1.1.diff.gz
+Checksums-Sha512:
+ 7fac27b84f0bc55be536405b0c612aca2ec5b966ec9391f9e3ec6d360f68bd16035c311719081973b0fc3cc359bebfcceaad01365b99870a8068ea06bf1570b1 1993 libtemplate-plugin-utf8decode-perl_0.01-1.1.dsc
+ 58e05de93203155b4c143c044788158f1c89dfaaaeef752597fb6d3efb8d2c1b1245c284b3baf84fe1ed099b5f3cf35225bdaa01864b5fc819e97caf88205391 1340 libtemplate-plugin-utf8decode-perl_0.01.orig.tar.gz
+ 35ea8aff307cc9db3c0385389210fdfa8c0d1a7a3d1e0e010378a63d9768051866309760b80d572b29feea49edbe9641cce571cef6d5df2da8111364219bba47 1246 libtemplate-plugin-utf8decode-perl_0.01-1.1.diff.gz
+
+Package: meta-exwm
+Format: 3.0 (native)
+Binary: exwm
+Architecture: all
+Version: 0.3
+Maintainer: Debian Emacsen team <debian-emacsen@lists.debian.org>
+Uploaders: Martin <debacle@debian.org>
+Standards-Version: 4.7.0
+Build-Depends: debhelper-compat (= 13)
+Homepage: https://salsa.debian.org/emacsen-team/meta-exwm
+Vcs-Browser: https://salsa.debian.org/emacsen-team/meta-exwm
+Vcs-Git: https://salsa.debian.org/emacsen-team/meta-exwm.git
+Directory: packages/meta-exwm
+Package-List:
+ exwm deb editors optional arch=all
+Files:
+ af81205a95768d479b3bddd21415af10 1021 meta-exwm_0.3.dsc
+ f452323cf971ab19fd3a585aa93c0e2b 1652 meta-exwm_0.3.tar.xz
+Checksums-Sha1:
+ 369a703e947dc4cb8dd76e68062ff8afac32cc0a 1021 meta-exwm_0.3.dsc
+ cdabe1d78d03884b327c385e9d73937261c07c9e 1652 meta-exwm_0.3.tar.xz
+Checksums-Sha256:
+ b9f5cdc5dff9cec6ad5f7b300976e60050506487cbdb30bafb768ba45bdde937 1021 meta-exwm_0.3.dsc
+ 35b0c798a834021a1768c6d750a8c49f8047dc8d0edacd6457d9eda8d7315823 1652 meta-exwm_0.3.tar.xz
+Checksums-Sha512:
+ cbc39bb6d6c71f090e3c38300f18efeaaac4525818e8c060147ade8b0647b4997101dfb1abf0cac70090c77dcc4e3b9a2de5689d484213075513f4ced65bbad8 1021 meta-exwm_0.3.dsc
+ 1e6aeae7d9c4b310a6b9e73aa5a3d8be2e15ec3dcdb1b589797c49b3dc37b695b0ef584baadd08b134844f033fd9e5f4f6d2aa5333b70584815fc1ef6765f23a 1652 meta-exwm_0.3.tar.xz
+
+Package: node-boolbase
+Format: 3.0 (quilt)
+Binary: node-boolbase
+Architecture: all
+Version: 1.0.0+~1.0.0-1
+Maintainer: Debian Javascript Maintainers <pkg-javascript-devel@lists.alioth.debian.org>
+Uploaders: Thorsten Alteholz <debian@alteholz.de>
+Standards-Version: 4.6.0
+Build-Depends: debhelper-compat (= 13), dh-sequence-nodejs
+Testsuite: autopkgtest-pkg-nodejs
+Homepage: https://github.com/fb55/boolbase
+Vcs-Browser: https://salsa.debian.org/js-team/node-boolbase
+Vcs-Git: https://salsa.debian.org/js-team/node-boolbase.git
+Directory: packages/node-boolbase
+Package-List:
+ node-boolbase deb javascript optional arch=all
+Files:
+ 7fe2354e543053d6dc5ee8dd1509fcce 2388 node-boolbase_1.0.0+~1.0.0-1.dsc
+ c70df0b47965ab3ef24b583c10624fd6 1514 node-boolbase_1.0.0+~1.0.0.orig-types-boolbase.tar.gz
+ f66beade83498aabc93598befa673670 851 node-boolbase_1.0.0+~1.0.0.orig.tar.gz
+ 20a245a146a33ea75d8d9f3a425c2127 3044 node-boolbase_1.0.0+~1.0.0-1.debian.tar.xz
+Checksums-Sha1:
+ 14db86632e44187064cd603a2eedfa96b0b35640 2388 node-boolbase_1.0.0+~1.0.0-1.dsc
+ ac620d4d7a515c44c4c5a9598522ab66fda29b56 1514 node-boolbase_1.0.0+~1.0.0.orig-types-boolbase.tar.gz
+ 68dff5fbe60c51eb37725ea9e3ed310dcc1e776e 851 node-boolbase_1.0.0+~1.0.0.orig.tar.gz
+ 7860c3d22288f0788ab029272fe50f6a61d859e4 3044 node-boolbase_1.0.0+~1.0.0-1.debian.tar.xz
+Checksums-Sha256:
+ b9c8606fb2854dd326d1ce9c0fce3791ffb05078fd394f5bf9e4442960926633 2388 node-boolbase_1.0.0+~1.0.0-1.dsc
+ d8168b4f14cdae5fb5c926fe83e0c25a5c802cbf82611e3b2e20ce85ec9429ca 1514 node-boolbase_1.0.0+~1.0.0.orig-types-boolbase.tar.gz
+ 69628ff8092c5ff940ea4a0f29da98d520615bae138755c9e059033606c6caa8 851 node-boolbase_1.0.0+~1.0.0.orig.tar.gz
+ 306b3375fb11d7c4c3521dc935c861968e54ec3db5953eae91b0063ba8888d4f 3044 node-boolbase_1.0.0+~1.0.0-1.debian.tar.xz
+Checksums-Sha512:
+ 8974924d1b68bace257dfe4d3d1feaacc3be57bf6175be0b99d70f97bcd1dae0c7e6e6edb37516155db0a3ffdace0181cfaa916fa97ab328f3863a9c5a84897a 2388 node-boolbase_1.0.0+~1.0.0-1.dsc
+ 61f03c99b44af47c2303992cc9f709d7722a88a326c8e468ac5c356c296620e56cdd5202123a6391ce81d78ad4c5444407dd3ca3483a93fe056c2a48a9a6f7da 1514 node-boolbase_1.0.0+~1.0.0.orig-types-boolbase.tar.gz
+ 25939203b328f6c34607cf948d283374bb68916024cb5cdbced3375912c26d9ef4ff771300d99098e751ef2da0f89d1ed965f2c32d724b8ebcb58f88aeea84c3 851 node-boolbase_1.0.0+~1.0.0.orig.tar.gz
+ 66d71cda19504a8f90dc9c0796d55d40e754ed6d54c20875a8ab53b87541ee1d2fae6f032f1e7f48bb506feeddb91a0be355870f904b32df7087853c3de25ad5 3044 node-boolbase_1.0.0+~1.0.0-1.debian.tar.xz
+
+Package: node-is-node
+Format: 3.0 (quilt)
+Binary: node-is-node
+Architecture: all
+Version: 1.0.2-2
+Maintainer: Debian Javascript Maintainers <pkg-javascript-devel@lists.alioth.debian.org>
+Uploaders:  Harley Swick <fancycade@protonmail.com>,
+Standards-Version: 4.5.0
+Build-Depends: debhelper-compat (= 13), nodejs (>= 6), pkg-js-tools (>= 0.9.35)
+Homepage: https://github.com/MatthewNPM/is-node
+Vcs-Browser: https://salsa.debian.org/js-team/node-is-node
+Vcs-Git: https://salsa.debian.org/js-team/node-is-node.git
+Directory: packages/node-is-node
+Package-List:
+ node-is-node deb javascript optional arch=all
+Files:
+ 56517f90b6131eb0c118ba8e62cb7bf5 2029 node-is-node_1.0.2-2.dsc
+ a4e13c0c3803d49538dce9d602ea83f4 855 node-is-node_1.0.2.orig.tar.gz
+ bef06d1cd5a8c00ca7ffc709f52296b1 2228 node-is-node_1.0.2-2.debian.tar.xz
+Checksums-Sha1:
+ dbafc1f6e8c86d373021dc96f3c44a2215b73350 2029 node-is-node_1.0.2-2.dsc
+ d7d002745ef7debbb7477e988956ab0a4fccb653 855 node-is-node_1.0.2.orig.tar.gz
+ b7efd1567e47abc59a5bebc957af956ada24d068 2228 node-is-node_1.0.2-2.debian.tar.xz
+Checksums-Sha256:
+ 82ce78901dd6e1d0bec60a0466daed06d3a7cd28c8f15c2befc6b26aa5699734 2029 node-is-node_1.0.2-2.dsc
+ 46ab2d63937e66cbde296f8e7f1cc6a1bf0dffe34750f9bcc3d974bc9b9b1892 855 node-is-node_1.0.2.orig.tar.gz
+ c2499f29e5f54463305b4294614f0def328d35bf1d7be843c1e58a771683ee3c 2228 node-is-node_1.0.2-2.debian.tar.xz
+Checksums-Sha512:
+ 0755c55e70b8eb245f46a5a866f5ab5310f99d64b6ab066b17dadbea99dd5f1224901d3682b6f31daf3a7bf3a993b49eb7e8ba42075c01f18ea9f4c55bfee42c 2029 node-is-node_1.0.2-2.dsc
+ 537ed4755587347d700c59a549ab8a4432f59e1682551207d45a1a64df7878626f53cdf6b2330710eff80084c090e4f46910fba00d45a2f9fb3de3421e2ab3d3 855 node-is-node_1.0.2.orig.tar.gz
+ c07b613694430be59569902fc38edb776d3f1b9d39dd361c39f855910b86bbad380df9b168db74f02f99c3db67d126527f0405d3e07c04a582ace166e725e35b 2228 node-is-node_1.0.2-2.debian.tar.xz
+
+Package: r-cran-bh
+Format: 3.0 (quilt)
+Binary: r-cran-bh
+Architecture: all
+Version: 1.84.0-1
+Maintainer: Dirk Eddelbuettel <edd@debian.org>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), r-base-dev (>= 4.3.2), dh-r
+Homepage: https://cran.r-project.org/package=BH
+Vcs-Browser: https://salsa.debian.org/edd/r-cran-bh
+Vcs-Git: https://salsa.debian.org/edd/r-cran-bh.git
+Directory: packages/r-cran-bh
+Package-List:
+ r-cran-bh deb gnu-r optional arch=all
+Files:
+ 3a871f3defa45c8a7fe8cebf302762ba 1818 r-cran-bh_1.84.0-1.dsc
+ 612d82804664aab49e333da531abf37c 641 r-cran-bh_1.84.0.orig.tar.gz
+ 55cac6927746283c17c1cfbdf97bf0ba 1936 r-cran-bh_1.84.0-1.debian.tar.xz
+Checksums-Sha1:
+ c38ba236823401b38330165a1a057d0312c24b5a 1818 r-cran-bh_1.84.0-1.dsc
+ 4255f6aae6a3dce8a76fd5c369bd1bdca461953c 641 r-cran-bh_1.84.0.orig.tar.gz
+ 7b3495c4be6c7d73423cf2ed78c17b42012cb7d4 1936 r-cran-bh_1.84.0-1.debian.tar.xz
+Checksums-Sha256:
+ b0ea99c25a7d1054880cd992fe0fa5477be7492e90d449645aca7979f3a3a364 1818 r-cran-bh_1.84.0-1.dsc
+ 9ad78523518d06405e9449642c543a4382fdc262de3edc3835855caa0bd94bc6 641 r-cran-bh_1.84.0.orig.tar.gz
+ 9df3bfb484ca8752303b74cbc8226b7e73dd787b85ea88c01700049375e022d1 1936 r-cran-bh_1.84.0-1.debian.tar.xz
+Checksums-Sha512:
+ a81e2d330e8e4cb374680e7b6afb4bdea4b03f4ea50ac1be82014a56bc52053198565f2032fcef61ce659ade1f4c7f6346faf1f1d18e136901368588d7aca82e 1818 r-cran-bh_1.84.0-1.dsc
+ 883c2c048a6981290d5a1c038a7d152c0473698188e82eb1705fd771c8199c9fa691d3c4308bf858928de739b605171c424b874464d1435dab6dd90dc6500b3b 641 r-cran-bh_1.84.0.orig.tar.gz
+ 3ffcd564ad5a73649f34de9d1e5b2305735e733a2c73beaf35b78c201fffac8591ba9355ccb6eb98217c18fdcde14cd5069bbd6f5ce3398dc5c0eb7376b735e0 1936 r-cran-bh_1.84.0-1.debian.tar.xz
+
+Package: rust-getch
+Format: 3.0 (quilt)
+Binary: librust-getch-dev
+Architecture: any
+Version: 0.3.1-1
+Maintainer: Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>
+Uploaders:  NoisyCoil <noisycoil@tutanota.com>
+Standards-Version: 4.7.0
+Build-Depends: debhelper-compat (= 13), dh-sequence-cargo, cargo:native <!nocheck>, rustc:native <!nocheck>, libstd-rust-dev <!nocheck>, librust-termios-0.3+default-dev (>= 0.3.3-~~) <!nocheck>
+Testsuite: autopkgtest
+Testsuite-Triggers: dh-cargo, rustc
+Homepage: https://nest.pijul.com/pmeunier/getch
+Vcs-Browser: https://salsa.debian.org/rust-team/debcargo-conf/tree/master/src/getch
+Vcs-Git: https://salsa.debian.org/rust-team/debcargo-conf.git [src/getch]
+Directory: packages/rust-getch
+Package-List:
+ librust-getch-dev deb rust optional arch=any
+Files:
+ 61ebda04d383c969d42f165a464dfefe 1593 rust-getch_0.3.1-1.dsc
+ 3defcd4fab9ffa0de754eceb9d9c3c41 1501 rust-getch_0.3.1.orig.tar.gz
+ 6aacb3ad581144b36dab8c5e80e29aeb 2068 rust-getch_0.3.1-1.debian.tar.xz
+Checksums-Sha1:
+ 653ba270087f18cc56c40c4b28bef7ba05e44db4 1593 rust-getch_0.3.1-1.dsc
+ 3c562854154c566f0b603aa686cceb43a22245e3 1501 rust-getch_0.3.1.orig.tar.gz
+ 76eed98dd32d9aa7e9e98dd8c1926f0134da6f00 2068 rust-getch_0.3.1-1.debian.tar.xz
+Checksums-Sha256:
+ 98eafafd23eb2aab42f7a7c19227336841378fb72ea99f02d9821c587f753286 1593 rust-getch_0.3.1-1.dsc
+ 13990e2d5b29e1770ddf7fc000afead4acb9bd8f8a9602de63bf189e261b1ba8 1501 rust-getch_0.3.1.orig.tar.gz
+ 0efa34c0a4d02597ae80089b0cc296304eaa4bfc990049fbdf378a2bd693fe68 2068 rust-getch_0.3.1-1.debian.tar.xz
+Checksums-Sha512:
+ 6c0b163e33309e57211f16b4b661f05e43255a50cac4286fd69a9c38cfcd0f73fd2bccdba952ac2b3f96a35f1ed67c6f34150292a5c7eb7aba8e7b41486698a2 1593 rust-getch_0.3.1-1.dsc
+ f3bd91d55b64c985c9425301e5bf20e8d80ee285b8da82675ed761a9502f7f9fd5282d50bf172b3598d89124b47516a397ace517de2ea8947fc6fb8b4fa42b27 1501 rust-getch_0.3.1.orig.tar.gz
+ 8397fa03afed92abc804b8ee9a4ac0aecb7b253706cbd5eefcbd2a071cee9609627c923ee9852df7e977b99c9d4d629ffa3fb6bb91c5a3ae54bb06b71e308bed 2068 rust-getch_0.3.1-1.debian.tar.xz
+
+Package: sl
+Format: 3.0 (quilt)
+Binary: sl
+Architecture: any
+Version: 5.02-1
+Maintainer: Markus Frosch <lazyfrosch@debian.org>
+Uploaders: Hiroyuki Yamamoto <yama1066@gmail.com>
+Standards-Version: 4.3.0
+Build-Depends: debhelper (>= 9), libncurses5-dev
+Homepage: https://github.com/mtoyoda/sl
+Vcs-Browser: https://salsa.debian.org/debian/sl
+Vcs-Git: https://salsa.debian.org/debian/sl.git
+Directory: packages/sl
+Package-List:
+ sl deb games optional arch=any
+Files:
+ eab27deb922c56defacd3fd2991cd69b 1460 sl_5.02-1.dsc
+ 5d5fe203eb19598821647ba8db5dde6c 5353 sl_5.02.orig.tar.gz
+ cfb5916b5603e419dd20aeadbbd89b33 13932 sl_5.02-1.debian.tar.xz
+Checksums-Sha1:
+ 50dbe35c19e358a6e964703a0dac86902db441d7 1460 sl_5.02-1.dsc
+ 8ea1ed978ed6738d6c510eceb329cb43616afb91 5353 sl_5.02.orig.tar.gz
+ 3f3a9abc45e998bfd8755613a59ba2aea519794e 13932 sl_5.02-1.debian.tar.xz
+Checksums-Sha256:
+ 6630f4697089b9aa2d2c09b7e7facd5aeee9b8088606ebc2442af7cb27141f2d 1460 sl_5.02-1.dsc
+ 1e5996757f879c81f202a18ad8e982195cf51c41727d3fea4af01fdcbbb5563a 5353 sl_5.02.orig.tar.gz
+ f25d8583951456d4889e72587856924d341652dcd1725e374a98971a1fdf8b55 13932 sl_5.02-1.debian.tar.xz
+Checksums-Sha512:
+ 5fc14100abb4ea5bb31dfef476297678fa8a906e313e214605edda43b6f00df3506d208d3ce36e53f7d9a431d0c2856fad0d189ecced61d5f637748f021cbc75 1460 sl_5.02-1.dsc
+ a4d18bc79d7e0eca7748b10226a6b2a85a7a01d636e4e9215bf524a7849bc5cb250034326e5a69f7423d79e40b92182fddc0e56e25df616edae06369c782cb26 5353 sl_5.02.orig.tar.gz
+ eca1dac2a75f9d872ce28872754e8d9f2a52513b657bd0ad816e7a43c93e9d81c9264791d4cf931590dc7ce76d4765b6d6be9002d63c75b8cf4ba043468e0026 13932 sl_5.02-1.debian.tar.xz
+
+Package: vacation
+Format: 1.0
+Binary: vacation
+Architecture: any
+Version: 3.3.3
+Maintainer: Phil Brooke <pjb@debian.org>
+Uploaders: Ian Jackson <ijackson@chiark.greenend.org.uk>
+Standards-Version: 4.4.0
+Build-Depends: debhelper (>= 9.0), libdb-dev (>= 5.1)
+Directory: packages/vacation
+Package-List:
+ vacation deb mail optional arch=any
+Files:
+ 72c9015600999d1720439d0e4abcc4b4 1224 vacation_3.3.3.dsc
+ d8a851f041073417b33e632fb14df3c7 12665 vacation_3.3.3.tar.gz
+Checksums-Sha1:
+ 910f2e6ba0025c4eb8a1460a61f85684659df3ef 1224 vacation_3.3.3.dsc
+ a7fad55f926007201cdccb91f6cb570d264bc7ef 12665 vacation_3.3.3.tar.gz
+Checksums-Sha256:
+ 11cc1e49eecd29ca78b9737e4534d0623ecd3b1186fd95e46f72cf549979aeb3 1224 vacation_3.3.3.dsc
+ 0bd52d8d3df77f2079c7a42cf530c76d8ed3f135d7f46a8be74829a321d08f04 12665 vacation_3.3.3.tar.gz
+Checksums-Sha512:
+ 2f21a92ddf74b6f1be6e5e60c214a12b26495b559d8112a57ccd9d14bc93f884561a282a3eadd51bb01197e5d77a5b3fb2782a93ef0c850359318c711b38cbab 1224 vacation_3.3.3.dsc
+ cb725476b0e0d68637365b3d95a17744d7650bbbfb2c0b197e14f5b2f04691b0613bdaa72671b35d1423b5dff692e765cc0658eb1db845fce07905fa317b8135 12665 vacation_3.3.3.tar.gz
+Dgit: 29c3619637dcaae3565c8240f4edc62f0f319677 debian archive/debian/3.3.3 https://git.dgit.debian.org/vacation
+
+Package: valgrind-if-available
+Format: 1.0
+Binary: valgrind-if-available
+Architecture: any
+Version: 3.18.1-1-1
+Maintainer: Adam Borowski <kilobyte@angband.pl>
+Standards-Version: 4.6.0
+Build-Depends: debhelper-compat (= 13), valgrind [amd64 arm64 armhf i386 mips64el ppc64el s390x powerpc ppc64]
+Testsuite: autopkgtest
+Testsuite-Triggers: gcc, libc-dev
+Vcs-Browser: https://salsa.debian.org/debian/valgrind-if-available
+Vcs-Git: https://salsa.debian.org/debian/valgrind-if-available.git
+Directory: packages/valgrind-if-available
+Package-List:
+ valgrind-if-available deb devel optional arch=any
+Files:
+ 85479d32c3a14098a49d2b41eb9b0d5e 1751 valgrind-if-available_3.18.1-1-1.dsc
+ 253e16a1696ec9ddefb174bdcb174c47 2409 valgrind-if-available_3.18.1-1-1.tar.gz
+Checksums-Sha1:
+ b09cd65ba8faf779c761cec3e714a28fbaecba2b 1751 valgrind-if-available_3.18.1-1-1.dsc
+ aeb04093ec8cd8a4da6ab607bb75248a80436304 2409 valgrind-if-available_3.18.1-1-1.tar.gz
+Checksums-Sha256:
+ 7d8079f81c1b7decd5893bae4861622ccd4736228f971f8e8bb81f63362e882d 1751 valgrind-if-available_3.18.1-1-1.dsc
+ 9055509f8542638d6f203121ca4b15d2fd070e74c02e630b1fbc08428e3f62b7 2409 valgrind-if-available_3.18.1-1-1.tar.gz
+Checksums-Sha512:
+ 534310cf667822d8ac7df273e1d4feab7cf9784dd28bdc810e259b8d0dff6cfe9493d4cc28722eebb4e2db825c6501f81cf5dee2079239391e2d5a0af9020246 1751 valgrind-if-available_3.18.1-1-1.dsc
+ 58f2d2292300f44abc1d2d6766c0e514028688faf92b1c29e1d22a998be50a6ffad278c4b51200bf4783bece0905a5aa697ec767ea07543b0ee2fe6717a2e035 2409 valgrind-if-available_3.18.1-1-1.tar.gz
+

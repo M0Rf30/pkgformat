@@ -1,0 +1,42 @@
+Format: 1.8
+Date: Wed, 16 Apr 2025 11:50:00 +0200
+Source: hello
+Binary: hello hello-dbgsym
+Architecture: source amd64
+Version: 2.10-5
+Distribution: unstable
+Urgency: medium
+Maintainer: Santiago Vila <sanvila@debian.org>
+Changed-By: Santiago Vila <sanvila@debian.org>
+Description:
+ hello      - example package based on GNU hello
+Closes: 1103293
+Changes:
+ hello (2.10-5) unstable; urgency=medium
+ .
+   * Add autopkgtest dependency on make. Closes: #1103293.
+     Thanks to Jochen Sprickerhof.
+Checksums-Sha1:
+ 425dbb1b8d775bdee41ffe7d6dee5a20e1fd844c 1198 hello_2.10-5.dsc
+ f7bebf6f9c62a2295e889f66e05ce9bfaed9ace3 725946 hello_2.10.orig.tar.gz
+ 9dc7a584db576910856ac7aa5cffbaeefe9cf427 819 hello_2.10.orig.tar.gz.asc
+ fd028d0555d3a5e2e04639c300837eb2e6ea2638 13096 hello_2.10-5.debian.tar.xz
+ 92e395f3626599e912d3076044ccbf13100c4f7d 35096 hello-dbgsym_2.10-5_amd64.deb
+ 9574edf731e203c970befdb9d1f60696a943b63c 5766 hello_2.10-5_amd64.buildinfo
+ c9bdd9b54053c77c85655d3c2a7d3d5c9a3ada32 52972 hello_2.10-5_amd64.deb
+Checksums-Sha256:
+ 0d9084dac094cbe6ffcc0430882c0746abb666b10cd0af56198f0b54aee341d1 1198 hello_2.10-5.dsc
+ 31e066137a962676e89f69d1b65382de95a7ef7d914b8cb956f41ea72e0f516b 725946 hello_2.10.orig.tar.gz
+ 4ea69de913428a4034d30dcdcb34ab84f5c4a76acf9040f3091f0d3fac411b60 819 hello_2.10.orig.tar.gz.asc
+ 804de7296812522418f425f5da011d67e04f08d1bbb2b2858b48a307d1824433 13096 hello_2.10-5.debian.tar.xz
+ d10e77615b8cecc2a8954a6de10073998551f36d08c743908fe41430765f5cd7 35096 hello-dbgsym_2.10-5_amd64.deb
+ a20434090d3c0efe526cd23b6c327618609c579785f2a4fec2ef1b5998276b67 5766 hello_2.10-5_amd64.buildinfo
+ 17be6ab55cb13a21e32c0eb8df15821832f82ac5b1fa1f84f1dd0236b202dfc1 52972 hello_2.10-5_amd64.deb
+Files:
+ f0f9cbecd7eae20bdb6158c67495883d 1198 devel optional hello_2.10-5.dsc
+ 6cd0ffea3884a4e79330338dcc2987d6 725946 devel optional hello_2.10.orig.tar.gz
+ e6074bb23a0f184e00fdfb5c546b3bc2 819 devel optional hello_2.10.orig.tar.gz.asc
+ c65b7b92470de3c403d6845982b12785 13096 devel optional hello_2.10-5.debian.tar.xz
+ 1d2d9f5060cf451aaf3503bf056fcdf0 35096 debug optional hello-dbgsym_2.10-5_amd64.deb
+ f84e6be21fb5890ee49dd23c2de635b0 5766 devel optional hello_2.10-5_amd64.buildinfo
+ f2390f8db10db5231f817135b501ca2e 52972 devel optional hello_2.10-5_amd64.deb
