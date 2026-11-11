@@ -1,0 +1,22 @@
+pretrans
+pre
+post
+posttrans
+--- install bar
+triggerprein
+triggerin
+filetriggerin-100
+filetriggerin-5
+transfiletriggerin
+--- remove bar
+transfiletriggerun
+filetriggerun
+triggerun
+filetriggerpostun
+triggerpostun
+transfiletriggerpostun
+--- remove trig
+preuntrans
+preun
+postun
+postuntrans

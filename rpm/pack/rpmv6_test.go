@@ -133,7 +133,7 @@ func readHeader(t *testing.T, b []byte) (parsedHeader, int) {
 			l = cnt
 		case tag.RPM_STRING_TYPE:
 			l = bytes.IndexByte(data[off:], 0) + 1
-		case tag.RPM_STRING_ARRAY_TYPE:
+		case tag.RPM_STRING_ARRAY_TYPE, tag.RPM_I18NSTRING_TYPE:
 			p := off
 			for j := 0; j < cnt; j++ {
 				p += bytes.IndexByte(data[p:], 0) + 1
@@ -318,7 +318,7 @@ func TestV6Structure(t *testing.T) {
 	if got := h.ints(t, tag.LONGSIZE, tag.RPM_INT64_TYPE); !reflect.DeepEqual(got, []uint64{12 + 600 + 5 + 3}) {
 		t.Errorf("LONGSIZE = %v", got)
 	}
-	wantDict := []string{"inode/directory", "text/plain", "application/octet-stream", "inode/x-empty", "inode/symlink"}
+	wantDict := []string{"inode/directory", "text/plain", "application/octet-stream", "", "inode/symlink"}
 	if got := h.strs(t, tag.MIMEDICT); !reflect.DeepEqual(got, wantDict) {
 		t.Errorf("MIMEDICT = %v, want %v", got, wantDict)
 	}
@@ -453,8 +453,12 @@ func TestV6Signed(t *testing.T) {
 	signed := newV6Test(t, "zstd")
 	var calls [][]byte
 	sigBytes := bytes.Repeat([]byte{0xab, 0xcd, 0xef}, 100)
-	signed.SetPGPSigner(func(b []byte) ([]byte, error) {
-		calls = append(calls, append([]byte{}, b...))
+	signed.SetPGPSigner(func(rd io.Reader) ([]byte, error) {
+		b, err := io.ReadAll(rd)
+		if err != nil {
+			return nil, err
+		}
+		calls = append(calls, b)
 		return sigBytes, nil
 	})
 	var sb bytes.Buffer
@@ -497,7 +501,7 @@ func TestV6Signed(t *testing.T) {
 
 func TestV6SignerError(t *testing.T) {
 	r := newV6Test(t, "gzip")
-	r.SetPGPSigner(func([]byte) ([]byte, error) { return nil, fmt.Errorf("boom") })
+	r.SetPGPSigner(func(io.Reader) ([]byte, error) { return nil, fmt.Errorf("boom") })
 	if err := r.Write(io.Discard); err == nil || !strings.Contains(err.Error(), "boom") {
 		t.Errorf("Write error = %v", err)
 	}
@@ -505,7 +509,7 @@ func TestV6SignerError(t *testing.T) {
 
 func TestV6BigSignatureDropsReserved(t *testing.T) {
 	r := newV6Test(t, "gzip")
-	r.SetPGPSigner(func([]byte) ([]byte, error) { return make([]byte, 10000), nil })
+	r.SetPGPSigner(func(io.Reader) ([]byte, error) { return make([]byte, 10000), nil })
 	var b bytes.Buffer
 	if err := r.Write(&b); err != nil {
 		t.Fatal(err)

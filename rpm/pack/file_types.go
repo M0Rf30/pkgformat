@@ -1,5 +1,12 @@
 package pack
 
+import (
+	"io"
+	"io/fs"
+
+	"github.com/M0Rf30/pkgformat/rpm/tag"
+)
+
 // FileType is the type of a file inside a RPM package.
 type FileType int32
 
@@ -35,13 +42,133 @@ const (
 	ExcludeFile
 )
 
+// ArtifactFile is a file that is a build artifact, such as a build id link (%artifact).
+const ArtifactFile FileType = tag.RPMFILE_ARTIFACT
+
+// VerifyFlags selects the attributes rpm --verify checks of a file.
+type VerifyFlags uint32
+
+// The attributes of a file that rpm verifies.
+const (
+	VerifyDigest   VerifyFlags = tag.RPMVERIFY_FILEDIGEST
+	VerifySize     VerifyFlags = tag.RPMVERIFY_FILESIZE
+	VerifyLinkTo   VerifyFlags = tag.RPMVERIFY_LINKTO
+	VerifyUser     VerifyFlags = tag.RPMVERIFY_USER
+	VerifyGroup    VerifyFlags = tag.RPMVERIFY_GROUP
+	VerifyMTime    VerifyFlags = tag.RPMVERIFY_MTIME
+	VerifyMode     VerifyFlags = tag.RPMVERIFY_MODE
+	VerifyRdev     VerifyFlags = tag.RPMVERIFY_RDEV
+	VerifyCaps     VerifyFlags = tag.RPMVERIFY_CAPS
+	VerifyContexts VerifyFlags = tag.RPMVERIFY_CONTEXTS
+)
+
+// The file type bits of RPMFile.Mode in addition to the regular file, directory
+// and symlink types.
+const (
+	ModeSocket     uint = 0140000
+	ModeBlock      uint = 060000
+	ModeChar       uint = 020000
+	ModeFifo       uint = 010000
+	modeSymlinkBit uint = 0120000
+	modeDirBit     uint = 040000
+	modeRegBit     uint = 0100000
+)
+
 // RPMFile contains a particular file's entry and data.
+//
+// The content of a regular file comes from exactly one of Body, Reader, Open or
+// Path; a file without any of them is empty. A symlink holds its target in Body. A
+// hard link has no content of its own: set Hardlink to the name of the file it
+// shares the content with.
 type RPMFile struct {
-	Name  string
-	Body  []byte
+	// Name is the clean absolute path of the file in the package.
+	Name string
+	// Body is the content of a regular file, or the target of a symlink.
+	Body []byte
+	// Reader is a one-shot source of the content, which must produce exactly Size
+	// bytes. The content is streamed, not buffered.
+	Reader io.Reader
+	// Open opens the content, which must be exactly Size bytes. It is called at most
+	// once, by Write.
+	Open func() (io.ReadCloser, error)
+	// Size is the length of the content from Reader and Open. It is not used with
+	// the other sources.
+	Size int64
+	// Path is a file of the host that holds the content. It is opened by Write and
+	// its size at that time is the size of the file in the package.
+	Path string
+	// Mode holds the permission bits and the file type: a regular file when no
+	// type bit is set, otherwise 040000 (directory), 0120000 (symlink), ModeFifo,
+	// ModeSocket, ModeChar or ModeBlock.
 	Mode  uint
 	Owner string
 	Group string
 	MTime uint32
 	Type  FileType
+
+	// Hardlink names another file of the package that this file is a hard link
+	// to. The files then share one inode and the payload stores their content
+	// once, as rpm requires.
+	Hardlink string
+	// Major and Minor are the device numbers of a character or block device.
+	Major, Minor uint32
+	// VerifyExclude lists the attributes rpm --verify skips (%verify(not ...)).
+	VerifyExclude VerifyFlags
+	// Lang is the language of the file (%lang).
+	Lang string
+	// Class is the description of the file type, as file(1) reports it. It is
+	// stored in the class dictionary of v4 packages.
+	Class string
+	// Caps is the text form of the file capabilities (%caps), for example
+	// "cap_net_raw=ep".
+	Caps string
+	// Color is the ELF color of the file: 1 for 32 bit and 2 for 64 bit objects.
+	Color uint32
+	// Provides and Requires are the dependencies found in this file, which are
+	// also package dependencies. They are recorded in the file dependency
+	// tags so that rpm knows what a file brings.
+	Provides, Requires Relations
+}
+
+// AddFSOptions are the options of AddFS.
+type AddFSOptions struct {
+	// Dir is the directory of fsys that is added. The default is ".".
+	Dir string
+	// Prefix is the directory of the package the files are placed in. The
+	// default is "/".
+	Prefix string
+	// Owner and Group own the files. The default is root.
+	Owner, Group string
+	// Type is set on every regular file.
+	Type FileType
+	// SkipDirs leaves out the directories, adding only files and symlinks.
+	SkipDirs bool
+}
+
+// modeIs reports whether mode has the given file type.
+func modeIs(mode, typ uint) bool { return mode&modeTypeMask == typ }
+
+// fsFileMode converts the mode of an fs.FileInfo to an rpm mode.
+func fsFileMode(m fs.FileMode) (uint, bool) {
+	mode := uint(m.Perm())
+	if m&fs.ModeSetuid != 0 {
+		mode |= 04000
+	}
+	if m&fs.ModeSetgid != 0 {
+		mode |= 02000
+	}
+	if m&fs.ModeSticky != 0 {
+		mode |= 01000
+	}
+	switch m.Type() {
+	case 0:
+		mode |= modeRegBit
+	case fs.ModeDir:
+		mode |= modeDirBit
+	case fs.ModeSymlink:
+		mode |= modeSymlinkBit
+	default:
+		return 0, false
+	}
+	return mode, true
 }

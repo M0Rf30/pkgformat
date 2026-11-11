@@ -91,10 +91,10 @@ func TestFromTar(t *testing.T) {
 			if r == nil {
 				t.Fatalf("FromTar returned nil pointer")
 			}
-			if d := cmp.Diff(tc.wantBasenames, r.basenames); d != "" {
+			if d := cmp.Diff(tc.wantBasenames, basenamesOf(t, r)); d != "" {
 				t.Errorf("FromTar basenames differs (want->got):\n%v", d)
 			}
-			if d := cmp.Diff(tc.wantFileModes, r.filemodes); d != "" {
+			if d := cmp.Diff(tc.wantFileModes, modesOf(t, r)); d != "" {
 				t.Errorf("FromTar filemodes differs (want->got):\n%v", d)
 			}
 		})
@@ -147,12 +147,12 @@ func TestFromTarIgnoresModeTypeBits(t *testing.T) {
 		"huge-mode":      0100644,
 		"negative-mode":  0107777,
 	}
-	for i, name := range r.basenames {
-		if r.filemodes[i] != want[name] {
-			t.Errorf("%s: mode %o, want %o", name, r.filemodes[i], want[name])
+	for i, name := range basenamesOf(t, r) {
+		if got := modesOf(t, r)[i]; got != want[name] {
+			t.Errorf("%s: mode %o, want %o", name, got, want[name])
 		}
-		if r.filelinktos[i] != "" {
-			t.Errorf("%s: unexpected link target %q", name, r.filelinktos[i])
+		if entriesOf(t, r)[i].isLink() {
+			t.Errorf("%s: unexpected symlink", name)
 		}
 	}
 }

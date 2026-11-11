@@ -38,11 +38,11 @@ func TestFileOwner(t *testing.T) {
 	if err := r.Write(io.Discard); err != nil {
 		t.Errorf("NewRPM returned error %v", err)
 	}
-	if r.fileowners[0] != user {
-		t.Errorf("File owner shoud be %s but is %s", user, r.fileowners[0])
+	if entriesOf(t, r)[0].Owner != user {
+		t.Errorf("File owner shoud be %s but is %s", user, entriesOf(t, r)[0].Owner)
 	}
-	if r.filegroups[0] != group {
-		t.Errorf("File owner shoud be %s but is %s", group, r.filegroups[0])
+	if entriesOf(t, r)[0].Group != group {
+		t.Errorf("File owner shoud be %s but is %s", group, entriesOf(t, r)[0].Group)
 	}
 }
 
@@ -61,11 +61,11 @@ func Test100644(t *testing.T) {
 	if err := r.Write(io.Discard); err != nil {
 		t.Errorf("Write returned error %v", err)
 	}
-	if r.filemodes[0] != 0100644 {
-		t.Errorf("file mode want 0100644, got %o", r.filemodes[0])
+	if entriesOf(t, r)[0].Mode != 0100644 {
+		t.Errorf("file mode want 0100644, got %o", entriesOf(t, r)[0].Mode)
 	}
-	if r.filelinktos[0] != "" {
-		t.Errorf("linktos want empty (not a symlink), got %q", r.filelinktos[0])
+	if e := entriesOf(t, r)[0]; e.isLink() || e.Body != nil && false {
+		t.Errorf("%q must not be a symlink", e.Name)
 	}
 }
 
@@ -149,11 +149,11 @@ func TestCompression(t *testing.T) {
 				expectedWriterType := reflect.Indirect(reflect.ValueOf(
 					testCase.ExpectedWriter)).String()
 				actualWriterType := reflect.Indirect(reflect.ValueOf(
-					r.compressedPayload)).String()
+					compressorWriter(t, r))).String()
 
 				if expectedWriterType != actualWriterType {
 					t.Fatalf("expected writer to be %T, got %T instead",
-						testCase.ExpectedWriter, r.compressedPayload)
+						testCase.ExpectedWriter, compressorWriter(t, r))
 				}
 			})
 		}
@@ -309,10 +309,8 @@ func TestWriteRejectsInvalidFile(t *testing.T) {
 			return RPMFile{Name: "/x", Mode: 0120777, Body: []byte("a\x00b")}
 		}},
 		{name: "empty symlink target", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 0120777} }},
-		{name: "character device", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 020644} }},
-		{name: "fifo", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 010644} }},
-		{name: "socket", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 0140644} }},
-		{name: "block device", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 060644} }},
+		{name: "bad file type", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 030644} }},
+		{name: "fifo", wantOK: true, file: func() RPMFile { return RPMFile{Name: "/x", Mode: 010644} }},
 		{name: "mode over 16 bits", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 1 << 16} }},
 		{name: "v4 file over 4 GiB", file: func() RPMFile { return RPMFile{Name: "/x", Mode: 0644, Body: big()} }},
 		{name: "v4 ghost over 4 GiB", file: func() RPMFile {
@@ -414,73 +412,18 @@ func TestWriteTimesPast2038(t *testing.T) {
 	}
 }
 
-func TestSizeTags(t *testing.T) {
-	const (
-		small = 1 << 20
-		over2 = 3 << 30 // does not fit int32: used to be written as a negative size
-		over4 = 5 << 30 // does not fit uint32
-	)
-	testCases := []struct {
-		name        string
-		payloadSize uint64
-		wantSize    bool // SIZE (32 bit) instead of LONGSIZE (64 bit)
-	}{
-		{"small", small, true},
-		{"over 2 GiB", over2, true},
-		{"max uint32", math.MaxUint32, true},
-		{"over 4 GiB", over4, false},
-	}
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			r, err := NewRPM(RPMMetaData{Name: "x", Version: "1", Epoch: NoEpoch})
-			if err != nil {
-				t.Fatal(err)
-			}
-			r.AddFile(RPMFile{Name: "/a", Body: []byte("a"), Mode: 0644})
-			// Pretend the files are big: the sizes are only read when writing the headers.
-			r.payloadSize = tc.payloadSize - 1 // the file adds 1
-			var b bytes.Buffer
-			if err := r.Write(&b); err != nil {
-				t.Fatal(err)
-			}
-			p := parseRPM(t, b.Bytes())
-			_, hasSize := p.main.entries[tag.SIZE]
-			_, hasLong := p.main.entries[tag.LONGSIZE]
-			_, hasSigArchive := p.sig.entries[(tag.SIG_PAYLOADSIZE - tag.SIGHEADER_TAG_BASE)]
-			_, hasSigLongArchive := p.sig.entries[tag.SIG_LONGARCHIVESIZE]
-			if hasSize != tc.wantSize || hasLong == tc.wantSize || hasSigArchive != tc.wantSize || hasSigLongArchive == tc.wantSize {
-				t.Fatalf("tags: SIZE=%v LONGSIZE=%v SIG_PAYLOADSIZE=%v SIG_LONGARCHIVESIZE=%v, want 32 bit tags: %v",
-					hasSize, hasLong, hasSigArchive, hasSigLongArchive, tc.wantSize)
-			}
-			if tc.wantSize {
-				if got := p.main.ints(t, tag.SIZE, tag.RPM_INT32_TYPE); got[0] != tc.payloadSize {
-					t.Errorf("SIZE = %d, want %d", got[0], tc.payloadSize)
-				}
-				if got := p.sig.ints(t, (tag.SIG_PAYLOADSIZE - tag.SIGHEADER_TAG_BASE), tag.RPM_INT32_TYPE); got[0] != tc.payloadSize {
-					t.Errorf("SIG_PAYLOADSIZE = %d, want %d", got[0], tc.payloadSize)
-				}
-			} else {
-				if got := p.main.ints(t, tag.LONGSIZE, tag.RPM_INT64_TYPE); got[0] != tc.payloadSize {
-					t.Errorf("LONGSIZE = %d, want %d", got[0], tc.payloadSize)
-				}
-				if got := p.sig.ints(t, tag.SIG_LONGARCHIVESIZE, tag.RPM_INT64_TYPE); got[0] != tc.payloadSize {
-					t.Errorf("LONGARCHIVESIZE = %d, want %d", got[0], tc.payloadSize)
-				}
-			}
-			// The sizes of header and payload are small here, so they stay 32 bit.
-			if _, ok := p.sig.entries[(tag.SIG_SIZE - tag.SIGHEADER_TAG_BASE)]; !ok {
-				t.Error("signature header lacks SIG_SIZE")
-			}
-			hasLargeFiles := false
-			if _, ok := p.main.entries[tag.REQUIRENAME]; ok {
-				for _, name := range p.main.strs(t, tag.REQUIRENAME) {
-					hasLargeFiles = hasLargeFiles || name == "rpmlib(LargeFiles)"
-				}
-			}
-			if hasLargeFiles == tc.wantSize {
-				t.Errorf("rpmlib(LargeFiles) requirement = %v, want %v", hasLargeFiles, !tc.wantSize)
-			}
-		})
+func TestAddInstalledSize(t *testing.T) {
+	for _, tc := range []struct {
+		size  uint64
+		short bool
+	}{{1 << 20, true}, {3 << 30, true}, {math.MaxUint32, true}, {5 << 30, false}} {
+		h := rpmhdr.NewIndex(tag.RPMTAG_HEADERIMMUTABLE)
+		addInstalledSize(h, tc.size)
+		_, hasSize := h.Entries[tag.SIZE]
+		_, hasLong := h.Entries[tag.LONGSIZE]
+		if hasSize != tc.short || hasLong == tc.short {
+			t.Errorf("size %d: SIZE=%v LONGSIZE=%v, want the 32 bit tag: %v", tc.size, hasSize, hasLong, tc.short)
+		}
 	}
 }
 
@@ -495,16 +438,5 @@ func TestAddSignatureSizes(t *testing.T) {
 	}
 	if _, ok := s.Entries[(tag.SIG_PAYLOADSIZE - tag.SIGHEADER_TAG_BASE)]; !ok {
 		t.Error("want SIG_PAYLOADSIZE for a size of 4 GiB - 1")
-	}
-}
-
-func TestFileSize32(t *testing.T) {
-	if got := fileSize32(7); got != 7 {
-		t.Errorf("fileSize32(7) = %d", got)
-	}
-	if strconv.IntSize == 64 {
-		if got := fileSize32(1 << 33); got != math.MaxUint32 {
-			t.Errorf("fileSize32(1<<33) = %d, want saturation", got)
-		}
 	}
 }

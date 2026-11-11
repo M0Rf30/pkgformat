@@ -31,7 +31,8 @@ import (
 // escape the root of the package. Only the permission bits (including setuid,
 // setgid and sticky) of the tar mode are used: the file type comes from the tar
 // entry type, never from mode bits. Symlink targets are stored as they are.
-// The whole tar content is kept in memory.
+// The content of the files is read into memory, as a tar archive is a stream
+// that cannot be read twice; to package a large tree use RPM.AddFS instead.
 func FromTar(inp io.Reader, md RPMMetaData) (*RPM, error) {
 	r, err := NewRPM(md)
 	if err != nil {

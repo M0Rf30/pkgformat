@@ -9,6 +9,7 @@ import (
 	"io"
 	"path"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/M0Rf30/pkgformat/rpm/cpio"
@@ -190,18 +191,18 @@ func checkPackage(t *testing.T, pkg []byte, files map[string]RPMFile, v6 bool) {
 		}
 		b, err := io.ReadAll(cr)
 		if err != nil {
-			t.Fatalf("payload %s: %v", h.Filename(), err)
+			t.Fatalf("payload %s: %v", strings.TrimPrefix(h.Filename(), "."), err)
 		}
-		f := files[h.Filename()]
+		f := files[strings.TrimPrefix(h.Filename(), ".")]
 		switch {
 		case f.Mode&040000 != 0: // a directory has no content
 			if len(b) != 0 || h.Filesize() != 0 {
-				t.Errorf("payload directory %s has %d bytes of content", h.Filename(), h.Filesize())
+				t.Errorf("payload directory %s has %d bytes of content", strings.TrimPrefix(h.Filename(), "."), h.Filesize())
 			}
 		case !bytes.Equal(b, f.Body):
-			t.Errorf("payload %s: content differs", h.Filename())
+			t.Errorf("payload %s: content differs", strings.TrimPrefix(h.Filename(), "."))
 		}
-		got = append(got, h.Filename())
+		got = append(got, strings.TrimPrefix(h.Filename(), "."))
 	}
 	if fmt.Sprint(got) != fmt.Sprint(payloadNames) {
 		t.Errorf("payload files %q, want %q", got, payloadNames)
@@ -222,7 +223,15 @@ func FuzzNewRelation(f *testing.F) {
 		if rel == nil {
 			t.Fatal("nil relation without error")
 		}
-		_ = rel.String()
+		if rel.Name == "" {
+			t.Fatalf("%q parsed to a relation without a name", s)
+		}
+		if !isRich(rel.Name) {
+			back, err := NewRelation(rel.String())
+			if err != nil || !back.Equal(rel) {
+				t.Fatalf("%q -> %q -> %+v, %v", s, rel.String(), back, err)
+			}
+		}
 		var rs Relations
 		if err := rs.Set(s); err != nil {
 			t.Fatalf("Set failed where NewRelation succeeded: %v", err)
@@ -236,11 +245,15 @@ func FuzzSetupCompressor(f *testing.F) {
 		f.Add(s)
 	}
 	f.Fuzz(func(t *testing.T, s string) {
-		wc, name, err := setupCompressor(s, io.Discard)
+		c, err := parseCompressor(s)
 		if err != nil {
 			return
 		}
-		if name == "" {
+		wc, err := c.open(io.Discard)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if c.name == "" || c.level == "" {
 			t.Error("empty compressor name")
 		}
 		if err := wc.Close(); err != nil {
