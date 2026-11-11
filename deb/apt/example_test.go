@@ -8,17 +8,23 @@ import (
 )
 
 func ExampleParseSourcesList() {
-	sources := apt.ParseSourcesList(`
+	sources, err := apt.ParseSourcesList(`
 # main archive
 deb [arch=amd64] https://deb.debian.org/debian bookworm main contrib
 deb-src https://deb.debian.org/debian bookworm main
 `)
+	if err != nil {
+		fmt.Println(err)
+
+		return
+	}
 
 	for _, s := range sources {
-		fmt.Println(s.URL, s.Suite, s.Components, s.Architectures)
+		fmt.Println(s.Type, s.URL, s.Suite, s.Components, s.Architectures)
 	}
 	// Output:
-	// https://deb.debian.org/debian/ bookworm [main contrib] [amd64]
+	// deb https://deb.debian.org/debian/ bookworm [main contrib] [amd64]
+	// deb-src https://deb.debian.org/debian/ bookworm [main] []
 }
 
 func ExampleCache_ResolveDeps() {
