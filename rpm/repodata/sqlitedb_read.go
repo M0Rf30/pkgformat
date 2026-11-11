@@ -552,7 +552,7 @@ func (d *SQLiteDB) dependencies(st *sql.Stmt, key int64, isRequires bool) ([]rpm
 }
 
 // senseFromFlags is the inverse of [rpm.SenseFlagsString].
-func senseFromFlags(s string) uint32 {
+func senseFromFlags(s string) rpm.Sense {
 	switch s {
 	case "LT":
 		return tag.RPMSENSE_LESS

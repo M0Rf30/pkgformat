@@ -382,7 +382,7 @@ func TestJoinFilelistPath(t *testing.T) {
 }
 
 func TestSenseFromFlagsInvertsSenseFlagsString(t *testing.T) {
-	for _, f := range []uint32{
+	for _, f := range []rpm.Sense{
 		tag.RPMSENSE_LESS, tag.RPMSENSE_GREATER, tag.RPMSENSE_EQUAL,
 		tag.RPMSENSE_LESS | tag.RPMSENSE_EQUAL, tag.RPMSENSE_GREATER | tag.RPMSENSE_EQUAL, 0,
 	} {
