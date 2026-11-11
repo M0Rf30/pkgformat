@@ -1,231 +1,166 @@
 package repodata
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/M0Rf30/pkgformat/rpm"
+	"github.com/M0Rf30/pkgformat/rpm/tag"
 )
 
-// glibcSymbol is a parsed `lib(GLIBC_x.y)[(64bit)]` requirement name.
-type glibcSymbol struct {
-	lib   string // everything before "(GLIBC_"
-	ver   string // dotted numeric symbol version
-	arch  bool   // trailing "(64bit)"
-	valid bool
-}
-
-const (
-	glibcMarker = "(GLIBC_"
-	arch64Tag   = "(64bit)"
-)
-
-// parseGlibcSymbol is the hand-written equivalent of
-// ^(.*)\(GLIBC_(\d+(?:\.\d+)*)\)((?:\(64bit\))?)$ (the regexp allocated a
-// submatch slice per call, ~50 times per package).
-func parseGlibcSymbol(name string) glibcSymbol {
-	rest, arch := strings.CutSuffix(name, arch64Tag)
-
-	rest, ok := strings.CutSuffix(rest, ")")
-	if !ok {
-		return glibcSymbol{}
-	}
-
-	i := strings.LastIndex(rest, glibcMarker)
-	if i < 0 {
-		return glibcSymbol{}
-	}
-
-	lib, ver := rest[:i], rest[i+len(glibcMarker):]
-	if strings.IndexByte(lib, '\n') >= 0 || !isDottedNumber(ver) {
-		return glibcSymbol{}
-	}
-
-	return glibcSymbol{lib: lib, ver: ver, arch: arch, valid: true}
-}
-
-// isDottedNumber reports whether s matches \d+(\.\d+)*.
-func isDottedNumber(s string) bool {
-	prevDigit := false
-
-	for i := range len(s) {
-		switch c := s[i]; {
-		case c >= '0' && c <= '9':
-			prevDigit = true
-		case c == '.' && prevDigit:
-			prevDigit = false
-		default:
-			return false
-		}
-	}
-
-	return prevDigit
-}
-
-// compareDotted compares dotted numeric versions ("2.9" < "2.34").
-func compareDotted(a, b string) int {
-	for a != "" || b != "" {
-		var x, y int
-
-		var as, bs string
-
-		as, a, _ = strings.Cut(a, ".")
-		bs, b, _ = strings.Cut(b, ".")
-
-		x, _ = strconv.Atoi(as)
-		y, _ = strconv.Atoi(bs)
-
-		if x != y {
-			return x - y
-		}
-	}
-
-	return 0
+// isPre reports whether a requirement is needed before or while the scriptlets
+// of the package run, which primary.xml marks pre="1": the prerequisite, the
+// pre/post and transaction scriptlet requirements.
+func isPre(d rpm.Dependency) bool {
+	return d.Flags&(tag.RPMSENSE_POSTTRANS|tag.RPMSENSE_PREREQ|tag.RPMSENSE_PRETRANS|
+		tag.RPMSENSE_SCRIPT_PRE|tag.RPMSENSE_SCRIPT_POST) != 0
 }
 
 type depKey struct {
 	name, flags, ver string
 	epoch            uint32
-	pre              bool
 }
 
 func keyOf(d rpm.Dependency) depKey {
-	return depKey{d.Name, rpm.SenseFlagsString(d.Flags), d.Version, d.Epoch, d.IsPre()}
+	return depKey{d.Name, rpm.SenseFlagsString(d.Flags), d.Version, d.Epoch}
 }
 
-// glibcLib identifies a library+arch pair for GLIBC collapsing.
-type glibcLib struct {
-	lib  string
-	arch bool
+// lastRequire is the last requirement kept under a name: the next one with
+// the same name is dropped when it only repeats it.
+type lastRequire struct {
+	key depKey
+	pre bool
 }
 
-type glibcBest struct {
-	idx int
-	ver string
-}
-
-// bestGlibcRequires finds, per library+arch, the requirement with the highest GLIBC_x symbol version.
-func bestGlibcRequires(best map[glibcLib]glibcBest, reqs []rpm.Dependency) {
-	for i, d := range reqs {
-		if d.Versioned() {
-			continue
-		}
-
-		if g := parseGlibcSymbol(d.Name); g.valid {
-			key := glibcLib{g.lib, g.arch}
-			if b, ok := best[key]; !ok || compareDotted(g.ver, b.ver) > 0 {
-				best[key] = glibcBest{i, g.ver}
-			}
-		}
-	}
-}
-
-type glibcAction int
-
-const (
-	glibcKeep glibcAction = iota
-	glibcDrop
-	glibcLast
-)
-
-// dropGlibc decides how a requirement is treated by the GLIBC collapsing.
-func dropGlibc(d rpm.Dependency, idx int, best map[glibcLib]glibcBest) glibcAction {
-	if d.Versioned() {
-		return glibcKeep
-	}
-
-	if g := parseGlibcSymbol(d.Name); g.valid {
-		if best[glibcLib{g.lib, g.arch}].idx != idx {
-			return glibcDrop
-		}
-
-		// createrepo_c emits the surviving GLIBC requirement last.
-		return glibcLast
-	}
-
-	if base, ok := strings.CutSuffix(d.Name, "()(64bit)"); ok {
-		if _, has := best[glibcLib{base, true}]; has {
-			return glibcDrop
-		}
-	} else if base, ok := strings.CutSuffix(d.Name, "()"); ok {
-		if _, has := best[glibcLib{base, false}]; has {
-			return glibcDrop
-		}
-	}
-
-	return glibcKeep
-}
-
-// requiresFilter applies the createrepo_c requirement filtering and keeps its
-// scratch maps and slices between packages, so repeated use (one filter per
-// metadata run) does not allocate per package. The slice returned by filter is
-// only valid until the next call.
+// requiresFilter applies the filtering createrepo_c puts on the requirements
+// of a package and keeps its scratch maps and slices between packages, so
+// repeated use (one filter per metadata run) does not allocate per package.
+// The slice returned by filter is only valid until the next call.
+//
+// A requirement is dropped when it is an rpmlib(...) feature, a primary file
+// of the package, something the package provides with the same comparison, or
+// a repeat of the previous requirement of that name. All the libc.so.6
+// requirements collapse into the one with the highest symbol version, which is
+// listed last.
 type requiresFilter struct {
-	provides map[depKey]bool
-	provided map[string]bool
-	seen     map[depKey]bool
-	best     map[glibcLib]glibcBest
+	provides map[depKey]struct{}
+	files    map[string]struct{}
+	last     map[string]lastRequire
 	out      []rpm.Dependency
-	glibc    []rpm.Dependency
 }
 
 func newRequiresFilter() *requiresFilter {
 	return &requiresFilter{
-		provides: make(map[depKey]bool),
-		provided: make(map[string]bool),
-		seen:     make(map[depKey]bool),
-		best:     make(map[glibcLib]glibcBest),
+		provides: make(map[depKey]struct{}),
+		files:    make(map[string]struct{}),
+		last:     make(map[string]lastRequire),
 	}
 }
 
 func (f *requiresFilter) filter(pkg *rpm.Package) []rpm.Dependency {
 	clear(f.provides)
-	clear(f.provided)
-	clear(f.seen)
-	clear(f.best)
+	clear(f.files)
+	clear(f.last)
 
 	for _, d := range pkg.Provides {
-		k := keyOf(d)
-		k.pre = false
-		f.provides[k] = true
-		f.provided[d.Name] = true
+		f.provides[keyOf(d)] = struct{}{}
 	}
 
 	for i := range pkg.Files {
-		f.provided[pkg.Files[i].Path] = true
+		f.files[pkg.Files[i].Path] = struct{}{}
 	}
 
-	bestGlibcRequires(f.best, pkg.Requires)
-
 	f.out = f.out[:0]
-	f.glibc = f.glibc[:0]
 
-	for i, d := range pkg.Requires {
-		k := keyOf(d)
-		if f.seen[k] {
+	var libc *rpm.Dependency
+
+	for i := range pkg.Requires {
+		d := &pkg.Requires[i]
+
+		if d.IsRPMLib() || strings.HasPrefix(d.Name, "rpmlib(") {
 			continue
 		}
 
-		f.seen[k] = true
-
-		if !d.IsPre() && !d.IsRPMLib() {
-			versioned := k.flags != ""
-			if (versioned && f.provides[k]) || (!versioned && f.provided[d.Name]) {
+		if strings.HasPrefix(d.Name, "/") && isPrimaryFile(d.Name) {
+			if _, ok := f.files[d.Name]; ok {
 				continue
 			}
 		}
 
-		switch dropGlibc(d, i, f.best) {
-		case glibcDrop:
+		k := keyOf(*d)
+		if _, ok := f.provides[k]; ok {
 			continue
-		case glibcLast:
-			f.glibc = append(f.glibc, d)
-			continue
-		case glibcKeep:
 		}
 
-		f.out = append(f.out, d)
+		pre := isPre(*d)
+		if l, ok := f.last[d.Name]; ok && l.key == k && l.pre == pre {
+			continue
+		}
+
+		if strings.HasPrefix(d.Name, "libc.so.6") {
+			if libc == nil || compareLibcDependency(libc.Name, d.Name) == 2 {
+				libc = d
+			}
+
+			continue
+		}
+
+		f.last[d.Name] = lastRequire{k, pre}
+		f.out = append(f.out, *d)
 	}
 
-	return append(f.out, f.glibc...)
+	if libc != nil {
+		f.out = append(f.out, *libc)
+	}
+
+	return f.out
+}
+
+// compareLibcDependency compares two requirement names of one library by the
+// version in their first parentheses, as createrepo_c does: 0 when the same,
+// 1 when the first is higher, 2 when the second is. An empty pair of
+// parentheses ranks lowest, so does a name without a digit in them; the
+// version starts at the first digit.
+func compareLibcDependency(a, b string) int {
+	va, okA := symbolVersion(a)
+	vb, okB := symbolVersion(b)
+
+	switch {
+	case !okA && !okB:
+		return 0
+	case !okA:
+		return 2
+	case !okB:
+		return 1
+	}
+
+	switch r := rpm.Vercmp(va, vb); {
+	case r < 0:
+		return 2
+	case r > 0:
+		return 1
+	}
+
+	return 0
+}
+
+// symbolVersion returns the text from the first digit to the closing
+// parenthesis of the first parenthesised group of name; false when there is
+// no group, it is empty or holds no digit.
+func symbolVersion(name string) (string, bool) {
+	_, rest, ok := strings.Cut(name, "(")
+	if !ok {
+		return "", false
+	}
+
+	group, _, ok := strings.Cut(rest, ")")
+	if !ok {
+		return "", false
+	}
+
+	i := strings.IndexAny(group, "0123456789")
+	if i < 0 {
+		return "", false
+	}
+
+	return group[i:], true
 }

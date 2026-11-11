@@ -52,12 +52,12 @@ func TestGeneratePrimaryXML_WeakDepsAndOrder(t *testing.T) {
 	}
 
 	for _, want := range []string{
-		`<rpm:entry name="rec"></rpm:entry>`,
-		`<rpm:entry name="sug" flags="GE" epoch="0" ver="1.0"></rpm:entry>`,
-		`<rpm:entry name="p" flags="EQ" epoch="1" ver="1" rel="1"></rpm:entry>`,
-		`<rpm:entry name="c" flags="LT" epoch="0" ver="2.0"></rpm:entry>`,
-		`<rpm:entry name="sh" pre="1"></rpm:entry>`,
-		`<rpm:entry name="lib"></rpm:entry>`,
+		`<rpm:entry name="rec"/>`,
+		`<rpm:entry name="sug" flags="GE" epoch="0" ver="1.0"/>`,
+		`<rpm:entry name="p" flags="EQ" epoch="1" ver="1" rel="1"/>`,
+		`<rpm:entry name="c" flags="LT" epoch="0" ver="2.0"/>`,
+		`<rpm:entry name="sh" pre="1"/>`,
+		`<rpm:entry name="lib"/>`,
 	} {
 		if !strings.Contains(xml, want) {
 			t.Errorf("missing %s in:\n%s", want, xml)
@@ -97,7 +97,9 @@ func TestFilterRequiresMatchesCreaterepoC(t *testing.T) {
 		got = append(got, d.Name)
 	}
 
-	want := []string{"/bin/sh", "libtinfo.so.6()(64bit)", "libc.so.6(GLIBC_2.34)(64bit)"}
+	// /bin/sh is provided with the same comparison, which also drops a pre
+	// requirement; libc keeps its highest symbol version, last.
+	want := []string{"libtinfo.so.6()(64bit)", "libc.so.6(GLIBC_2.34)(64bit)"}
 	if strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Errorf("filterRequires = %v, want %v", got, want)
 	}

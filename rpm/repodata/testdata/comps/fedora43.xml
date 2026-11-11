@@ -1,0 +1,1205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE comps PUBLIC "-//Red Hat, Inc.//DTD Comps info//EN" "comps.dtd">
+<comps>
+  <group>
+    <id>core</id>
+    <name>Core</name>
+    <name xml:lang="af">Kern</name>
+    <name xml:lang="am">ማዕከላዊ ቦታ</name>
+    <name xml:lang="ar">اللبّ</name>
+    <name xml:lang="as">মূল</name>
+    <name xml:lang="ast">Nucleu</name>
+    <name xml:lang="bal">هستگ</name>
+    <name xml:lang="be">Падмурак</name>
+    <name xml:lang="bg">Основа</name>
+    <name xml:lang="bn">কোর</name>
+    <name xml:lang="bn_IN">কোর</name>
+    <name xml:lang="bs">Jezgra</name>
+    <name xml:lang="ca">Nucli</name>
+    <name xml:lang="cs">Úplný základ</name>
+    <name xml:lang="cy">Craidd</name>
+    <name xml:lang="da">Kerne</name>
+    <name xml:lang="de">Kern</name>
+    <name xml:lang="el">Πυρήνας</name>
+    <name xml:lang="en_GB">Core</name>
+    <name xml:lang="es">Núcleo</name>
+    <name xml:lang="et">Tuum</name>
+    <name xml:lang="fa">هسته</name>
+    <name xml:lang="fi">Keskeiset</name>
+    <name xml:lang="fr">Core</name>
+    <name xml:lang="fur">Cûr</name>
+    <name xml:lang="gl">Núcleo</name>
+    <name xml:lang="gu">મૂળ</name>
+    <name xml:lang="he">ליבה</name>
+    <name xml:lang="hi">क्रोड़</name>
+    <name xml:lang="hr">Jezgra</name>
+    <name xml:lang="hu">Mag</name>
+    <name xml:lang="hy">Հիմք</name>
+    <name xml:lang="ia">Nucleo</name>
+    <name xml:lang="id">Inti</name>
+    <name xml:lang="ilo">Bugas</name>
+    <name xml:lang="is">Lágmarkskerfi</name>
+    <name xml:lang="it">Core</name>
+    <name xml:lang="ja">コア</name>
+    <name xml:lang="ka">ბირთვი</name>
+    <name xml:lang="kab">Core</name>
+    <name xml:lang="kn">ಅಂತಸ್ಸಾರ</name>
+    <name xml:lang="ko">핵심</name>
+    <name xml:lang="lv">Pamatsistēma</name>
+    <name xml:lang="mai">कोर</name>
+    <name xml:lang="mk">Основни</name>
+    <name xml:lang="ml">കോര്‍</name>
+    <name xml:lang="mr">कोर</name>
+    <name xml:lang="ms">Teras</name>
+    <name xml:lang="nb">Kjerne</name>
+    <name xml:lang="nds">Kern</name>
+    <name xml:lang="ne">कोर</name>
+    <name xml:lang="nl">Kern</name>
+    <name xml:lang="nso">Bogare</name>
+    <name xml:lang="or">ପ୍ରମୂଖ</name>
+    <name xml:lang="pa">ਕੋਰ</name>
+    <name xml:lang="pl">Rdzeń</name>
+    <name xml:lang="pt">Núcleo</name>
+    <name xml:lang="pt_BR">Núcleo</name>
+    <name xml:lang="ro">Nucleu</name>
+    <name xml:lang="ru">Основные</name>
+    <name xml:lang="si">න්‍යෂ්ඨිය</name>
+    <name xml:lang="sk">Úplný základ</name>
+    <name xml:lang="sl">Jedro</name>
+    <name xml:lang="sq">Bërthama</name>
+    <name xml:lang="sr">Срж</name>
+    <name xml:lang="sr@Latn">Srž</name>
+    <name xml:lang="sr@latin">Srž</name>
+    <name xml:lang="sv">Grund</name>
+    <name xml:lang="ta">கோர்</name>
+    <name xml:lang="te">అంతర్భాగం</name>
+    <name xml:lang="tg">Система</name>
+    <name xml:lang="th">แกนหลัก</name>
+    <name xml:lang="tr">Çekirdek</name>
+    <name xml:lang="uk">Основа</name>
+    <name xml:lang="ur">مرکز</name>
+    <name xml:lang="vi">Lõi</name>
+    <name xml:lang="zh_CN">核心</name>
+    <name xml:lang="zh_TW">主要</name>
+    <name xml:lang="zu">Okuyikhona</name>
+    <description>Smallest possible installation</description>
+    <description xml:lang="af">Kleinste moontlike installasie</description>
+    <description xml:lang="am">ትንሹ የሚቻለው የማስገባት ሥራ</description>
+    <description xml:lang="ar">أصغر تثبيت متاح</description>
+    <description xml:lang="as">ক্ষুদ্ৰতম সাম্ভৱপৰ সংস্থাপন</description>
+    <description xml:lang="ast">Instalación lo más pequeña dable</description>
+    <description xml:lang="bal">هوردترین نصب ممکن</description>
+    <description xml:lang="be">Найменшая з магчымых усталёўка</description>
+    <description xml:lang="bg">Най-малката възможна инсталация</description>
+    <description xml:lang="bn">ন্যূনতম ইনস্টলেশন</description>
+    <description xml:lang="bn_IN">ন্যূনতম ইনস্টলেশন</description>
+    <description xml:lang="bs">Najmanja moguća instalacija</description>
+    <description xml:lang="ca">La instal·lació més petita possible</description>
+    <description xml:lang="cs">Nejmenší možná instalace</description>
+    <description xml:lang="cy">Arsefydliad lleiaf posib</description>
+    <description xml:lang="da">Mindst mulige installation</description>
+    <description xml:lang="de">Kleinstmögliche Installation</description>
+    <description xml:lang="el">Μικρότερη δυνατή εγκατάσταση</description>
+    <description xml:lang="en_GB">Smallest possible installation</description>
+    <description xml:lang="es">Instalación lo más pequeña posible</description>
+    <description xml:lang="et">Väikseim võimalik paigaldus</description>
+    <description xml:lang="fa">کوچکترین نصب ممکن</description>
+    <description xml:lang="fi">Pienin mahdollinen asennus</description>
+    <description xml:lang="fr">Plus petite installation possible</description>
+    <description xml:lang="fur">La plui piçule instalazion pussibile</description>
+    <description xml:lang="gl">Instalación o máis pequena posíbel</description>
+    <description xml:lang="gu">નાનામાં નાના શક્ય સ્થાપનો</description>
+    <description xml:lang="he">התקנה מזערית</description>
+    <description xml:lang="hi">लघुतम संभावित संस्थापन</description>
+    <description xml:lang="hr">Najmanja moguća instalacija</description>
+    <description xml:lang="hu">Lehető legkisebb telepítés</description>
+    <description xml:lang="hy">Փոքրագույն հնարավոր տեղադրում</description>
+    <description xml:lang="ia">Le plus parve installation possibile</description>
+    <description xml:lang="id">Instalasi terkecil yang mungkin</description>
+    <description xml:lang="is">Lágmarks uppsetning</description>
+    <description xml:lang="it">Installazione minima</description>
+    <description xml:lang="ja">最小限のインストール</description>
+    <description xml:lang="ka">უმცირესი შესაძლო ჩადგმა</description>
+    <description xml:lang="kn">ಅತ್ಯಲ್ಪಸಾಧ್ಯ ಅನುಸ್ಥಾಪನೆ</description>
+    <description xml:lang="ko">가능한 최소 설치</description>
+    <description xml:lang="lv">Vismazākā iespējamā instalācija</description>
+    <description xml:lang="mai">सबसँ छोट संभावित संस्थापन</description>
+    <description xml:lang="mk">Најмалата можна инсталација</description>
+    <description xml:lang="ml">സാധ്യമായ ഏറ്റവും ചെറിയ ഇന്‍സ്റ്റലേഷന്‍</description>
+    <description xml:lang="mr">सर्वात लहान शक्य प्रतिष्ठापन</description>
+    <description xml:lang="ms">Pemasangan sekecil mungkin</description>
+    <description xml:lang="nb">Minste mulige installering</description>
+    <description xml:lang="ne">सम्भावित सबैभन्दा सानो स्थापना</description>
+    <description xml:lang="nl">Kleinst mogelijke installatie</description>
+    <description xml:lang="nso">Go tsenya mo go kgonegago go gonyenyane kudu</description>
+    <description xml:lang="or">କ୍ଷୁଦ୍ରତମ ସମ୍ଭାବ୍ଯ ସ୍ଥାପନ</description>
+    <description xml:lang="pa">ਘੱਟੋ-ਘੱਟ ਸੰਭਵ ਇੰਸਟਾਲੇਸ਼ਨ</description>
+    <description xml:lang="pl">Najmniejsza możliwa instalacja</description>
+    <description xml:lang="pt">A instalação mais pequena possível</description>
+    <description xml:lang="pt_BR">Menor instalação possível</description>
+    <description xml:lang="ro">Cea mai mică instalare posibilă</description>
+    <description xml:lang="ru">Минимально возможная установка</description>
+    <description xml:lang="si">සිදුකල හැකි ඉතාම කුඩා ස්ථාපනය</description>
+    <description xml:lang="sk">Najmenšia možná inštalácia</description>
+    <description xml:lang="sl">Najmanjša možna namestitev</description>
+    <description xml:lang="sq">Instalimi më i vogël i mundshëm</description>
+    <description xml:lang="sr">Најмања могућа инсталација</description>
+    <description xml:lang="sr@Latn">Najmanja moguća instalacija</description>
+    <description xml:lang="sr@latin">Najmanja moguća instalacija</description>
+    <description xml:lang="sv">Minsta möjliga installation</description>
+    <description xml:lang="ta">மிக சிறிய நிறுவல்</description>
+    <description xml:lang="te">సాధ్యమగు చిన్న సంస్థాపన</description>
+    <description xml:lang="tg">Сабткунии оддӣ</description>
+    <description xml:lang="th">ติดตั้งให้มีขนาดเล็กที่สุดที่เป็นไปได้</description>
+    <description xml:lang="tr">Olası en küçük kurulum</description>
+    <description xml:lang="uk">Мінімально можливе встановлення</description>
+    <description xml:lang="ur">چھو ٹی ممکن انسٹللشن </description>
+    <description xml:lang="vi">Cài đặt nhỏ tối thiểu</description>
+    <description xml:lang="zh_CN">精简安装</description>
+    <description xml:lang="zh_TW">最小安裝</description>
+    <description xml:lang="zu">Ukufakwa okuncane</description>
+    <default>false</default>
+    <uservisible>false</uservisible>
+    <packagelist>
+      <packagereq type="mandatory">audit</packagereq>
+      <packagereq type="mandatory">bash</packagereq>
+      <packagereq type="mandatory">coreutils</packagereq>
+      <packagereq type="mandatory">curl</packagereq>
+      <packagereq type="mandatory">dhcp-client</packagereq>
+      <packagereq type="mandatory">dnf5</packagereq>
+      <packagereq type="mandatory">e2fsprogs</packagereq>
+      <packagereq type="mandatory">filesystem</packagereq>
+      <packagereq type="mandatory">glibc</packagereq>
+      <packagereq type="mandatory">hostname</packagereq>
+      <packagereq type="mandatory">iproute</packagereq>
+      <packagereq type="mandatory">iputils</packagereq>
+      <packagereq type="mandatory">kbd</packagereq>
+      <packagereq type="mandatory">less</packagereq>
+      <packagereq type="mandatory">man-db</packagereq>
+      <packagereq type="mandatory">ncurses</packagereq>
+      <packagereq type="mandatory">openssh-clients</packagereq>
+      <packagereq type="mandatory">openssh-server</packagereq>
+      <packagereq type="mandatory">parted</packagereq>
+      <packagereq type="mandatory">policycoreutils</packagereq>
+      <packagereq type="mandatory">procps-ng</packagereq>
+      <packagereq type="mandatory">rootfiles</packagereq>
+      <packagereq type="mandatory">rpm</packagereq>
+      <packagereq type="mandatory">selinux-policy-targeted</packagereq>
+      <packagereq type="mandatory">setup</packagereq>
+      <packagereq type="mandatory">shadow-utils</packagereq>
+      <packagereq type="mandatory">sssd-common</packagereq>
+      <packagereq type="mandatory">sssd-kcm</packagereq>
+      <packagereq type="mandatory">sudo</packagereq>
+      <packagereq type="mandatory">systemd</packagereq>
+      <packagereq type="mandatory">util-linux</packagereq>
+      <packagereq type="mandatory">vim-minimal</packagereq>
+      <packagereq type="default">NetworkManager</packagereq>
+      <packagereq type="default">dnf5-plugins</packagereq>
+      <packagereq type="default">dracut-config-rescue</packagereq>
+      <packagereq type="default">firewalld</packagereq>
+      <packagereq type="default">fwupd</packagereq>
+      <packagereq type="default">plymouth</packagereq>
+      <packagereq type="default">prefixdevname</packagereq>
+      <packagereq type="default">systemd-resolved</packagereq>
+      <packagereq type="default">zram-generator-defaults</packagereq>
+      <packagereq type="optional">dracut-config-generic</packagereq>
+      <packagereq type="optional">initial-setup</packagereq>
+      <packagereq type="optional">initscripts</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>guest-agents</id>
+    <name>Guest Agents</name>
+    <name xml:lang="af">Agente vir virtualiseringsgaste</name>
+    <name xml:lang="bg">Агенти за гости</name>
+    <name xml:lang="ca">Agents de convidats</name>
+    <name xml:lang="cs">Agenti hosta</name>
+    <name xml:lang="da">Gæsteagenter</name>
+    <name xml:lang="de">Gast-Agenten</name>
+    <name xml:lang="en_GB">Guest Agents</name>
+    <name xml:lang="es">Agentes Invitados</name>
+    <name xml:lang="fi">Guest-agentit</name>
+    <name xml:lang="fr">Agents invités</name>
+    <name xml:lang="fur">Agjents Ospit(Guest)</name>
+    <name xml:lang="hu">Vendég ágensek</name>
+    <name xml:lang="hy">Guest Agents</name>
+    <name xml:lang="ia">Agentes pro machinas virtual</name>
+    <name xml:lang="id">Agen Tamu</name>
+    <name xml:lang="it">Agenti guest</name>
+    <name xml:lang="ja">ゲストエージェント</name>
+    <name xml:lang="ka">სტუმრის აგენტები</name>
+    <name xml:lang="ko">게스트 에이전트</name>
+    <name xml:lang="nb">Gjesteagenter</name>
+    <name xml:lang="nl">Guest Agents</name>
+    <name xml:lang="pa">ਗੈਸਟ ਏਜੰਟ</name>
+    <name xml:lang="pl">Agenty gościa</name>
+    <name xml:lang="pt">Agentes de convidados</name>
+    <name xml:lang="pt_BR">Agente de Convidado</name>
+    <name xml:lang="ru">Гостевые агенты</name>
+    <name xml:lang="sk">Agenti hosťa</name>
+    <name xml:lang="sr">Агенти гостију</name>
+    <name xml:lang="sv">Gästagenter</name>
+    <name xml:lang="tr">Konuk Birimleri</name>
+    <name xml:lang="uk">Агенти гостьових систем</name>
+    <name xml:lang="zh_CN">虚拟机代理</name>
+    <name xml:lang="zh_TW">客端代理</name>
+    <description>Agents used when running under a hypervisor.</description>
+    <description xml:lang="af">Agente vir gebruik onder ’n virtualiseringstoesighouer (hypervisor).</description>
+    <description xml:lang="bg">Агенти, използвани при работа в хипервайзор.</description>
+    <description xml:lang="ca">Els agents utilitzats quan s'executa sota un hipervisor.</description>
+    <description xml:lang="cs">Agenti využití za běhu pod hypervisorem.</description>
+    <description xml:lang="da">Agenter som bruges når der køres under en hypervisor.</description>
+    <description xml:lang="de">Agenten, die benutzt werden, wenn unter einem Hypervisor ausgeführt wird.</description>
+    <description xml:lang="en_GB">Agents used when running under a hypervisor.</description>
+    <description xml:lang="es">Agentes usados cuando se corre bajo un hypervisor.</description>
+    <description xml:lang="fi">Hypervisorin alaisuudessa käytettävät agentit.</description>
+    <description xml:lang="fr">Agents utilisés lorsqu'ils sont lancés sous un hyperviseur.</description>
+    <description xml:lang="fur">Agjents doprâts cuant che si zire sot di un hypervisôr.</description>
+    <description xml:lang="hu">Hipervizor alatti futtatás során használt ágensek.</description>
+    <description xml:lang="ia">Agentes utile pro systemas que functiona sub un hypervisor.</description>
+    <description xml:lang="id">Agen yang digunakan saat berjalan di bawah hypervisor.</description>
+    <description xml:lang="it">Agenti usati durante l'esecuzione sotto un hypervisor.</description>
+    <description xml:lang="ja">ハイパーバイザーで実行されるときに使用されるエージェント</description>
+    <description xml:lang="ko">하이퍼바이저 아래에서 동작 할 때에 사용되는 에이전트.</description>
+    <description xml:lang="nb">Agenter brukt under kjøring i hypervisor.</description>
+    <description xml:lang="nl">Agenten die gebruikt worden als onder een hypervisor gedraaid wordt.</description>
+    <description xml:lang="pl">Agenty używane podczas działania pod nadzorcą.</description>
+    <description xml:lang="pt">Agentes usados quando utilizado sob um hypervisor.</description>
+    <description xml:lang="pt_BR">Agentes utilizados quando executados com um hipervisor.</description>
+    <description xml:lang="ru">Агенты, используемые при работе под гипервизором.</description>
+    <description xml:lang="sk">Agenti použitý pri behu pod hypervízorom.</description>
+    <description xml:lang="sr">Агенти у употреби када раде под надзорником.</description>
+    <description xml:lang="sv">Agenter som används när man kör under en hypervisor.</description>
+    <description xml:lang="tr">Bir sanallaştırma katmanı altında çalışırken kullanılan birimler.</description>
+    <description xml:lang="uk">Програми-агенти, які використовуються під час роботи під керуванням гіпервізора.</description>
+    <description xml:lang="zh_CN">在虚拟机管理器下运行时使用的代理程序。</description>
+    <description xml:lang="zh_TW">在 Hypervisor 之下執行時使用的代理。</description>
+    <default>false</default>
+    <uservisible>false</uservisible>
+    <packagelist>
+      <packagereq type="mandatory">open-vm-tools</packagereq>
+      <packagereq type="mandatory">qemu-guest-agent</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>networkmanager-submodules</id>
+    <name>Common NetworkManager Submodules</name>
+    <name xml:lang="af">Algemene NetworkManager-submodules</name>
+    <name xml:lang="bg">Допълнителни модули за NetworkManager</name>
+    <name xml:lang="ca">Submòduls comuns de NetworkManager</name>
+    <name xml:lang="cs">Společné podmoduly NetworkManageru</name>
+    <name xml:lang="da">Undermoduler som almindeligvis bruges til netværkshåndtering</name>
+    <name xml:lang="de">Häufig verwendete Netzwerkmanager Module</name>
+    <name xml:lang="en_GB">Common NetworkManager Submodules</name>
+    <name xml:lang="es">Módulos habituales de NetworkManager</name>
+    <name xml:lang="fi">Yleiset NetworkManagerin moduulit</name>
+    <name xml:lang="fr">Sous-modules NetworkManager courants</name>
+    <name xml:lang="hu">Gyakori NetworkManager almodulok</name>
+    <name xml:lang="hy">Ընդհանուր NetworkManager ենթամոդուլներ</name>
+    <name xml:lang="id">Submodul NetworkManager Umum</name>
+    <name xml:lang="it">Sottomoduli comuni di NetworkManager</name>
+    <name xml:lang="ko">공통적인 네트워크매니저 하위 모듈</name>
+    <name xml:lang="nb">Vanlige NetworkManager-undermoduler</name>
+    <name xml:lang="nl">Algemene NetworkManager submodules</name>
+    <name xml:lang="pl">Często używane podmoduły usługi NetworkManager</name>
+    <name xml:lang="pt">Submódulos Comuns do Gestor de Redes</name>
+    <name xml:lang="pt_BR">Submódulos comuns do NetworkManager</name>
+    <name xml:lang="ru">Стандартные подмодули NetworkManager</name>
+    <name xml:lang="sk">Bežné podmoduly NetworkManagera</name>
+    <name xml:lang="sv">Allmänna NetworkManager-undermoduler</name>
+    <name xml:lang="tr">Ortak NetworkManager Alt Modülleri</name>
+    <name xml:lang="uk">Загальні підмодулі NetworkManager</name>
+    <name xml:lang="zh_CN">常用 NetworkManager 子模块</name>
+    <name xml:lang="zh_TW">常用 NetworkManager 子模組</name>
+    <description>This group contains NetworkManager submodules that are commonly used, but may not be wanted in some streamlined configurations.</description>
+    <description xml:lang="af">Hierdie groep bevat NetworkManager-submodules wat algemeen gebruik word, maar dalk nie in sommige vaartbelynde konfigurasies verlang word nie.</description>
+    <description xml:lang="bg">Тази група съдържа често ползвани допълнителни модули за NetworkManager, които може да не са желани в определени специфични конфигурации.</description>
+    <description xml:lang="ca">En aquest grup hi ha els submòduls de NetworkManager que s'utilitzen més sovint, pot ser que no es vulguin en algunes configuracions simplificades.</description>
+    <description xml:lang="cs">Skupina obsahuje podmoduly pro aplikaci NetworkManager, které jsou široce užívány, ale nemusí být potřeba v některých zeštíhlených konfiguracích.</description>
+    <description xml:lang="da">Denne gruppe indeholder netværkshåndteringsundermoduler som almindeligvis bruges, men som måske ikke er ønsket i nogen strømlinet konfigurationer.</description>
+    <description xml:lang="de">Häufig verwendete Netzwerkmanager Untermodule, die häufig genutzt werden, aber in manchen zugeschnittenen Konfigurationen nicht benötigt werden.</description>
+    <description xml:lang="en_GB">This group contains NetworkManager submodules that are commonly used, but may not be wanted in some streamlined configurations.</description>
+    <description xml:lang="es">Este grupo contiene módulos de NetworkManager bastante comunes, pero que pueden querer ser evitados en configuraciones ligeras.</description>
+    <description xml:lang="fi">Tämä ryhmä sisältää usein käytettyjä NetworkManager-moduuleja, joita ei tarvita kaikissa karsituissa asennuksissa.</description>
+    <description xml:lang="fr">Ce groupe contient des sous-modules NetworkManager qui sont couramment utilisés, mais qui peuvent ne pas être souhaités dans certaines configurations optimisées.</description>
+    <description xml:lang="hu">Ez a csoport gyakran használt NetworkManager almodulokat tartalmaz, de nem biztos hogy kívánatosak egyszerűbb beállítások esetén.</description>
+    <description xml:lang="hy">Այս խումբը պարունակում է NetworkManager ենթամոդուլներ, որոնք սովորաբար օգտագործվում են, բայց հնարավոր է անցանկալի լինեն որոշակի պարզեցված կոնֆիգուրացիաների դեպքում։</description>
+    <description xml:lang="id">Grup ini berisi submodul NetworkManager yang biasanya digunakan, tetapi mungkin tidak diinginkan dalam beberapa konfigurasi yang disederhanakan.</description>
+    <description xml:lang="it">Questo gruppo contiene sottomoduli di NetworkManager che vengono comunemente utilizzati e che potrebbero essere non desiderati in alcune configurazioni ottimizzate.</description>
+    <description xml:lang="ko">이들 그룹은 공통적으로 사용되어지는 네트워크매니저 하위 모듈을 포함지만, 몇몇 간소화된 환경에서는 원하지 않을 수 있습니다.</description>
+    <description xml:lang="nb">Denne gruppen inneholder NetworkManager-undermoduler som ofte anvendes, men som kan velges bort i strømlinjeformede oppsett.</description>
+    <description xml:lang="nl">TDeze groep bevat NetworkManager submodules die algemeen gebruikt worden, maar die misschien niet gewenst zijn in sommige gestroomlijnde condiguraties.</description>
+    <description xml:lang="pl">Ta grupa zawiera podmoduły usługi NetworkManager, które są często używane, ale mogą być niepotrzebne w szczególnie ograniczonych konfiguracjach.</description>
+    <description xml:lang="pt">Este grupo contém submódulos do "Gestor de Redes" que são normalmente utilizados, mas podem não ser desejados em algumas configurações otimizadas.</description>
+    <description xml:lang="pt_BR">Este grupo contém submódulos do NetworkManager que geralmente são utilizados, mas podem não ser desejados em algumas configurações reduzidas.</description>
+    <description xml:lang="ru">Эта группа содержит подмодули NetworkManager, которые используются довольно часто, но могут быть отключены в некоторых упроённых конфигурациях.</description>
+    <description xml:lang="sk">Táto skupina obsahuje podmoduly NetworkManagera, ktoré sú bežne používané, ale nemusia byť potrebné na niektorých ohľahčených konfiguráciách.</description>
+    <description xml:lang="sv">Denna grupp innehåller undermoduler till NetworkManager som ofta används, men som kanske inte önskas i några slimmade konfigurationer.</description>
+    <description xml:lang="tr">Bu grup, yaygın olarak kullanılan ancak bazı modern yapılandırmalarda istenmeyebilecek NetworkManager alt modüllerini içerir.</description>
+    <description xml:lang="uk">У цій групі містяться підмодулі NetworkManager, які часто використовуються, але можуть бути небажаними для деяких спрощених варіантів системи.</description>
+    <description xml:lang="zh_CN">该组包含了常用的 NetworkManager 子模块，但可能不适合用于某些流水化配置中。</description>
+    <description xml:lang="zh_TW">這個群組包含常用的 NetworkManager 子模組，但可能在某些流線化組態情況下可能不大想用到。</description>
+    <default>false</default>
+    <uservisible>false</uservisible>
+    <packagelist>
+      <packagereq type="default">NetworkManager-bluetooth</packagereq>
+      <packagereq type="default">NetworkManager-wifi</packagereq>
+      <packagereq type="default">NetworkManager-wwan</packagereq>
+      <packagereq type="default">dhcp-client</packagereq>
+      <packagereq type="default">dnsmasq</packagereq>
+      <packagereq type="default">iptables-nft</packagereq>
+      <packagereq type="default">wpa_supplicant</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>standard</id>
+    <name>Standard</name>
+    <name xml:lang="af">Standaard</name>
+    <name xml:lang="bg">Стандартен</name>
+    <name xml:lang="ca">Estàndard</name>
+    <name xml:lang="cs">Standard</name>
+    <name xml:lang="da">Standard</name>
+    <name xml:lang="de">Standard</name>
+    <name xml:lang="en_GB">Standard</name>
+    <name xml:lang="es">Estándar</name>
+    <name xml:lang="fi">Tavalliset</name>
+    <name xml:lang="fr">Standard</name>
+    <name xml:lang="hu">Szabványos</name>
+    <name xml:lang="hy">Ստանդարտ</name>
+    <name xml:lang="ia">Standard</name>
+    <name xml:lang="id">Baku</name>
+    <name xml:lang="it">Standard</name>
+    <name xml:lang="ja">標準</name>
+    <name xml:lang="ka">სტანდარტული</name>
+    <name xml:lang="ko">표준</name>
+    <name xml:lang="nb">Standard</name>
+    <name xml:lang="nl">Standaard</name>
+    <name xml:lang="pa">ਸਟੈਂਡਰਡ</name>
+    <name xml:lang="pl">Standardowe</name>
+    <name xml:lang="pt">Padrao</name>
+    <name xml:lang="pt_BR">Padrão</name>
+    <name xml:lang="ru">Стандартные</name>
+    <name xml:lang="sk">Štandardná sada</name>
+    <name xml:lang="sr">Уобичајено</name>
+    <name xml:lang="sv">Standard</name>
+    <name xml:lang="te">ప్రామాణిక</name>
+    <name xml:lang="tr">Standart</name>
+    <name xml:lang="uk">Стандартнs</name>
+    <name xml:lang="zh_CN">标准</name>
+    <name xml:lang="zh_TW">標準</name>
+    <description>Common set of utilities that extend the minimal installation.</description>
+    <description xml:lang="af">Algemene stel van nutsprogramme wat die minimale installasie uitbrei.</description>
+    <description xml:lang="bg">Обичаен комплект от инструменти, разширяващ минималната инсталация.</description>
+    <description xml:lang="ca">Conjunt comú d'utilitats que amplien la instal·lació mínima.</description>
+    <description xml:lang="cs">Běžná sada služeb rozšiřujících minimální instalaci.</description>
+    <description xml:lang="da">Sæt af redskaber som almindeligvis bruges som udvider den minimale installation.</description>
+    <description xml:lang="de">Eine Sammlung häufig verwendeter Werkzeuge, welche die Minimalinstallation erweitern.</description>
+    <description xml:lang="en_GB">Common set of utilities that extend the minimal installation.</description>
+    <description xml:lang="es">Conjunto de utilidades que amplían la instalación básica.</description>
+    <description xml:lang="fi">Tavalliset vähimmäisasennusta laajemmat työkalut.</description>
+    <description xml:lang="fr">Jeu commun d'utilitaires afin d'étendre l'installation minimale.</description>
+    <description xml:lang="hu">Gyakori, közös segédprogramok, melyek kibővítik a minimális telepítést.</description>
+    <description xml:lang="hy">Սպասարկող ծրագրերի ընդհանուր խումբ, որը ընդլայնում է մինիմալ ինստալացիան։</description>
+    <description xml:lang="ia">Un collection de utensiles commun que extende le installation minimal.</description>
+    <description xml:lang="id">Kumpulan utilitas umum yang memperluas instalasi minimal.</description>
+    <description xml:lang="it">Insieme standard di utilities che ampliano l'installazione minima</description>
+    <description xml:lang="ja">最小限のインストールを拡張するユーティリティの共通セット</description>
+    <description xml:lang="ko">최소 설치에 확장된 공통적인 유틸리트 설정.</description>
+    <description xml:lang="nb">Vanlig sett med verktøy som utvider minimal installasjon.</description>
+    <description xml:lang="nl">Algemene set hulpgereedschappen die de minimale installatie uitbreiden.</description>
+    <description xml:lang="pl">Wspólny zestaw narzędzi rozszerzających minimalną instalację.</description>
+    <description xml:lang="pt">Conjunto comum de serviços públicos que se estendem a instalação mínima.</description>
+    <description xml:lang="pt_BR">Conjunto comum de utilidades que estendem a instalação mínima.</description>
+    <description xml:lang="ru">Обычный набор программ, дополняющих и расширяющих минимальную установку.</description>
+    <description xml:lang="sk">Bežná sada nástrojov rozširujúcich minimálnu inštaláciu.</description>
+    <description xml:lang="sr">Уобичајени скуп алатки који проширују минималну инсталацију.</description>
+    <description xml:lang="sv">Normal uppsättning av verktyg som utvidgar den minimala installationen.</description>
+    <description xml:lang="te">కనీసపు సంస్థాపనకు విస్తరించే వినియోగాలు యొక్క సముదాయాన్ని.</description>
+    <description xml:lang="tr">Asgari kurulumu genişleten ortak yardımcı programlar kümesi.</description>
+    <description xml:lang="uk">Типовий набір програм, які розширюють можливості мінімальної системи.</description>
+    <description xml:lang="zh_CN">扩展了最小化安装的常见实用工具集。</description>
+    <description xml:lang="zh_TW">最小安裝再多延攬一些常用的公用程式。</description>
+    <default>false</default>
+    <uservisible>false</uservisible>
+    <packagelist>
+      <packagereq type="mandatory">abrt-cli</packagereq>
+      <packagereq type="mandatory">acl</packagereq>
+      <packagereq type="mandatory">amd-ucode-firmware</packagereq>
+      <packagereq type="mandatory">at</packagereq>
+      <packagereq type="mandatory">attr</packagereq>
+      <packagereq type="mandatory">bash-color-prompt</packagereq>
+      <packagereq type="mandatory">bash-completion</packagereq>
+      <packagereq type="mandatory">bc</packagereq>
+      <packagereq type="mandatory">bind-utils</packagereq>
+      <packagereq type="mandatory">btrfs-progs</packagereq>
+      <packagereq type="mandatory">bzip2</packagereq>
+      <packagereq type="mandatory">cifs-utils</packagereq>
+      <packagereq type="mandatory">compsize</packagereq>
+      <packagereq type="mandatory">cpio</packagereq>
+      <packagereq type="mandatory">crontabs</packagereq>
+      <packagereq type="mandatory">cryptsetup</packagereq>
+      <packagereq type="mandatory">cyrus-sasl-plain</packagereq>
+      <packagereq type="mandatory">dbus</packagereq>
+      <packagereq type="mandatory">default-editor</packagereq>
+      <packagereq type="mandatory">deltarpm</packagereq>
+      <packagereq type="mandatory">dos2unix</packagereq>
+      <packagereq type="mandatory">dosfstools</packagereq>
+      <packagereq type="mandatory">ed</packagereq>
+      <packagereq type="mandatory">ethtool</packagereq>
+      <packagereq type="mandatory">exfatprogs</packagereq>
+      <packagereq type="mandatory">file</packagereq>
+      <packagereq type="mandatory">fpaste</packagereq>
+      <packagereq type="mandatory">fprintd-pam</packagereq>
+      <packagereq type="mandatory">gnupg2</packagereq>
+      <packagereq type="mandatory">hunspell</packagereq>
+      <packagereq type="mandatory">iptstate</packagereq>
+      <packagereq type="mandatory">irqbalance</packagereq>
+      <packagereq type="mandatory">logrotate</packagereq>
+      <packagereq type="mandatory">lsof</packagereq>
+      <packagereq type="mandatory">mailcap</packagereq>
+      <packagereq type="mandatory">man-pages</packagereq>
+      <packagereq type="mandatory">mcelog</packagereq>
+      <packagereq type="mandatory">mdadm</packagereq>
+      <packagereq type="mandatory">microcode_ctl</packagereq>
+      <packagereq type="mandatory">mtr</packagereq>
+      <packagereq type="mandatory">net-tools</packagereq>
+      <packagereq type="mandatory">nfs-utils</packagereq>
+      <packagereq type="mandatory">nmap-ncat</packagereq>
+      <packagereq type="mandatory">ntfs-3g</packagereq>
+      <packagereq type="mandatory">ntfsprogs</packagereq>
+      <packagereq type="mandatory">opensc</packagereq>
+      <packagereq type="mandatory">passwdqc</packagereq>
+      <packagereq type="mandatory">pciutils</packagereq>
+      <packagereq type="mandatory">pinfo</packagereq>
+      <packagereq type="mandatory">plocate</packagereq>
+      <packagereq type="mandatory">psacct</packagereq>
+      <packagereq type="mandatory">quota</packagereq>
+      <packagereq type="mandatory">realmd</packagereq>
+      <packagereq type="mandatory">rsync</packagereq>
+      <packagereq type="mandatory">rsyslog</packagereq>
+      <packagereq type="mandatory">smartmontools</packagereq>
+      <packagereq type="mandatory">sos</packagereq>
+      <packagereq type="mandatory">sssd-proxy</packagereq>
+      <packagereq type="mandatory">sudo</packagereq>
+      <packagereq type="mandatory">symlinks</packagereq>
+      <packagereq type="mandatory">systemd-udev</packagereq>
+      <packagereq type="mandatory">tar</packagereq>
+      <packagereq type="mandatory">tcpdump</packagereq>
+      <packagereq type="mandatory">time</packagereq>
+      <packagereq type="mandatory">traceroute</packagereq>
+      <packagereq type="mandatory">tree</packagereq>
+      <packagereq type="mandatory">unzip</packagereq>
+      <packagereq type="mandatory">usbutils</packagereq>
+      <packagereq type="mandatory">wget2-wget</packagereq>
+      <packagereq type="mandatory">which</packagereq>
+      <packagereq type="mandatory">whois</packagereq>
+      <packagereq type="mandatory">words</packagereq>
+      <packagereq type="mandatory">zip</packagereq>
+      <packagereq requires="gnome-control-center" type="conditional">chrony</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>kde-mobile</id>
+    <name>KDE Mobile</name>
+    <description>KDE Plasma Mobile, a highly-configurable graphical user interface optimized for mobile devices.</description>
+    <default>false</default>
+    <uservisible>true</uservisible>
+    <packagelist>
+      <packagereq type="mandatory">plasma-mobile</packagereq>
+      <packagereq type="mandatory">plasma-mobile-sounds</packagereq>
+      <packagereq type="default">bluedevil</packagereq>
+      <packagereq type="default">fedora-flathub-remote</packagereq>
+      <packagereq type="default">fedora-workstation-repositories</packagereq>
+      <packagereq type="default">glibc-all-langpacks</packagereq>
+      <packagereq type="default">plasma-discover</packagereq>
+      <packagereq type="default">plasma-discover-notifier</packagereq>
+      <packagereq type="default">plasma-settings</packagereq>
+      <packagereq type="default">sddm</packagereq>
+      <packagereq type="default">sddm-themes</packagereq>
+      <packagereq type="default">sddm-wayland-plasma</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>kde-mobile-apps</id>
+    <name>KDE Mobile Apps</name>
+    <description>A set of commonly used KDE Plasma Mobile applications</description>
+    <default>false</default>
+    <uservisible>true</uservisible>
+    <packagelist>
+      <packagereq type="default">angelfish</packagereq>
+      <packagereq type="default">arianna</packagereq>
+      <packagereq type="default">elisa-player</packagereq>
+      <packagereq type="default">haruna</packagereq>
+      <packagereq type="default">kalk</packagereq>
+      <packagereq type="default">kasts</packagereq>
+      <packagereq type="default">kclock</packagereq>
+      <packagereq type="default">keysmith</packagereq>
+      <packagereq type="default">koko</packagereq>
+      <packagereq type="default">krecorder</packagereq>
+      <packagereq type="default">kweather</packagereq>
+      <packagereq type="default">marknote</packagereq>
+      <packagereq type="default">neochat</packagereq>
+      <packagereq type="default">okular-mobile</packagereq>
+      <packagereq type="default">qmlkonsole</packagereq>
+      <packagereq type="default">qrca</packagereq>
+      <packagereq type="default">spacebar</packagereq>
+      <packagereq type="default">tokodon</packagereq>
+      <packagereq type="optional">alligator</packagereq>
+      <packagereq type="optional">audiotube</packagereq>
+      <packagereq type="optional">calindori</packagereq>
+      <packagereq type="optional">fielding</packagereq>
+      <packagereq type="optional">francis</packagereq>
+      <packagereq type="optional">gcompris-qt</packagereq>
+      <packagereq type="optional">gcompris-qt-activities</packagereq>
+      <packagereq type="optional">kaidan</packagereq>
+      <packagereq type="optional">kitinerary</packagereq>
+      <packagereq type="optional">kongress</packagereq>
+      <packagereq type="optional">kontrast</packagereq>
+      <packagereq type="optional">ktrip</packagereq>
+      <packagereq type="optional">kwordquiz</packagereq>
+      <packagereq type="optional">merkuro</packagereq>
+      <packagereq type="optional">plasma-dialer</packagereq>
+      <packagereq type="optional">plasma-phonebook</packagereq>
+      <packagereq type="optional">plasmatube</packagereq>
+      <packagereq type="optional">vakzination</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>firefox</id>
+    <name>Firefox Web Browser</name>
+    <name xml:lang="af">Firefox-webblaaier</name>
+    <name xml:lang="bg">Firefox уеб четец</name>
+    <name xml:lang="ca">Navegador web Firefox</name>
+    <name xml:lang="cs">Webový prohlížeč Firefox</name>
+    <name xml:lang="da">Firefox-webbrowser</name>
+    <name xml:lang="de">Firefox Web Browser</name>
+    <name xml:lang="en_GB">Firefox Web Browser</name>
+    <name xml:lang="es">Navegador Firefox</name>
+    <name xml:lang="fi">Firefox-selain</name>
+    <name xml:lang="fr">Navigateur Web Firefox</name>
+    <name xml:lang="fur">Navigadôr Web Firefox</name>
+    <name xml:lang="hu">Firefox webböngésző</name>
+    <name xml:lang="hy">Firefox Վեբ Դիտարկիչ</name>
+    <name xml:lang="ia">Navigator Firefox</name>
+    <name xml:lang="id">Peramban Web Firefox</name>
+    <name xml:lang="it">Browser web Firefox</name>
+    <name xml:lang="ja">Firefox ウェブブラウザー</name>
+    <name xml:lang="kab">Iminig Web Firefox</name>
+    <name xml:lang="ko">파이어폭스 웹 열람기</name>
+    <name xml:lang="nb">Firefox nettleser</name>
+    <name xml:lang="nl">Firefox webbrowser</name>
+    <name xml:lang="pa">ਫਾਇਰਫਾਕਸ ਵੈੱਬ ਬਰਾਊਜ਼ਰ</name>
+    <name xml:lang="pl">Przeglądarka WWW Firefox</name>
+    <name xml:lang="pt">Firefox - Navegador da Web</name>
+    <name xml:lang="pt_BR">Navegador de Internet Firefox</name>
+    <name xml:lang="ru">Веб-браузер Firefox</name>
+    <name xml:lang="sk">Webový prehliadač Firefox</name>
+    <name xml:lang="sr">Firefox веб претраживач</name>
+    <name xml:lang="sv">Firefox Webbläsare</name>
+    <name xml:lang="te">ఫైర్‌ఫాక్స్ వెబ్ బ్రౌజర్</name>
+    <name xml:lang="tr">Firefox Web Tarayıcısı</name>
+    <name xml:lang="uk">Веб-браузер Firefox</name>
+    <name xml:lang="zh_CN">Firefox 浏览器</name>
+    <name xml:lang="zh_TW">Firefox 網頁瀏覽器</name>
+    <description>The Firefox web browser</description>
+    <description xml:lang="af">Die Firefox-webblaaier</description>
+    <description xml:lang="bg">Уеб четецът Firefox</description>
+    <description xml:lang="ca">El navegador web Firefox</description>
+    <description xml:lang="cs">Webový prohlížeč Firefox</description>
+    <description xml:lang="da">Webbrowseren Firefox</description>
+    <description xml:lang="de">Der Firefox-Webbrowser</description>
+    <description xml:lang="en_GB">The Firefox web browser</description>
+    <description xml:lang="es">El navegador Firefox</description>
+    <description xml:lang="fi">Firefox-selain</description>
+    <description xml:lang="fr">Le navigateur Web Firefox</description>
+    <description xml:lang="fur">Il navigadôr web Firefox</description>
+    <description xml:lang="hu">A Firefox webböngésző</description>
+    <description xml:lang="hy">Firefox վեբ դիտարկիչը</description>
+    <description xml:lang="ia">Le navigator web Firefox</description>
+    <description xml:lang="id">Peramban web Firefox</description>
+    <description xml:lang="it">Il browser web Firefox</description>
+    <description xml:lang="ja">Firefox ウェブブラウザー</description>
+    <description xml:lang="ko">파이어폭스 웹 열람기</description>
+    <description xml:lang="nb">Nettleseren Firefox</description>
+    <description xml:lang="nl">De Firefox webbrowser</description>
+    <description xml:lang="pa">ਫਾਇਰਫਾਕਸ ਵੈੱਬ ਬਰਾਊਜ਼ਰ</description>
+    <description xml:lang="pl">Przeglądarka WWW Firefox</description>
+    <description xml:lang="pt">O navegador da Web Firefox</description>
+    <description xml:lang="pt_BR">O navegador de internet Firefox</description>
+    <description xml:lang="ru">Веб-браузер Firefox</description>
+    <description xml:lang="sk">Webový prehliadač Firefox</description>
+    <description xml:lang="sr">Firefox веб претраживач</description>
+    <description xml:lang="sv">Webbläsaren Firefox</description>
+    <description xml:lang="te">ఫైర్‌ఫాక్స్ వెబ్ బ్రౌజర్</description>
+    <description xml:lang="tr">Firefox web tarayıcısı</description>
+    <description xml:lang="uk">Веб-браузер Firefox</description>
+    <description xml:lang="zh_CN">Firefox 浏览器</description>
+    <description xml:lang="zh_TW">Firefox 網頁瀏覽器</description>
+    <default>false</default>
+    <uservisible>false</uservisible>
+    <packagelist>
+      <packagereq type="mandatory">fedora-bookmarks</packagereq>
+      <packagereq type="mandatory">firefox</packagereq>
+      <packagereq type="default">libglvnd-gles</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>design-suite</id>
+    <name>Design Suite</name>
+    <name xml:lang="af">Ontwerpsuite</name>
+    <name xml:lang="ar">طقم التصميم</name>
+    <name xml:lang="as">ৰুপাঙ্কণ চুইট</name>
+    <name xml:lang="bg">Комплект за дизайн</name>
+    <name xml:lang="bn">ডিসাইন সুইট</name>
+    <name xml:lang="bn_IN">ডিসাইন সুইট</name>
+    <name xml:lang="ca">Conjunt de programes de disseny</name>
+    <name xml:lang="cs">Nástroje pro design</name>
+    <name xml:lang="da">Designpakke</name>
+    <name xml:lang="de">Design-Suite</name>
+    <name xml:lang="en_GB">Design Suite</name>
+    <name xml:lang="es">Suite de Diseño</name>
+    <name xml:lang="et">Disainikomplekt</name>
+    <name xml:lang="fi">Suunnitteluohjelmisto</name>
+    <name xml:lang="fr">Design Suite</name>
+    <name xml:lang="fur">Suite di dissen</name>
+    <name xml:lang="gu">ડિઝાઇન સેવા</name>
+    <name xml:lang="hu">Design Suite</name>
+    <name xml:lang="hy">Դիզայն Փաթեթ</name>
+    <name xml:lang="ia">Collection pro designatores</name>
+    <name xml:lang="id">Suite Desain</name>
+    <name xml:lang="it">Design Suite</name>
+    <name xml:lang="ja">デサインスイート</name>
+    <name xml:lang="ka">დიზაინის პროგრამული პაკეტი</name>
+    <name xml:lang="kn">ವಿನ್ಯಾಸ ಸೂಟ್</name>
+    <name xml:lang="ko">디자인 제품군</name>
+    <name xml:lang="lv">Dizaina komplekts</name>
+    <name xml:lang="nb">Designpakke</name>
+    <name xml:lang="nl">Ontwerpsuite</name>
+    <name xml:lang="pa">ਡਿਜ਼ਇਨ ਸੂਟ</name>
+    <name xml:lang="pl">Zestaw projektowania</name>
+    <name xml:lang="pt">Conjunto de Desenho</name>
+    <name xml:lang="pt_BR">Suite Design</name>
+    <name xml:lang="ru">Комплект программ дизайнера</name>
+    <name xml:lang="sk">Nástroje pre design</name>
+    <name xml:lang="sr">Дизајн група</name>
+    <name xml:lang="sv">Designsvit</name>
+    <name xml:lang="ta">வடிவமைப்பு தொகுப்பு</name>
+    <name xml:lang="te">రూపకల్పన స్యూట్</name>
+    <name xml:lang="tg">Дастаи барномаҳо барои дизайнер</name>
+    <name xml:lang="tr">Tasarım Takımı</name>
+    <name xml:lang="uk">Дизайнерський Набір</name>
+    <name xml:lang="zh_CN">设计套件</name>
+    <name xml:lang="zh_TW">設計套組</name>
+    <description>These packages are targeted towards professional designers, and are related to graphics, web and animation.</description>
+    <description xml:lang="af">Hierdie pakkette is geteiken op professionele ontwerpers, en hou verband met grafika, web en animasie.</description>
+    <description xml:lang="bg">Тези пакети са предназначени за професионални дизайнери за графика, уеб и анимация.</description>
+    <description xml:lang="ca">Aquests paquets estan dirigits als dissenyadors professionals relacionats amb les arts gràfics, el web i l'animació.</description>
+    <description xml:lang="cs">Balíčky, které cílí na profesionální návrháře v oblasti grafiky, webu a animace.</description>
+    <description xml:lang="da">Disse pakker er rettet mod professionelle designere og har relation til grafik, web og animation.</description>
+    <description xml:lang="de">Diese Pakete sind für professionelle Designer von Graphiken, Webanwendungen und Animationen gedacht.</description>
+    <description xml:lang="en_GB">These packages are targeted towards professional designers, and are related to graphics, web and animation.</description>
+    <description xml:lang="es">Estos paquetes están dirigidos a diseñadores profesionales, y están relacionados con gráficos, web y animaciones.</description>
+    <description xml:lang="fi">Nämä paketit on tarkoitettu grafiikka-, web- ja animaatiosuunnittelijoille.</description>
+    <description xml:lang="fr">Ces paquets ciblent les designers professionnels, et sont liés au graphisme, au Web et à l'animation.</description>
+    <description xml:lang="fur">Chescj pachets a son indreçâts a progjetiscj e dissegnadôrs professionâi e a interessin grafiche, web e animazion.</description>
+    <description xml:lang="hu">Ezek a csomagok a professzionális dizájnereket célozzák meg, és grafikával, webbel valamint animációval kapcsolatosak.</description>
+    <description xml:lang="hy">Այս փաթեթները նախատեսված են պրոֆեսիոնալ դիզայներներ համար, և կապված են գրաֆիկայի, վեբի և անիմացիաների հետ։</description>
+    <description xml:lang="id">Paket-paket ini ditargetkan bagi desainer profesional, dan terkait grafis, web, dan animasi.</description>
+    <description xml:lang="it">Questi pacchetti sono rivolti a designer professionali e riguardano grafica, web e animazione.</description>
+    <description xml:lang="ko">이들 꾸러미는 전문 디자이너를 대상으로 하며, 그리고 그래픽, 웹과 애니메이션 등과도 연관되어 있습니다.</description>
+    <description xml:lang="nb">Disse pakkene rettes mot profesjonelle designere, og er relatert til grafikk, vev og animasjon.</description>
+    <description xml:lang="nl">Deze pakketten richten zich op professionele ontwerpers gerelateerd aan afbeeldingen, web en animaties.</description>
+    <description xml:lang="pl">Te pakiety są przeznaczone dla zawodowych projektantów grafiki, stron WWW i animacji.</description>
+    <description xml:lang="pt">Estes pacotes são direcionados para os desenhadores profissionais, e estão relacionados com gráficos, Web e animação.</description>
+    <description xml:lang="pt_BR">Estes pacotes são direcionados para designers profissionais, e são relacionados com gráficos, web e animações.</description>
+    <description xml:lang="ru">Эти пакеты предназначены для профессиональных дизайнеров, работающих с графикой, веб-технологиями и анимацией.</description>
+    <description xml:lang="sk">Tieto balíčky sú určené pre profesionálnych dizajnérov zameraných na grafiku, web a animácie.</description>
+    <description xml:lang="sv">Dessa paket är riktade till professionella designers, och är relaterade till grafik, webb och animeringar.</description>
+    <description xml:lang="tr">Bu paketler uzman tasarımcıları hedeflemiştir ve bunlar grafik, web ve canlandırmayla ilgilidir.</description>
+    <description xml:lang="uk">Ці пакунки призначено для професійних дизайнерів, пов’язаних із роботою над графікою, вебдизайном та анімацією.</description>
+    <description xml:lang="zh_CN">这些软件包面向与图形、网页及动画相关的专业设计人员。</description>
+    <description xml:lang="zh_TW">這些軟體包針對美工繪圖、網頁、動畫等相關領域的專業設計師打造。</description>
+    <default>false</default>
+    <uservisible>true</uservisible>
+    <packagelist>
+      <packagereq type="default">GraphicsMagick</packagereq>
+      <packagereq type="default">aajohan-comfortaa-fonts</packagereq>
+      <packagereq type="default">adobe-source-sans-pro-fonts</packagereq>
+      <packagereq type="default">astigmatic-grand-hotel-fonts</packagereq>
+      <packagereq type="default">audacity</packagereq>
+      <packagereq type="default">blender</packagereq>
+      <packagereq type="default">campivisivi-titillium-fonts</packagereq>
+      <packagereq type="default">colord-extra-profiles</packagereq>
+      <packagereq type="default">darktable</packagereq>
+      <packagereq type="default">entangle</packagereq>
+      <packagereq type="default">fontforge</packagereq>
+      <packagereq type="default">gcolor3</packagereq>
+      <packagereq type="default">gimp</packagereq>
+      <packagereq type="default">google-roboto-condensed-fonts</packagereq>
+      <packagereq type="default">google-roboto-fonts</packagereq>
+      <packagereq type="default">google-roboto-slab-fonts</packagereq>
+      <packagereq type="default">hugin</packagereq>
+      <packagereq type="default">inkscape</packagereq>
+      <packagereq type="default">julietaula-montserrat-fonts</packagereq>
+      <packagereq type="default">krita</packagereq>
+      <packagereq type="default">lato-fonts</packagereq>
+      <packagereq type="default">open-sans-fonts</packagereq>
+      <packagereq type="default">optipng</packagereq>
+      <packagereq type="default">overpass-fonts</packagereq>
+      <packagereq type="default">pdfarranger</packagereq>
+      <packagereq type="default">pitivi</packagereq>
+      <packagereq type="default">redhat-display-fonts</packagereq>
+      <packagereq type="default">redhat-text-fonts</packagereq>
+      <packagereq type="default">rsms-inter-fonts</packagereq>
+      <packagereq type="default">scribus</packagereq>
+      <packagereq type="default">shotwell</packagereq>
+      <packagereq type="default">synfigstudio</packagereq>
+      <packagereq type="default">typetype-molot-fonts</packagereq>
+      <packagereq type="default">xournalpp</packagereq>
+      <packagereq type="optional">ImageMagick</packagereq>
+      <packagereq type="optional">YafaRay</packagereq>
+      <packagereq type="optional">calligra-karbon</packagereq>
+      <packagereq type="optional">digikam</packagereq>
+      <packagereq type="optional">geeqie</packagereq>
+      <packagereq type="optional">luxcorerender</packagereq>
+      <packagereq type="optional">mypaint</packagereq>
+      <packagereq type="optional">pngcrush</packagereq>
+      <packagereq type="optional">shutter</packagereq>
+      <packagereq requires="blender" type="conditional">YafaRay-blender</packagereq>
+      <packagereq requires="blender" type="conditional">blender-luxcorerender</packagereq>
+      <packagereq requires="darktable" type="conditional">darktable-tools-noise</packagereq>
+      <packagereq requires="gimp" type="conditional">gmic-gimp</packagereq>
+      <packagereq requires="inkscape" type="conditional">inkscape-psd</packagereq>
+      <packagereq requires="inkscape" type="conditional">inkscape-svg2tikz</packagereq>
+      <packagereq requires="gimp" type="conditional">sane-backends-drivers-scanners</packagereq>
+      <packagereq requires="scribus" type="conditional">scribus-generator</packagereq>
+    </packagelist>
+  </group>
+  <group>
+    <id>input-methods</id>
+    <name>Input Methods</name>
+    <name xml:lang="af">Toevoermetodes</name>
+    <name xml:lang="ar">طرق الإدخال</name>
+    <name xml:lang="as">নিবেশ পদ্ধতি</name>
+    <name xml:lang="ast">Métodos d'Entrada</name>
+    <name xml:lang="bg">Методи за писане</name>
+    <name xml:lang="bn">ইনপুট পদ্ধতি</name>
+    <name xml:lang="bn_IN">ইনপুট পদ্ধতি</name>
+    <name xml:lang="ca">Mètodes d'entrada</name>
+    <name xml:lang="cs">Vstupní metody</name>
+    <name xml:lang="da">Inddatametoder</name>
+    <name xml:lang="de">Eingabemethoden</name>
+    <name xml:lang="el">Μέθοδοι εισαγωγής</name>
+    <name xml:lang="en_GB">Input Methods</name>
+    <name xml:lang="es">Métodos de Entrada</name>
+    <name xml:lang="et">Sisestusmeetodid</name>
+    <name xml:lang="eu">Sarrera metodoak</name>
+    <name xml:lang="fa">شیوه‌های ورود</name>
+    <name xml:lang="fi">Syöttömenetelmät</name>
+    <name xml:lang="fr">Méthodes de saisie</name>
+    <name xml:lang="fur">Metodis di input</name>
+    <name xml:lang="gl">Métodos de entrada</name>
+    <name xml:lang="gu">ઇનપુટ પદ્દતિઓ</name>
+    <name xml:lang="he">שיטות קלט</name>
+    <name xml:lang="hi">इनपुट विधि</name>
+    <name xml:lang="hu">Beviteli módszerek</name>
+    <name xml:lang="hy">Ներածման Մեթոդներ</name>
+    <name xml:lang="ia">Methodos de entrata</name>
+    <name xml:lang="id">Metoda Input</name>
+    <name xml:lang="is">Innsetningaraðferðir</name>
+    <name xml:lang="it">Metodi di input</name>
+    <name xml:lang="ja">入力メソッド</name>
+    <name xml:lang="ka">შეტანის მეთოდები</name>
+    <name xml:lang="kn">ಆದಾನ ಕ್ರಮಗಳು</name>
+    <name xml:lang="ko">입력 방식</name>
+    <name xml:lang="lv">Ievades metodes</name>
+    <name xml:lang="mai">इनपुट पद्धति</name>
+    <name xml:lang="ml">ഇന്‍പുട്ട് മെഥേഡുകള്‍</name>
+    <name xml:lang="mr">इंपुट पध्दती</name>
+    <name xml:lang="nb">Inndatametoder</name>
+    <name xml:lang="nl">Invoermethoden</name>
+    <name xml:lang="or">ନିବେଶ ପଦ୍ଧତି</name>
+    <name xml:lang="pa">ਇਨਪੁੱਟ ਢੰਗ</name>
+    <name xml:lang="pl">Metody wprowadzania</name>
+    <name xml:lang="pt">Métodos de Introdução de Dados</name>
+    <name xml:lang="pt_BR">Métodos de entrada</name>
+    <name xml:lang="ru">Методы ввода</name>
+    <name xml:lang="sk">Metódy vstupu</name>
+    <name xml:lang="sr">Методе уноса</name>
+    <name xml:lang="sr@Latn">Metode unosa</name>
+    <name xml:lang="sr@latin">Metode unosa</name>
+    <name xml:lang="sv">Inmatningsmetoder</name>
+    <name xml:lang="ta">உள்ளீடு முறைகள்</name>
+    <name xml:lang="te">ఇన్‌పుట్ పద్దతులు</name>
+    <name xml:lang="tg">Услубҳои воридотӣ</name>
+    <name xml:lang="th">วิธีป้อนข้อความ</name>
+    <name xml:lang="tr">Giriş Yöntemleri</name>
+    <name xml:lang="uk">Методи вводу</name>
+    <name xml:lang="zh_CN">输入法</name>
+    <name xml:lang="zh_TW">輸入法</name>
+    <description>Input method packages for the input of international text.</description>
+    <description xml:lang="af">Pakkette met toevoermetodes om internasionale teks mee te tik.</description>
+    <description xml:lang="ar">حزم طرق الإدخال لإدخال النصوص بلغات عالمية.</description>
+    <description xml:lang="as">আন্তৰ্জাতিক শব্দ নিবেশ কৰিবলৈ নিবেশ পদ্ধতিৰ সৰঞ্জাম ।</description>
+    <description xml:lang="ast">Los paquetes de métodos d'entrada pa la entrada de testu internacional.</description>
+    <description xml:lang="bg">Пакети с методи за писане за въвеждане на интернационален текст.</description>
+    <description xml:lang="bn">বিভিন্ন আন্তর্জাতিক ভাষায় লেখার জন্য প্রয়োজনীয় ইনপুট পদ্ধতির প্যাকেজ।</description>
+    <description xml:lang="bn_IN">বিভিন্ন আন্তর্জাতিক ভাষায় লেখার জন্য প্রয়োজনীয় ইনপুট পদ্ধতির প্যাকেজ।</description>
+    <description xml:lang="ca">Paquets de mètodes d'entrada per a introduir text internacional.</description>
+    <description xml:lang="cs">Vstupní metody pro podporu exotických jazyků s obrázkovým písmem (např. japonština, korejština, čínština).</description>
+    <description xml:lang="da">Inddatametodepakker for inddata af international tekst.</description>
+    <description xml:lang="de">Eingabemethoden-Paket für die Eingabe von internationalem Text.</description>
+    <description xml:lang="el">Πακέτα μεθόδων εισαγωγής για την εισαγωγή διεθνούς κειμένου.</description>
+    <description xml:lang="en_GB">Input method packages for the input of international text.</description>
+    <description xml:lang="es">Los paquetes de métodos de entrada para la entrada de texto internacional.</description>
+    <description xml:lang="et">Erinevad sisestusmeetodid rahvusvahelise teksti sisestamiseks.</description>
+    <description xml:lang="fa">بسته‌های شیوه‌های ورود برای ورود متن بین‌المللی</description>
+    <description xml:lang="fi">Syöttömenetelmäpaketteja kansainvälisen tekstin syöttämiseen.</description>
+    <description xml:lang="fr">Paquets de méthodes de saisie de textes internationaux.</description>
+    <description xml:lang="fur">Pachets dai metodis di input pal inseriment di test internazionâl.</description>
+    <description xml:lang="gu">આંતરરાષ્ટ્રીય લખાણનાં ઇનપુટ માટે ઇનપુટ પદ્દતિ પેકેજો.</description>
+    <description xml:lang="he">חבילות של שיטות קלט המיועדות לאפשר קלט של טקסט בשפות זרות.</description>
+    <description xml:lang="hi">अंतरराष्ट्रीय पाठ की इनपुट के लिए इनपुट विधि संकुल.</description>
+    <description xml:lang="hu">Beviteli módszer csomagok nemzetközi szövegek bevitelére.</description>
+    <description xml:lang="hy">Ներածման մեթոդի փաթեթներ միջազգային տեքստի ներածման համար։</description>
+    <description xml:lang="ia">Pacchettos que contine le methodos de entrata de texto international.</description>
+    <description xml:lang="id">Paket metode masukan untuk memasukkan teks internasional.</description>
+    <description xml:lang="is">Pakkar með ýmsum innsetningaraðferðum til innsetningar alþjóðlegra texta.</description>
+    <description xml:lang="it">Pacchetti contenenti metodi per l'inserimento internazionalizzato di testi.</description>
+    <description xml:lang="ja">さまざまな言語によるテキスト入力用の入力メソッドパッケージです。</description>
+    <description xml:lang="kn">ಅಂತರಾಷ್ಟ್ರೀಯ ಪಠ್ಯವನ್ನು ನಮೂದಿಸಲು ಬಳಸಲಾಗುವ ಆದಾನ ಕ್ರಮಗಳ ಪ್ಯಾಕೇಜುಗಳು.</description>
+    <description xml:lang="ko">세계적인 언어 입력을 위한 입력 방식 꾸러미.</description>
+    <description xml:lang="lv">Ievades metožu pakas starptautisko tekstu ievadīšanai.</description>
+    <description xml:lang="mai">अंतरराष्ट्रीय पाठक इनपुट क' लेल इनपुट विधि संकुल.</description>
+    <description xml:lang="ml">അന്താരാഷ്ട്ര വാചകങ്ങള്‍ നല്‍കുന്നതിനുള്ള ഇന്‍പുട്ട് മെഥേഡ് പാക്കേജുകള്‍.</description>
+    <description xml:lang="mr">अंतर्राष्ट्रीय पाठ्य प्रविष्ट करण्याकरीता इन्पुट पद्धती संकुल.</description>
+    <description xml:lang="nb">Pakker med inndatametoder for inntasting av spesielle tegn.</description>
+    <description xml:lang="nl">Invoermethode-pakketten voor het invoeren van internationale tekst.</description>
+    <description xml:lang="or">ଅନ୍ତର୍ରାଷ୍ଟୀୟ ପାଠ୍ୟ ନିବେଶ ପାଇଁ ନିବେଶ ପଦ୍ଧତି ପ୍ୟାକେଜଗୁଡିକ।</description>
+    <description xml:lang="pa">ਅੰਤਰਰਾਸ਼ਟਰੀ ਟੈਕਸਟ ਇਨਪੁੱਟ ਕਰਨ ਵਾਸਤੇ ਇਨਪੁੱਟ ਢੰਗ ਪੈਕੇਜ ਹੈ।</description>
+    <description xml:lang="pl">Pakiety metod wprowadzania do wpisywania międzynarodowego tekstu.</description>
+    <description xml:lang="pt">Pacotes de métodos de entrada para introduzir texto internacional.</description>
+    <description xml:lang="pt_BR">Pacotes de métodos de entrada para a inserção de textos internacionais.</description>
+    <description xml:lang="ru">Пакеты для ввода текста на различных языках.</description>
+    <description xml:lang="sk">Balíčky metód vstupu pre podporu medzinárodného textu.</description>
+    <description xml:lang="sr">Пакети метода уноса за уношење интернационалног текста.</description>
+    <description xml:lang="sr@Latn">Paketi metoda unosa za unošenje internacionalnog teksta.</description>
+    <description xml:lang="sr@latin">Paketi metoda unosa za unošenje internacionalnog teksta.</description>
+    <description xml:lang="sv">Paket med inmatningsmetoder för inmatning av internationell text.</description>
+    <description xml:lang="ta">சர்வதேச உரை உள்ளீடுக்கான உள்ளீடு முறை தொகுப்புகள்</description>
+    <description xml:lang="te">అంతర్జాతీయ పాఠ్యము ఇన్‌పుట్ చేయుటకు ఇన్‌పుట్ పద్దతి సంకలనాలు.</description>
+    <description xml:lang="tg">Барномаҳои услуби воридоти барои вориди ҳарфҳои байналхалқӣ.</description>
+    <description xml:lang="th">แพคเกจวิธีป้อนข้อความสำหรับการป้อนข้อความนานาชาติ</description>
+    <description xml:lang="tr">Uluslararası metnin girişi için girdi yöntemi paketleri.</description>
+    <description xml:lang="uk">Пакунки для вводу тексту різними мовами.</description>
+    <description xml:lang="zh_CN">用于输入国际文本的输入法软件包。</description>
+    <description xml:lang="zh_TW">國際文字輸入法的輸入法軟體包。</description>
+    <default>false</default>
+    <uservisible>false</uservisible>
+    <packagelist>
+      <packagereq type="default">ibus-anthy</packagereq>
+      <packagereq type="default">ibus-chewing</packagereq>
+      <packagereq type="default">ibus-hangul</packagereq>
+      <packagereq type="default">ibus-libpinyin</packagereq>
+      <packagereq type="default">ibus-m17n</packagereq>
+      <packagereq type="default">ibus-table-chinese-cangjie</packagereq>
+      <packagereq type="default">ibus-typing-booster</packagereq>
+      <packagereq type="default">im-chooser</packagereq>
+      <packagereq type="default">imsettings</packagereq>
+      <packagereq type="default">imsettings-gsettings</packagereq>
+      <packagereq type="optional">caribou</packagereq>
+      <packagereq type="optional">cellwriter</packagereq>
+      <packagereq type="optional">fcitx</packagereq>
+      <packagereq type="optional">ibus-array</packagereq>
+      <packagereq type="optional">ibus-cangjie-engine-cangjie</packagereq>
+      <packagereq type="optional">ibus-cangjie-engine-quick</packagereq>
+      <packagereq type="optional">ibus-fbterm</packagereq>
+      <packagereq type="optional">ibus-handwrite</packagereq>
+      <packagereq type="optional">ibus-input-pad</packagereq>
+      <packagereq type="optional">ibus-kkc</packagereq>
+      <packagereq type="optional">ibus-mozc</packagereq>
+      <packagereq type="optional">ibus-sayura</packagereq>
+      <packagereq type="optional">ibus-skk</packagereq>
+      <packagereq type="optional">ibus-table</packagereq>
+      <packagereq type="optional">ibus-table-chinese-array</packagereq>
+      <packagereq type="optional">ibus-table-chinese-quick</packagereq>
+      <packagereq type="optional">ibus-table-cyrillic</packagereq>
+      <packagereq type="optional">ibus-unikey</packagereq>
+      <packagereq type="optional">input-pad</packagereq>
+      <packagereq type="optional">scim-fcitx</packagereq>
+      <packagereq type="optional">scim-gtk</packagereq>
+      <packagereq type="optional">scim-hangul</packagereq>
+      <packagereq type="optional">scim-m17n</packagereq>
+      <packagereq type="optional">scim-pinyin</packagereq>
+      <packagereq type="optional">scim-qt</packagereq>
+      <packagereq type="optional">scim-rawcode</packagereq>
+      <packagereq type="optional">scim-thai</packagereq>
+      <packagereq type="optional">uim</packagereq>
+      <packagereq type="optional">uim-anthy</packagereq>
+      <packagereq type="optional">uim-gtk3</packagereq>
+      <packagereq type="optional">uim-m17n</packagereq>
+      <packagereq type="optional">uim-qt</packagereq>
+      <packagereq type="optional">uim-skk</packagereq>
+      <packagereq requires="gtk2" type="conditional">gtk2-immodule-xim</packagereq>
+      <packagereq requires="gtk3" type="conditional">gtk3-immodule-xim</packagereq>
+      <packagereq requires="gtk2" type="conditional">ibus-gtk2</packagereq>
+      <packagereq requires="gtk3" type="conditional">ibus-gtk3</packagereq>
+      <packagereq requires="gtk4" type="conditional">ibus-gtk4</packagereq>
+      <packagereq requires="qt" type="conditional">ibus-qt</packagereq>
+      <packagereq requires="xfce4-panel" type="conditional">im-chooser-xfce</packagereq>
+      <packagereq requires="plasma-desktop" type="conditional">imsettings-plasma</packagereq>
+    </packagelist>
+  </group>
+  <category>
+    <id>kde-mobile-environment</id>
+    <name>KDE Plasma Mobile</name>
+    <description>The KDE Plasma Mobile evnironment includes KDE Plasma Mobile and many Plasma Mobile applications.</description>
+    <display_order>11</display_order>
+    <grouplist>
+      <groupid>kde-mobile</groupid>
+      <groupid>kde-mobile-apps</groupid>
+    </grouplist>
+  </category>
+  <category>
+    <id>apps</id>
+    <name>Applications</name>
+    <name xml:lang="af">Toepassings</name>
+    <name xml:lang="am">መጠቀሚያ ፕሮግራሞች</name>
+    <name xml:lang="ar">تطبيقات</name>
+    <name xml:lang="as">অনুপ্ৰয়োগ</name>
+    <name xml:lang="ast">Aplicaciones</name>
+    <name xml:lang="bal">کارمرزیان</name>
+    <name xml:lang="be">Дастасаваньні</name>
+    <name xml:lang="bg">Приложения</name>
+    <name xml:lang="bn">অ্যাপ্লিকেশন</name>
+    <name xml:lang="bn_IN">অ্যাপ্লিকেশন</name>
+    <name xml:lang="bs">Aplikacije</name>
+    <name xml:lang="ca">Aplicacions</name>
+    <name xml:lang="cs">Aplikace</name>
+    <name xml:lang="cy">Cymwysiadau</name>
+    <name xml:lang="da">Programmer</name>
+    <name xml:lang="de">Anwendungen</name>
+    <name xml:lang="el">Εφαρμογές</name>
+    <name xml:lang="en_GB">Applications</name>
+    <name xml:lang="es">Aplicaciones</name>
+    <name xml:lang="et">Rakendused</name>
+    <name xml:lang="eu">Aplikazioak</name>
+    <name xml:lang="fa">برنامه‌ها</name>
+    <name xml:lang="fi">Apuohjelmat</name>
+    <name xml:lang="fr">Applications</name>
+    <name xml:lang="gl">Aplicacións</name>
+    <name xml:lang="gu">કાર્યક્રમો</name>
+    <name xml:lang="he">ישומים</name>
+    <name xml:lang="hi">अनुप्रयोग</name>
+    <name xml:lang="hr">Aplikacije</name>
+    <name xml:lang="hu">Alkalmazások</name>
+    <name xml:lang="hy">Ծրագրեր</name>
+    <name xml:lang="ia">Applicationes</name>
+    <name xml:lang="id">Aplikasi</name>
+    <name xml:lang="ilo">Dagiti Aplikasion</name>
+    <name xml:lang="is">Forrit</name>
+    <name xml:lang="it">Applicazioni</name>
+    <name xml:lang="ja">アプリケーション</name>
+    <name xml:lang="ka">პროგრამები</name>
+    <name xml:lang="kab">Isnasen</name>
+    <name xml:lang="kn">ಅನ್ವಯಗಳು</name>
+    <name xml:lang="ko">응용 프로그램</name>
+    <name xml:lang="lv">Lietotnes</name>
+    <name xml:lang="mai">अनुप्रयोग</name>
+    <name xml:lang="mk">Апликации</name>
+    <name xml:lang="ml">പ്രയോഗങ്ങള്‍</name>
+    <name xml:lang="mr">ॲप्लिकेशन्स्</name>
+    <name xml:lang="ms">Aplikasi</name>
+    <name xml:lang="nb">Programmer</name>
+    <name xml:lang="nds">Anwennen</name>
+    <name xml:lang="ne">अनुप्रयोग</name>
+    <name xml:lang="nl">Toepassingen</name>
+    <name xml:lang="nso">Ditirišo</name>
+    <name xml:lang="or">ପ୍ରୟୋଗ</name>
+    <name xml:lang="pa">ਐਪਲੀਕੇਸ਼ਨਾਂ</name>
+    <name xml:lang="pl">Aplikacje</name>
+    <name xml:lang="pt">Aplicações</name>
+    <name xml:lang="pt_BR">Aplicações</name>
+    <name xml:lang="ro">Aplicații</name>
+    <name xml:lang="ru">Приложения</name>
+    <name xml:lang="si">වැඩසටහන්</name>
+    <name xml:lang="sk">Aplikácie</name>
+    <name xml:lang="sl">Aplikacije</name>
+    <name xml:lang="sq">Zbatime</name>
+    <name xml:lang="sr">Програми</name>
+    <name xml:lang="sr@Latn">Programi</name>
+    <name xml:lang="sr@latin">Programi</name>
+    <name xml:lang="sv">Program</name>
+    <name xml:lang="ta">பயன்பாடுகள்</name>
+    <name xml:lang="te">అనువర్తనాలు</name>
+    <name xml:lang="tg">Барномаҳо</name>
+    <name xml:lang="th">แอพลิเคชัน</name>
+    <name xml:lang="tr">Uygulamalar</name>
+    <name xml:lang="uk">Програми</name>
+    <name xml:lang="ur">اپلکیشن</name>
+    <name xml:lang="vi">Ứng dụng</name>
+    <name xml:lang="zh_CN">应用程序</name>
+    <name xml:lang="zh_TW">應用程式</name>
+    <name xml:lang="zu">Abayaleli</name>
+    <description>Applications to perform a variety of tasks</description>
+    <description xml:lang="af">Toepassings vir ’n verskeidenheid take</description>
+    <description xml:lang="ar">تطبيقات تقوم بمهام منوعة</description>
+    <description xml:lang="as">বিভিন্ন কাৰ্য্যৰ বাবে অনুপ্ৰয়োগ</description>
+    <description xml:lang="ast">Aplicaciones pa una variedá de xeres</description>
+    <description xml:lang="bal">کارمرزیان په اجرای چندین وظیفه</description>
+    <description xml:lang="bg">Приложения за разнообразни задачи</description>
+    <description xml:lang="bn">বিবিধ কর্মে ব্যবহৃত অ্যাপ্লিকেশন</description>
+    <description xml:lang="bn_IN">বিবিধ কর্মে ব্যবহৃত অ্যাপ্লিকেশন</description>
+    <description xml:lang="bs">Aplikacije za izvršavanje raznovrsnih zadataka</description>
+    <description xml:lang="ca">Aplicacions per a realitzar diverses tasques</description>
+    <description xml:lang="cs">Aplikace pro různé úkoly</description>
+    <description xml:lang="da">Programmer til at udføre en række af opgaver</description>
+    <description xml:lang="de">Anwendungen zum Durchführen einer Vielzahl von Aufgaben</description>
+    <description xml:lang="el">Εφαρμογές για μια ποικιλία εργασιών</description>
+    <description xml:lang="en_GB">Applications to perform a variety of tasks</description>
+    <description xml:lang="es">Aplicaciones para una variedad de tareas</description>
+    <description xml:lang="et">Rakendused kõiksugu ülesannete täitmiseks</description>
+    <description xml:lang="eu">Hainbat ataza burutzeko aplikazioak</description>
+    <description xml:lang="fa">برنامه‌هایی برای انجام وظیفه‌های متفاوت</description>
+    <description xml:lang="fi">Sovelluksia moniin tehtäviin</description>
+    <description xml:lang="fr">Applications pour effectuer différentes tâches</description>
+    <description xml:lang="gl">Aplicativos para unha variedade de tarefas</description>
+    <description xml:lang="gu">વિવિધ પ્રકારની ક્રિયાઓ કરવા માટેના કાર્યક્રમો</description>
+    <description xml:lang="he">ישומים למגוון משימות</description>
+    <description xml:lang="hi">कार्य विविधता संपन्न करने के लिये अनुप्रयोग</description>
+    <description xml:lang="hr">Aplikacije za izvršavanje raznovrsnih zadataka</description>
+    <description xml:lang="hu">Alkalmazások számos feladathoz</description>
+    <description xml:lang="hy">Ծրագրեր զանազան առաջադրանքների կատարման համար</description>
+    <description xml:lang="ia">Applicationes pro exequer varie cargas</description>
+    <description xml:lang="id">Aplikasi untuk melakukan beragam tugas</description>
+    <description xml:lang="is">Ýmis forrit sem leysa mörg verkefni af hendi</description>
+    <description xml:lang="it">Applicazioni generiche per vari compiti</description>
+    <description xml:lang="ja">さまざまな作業用アプリケーション</description>
+    <description xml:lang="kn">ವಿವಿಧ ಕಾರ್ಯಗಳನ್ನು  ನಿವ೯ಹಿಸಲು ಬೇಕಾಗುವ ಅನ್ವಯಗಳು</description>
+    <description xml:lang="ko">다양한 작업을 실행하기 위한 응용 프로그램</description>
+    <description xml:lang="lv">Lietotnes dažādiem uzdevumiem</description>
+    <description xml:lang="mai">कार्य विविधता संपन्न करबा क' लेल अनुप्रयोग</description>
+    <description xml:lang="ml">അനവധി പ്രവര്‍ത്തനങ്ങള്‍ക്കായുളള ആപ്ലിക്കേഷനുകള്‍</description>
+    <description xml:lang="mr">विविध कामे पार पाडण्यासाठी ॲप्लिकेशन्स्</description>
+    <description xml:lang="ms">Aplikasi untuk melaksanakan pelbagai tugasan</description>
+    <description xml:lang="nb">Programmer for en rekke forskjellige oppgaver</description>
+    <description xml:lang="ne">कार्यको भिन्नता सम्पादन गर्ने अनुप्रयोग</description>
+    <description xml:lang="nl">Toepassingen om diverse taken uit te voeren</description>
+    <description xml:lang="or">ବିଭିନ୍ନ କାର୍ଯ୍ଯ କରିବା ପାଇଁ ପ୍ରୟୋଗ ମାନ</description>
+    <description xml:lang="pa">ਕਈ ਤਰ੍ਹਾਂ ਦੇ ਕੰਮ ਕਰਨ ਲਈ ਐਪਲੀਕੇਸ਼ਨਾਂ</description>
+    <description xml:lang="pl">Aplikacje do wykonywania różnych zadań</description>
+    <description xml:lang="pt">Aplicações para efectuar uma variedade de tarefas</description>
+    <description xml:lang="pt_BR">Aplicações para realizar uma variedade de tarefas</description>
+    <description xml:lang="ro">Aplicații pentru executarea unor sarcini diverse</description>
+    <description xml:lang="ru">Приложения для выполнения различных задач</description>
+    <description xml:lang="si">විවිධ වූ කාර්යයන් සිදු කිරීම සඳහා අවශ්‍ය වන වැඩසටහන්</description>
+    <description xml:lang="sk">Aplikácie na vykonávanie rôznych úloh</description>
+    <description xml:lang="sl">Programje za različna opravila</description>
+    <description xml:lang="sq">Zbatime për përmbushjen e një sërë detyrash</description>
+    <description xml:lang="sr">Програми за обављање разних послова</description>
+    <description xml:lang="sr@Latn">Programi za obavljanje raznih poslova</description>
+    <description xml:lang="sr@latin">Programi za obavljanje raznih poslova</description>
+    <description xml:lang="sv">Applikationer för utföra en mängd arbetsuppgifter</description>
+    <description xml:lang="ta">பல்வேறு பணிகளை செய்ய பயன்பாடுகள்</description>
+    <description xml:lang="te">ప్రత్యేక పనులు చేయటానికి అనువర్తనాలు</description>
+    <description xml:lang="tg">Барномаҳо барои коркарди масъалаҳои гуногун</description>
+    <description xml:lang="th">โปรแกรมที่สามารถทำงานได้จิปาถะ</description>
+    <description xml:lang="tr">Çeşitli görevler için uygulamalar</description>
+    <description xml:lang="uk">Програми для виконання різних завдань</description>
+    <description xml:lang="zh_CN">执行各种任务的应用程序</description>
+    <description xml:lang="zh_TW">用於多種不同工作的應用程式</description>
+    <display_order>20</display_order>
+    <grouplist>
+      <groupid>design-suite</groupid>
+      <groupid>firefox</groupid>
+    </grouplist>
+  </category>
+  <environment>
+    <id>custom-environment</id>
+    <name>Fedora Custom Operating System</name>
+    <name xml:lang="af">Fedora- pasgemaakte bedryfstelsel</name>
+    <name xml:lang="bg">Персонализирана операционна система на Fedora</name>
+    <name xml:lang="ca">Sistema operatiu Fedora personalitzat</name>
+    <name xml:lang="cs">Zákaznicky upravený operační systém Fedora</name>
+    <name xml:lang="da">Fedora tilpasset styresystem</name>
+    <name xml:lang="de">Fedora Betriebssystem</name>
+    <name xml:lang="en_GB">Fedora Custom Operating System</name>
+    <name xml:lang="es">Sistema Fedora personalizado</name>
+    <name xml:lang="fi">Muokattu Fedora-käyttöjärjestelmä</name>
+    <name xml:lang="fr">Système d'exploitation Fedora personnalisé</name>
+    <name xml:lang="hu">Egyéni Fedora operációs rendszer</name>
+    <name xml:lang="hy">Fedora Custome Օպերացիոն Համակարգ</name>
+    <name xml:lang="id">Sistem Operasi Ubahan Fedora</name>
+    <name xml:lang="it">Sistema Operativo Personalizzato Fedora</name>
+    <name xml:lang="ko">페도라 사용자 정의 운영 체제</name>
+    <name xml:lang="nb">Egendefinert Fedora-operativsystem</name>
+    <name xml:lang="nl">Fedora Custom besturingssysteem</name>
+    <name xml:lang="pa">ਫੇਡੋਰਾ ਕਸਟਮ ਓਪਰੇਟਿੰਗ ਸਿਸਟਮ</name>
+    <name xml:lang="pl">Niestandardowa Fedora</name>
+    <name xml:lang="pt">Sistema Operativo Personalizado do Fedora</name>
+    <name xml:lang="pt_BR">Sistema Operacional Fedora Customizado</name>
+    <name xml:lang="ru">Настраиваемая операционная система Fedora</name>
+    <name xml:lang="sk">Vlastný operačný systém Fedora</name>
+    <name xml:lang="sv">Fedora Custom operativsystem</name>
+    <name xml:lang="tr">Fedora Özel İşletim Sistemi</name>
+    <name xml:lang="uk">Нетипова операційна система Fedora</name>
+    <name xml:lang="zh_CN">Fedora 定制操作系统</name>
+    <name xml:lang="zh_TW">Fedora 自訂作業系統</name>
+    <description>Basic building block for a custom Fedora system.</description>
+    <description xml:lang="af">Basiese bousteen vir ’n pasgemaakte Fedora-stelsel.</description>
+    <description xml:lang="bg">Основен градивен елемент за персонализирана система Fedora.</description>
+    <description xml:lang="ca">Bloc de construcció bàsic per a un sistema Fedora personalitzat.</description>
+    <description xml:lang="cs">Základní stavební blok pro zákaznicky upravený systém Fedory.</description>
+    <description xml:lang="da">Basale byggesten til et tilpasset Fedora-system.</description>
+    <description xml:lang="de">Grundlegender Baustein für ein benutzerdefiniertes Fedora System</description>
+    <description xml:lang="en_GB">Basic building block for a custom Fedora system.</description>
+    <description xml:lang="es">Bloque básico para la construcción de un sistema Fedora personalizado.</description>
+    <description xml:lang="fi">Perusosa muokatun Fedora-järjestelmän rakentamiseen.</description>
+    <description xml:lang="fr">Socle de construction basique pour un système Fedora personnalisé.</description>
+    <description xml:lang="hu">Alapvető építőkockák egy egyéni Fedora rendszerhez.</description>
+    <description xml:lang="hy">Հիմնական կառուցման բլոկ custom Fedora համակարգի համար։</description>
+    <description xml:lang="id">Blok bangunan dasar untuk sistem Fedora khusus.</description>
+    <description xml:lang="it">Parti fondamentali per la creazione di un sistema Fedora personalizzato.</description>
+    <description xml:lang="ko">사용자 페도라 시스템을 위해 기본적으로 구축된 블럭.</description>
+    <description xml:lang="nb">Grunnleggende grunnstein for egendefinert Fedora-system.</description>
+    <description xml:lang="nl">Basis bouwblokken voor een aangepast Fedora systeem.</description>
+    <description xml:lang="pl">Podstawa do budowania niestandardowej Fedory.</description>
+    <description xml:lang="pt">Bloco de criação básico para um sistema personalizado do Fedora.</description>
+    <description xml:lang="pt_BR">Bloco de construção básico para um sistema Fedora customizado.</description>
+    <description xml:lang="ru">Основной блок построения для настраиваемой системы Fedora.</description>
+    <description xml:lang="sk">Základný stavebný blok pre vlastný systém Fedora.</description>
+    <description xml:lang="sv">Grundläggande byggblock för ett anpassat Fedorasystem.</description>
+    <description xml:lang="tr">Özel bir Fedora sistemi için temel inşa bloğu.</description>
+    <description xml:lang="uk">Базовий блок для нетипової системи Fedora.</description>
+    <description xml:lang="zh_CN">为定制 Fedora 系统提供基本构建工具。</description>
+    <description xml:lang="zh_TW">自訂 Fedora 系統所需的基本建置元件。</description>
+    <display_order>1</display_order>
+    <grouplist>
+      <groupid>core</groupid>
+    </grouplist>
+    <optionlist>
+      <groupid>guest-agents</groupid>
+      <groupid>networkmanager-submodules</groupid>
+      <groupid>standard</groupid>
+    </optionlist>
+  </environment>
+  <environment>
+    <id>kde-mobile-environment</id>
+    <name>KDE Plasma Mobile</name>
+    <description>The KDE Plasma Mobile evnironment includes KDE Plasma Mobile and many Plasma Mobile applications.</description>
+    <display_order>11</display_order>
+    <grouplist>
+      <groupid>core</groupid>
+      <groupid>kde-mobile</groupid>
+      <groupid>kde-mobile-apps</groupid>
+    </grouplist>
+    <optionlist>
+      <groupid default="true">firefox</groupid>
+    </optionlist>
+  </environment>
+  <langpacks>
+    <match install="aspell-%s" name="aspell"/>
+    <match install="mythes-%s" name="mythes"/>
+    <match install="tesseract-langpack-%s" name="tesseract"/>
+  </langpacks>
+</comps>

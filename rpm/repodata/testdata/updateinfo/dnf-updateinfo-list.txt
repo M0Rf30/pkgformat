@@ -1,0 +1,4 @@
+Name                   Type        Severity                           Package              Issued
+FEDORA-2026-7e8f9a0b1c bugfix      None       coreutils-99:9.99-1.fc45.x86_64 2026-09-20 17:05:01
+FEDORA-2026-a0b1c2d3e4 enhancement Low       filesystem-99:3.99-1.fc45.x86_64 2026-08-03 06:00:00
+FEDORA-2026-c3b1d2e4f5 security    Important     bash-99:5.3.99-1.fc45.x86_64 2026-10-15 01:07:46

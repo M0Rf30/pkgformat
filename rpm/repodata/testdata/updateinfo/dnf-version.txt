@@ -1,0 +1,1 @@
+dnf5 version 5.4.7.0

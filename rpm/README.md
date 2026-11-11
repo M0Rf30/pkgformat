@@ -26,7 +26,7 @@ C zstd library to decompress payloads, otherwise a pure Go decoder.
 | [`.../pack`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/pack) | Write packages (`NewRPM`, `AddFile`, `Write`), optionally signed; build a package from a tar |
 | [`.../tag`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/tag) | Header tag numbers and entry types, as in `rpmtag.h` |
 | [`.../cpio`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/cpio) | Read, write and safely extract the cpio payload, including the stripped cpio of format 6 |
-| [`.../repodata`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/repodata) | Write repository metadata (primary, filelists, other, repomd.xml, comps), compress and sign it; read repomd.xml, primary.xml and modules.yaml; merge repositories |
+| [`.../repodata`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/repodata) | Write repository metadata byte for byte as `createrepo_c` does (primary, filelists, filelists-ext, other, repomd.xml with tags, comps, updateinfo, modules.yaml, prestodelta, SQLite databases, AppStream records), compress it (gzip, zstd, xz, zchunk) and sign it; read all of them; merge repositories |
 | [`.../dnf`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/dnf) | Repository client: `.repo` files, mirror failover, verified metadata cache, module filtering, dependency resolution, checked downloads |
 | [`.../rpmdb`](https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/rpmdb) | Read the installed-package database of a system, read only: SQLite (rpm 4.16 and later), ndb (`Packages.db`) and BerkeleyDB hash (`Packages`, rpm 4.15 and earlier) ([README](rpmdb/README.md)) |
 | [`cmd/tar2rpm`](../cmd/tar2rpm) | Command that turns a tar archive into a package |
@@ -130,8 +130,12 @@ if err := rpm.Sign(src, dst, signer); err != nil { // src is an io.ReadSeeker
 
 Publish a repository and consume it (see the examples of `repodata` and `dnf`):
 `repodata.WritePrimaryXML`, `WriteFilelistsXML` and `WriteOtherXML` produce the
-metadata that `createrepo_c` writes, `GenerateRepomdXML` indexes it and
-`SignRepomdXML` signs the index. On the client side `dnf.New(dnf.Options{...})`
+metadata that `createrepo_c` writes (the tests compare it byte for byte with
+its output for a corpus of real packages), `Repomd.Marshal` indexes it (tags,
+header checksums, database versions) and `SignRepomdXML` signs the index.
+`WriteCompsXML`, `WriteUpdateinfoXML`, `WriteDeltaInfoXML`, `WriteSQLite`,
+`NewZchunkWriter` (`Compression` `Zchunk`) and `NewRecord`/`AddRecord`
+(`modifyrepo_c`, AppStream) cover the other metadata types. On the client side `dnf.New(dnf.Options{...})`
 gives `Update` (fetch and verify), `Load` (index), `Resolve` and `Download`;
 nothing about the host is assumed, the repository, cache and variable
 directories and the installed-package list are all options. The `.repo`

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components version="0.16" origin="pkgformat-test">
+  <component type="desktop-application">
+    <id>org.example.Demo</id>
+    <name>Demo</name>
+    <summary>A demo application &amp; its catalog entry</summary>
+    <icon type="cached" width="64" height="64">org.example.Demo.png</icon>
+    <pkgname>edge-min</pkgname>
+  </component>
+</components>

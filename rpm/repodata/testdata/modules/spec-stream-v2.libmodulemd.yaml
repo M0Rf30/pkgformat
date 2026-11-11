@@ -1,0 +1,144 @@
+---
+document: modulemd
+version: 2
+data:
+  name: foo
+  stream: "latest"
+  version: 20160927144203
+  context: c0ffee43
+  arch: x86_64
+  summary: An example module
+  description: >-
+    A module for the demonstration of the metadata format. Also, the obligatory lorem
+    ipsum dolor sit amet goes right here.
+  servicelevels:
+    bug_fixes:
+      eol: 2077-10-23
+    rawhide:
+      eol: 2077-10-23
+    security_fixes:
+      eol: 2077-10-23
+    stable_api:
+      eol: 2077-10-23
+  license:
+    module:
+    - MIT
+    content:
+    - Apache-2.0
+    - GPL-1.0-or-later OR Artistic-1.0-Perl
+  xmd:
+    some_key: some_data
+  dependencies:
+  - buildrequires:
+      platform: [-epel7, -f27, -f28]
+    requires:
+      platform: [-epel7, -f27, -f28]
+  - buildrequires:
+      buildtools: [v1, v2]
+      compatible: [v3]
+      platform: [f27]
+    requires:
+      compatible: [v3, v4]
+      platform: [f27]
+  - buildrequires:
+      platform: [f28]
+    requires:
+      platform: [f28]
+      runtime: [a, b]
+  - buildrequires:
+      extras: []
+      moreextras: [bar, foo]
+      platform: [epel7]
+    requires:
+      extras: []
+      moreextras: [bar, foo]
+      platform: [epel7]
+  references:
+    community: http://www.example.com/
+    documentation: http://www.example.com/
+    tracker: http://www.example.com/
+  profiles:
+    buildroot:
+      rpms:
+      - bar-devel
+    container:
+      rpms:
+      - bar
+      - bar-devel
+    minimal:
+      description: Minimal profile installing only the bar package.
+      rpms:
+      - bar
+    srpm-buildroot:
+      rpms:
+      - bar-extras
+  api:
+    rpms:
+    - bar
+    - bar-devel
+    - bar-extras
+    - baz
+    - xxx
+  filter:
+    rpms:
+    - baz-nonfoo
+  demodularized:
+    rpms:
+    - bar-old
+  buildopts:
+    rpms:
+      macros: >
+        %demomacro 1
+
+        %demomacro2 %{demomacro}23
+      whitelist:
+      - fooscl-1-bar
+      - fooscl-1-baz
+      - xxx
+      - xyz
+    arches: [i686, x86_64]
+  components:
+    rpms:
+      bar:
+        rationale: We need this to demonstrate stuff.
+        name: bar-real
+        repository: https://pagure.io/bar.git
+        cache: https://example.com/cache
+        ref: 26ca0c0
+      baz:
+        rationale: Demonstrate updating the buildroot contents.
+        buildroot: true
+        srpm-buildroot: true
+        buildorder: -1
+      xxx:
+        rationale: xxx demonstrates arches and multilib.
+        arches: [i686, x86_64]
+        multilib: [x86_64]
+      xyz:
+        rationale: xyz is a bundled dependency of xxx.
+        buildorder: 10
+    modules:
+      includedmodule:
+        rationale: Included in the stack, just because.
+        repository: https://pagure.io/includedmodule.git
+        ref: somecoolbranchname
+        buildorder: 100
+  artifacts:
+    rpms:
+    - bar-0:1.23-1.module_deadbeef.x86_64
+    - bar-devel-0:1.23-1.module_deadbeef.x86_64
+    - bar-extras-0:1.23-1.module_deadbeef.x86_64
+    - baz-0:42-42.module_deadbeef.x86_64
+    - xxx-0:1-1.module_deadbeef.i686
+    - xxx-0:1-1.module_deadbeef.x86_64
+    - xyz-0:1-1.module_deadbeef.x86_64
+    rpm-map:
+      sha256:
+        ee47083ed80146eb2c84e9a94d0836393912185dcda62b9d93ee0c2ea5dc795b:
+          name: bar
+          epoch: 0
+          version: "1.23"
+          release: 1.module_deadbeef
+          arch: x86_64
+          nevra: bar-0:1.23-1.module_deadbeef.x86_64
+...

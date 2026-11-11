@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updates>
+  <update from="updates@fedoraproject.org" status="stable" type="security" version="2.0">
+    <id>FEDORA-2026-1f3a9c0b52</id>
+    <title>hello-test-1.0.0-1.fc45</title>
+    <issued date="2026-03-13 21:14:55"/>
+    <updated date="2026-03-22 00:52:45"/>
+    <rights>Copyright (C) 2026 Red Hat, Inc. and others.</rights>
+    <release>Fedora 45</release>
+    <severity>Important</severity>
+    <summary>hello-test-1.0.0-1.fc45 security update</summary>
+    <description>Fix a heap overflow in the greeting parser (CVE-2026-0001).
+
+The parser trusted the length of a &lt;greeting&gt; &amp; wrote past the buffer.</description>
+    <reboot_suggested>True</reboot_suggested>
+    <references>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2400001" id="2400001" type="bugzilla" title="CVE-2026-0001 hello-test: heap overflow in the greeting parser"/>
+      <reference href="https://bodhi.fedoraproject.org/updates/FEDORA-2026-1f3a9c0b52" id="FEDORA-2026-1f3a9c0b52" type="self" title="FEDORA-2026-1f3a9c0b52"/>
+    </references>
+    <pkglist>
+      <collection short="F45">
+        <name>Fedora 45</name>
+        <package name="hello-test" version="1.0.0" release="1" epoch="0" arch="noarch" src="https://download.fedoraproject.org/pub/fedora/linux/updates/45/SRPMS/h/hello-test-1.0.0-1.fc45.src.rpm">
+          <filename>hello-test-1.0.0-1.noarch.rpm</filename>
+          <sum type="sha256">48131ebba95c88df0e452931707a42dfdfd0c3c2832522c1c686a82449d45dab</sum>
+          <reboot_suggested>True</reboot_suggested>
+          <restart_suggested>True</restart_suggested>
+          <relogin_suggested>True</relogin_suggested>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="releng@rockylinux.org" status="final" type="bugfix" version="2">
+    <id>RLBA-2026:0001</id>
+    <title>files-test and weakdep-test bug fix update</title>
+    <issued date="2026-01-20 09:30:00"/>
+    <updated date="2026-02-02 12:00:00"/>
+    <rights>Copyright 2026 Rocky Enterprise Software Foundation. © Red Hat, Inc.</rights>
+    <release>Rocky Linux 9</release>
+    <pushcount>1</pushcount>
+    <severity>None</severity>
+    <summary>An update is available for files-test and weakdep-test.</summary>
+    <description>Both packages were rebuilt with the new macros.
+  * files-test ships the missing directory
+  * weakdep-test keeps its weak dependencies</description>
+    <solution>Update the packages with dnf update.</solution>
+    <references>
+      <reference href="https://errata.rockylinux.org/RLBA-2026:0001" id="RLBA-2026:0001" type="self" title="RLBA-2026:0001"/>
+    </references>
+    <pkglist>
+      <collection short="rocky-linux-9-x86-64-baseos-rpms">
+        <name>rocky-linux-9-x86-64-baseos-rpms</name>
+        <package name="files-test" version="2.1" release="3" epoch="0" arch="noarch" src="files-test-2.1-3.src.rpm">
+          <filename>files-test-2.1-3.noarch.rpm</filename>
+          <sum type="sha256">9ce47f4720a1d2348899eb9d6baf4f4f89fbb2d69d800bfc030046f28f497481</sum>
+        </package>
+        <package name="weakdep-test" version="1.0" release="1" epoch="1" arch="noarch" src="weakdep-test-1.0-1.src.rpm">
+          <filename>weakdep-test-1.0-1.noarch.rpm</filename>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="releng@rockylinux.org" status="final" type="security" version="2">
+    <id>RLSA-2026:0002</id>
+    <title>Moderate: nodejs:20 security update</title>
+    <issued date="2026-04-01 08:00:00"/>
+    <rights>Copyright 2026 Rocky Enterprise Software Foundation.</rights>
+    <release>Rocky Linux 9</release>
+    <pushcount>2</pushcount>
+    <severity>Moderate</severity>
+    <summary>An update for the nodejs:20 module is available.</summary>
+    <description>Security fix for the nodejs:20 module stream.</description>
+    <references>
+      <reference href="https://access.redhat.com/security/cve/CVE-2026-0002" id="CVE-2026-0002" type="cve" title="CVE-2026-0002"/>
+    </references>
+    <pkglist>
+      <collection short="rocky-linux-9-x86-64-appstream-rpms">
+        <name>rocky-linux-9-x86-64-appstream-rpms</name>
+        <module name="nodejs" stream="20" version="9060020260401080000" context="rhel9" arch="x86_64"/>
+        <package name="nodejs" version="20.11.1" release="1.module+el9.6.0+1+abcdef01" epoch="1" arch="x86_64" src="nodejs-20.11.1-1.module+el9.6.0+1+abcdef01.src.rpm">
+          <filename>nodejs-20.11.1-1.module+el9.6.0+1+abcdef01.x86_64.rpm</filename>
+        </package>
+      </collection>
+      <collection short="empty">
+        <name>A collection without packages</name>
+      </collection>
+    </pkglist>
+  </update>
+  <update>
+    <id>BARE-1</id>
+    <references/>
+    <pkglist/>
+  </update>
+</updates>

@@ -1,0 +1,81 @@
+<updates>
+  <update from="releng@rockylinux.org" status="final" type="bugfix" version="2">
+    <id>RLBA-2022:7404</id>
+    <title>tzdata bug fix and enhancement update</title>
+    <issued date="2022-11-03 09:19:42" />
+    <updated date="2023-02-02 12:53:50" />
+    <rights>Copyright 2026 Rocky Enterprise Software Foundation. Advisory content derived from Red Hat RHBA-2022:7404 (https://access.redhat.com/errata/RHBA-2022:7404), © Red Hat, Inc., used under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), with modifications.</rights>
+    <release>Rocky Linux 9</release>
+    <pushcount>1</pushcount>
+    <severity>None</severity>
+    <summary>An update is available for tzdata.
+This update affects Rocky Linux 8, Rocky Linux 9.
+A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list</summary>
+    <description>The tzdata packages contain data files with rules for various time zones.
+
+The tzdata packages have been updated to version 2022f, which addresses recent
+time zone changes. Notably: 
+
+  * Mexico will stop observing daylight saving time (DST) except near the border with the United Stated of America.
+
+  * Chihuahua moved to the time offset of -06:00 from the coordinated universal time (UTC) permanently starting on October 30 2022.
+
+  * Fiji no longer observes daylight saving time (DST).</description>
+    <solution />
+    <references>
+      <reference href="https://errata.rockylinux.org/RLBA-2022:7404" id="RLBA-2022:7404" type="self" title="RLBA-2022:7404" />
+      <reference href="https://access.redhat.com/errata/RHBA-2022:7404" id="RHBA-2022:7404" type="vendor" title="Red Hat RHBA-2022:7404" />
+      <reference href="https://creativecommons.org/licenses/by/4.0/" id="CC-BY-4.0" type="other" title="License: CC-BY-4.0" />
+    </references>
+    <pkglist>
+      <collection short="rocky-linux-9-x86-64-baseos-rpms">
+        <name>rocky-linux-9-x86-64-baseos-rpms</name>
+        <package name="tzdata" arch="noarch" epoch="0" version="2022f" release="1.el8" src="tzdata-2022f-1.el8.src.rpm">
+          <filename>tzdata-2022f-1.el8.noarch.rpm</filename>
+          <sum type="sha256">b20056db1d142973b6991fe5621d9d75b36c6af06351c50000143abf156d0c06</sum>
+        </package>
+        <package name="tzdata" arch="noarch" epoch="0" version="2022f" release="1.el9_0" src="tzdata-2022f-1.el8.src.rpm">
+          <filename>tzdata-2022f-1.el9_0.noarch.rpm</filename>
+          <sum type="sha256">da66be8719af463ead916afb64b8c8dd807838e626560a11bc3c18690ff29f19</sum>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="releng@rockylinux.org" status="final" type="security" version="2">
+    <id>RLSA-2022:6602</id>
+    <title>Moderate: gnupg2 security update</title>
+    <issued date="2022-09-20 11:39:20" />
+    <updated date="2023-02-02 13:56:33" />
+    <rights>Copyright 2026 Rocky Enterprise Software Foundation. Advisory content derived from Red Hat RHSA-2022:6602 (https://access.redhat.com/errata/RHSA-2022:6602), © Red Hat, Inc., used under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), with modifications.</rights>
+    <release>Rocky Linux 9</release>
+    <pushcount>1</pushcount>
+    <severity>Moderate</severity>
+    <summary>An update is available for gnupg2.
+This update affects Rocky Linux 9.
+A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list</summary>
+    <description>The GNU Privacy Guard (GnuPG or GPG) is a tool for encrypting data and creating digital signatures, compliant with OpenPGP and S/MIME standards.
+
+Security Fix(es):
+
+* gpg: Signature spoofing via status line injection (CVE-2022-34903)
+
+For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.</description>
+    <solution />
+    <references>
+      <reference href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-34903" id="CVE-2022-34903" type="cve" title="CVE-2022-34903" />
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2102868" id="2102868" type="bugzilla" title="" />
+      <reference href="https://errata.rockylinux.org/RLSA-2022:6602" id="RLSA-2022:6602" type="self" title="RLSA-2022:6602" />
+      <reference href="https://access.redhat.com/errata/RHSA-2022:6602" id="RHSA-2022:6602" type="vendor" title="Red Hat RHSA-2022:6602" />
+      <reference href="https://creativecommons.org/licenses/by/4.0/" id="CC-BY-4.0" type="other" title="License: CC-BY-4.0" />
+    </references>
+    <pkglist>
+      <collection short="rocky-linux-9-x86-64-baseos-rpms">
+        <name>rocky-linux-9-x86-64-baseos-rpms</name>
+        <package name="gnupg2" arch="x86_64" epoch="0" version="2.3.3" release="2.el9_0" src="gnupg2-2.3.3-2.el9_0.src.rpm">
+          <filename>gnupg2-2.3.3-2.el9_0.x86_64.rpm</filename>
+          <sum type="sha256">ac9e8c035ce0b851d1cf9d959c74d80460d82610d5705e8e9c4496cc7578a093</sum>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+</updates>

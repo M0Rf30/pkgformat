@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components version="0.16" origin="pkgformat-test">
+  <component type="desktop-application">
+    <id>org.example.Other</id>
+    <name>Other</name>
+    <pkgname>edge-min</pkgname>
+  </component>
+</components>
