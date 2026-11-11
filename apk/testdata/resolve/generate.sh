@@ -7,7 +7,7 @@
 #
 #   ./generate.sh [name-prefix]      (default: every case)
 #
-# main.index and edge.index are APKINDEX texts kept by hand from
+# main.index and edge.index are APKINDEX texts made by mkidx.py from
 # main.universe and edge.universe (one line per package); the checksums are
 # SHA-1 of name and version in the canonical base64 form apk requires.
 #
@@ -21,6 +21,9 @@ cd "$(dirname "$0")"
 engine=${ENGINE:-$(command -v podman || command -v docker)}
 image=${IMAGE:-docker.io/library/alpine:3.24}
 prefix=${1:-}
+
+python3 mkidx.py main.universe > main.index
+python3 mkidx.py edge.universe > edge.index
 
 rm -rf expected.tmp
 mkdir expected.tmp

@@ -4,7 +4,7 @@ The solver is checked against `apk add --simulate` / `apk upgrade --simulate`
 (apk-tools 3.0.8 in an `alpine:3.24` container).
 
 * `main.universe`, `edge.universe` are hand-written package lists (one line each);
-  `main.index`, `edge.index` are the APKINDEX texts made from them, with unique
+  `main.index`, `edge.index` are the APKINDEX texts `mkidx.py` makes from them (`generate.sh` runs it), with unique
   SHA-1 based `C:` values. The second repository is tagged `@edge`.
 * `cases.txt` has 59 cases (installed packages, world, command); `generate.sh`
   replays each one and writes `expected/<case>`: the sorted install/upgrade/
