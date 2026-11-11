@@ -1,0 +1,4 @@
+usr|d|755|0|0|4096|||3|
+usr/sbin|d|755|0|0|4096|||2|
+usr/sbin/capsh|f|755|0|0|46088||8f6c565efad1abb0638bd53d6a849f677fb2feeb1e8215cde1e6d162b8e437dc|1|
+usr/sbin/getpcaps|f|755|0|0|14248||88a8f54f644b49ad96da98c53cb781d3ed72747dfdd7e739a191c0c39913c487|1|

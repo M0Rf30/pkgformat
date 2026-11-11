@@ -28,8 +28,8 @@ var (
 
 // Defaults of the limits of [ExtractOptions].
 const (
-	DefaultMaxExtractBytes int64 = 16 << 30
-	DefaultMaxExtractEntries     = 1 << 20
+	DefaultMaxExtractBytes   int64 = 16 << 30
+	DefaultMaxExtractEntries       = 1 << 20
 )
 
 // ExtractOptions tunes [Archive.Extract]. The zero value extracts regular
@@ -70,6 +70,12 @@ func (a *Archive) Extract(dir string, opts ExtractOptions) error {
 
 	if opts.MaxEntries <= 0 {
 		opts.MaxEntries = DefaultMaxExtractEntries
+	}
+
+	if info, err := os.Stat(dir); err != nil {
+		return fmt.Errorf("apk: extraction directory: %w", err)
+	} else if !info.IsDir() {
+		return fmt.Errorf("apk: extraction directory %q is not a directory", short(dir))
 	}
 
 	x := &extractor{dir: dir, opts: opts, left: opts.MaxBytes}
@@ -182,16 +188,16 @@ func (x *extractor) mode(e *Entry) fs.FileMode {
 
 // prepare creates the parent directory of target and removes what is there.
 func (x *extractor) prepare(e *Entry, target string) error {
-	if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil { //nolint:gosec // the path was confined to the extraction directory by safepath
 		return fmt.Errorf("apk: creating directory for %q: %w", short(e.Name), err)
 	}
 
-	if info, err := os.Lstat(target); err == nil {
+	if info, err := os.Lstat(target); err == nil { //nolint:gosec // the path was confined to the extraction directory by safepath
 		if info.IsDir() {
 			return fmt.Errorf("%w: %q replaces a directory", ErrUnsafeEntry, short(e.Name))
 		}
 
-		if err := os.Remove(target); err != nil {
+		if err := os.Remove(target); err != nil { //nolint:gosec // the path was confined to the extraction directory by safepath
 			return fmt.Errorf("apk: replacing %q: %w", short(e.Name), err)
 		}
 	}
@@ -207,7 +213,7 @@ func (x *extractor) dir1(e *Entry) error {
 
 	// The owner keeps full access until the content is in; the real mode is
 	// applied by finishDirs.
-	if err := os.MkdirAll(target, 0o700); err != nil {
+	if err := os.MkdirAll(target, 0o700); err != nil { //nolint:gosec // the path was confined to the extraction directory by safepath
 		return fmt.Errorf("apk: creating directory %q: %w", short(e.Name), err)
 	}
 
@@ -256,7 +262,7 @@ func (x *extractor) file(e *Entry, content io.Reader) error {
 		return err
 	}
 
-	out, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	out, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600) //nolint:gosec // the path was confined to the extraction directory by safepath
 	if err != nil {
 		return fmt.Errorf("apk: creating %q: %w", short(e.Name), err)
 	}
@@ -269,7 +275,7 @@ func (x *extractor) file(e *Entry, content io.Reader) error {
 	}
 
 	if copyErr != nil {
-		_ = os.Remove(target)
+		_ = os.Remove(target) //nolint:gosec // the path was confined to the extraction directory by safepath
 
 		return fmt.Errorf("apk: writing %q: %w", short(e.Name), copyErr)
 	}
@@ -288,7 +294,7 @@ func (x *extractor) finishFile(e *Entry, target string) error {
 	}
 
 	// chmod after chown: chown clears setuid and setgid.
-	if err := os.Chmod(target, x.mode(e)); err != nil {
+	if err := os.Chmod(target, x.mode(e)); err != nil { //nolint:gosec // the path was confined to the extraction directory by safepath
 		return fmt.Errorf("apk: setting the mode of %q: %w", short(e.Name), err)
 	}
 
@@ -339,7 +345,7 @@ func (x *extractor) hardlink(e *Entry) error {
 		return err
 	}
 
-	info, err := os.Lstat(source)
+	info, err := os.Lstat(source) //nolint:gosec // the path was confined to the extraction directory by safepath
 	if err != nil || !info.Mode().IsRegular() {
 		return fmt.Errorf("%w: hard link %q: %q is not an extracted regular file",
 			ErrUnsafeEntry, short(e.Name), short(e.LinkTarget))
