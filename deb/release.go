@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"hash"
 	"io"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -91,8 +92,71 @@ type Release struct {
 	Architectures []string
 	Components    []string
 	Description   string
+	// NotAutomatic ("NotAutomatic: yes") marks a repository whose packages must
+	// not be installed or upgraded to without an explicit request (pin
+	// priority 1); with ButAutomaticUpgrades the installed ones are upgraded
+	// (pin priority 100).
+	NotAutomatic, ButAutomaticUpgrades bool
+	// AcquireByHash ("Acquire-By-Hash: yes") says the by-hash tree (see
+	// ByHashPath) of the repository is complete: a client fetches the indexes
+	// by their digest and is immune to a repository that is updated while it
+	// downloads.
+	AcquireByHash bool
+	// SignedBy is the Signed-By field: the fingerprints of the keys that may
+	// sign the repository, which a client may enforce. It may span lines.
+	SignedBy string
+	// NoSupportForArchitectureAll is the "No-Support-for-Architecture-all"
+	// field: "Packages" says the architecture-specific Packages indexes do not
+	// carry the architecture all packages and apt must fetch the
+	// binary-all index.
+	NoSupportForArchitectureAll string
+	// Changelogs is the Changelogs field: the URL template of the changelog
+	// server, or "no".
+	Changelogs string
+	// Snapshots is the Snapshots field: the URL template of the snapshot
+	// service of the archive.
+	Snapshots string
+	// Extra holds the fields the type has no member for, by name as written,
+	// so that a Release read and marshalled again loses none.
+	Extra map[string]string
 	// Files lists the index files by Path, relative to dists/<dist>/.
 	Files map[string]FileInfo
+}
+
+// releaseKnownFields are the header fields of a Release the type models,
+// together with the checksum sections.
+var releaseKnownFields = []string{
+	"Origin", "Label", "Suite", "Version", "Codename", "Date", "Valid-Until",
+	"NotAutomatic", "ButAutomaticUpgrades", "Acquire-By-Hash", "Signed-By",
+	"No-Support-for-Architecture-all", "Changelogs", "Snapshots",
+	"Architectures", "Components", "Description",
+	"MD5Sum", "SHA1", "SHA256", "SHA512",
+}
+
+// ParseBool reads the boolean spellings apt accepts in Release files and
+// configuration: yes, true, with, on, enable and 1 are true; no, false,
+// without, off, disable and 0 are false. ok is false for anything else.
+func ParseBool(s string) (value, ok bool) {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "yes", "true", "with", "on", "enable", "1":
+		return true, true
+	case "no", "false", "without", "off", "disable", "0":
+		return false, true
+	}
+
+	return false, false
+}
+
+func boolField(cf *ControlFile, names ...string) bool {
+	for _, n := range names {
+		if v, ok := cf.Lookup(n); ok {
+			b, _ := ParseBool(v)
+
+			return b
+		}
+	}
+
+	return false
 }
 
 // AddFile records a file in the listing.
@@ -130,44 +194,97 @@ func (r *Release) Marshal() []byte {
 		field("Valid-Until", r.ValidUntil.UTC().Format(releaseDateFormat))
 	}
 
+	yes := func(name string, v bool) {
+		if v {
+			writeField(&sb, name, "yes")
+		}
+	}
+
+	yes("NotAutomatic", r.NotAutomatic)
+	yes("ButAutomaticUpgrades", r.ButAutomaticUpgrades)
+	yes("Acquire-By-Hash", r.AcquireByHash)
+	field("Signed-By", r.SignedBy)
+	field("No-Support-for-Architecture-all", r.NoSupportForArchitectureAll)
+	field("Changelogs", r.Changelogs)
+	field("Snapshots", r.Snapshots)
 	field("Architectures", strings.Join(r.Architectures, " "))
 	field("Components", strings.Join(r.Components, " "))
 	field("Description", r.Description)
 
-	paths := make([]string, 0, len(r.Files))
-	for p := range r.Files {
+	extra := make([]string, 0, len(r.Extra))
+
+	for k := range r.Extra {
+		if !isReleaseKnownField(k) {
+			extra = append(extra, k)
+		}
+	}
+
+	sort.Strings(extra)
+
+	for _, k := range extra {
+		field(k, r.Extra[k])
+	}
+
+	writeSections(&sb, r.Files)
+
+	return []byte(sb.String())
+}
+
+func isReleaseKnownField(name string) bool {
+	return slices.ContainsFunc(releaseKnownFields, func(k string) bool { return strings.EqualFold(k, name) })
+}
+
+// sectionSpecs lists the checksum sections of a Release (and of the other
+// indexes that list files: i18n/Index) with the digest each reads and writes.
+func sectionSpecs() []struct {
+	field  string
+	length int
+	get    func(FileInfo) string
+	set    func(*FileInfo, string)
+} {
+	return []struct {
+		field  string
+		length int
+		get    func(FileInfo) string
+		set    func(*FileInfo, string)
+	}{
+		{"MD5Sum", md5.Size, func(f FileInfo) string { return f.MD5sum }, func(f *FileInfo, h string) { f.MD5sum = h }},
+		{"SHA1", sha1.Size, func(f FileInfo) string { return f.SHA1 }, func(f *FileInfo, h string) { f.SHA1 = h }},
+		{"SHA256", sha256.Size, func(f FileInfo) string { return f.SHA256 }, func(f *FileInfo, h string) { f.SHA256 = h }},
+		{"SHA512", sha512.Size, func(f FileInfo) string { return f.SHA512 }, func(f *FileInfo, h string) { f.SHA512 = h }},
+	}
+}
+
+// writeSections writes the MD5Sum, SHA1, SHA256 and SHA512 sections for files,
+// by path, with only the digests each has.
+func writeSections(sb *strings.Builder, files map[string]FileInfo) {
+	paths := make([]string, 0, len(files))
+	for p := range files {
 		paths = append(paths, p)
 	}
 
 	sort.Strings(paths)
 
-	section := func(name string, digest func(FileInfo) string) {
+	for _, spec := range sectionSpecs() {
 		var any bool
 
 		for _, p := range paths {
-			fi := r.Files[p]
+			fi := files[p]
 
-			d := digest(fi)
+			d := spec.get(fi)
 			if d == "" {
 				continue
 			}
 
 			if !any {
-				sb.WriteString(name + ":\n")
+				sb.WriteString(spec.field + ":\n")
 
 				any = true
 			}
 
-			fmt.Fprintf(&sb, " %s %10d %s\n", d, fi.Size, p)
+			fmt.Fprintf(sb, " %s %10d %s\n", d, fi.Size, p)
 		}
 	}
-
-	section("MD5Sum", func(f FileInfo) string { return f.MD5sum })
-	section("SHA1", func(f FileInfo) string { return f.SHA1 })
-	section("SHA256", func(f FileInfo) string { return f.SHA256 })
-	section("SHA512", func(f FileInfo) string { return f.SHA512 })
-
-	return []byte(sb.String())
 }
 
 // ParseRelease parses a Release or InRelease document. A clear-signed
@@ -200,19 +317,30 @@ func ParseRelease(data []byte) (*Release, error) {
 		Date:          parseReleaseTime(cf.Get("Date")),
 		ValidUntil:    parseReleaseTime(cf.Get("Valid-Until")),
 		Files:         make(map[string]FileInfo),
+
+		NotAutomatic:                boolField(cf, "NotAutomatic", "Not-Automatic"),
+		ButAutomaticUpgrades:        boolField(cf, "ButAutomaticUpgrades"),
+		AcquireByHash:               boolField(cf, "Acquire-By-Hash"),
+		SignedBy:                    cf.Get("Signed-By"),
+		NoSupportForArchitectureAll: cf.Get("No-Support-for-Architecture-all"),
+		Changelogs:                  cf.Get("Changelogs"),
+		Snapshots:                   cf.Get("Snapshots"),
 	}
 
-	for _, sec := range []struct {
-		field  string
-		length int
-		set    func(*FileInfo, string)
-	}{
-		{"MD5Sum", md5.Size, func(f *FileInfo, h string) { f.MD5sum = h }},
-		{"SHA1", sha1.Size, func(f *FileInfo, h string) { f.SHA1 = h }},
-		{"SHA256", sha256.Size, func(f *FileInfo, h string) { f.SHA256 = h }},
-		{"SHA512", sha512.Size, func(f *FileInfo, h string) { f.SHA512 = h }},
-	} {
-		if err := rel.addSection(cf.Get(sec.field), sec.length, sec.set); err != nil {
+	for _, name := range cf.Order {
+		if isReleaseKnownField(name) || strings.EqualFold(name, "Not-Automatic") {
+			continue
+		}
+
+		if rel.Extra == nil {
+			rel.Extra = make(map[string]string)
+		}
+
+		rel.Extra[name] = cf.Fields[name]
+	}
+
+	for _, sec := range sectionSpecs() {
+		if err := addSection(rel.Files, cf.Get(sec.field), sec.length, sec.set); err != nil {
 			return nil, fmt.Errorf("%s: %w", sec.field, err)
 		}
 	}
@@ -220,8 +348,8 @@ func ParseRelease(data []byte) (*Release, error) {
 	return rel, nil
 }
 
-// addSection merges the lines of one checksum section into r.Files.
-func (r *Release) addSection(value string, hashLen int, set func(*FileInfo, string)) error {
+// addSection merges the lines of one checksum section into files.
+func addSection(files map[string]FileInfo, value string, hashLen int, set func(*FileInfo, string)) error {
 	for line := range strings.SplitSeq(value, "\n") {
 		fields := strings.Fields(line)
 		if len(fields) != 3 {
@@ -243,18 +371,18 @@ func (r *Release) addSection(value string, hashLen int, set func(*FileInfo, stri
 			return fmt.Errorf("%w: unsafe path %q", ErrInvalidRelease, path)
 		}
 
-		fi, seen := r.Files[path]
+		fi, seen := files[path]
 		if seen && fi.Size != size {
 			return fmt.Errorf("%w: sections disagree on the size of %q", ErrInvalidRelease, path)
 		}
 
-		if !seen && len(r.Files) >= maxReleaseFiles {
+		if !seen && len(files) >= maxReleaseFiles {
 			return fmt.Errorf("%w: more than %d files", ErrTooLarge, maxReleaseFiles)
 		}
 
 		fi.Path, fi.Size = path, size
 		set(&fi, strings.ToLower(sum))
-		r.Files[path] = fi
+		files[path] = fi
 	}
 
 	return nil
