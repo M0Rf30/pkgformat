@@ -2,7 +2,6 @@ package rpm
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 
@@ -12,10 +11,6 @@ import (
 	"github.com/M0Rf30/pkgformat/gpg"
 	"github.com/M0Rf30/pkgformat/rpm/tag"
 )
-
-// ErrKeyNotSupported means the signer cannot expose a private key to sign
-// packages with.
-var ErrKeyNotSupported = errors.New("rpm: signer cannot sign packages")
 
 // KeyHolder is implemented by signers that hold their private key locally,
 // such as [gpg.LocalSigner].
