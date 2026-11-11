@@ -1,0 +1,35 @@
+#%SCHEMA: 676B6370
+# ADB block, size: 288, compat: 0, ver: 0
+info:
+  name: signed
+  version: 1.0-r0
+  hashes: 57a7df19d4c4efe2f00e3b4826610a82fa453cf2
+  arch: x86_64
+  build-time: 1700000000
+  installed-size: 4
+paths: # 3 items
+  - acl:
+      mode: 0755
+      user: root
+      group: root
+  - name: usr
+    acl:
+      mode: 0755
+      user: root
+      group: root
+  - name: usr/bin
+    acl:
+      mode: 0755
+      user: root
+      group: root
+    files: # 1 items
+      - name: one
+        acl:
+          mode: 0755
+          user: root
+          group: root
+        size: 4
+        mtime: 1700000000
+        hash: 2c8b08da5ce60398e1f19af0e5dccc744df274b826abe585eaba68c525434806
+# sig v00 h04 4981c39fe34f0b7326c3de7c05512f0f304602210082a97c8fc4090b0d7b6fe0a435529098861edba4afb44e005c84581557acbb0002..: UNTRUSTED signature
+# data block, size: 12

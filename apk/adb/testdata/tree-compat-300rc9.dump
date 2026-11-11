@@ -1,0 +1,119 @@
+#%SCHEMA: 676B6370
+# ADB block, size: 1016, compat: 0, ver: 0
+info:
+  name: tree
+  version: 1.0-r0
+  hashes: 93829597020c14900e3cf2bf2e945b1440013449
+  description: Fixture with every kind of entry
+  arch: x86_64
+  license: MIT
+  build-time: 1700000000
+  installed-size: 100036
+paths: # 6 items
+  - acl:
+      mode: 0755
+      user: root
+      group: root
+    files: # 1 items
+      - name: README
+        acl:
+          mode: 0644
+          user: root
+          group: root
+        size: 7
+        mtime: 1700000000
+        hash: 00d75b5176b48ccc71d91bcc1d7b90fc2820429b1629b77fd1d5f4c5dcee4f6d
+  - name: etc
+    acl:
+      mode: 0755
+      user: root
+      group: root
+    files: # 3 items
+      - name: app.conf
+        acl:
+          mode: 0644
+          user: root
+          group: root
+          xattrs: # 1 items
+            - user.fixture=7631
+        size: 5
+        mtime: 1700000000
+        hash: 8d0d4c8a1e6ab75ae2f81abf1e1e66ce1ab7be53c7b8f245a41907fc45b3a801
+      - name: app.conf.hard
+        acl:
+          mode: 0644
+          user: root
+          group: root
+          xattrs: # 1 items
+            - user.fixture=7631
+        size: 5
+        mtime: 1700000000
+        hash: 8d0d4c8a1e6ab75ae2f81abf1e1e66ce1ab7be53c7b8f245a41907fc45b3a801
+        target: 00806574632f6170702e636f6e66
+      - name: empty
+        acl:
+          mode: 0600
+          user: root
+          group: root
+        size: 0
+        mtime: 1700000000
+        hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  - name: usr/bin
+    acl:
+      mode: 0755
+      user: root
+      group: root
+    files: # 3 items
+      - name: hello
+        acl:
+          mode: 0755
+          user: root
+          group: root
+        size: 21
+        mtime: 1700000000
+        hash: bfdeaeb08cffb6a36438bcd12dda25417e3cdd36f1e7e482a2849d539225288b
+      - name: hi
+        acl:
+          mode: 0777
+          user: root
+          group: root
+        size: 5
+        mtime: 1700000000
+        target: 00a068656c6c6f
+      - name: su
+        acl:
+          mode: 04755
+          user: root
+          group: root
+        size: 3
+        mtime: 1700000000
+        hash: d928f50882dafa9d44254d694a9c1a6d56e9aaae3d5ecb39d82cbaaad56b2a9e
+  - name: usr/share/doc/tree
+    acl:
+      mode: 0755
+      user: root
+      group: root
+    files: # 1 items
+      - name: big
+        acl:
+          mode: 0644
+          user: root
+          group: root
+        size: 100000
+        mtime: 1700000000
+        hash: d69e68988157833272305aaf21f453c800346e8a3640db6578e260215542e5d4
+  - name: var/empty
+    acl:
+      mode: 0700
+      user: root
+      group: root
+  - name: var/lib/app/state
+    acl:
+      mode: 0755
+      user: root
+      group: root
+# data block, size: 15
+# data block, size: 13
+# data block, size: 29
+# data block, size: 11
+# data block, size: 100008

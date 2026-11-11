@@ -1,0 +1,60 @@
+#%SCHEMA: 78646E69
+# ADB block, size: 1052, compat: 0, ver: 0
+description: fixture index
+packages: # 3 items
+  - name: full
+    version: 1.2.3_rc1-r4
+    hashes: bb8b17a1236100ae7cf942860a2a188e50e888b694ef6d435603dac98f480520
+    description: Full test
+    arch: x86_64
+    license: MIT BSD-2-Clause
+    origin: fullorigin
+    maintainer: A B <a@b.c>
+    url: https://example.org
+    repo-commit: 0123456789abcdef0123456789abcdef01234567
+    build-time: 1700000000
+    installed-size: 4
+    file-size: 720
+    provider-priority: 10
+    depends: # 8 items
+      - bar<2
+      - baz<=3
+      - busybox>=1.0
+      - '!conflicting'
+      - foo~1.2
+      - quux=5
+      - qux>4
+      - so:libc.musl-x86_64.so.1
+    provides: # 2 items
+      - cmd:full=1.2.3-r4
+      - virt
+    replaces: # 1 items
+      - other
+    install-if: # 2 items
+      - bar
+      - foo=1
+    recommends: # 2 items
+      - rec1
+      - rec2
+    layer: 1
+    tags: # 2 items
+      - b
+      - a
+  - name: minimal
+    version: 1.0-r0
+    hashes: 0996b176f6177a10ba0a150e0ce51b0c15755bce614b0cdd573392bcc59533f1
+    arch: x86_64
+    build-time: 1700000000
+    installed-size: 0
+    file-size: 102
+  - name: tree
+    version: 1.0-r0
+    hashes: 92710fc764cc756138ba8f67af090c965fa64c6e7fc33531f938107542b61fdf
+    description: Fixture with every kind of entry
+    arch: x86_64
+    license: MIT
+    build-time: 1700000000
+    installed-size: 100036
+    file-size: 1084
+pkgname-spec: ${name}-${version}.apk
+# sig v00 h04 669b3db9670bcda9564151d7df097f7503df985850634dc7f3bc36e4b582bbcb45773cb4f0fa548bf4320b41b0d7b1957308cd9f81c0..: UNTRUSTED signature
