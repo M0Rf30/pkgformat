@@ -1,0 +1,15 @@
+# id	apt-get arguments
+p01	install pn1
+p02	install pn2
+p03	install pn3
+p04	install pn4
+p05	install dep-pn4
+p06	install gp-one
+p07	install dep-gp
+p08	install dep-pn1
+p09	install dep-pn1-old
+p10	upgrade
+p11	dist-upgrade
+p12	install pn5
+p13	install conf-pn
+p14	install pn1=3.0

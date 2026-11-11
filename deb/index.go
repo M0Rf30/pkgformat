@@ -203,7 +203,17 @@ func ControlFieldsToStore(fields map[string]string) map[string]string {
 
 // FormatPackagesEntry renders a complete Packages stanza, terminated by a
 // blank line, for the entry.
-func FormatPackagesEntry(e IndexEntry) string {
+func FormatPackagesEntry(e IndexEntry) string { return formatPackagesEntry(e, false) }
+
+// FormatPackagesEntryShort renders the stanza the way a repository that
+// publishes Translation files does (apt-ftparchive with LongDescription
+// false): the Description field holds the short description only, and a
+// Description-md5 field keys the full one, which IndexEntry.TranslationEntry
+// puts in Translation-en. An entry without a description is rendered as by
+// FormatPackagesEntry.
+func FormatPackagesEntryShort(e IndexEntry) string { return formatPackagesEntry(e, true) }
+
+func formatPackagesEntry(e IndexEntry, short bool) string {
 	var sb strings.Builder
 
 	fields := canonicalFields(e.Control)
@@ -237,7 +247,7 @@ func FormatPackagesEntry(e IndexEntry) string {
 	extra := make([]string, 0)
 
 	for k := range fields {
-		if !slices.Contains(known, k) && !isOwnedField(k) {
+		if !slices.Contains(known, k) && !isOwnedField(k) && (!short || !strings.EqualFold(k, "Description-md5")) {
 			extra = append(extra, k)
 		}
 	}
@@ -254,7 +264,13 @@ func FormatPackagesEntry(e IndexEntry) string {
 	write("SHA1", e.SHA1)
 	write("SHA256", e.SHA256)
 	write("SHA512", e.SHA512)
-	write("Description", fields["Description"])
+	if desc := fields["Description"]; short && desc != "" {
+		write("Description", ShortDescription(desc))
+		write("Description-md5", DescriptionMD5(desc))
+	} else {
+		write("Description", desc)
+	}
+
 	sb.WriteString("\n")
 
 	return sb.String()

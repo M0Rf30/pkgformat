@@ -1,0 +1,15 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: keyring-test
+Suite: stable
+Codename: stable
+Date: Sat, 01 Jan 2022 00:00:00 UTC
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQTDfHVG+SiDxFpEPZPvXkgY1QjpwQUCavPZZQAKCRDvXkgY1Qjp
+wRrpAP9lGaZDJfILDE9ON6DtwSXnYAHp8pptyDyVipGcFEPmBAEAqHOJHcMrHZE8
+EG5NDacml70ICzxDVlfavRAddUSTJwU=
+=65ZO
+-----END PGP SIGNATURE-----

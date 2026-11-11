@@ -1,0 +1,214 @@
+Package: mta-a
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: mail-transport-agent
+Conflicts: mail-transport-agent
+Replaces: mail-transport-agent
+Description: mta-a test package
+
+Package: newlib
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: lib
+Description: newlib test package
+
+Package: vc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: old (<< 2.0)
+Description: vc test package
+
+Package: old
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: old test package
+
+Package: vc2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: old2 (<< 2.0)
+Description: vc2 test package
+
+Package: br
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Breaks: bold (<< 2.0)
+Description: br test package
+
+Package: bold
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: bold test package
+
+Package: br2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Breaks: bold2 (<< 2.0)
+Description: br2 test package
+
+Package: replacer
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: oldname
+Conflicts: oldname
+Replaces: oldname
+Description: replacer test package
+
+Package: alt1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: x1 | y1
+Description: alt1 test package
+
+Package: x1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: x1 test package
+
+Package: y1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: y1 test package
+
+Package: alt2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: x2 | y2
+Description: alt2 test package
+
+Package: x2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: x2 test package
+
+Package: alt3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: x3 (>= 2.0) | y3
+Description: alt3 test package
+
+Package: x3
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: x3 test package
+
+Package: y3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: y3 test package
+
+Package: vuser
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: vp
+Description: vuser test package
+
+Package: p1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vp
+Priority: optional
+Description: p1 test package
+
+Package: p2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vp
+Priority: standard
+Description: p2 test package
+
+Package: vuser2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: vp2
+Description: vuser2 test package
+
+Package: q1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vp2
+Description: q1 test package
+
+Package: q2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vp2
+Description: q2 test package
+
+Package: conf-a
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: conf-b
+Description: conf-a test package
+
+Package: conf-b
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: conf-b test package
+
+Package: broken
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: nonexistent
+Description: broken test package
+
+Package: evil
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: core
+Description: evil test package
+
+Package: newdl
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: dlib (>= 2.0)
+Description: newdl test package
+
+Package: dlib
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: dlib test package
+
+Package: dc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: dcdep
+Description: dc test package
+
+Package: dcdep
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: lib
+Description: dcdep test package
+

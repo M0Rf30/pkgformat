@@ -1,0 +1,4 @@
+Label: Local Packages
+Suite: local
+Architectures: amd64
+Components: main

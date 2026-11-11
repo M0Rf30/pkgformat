@@ -80,8 +80,17 @@ func TestUpdateIndexVariants(t *testing.T) {
 
 			entries, err := os.ReadDir(f.lists)
 			require.NoError(t, err)
-			require.Len(t, entries, 1, "only the chosen variant is stored")
-			assert.Equal(t, filepath.Base(f.listPath("main", tt.ext)), entries[0].Name())
+
+			var indexes []string
+
+			for _, e := range entries {
+				if !strings.HasSuffix(e.Name(), "_InRelease") {
+					indexes = append(indexes, e.Name())
+				}
+			}
+
+			require.Len(t, indexes, 1, "only the chosen variant is stored")
+			assert.Equal(t, filepath.Base(f.listPath("main", tt.ext)), indexes[0])
 
 			c, err := f.load()
 			require.NoError(t, err)

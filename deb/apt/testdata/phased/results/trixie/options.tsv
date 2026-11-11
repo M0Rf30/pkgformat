@@ -1,0 +1,5 @@
+never	pa100 pd-101 pd-none pd-text psec-mid psec-self
+always	pa0 pa1 pa10 pa100 pa25 pa37 pa50 pa63 pa75 pa90 pa99 pb10 pb50 pb90 pc37 pc50 pd-101 pd-none pd-text pmulti psec-mid psec-old psec-self
+no-machine-id	pa0 pa1 pa10 pa100 pa25 pa37 pa50 pa63 pa75 pa90 pa99 pb10 pb50 pb90 pc37 pc50 pd-101 pd-none pd-text pmulti psec-mid psec-old psec-self
+never-no-machine-id	pa100 pd-101 pd-none pd-text psec-mid psec-self
+always-and-never	pa0 pa1 pa10 pa100 pa25 pa37 pa50 pa63 pa75 pa90 pa99 pb10 pb50 pb90 pc37 pc50 pd-101 pd-none pd-text pmulti psec-mid psec-old psec-self

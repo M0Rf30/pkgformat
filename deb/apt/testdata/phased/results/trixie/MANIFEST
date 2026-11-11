@@ -1,0 +1,6 @@
+image: Debian GNU/Linux 13
+apt: apt 3.0.4 (amd64)
+libstdc++: libstdc++6 14.2.0-19
+ischroot: not a chroot
+captured: 2026-11-11T02:56:49Z
+image-reference: docker.io/library/debian:stable-slim

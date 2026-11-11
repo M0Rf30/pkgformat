@@ -1,0 +1,4 @@
+Package: docs-common:i386
+Pin: release a=testing
+Pin-Priority: 745
+

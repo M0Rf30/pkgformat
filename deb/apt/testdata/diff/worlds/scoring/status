@@ -1,0 +1,121 @@
+Package: e1
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: e1 test package
+
+Package: bi
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: bi test package
+
+Package: biuser
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: bi
+Description: biuser test package
+
+Package: m2
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: m2 test package
+
+Package: lib2
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: lib2 test package
+
+Package: req2
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Depends: lib2
+Description: req2 test package
+
+Package: lvl3
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: lvl3 test package
+
+Package: lvl3user
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: lvl3 (<< 2.0)
+Description: lvl3user test package
+
+Package: o1
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: o1 test package
+
+Package: o1user
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: o1 (<< 2.0)
+Description: o1user test package
+
+Package: t8
+Status: install ok installed
+Version: 0.5
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: t8 test package
+
+Package: mg4
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: mg4 test package
+
+Package: mg4user
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: mg4
+Description: mg4user test package
+
+Package: prov3
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: svc
+Priority: extra
+Description: prov3 test package
+
+Package: repl-b
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: repl-b test package
+
+Package: repl-user
+Status: install ok installed
+Version: 0.5
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: repl-b
+Description: repl-user test package
+

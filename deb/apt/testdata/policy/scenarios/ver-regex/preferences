@@ -1,0 +1,4 @@
+Package: hello
+Pin: version /^2\.10-[24]$/
+Pin-Priority: 890
+

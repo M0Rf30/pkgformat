@@ -1,0 +1,17 @@
+contribpkg	inst=1.0-1
+docs-common	inst=1.0-1
+epoched	inst=1:1.0-1
+foo-tools	inst=1.2-1
+gone	error=E: Unable to locate package gone
+hello	inst=2.10-2
+libbar-dev	inst=3.1-1
+libfoo-dev	inst=1.2-1
+libfoo1	inst=1.2-1
+libfoo1:i386	inst=1.2-1
+libfoo2	inst=2.0-1
+localonly	inst=0.1
+multi	inst=1.0-1
+multi:i386	inst=1.0-1
+solo-bpo	inst=0.7~bpo12+1
+solo-exp	inst=0.5-1
+solo-vendor	inst=3.0-1

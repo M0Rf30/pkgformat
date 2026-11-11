@@ -70,6 +70,25 @@
 // helpers (PoolPath, PackagesPath, ReleasePath, ...) give the conventional
 // locations.
 //
+// Release reads and writes every field apt knows (Acquire-By-Hash,
+// NotAutomatic, ButAutomaticUpgrades, Signed-By, No-Support-for-Architecture-All,
+// Changelogs, Snapshots, ...), in the layout of Debian's archive or of
+// apt-ftparchive (MarshalStyle). WriteByHash lays out the by-hash tree next to
+// the indexes, PlanByHashPrune and PruneByHash apply a retention policy to it,
+// and Release.ByHashRefs gives the by-hash path of a listed file.
+// ContentsBuilder and ScanContents write and read Contents files, and
+// TranslationBuilder, ScanTranslation and I18nIndex the Translation files with
+// their i18n/Index. See REPOSITORY.md.
+//
+// # Packages.diff
+//
+// ParsePDiffIndex reads a Packages.diff/Index, PDiffIndex.Chain finds the
+// patches that lead from a file by its SHA-256 to the current one, and
+// ApplyPDiffChain downloads and applies them, checking every digest on the way.
+// GeneratePDiff makes the ed-style patch between two files, MergePDiffs
+// collapses a series into one, and PDiffIndexBuilder maintains the whole
+// Packages.diff directory of a repository the way dak does. See PDIFF.md.
+//
 // # Signing and verification
 //
 // SignRelease signs a Release document with a gpg.Signer and returns the

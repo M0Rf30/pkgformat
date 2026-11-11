@@ -1,0 +1,6 @@
+image: Debian GNU/Linux unstable
+apt: apt 3.3.6 (amd64)
+libstdc++: libstdc++6 16.2.0-4
+ischroot: not a chroot
+captured: 2026-11-11T02:57:03Z
+image-reference: docker.io/library/debian:unstable-slim

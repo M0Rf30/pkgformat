@@ -1,0 +1,7 @@
+Origin: Debian
+Label: Debian
+Suite: stable
+Codename: bookworm
+Version: 12.5
+Architectures: amd64 i386
+Components: main contrib

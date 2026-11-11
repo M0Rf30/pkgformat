@@ -1,0 +1,4 @@
+Package: foo-tools
+Pin: release a=testing
+Pin-Priority: 809
+

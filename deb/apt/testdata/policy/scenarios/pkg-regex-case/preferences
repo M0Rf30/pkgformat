@@ -1,0 +1,4 @@
+Package: /^HELLO$/
+Pin: release a=testing
+Pin-Priority: 721
+

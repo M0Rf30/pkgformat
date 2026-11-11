@@ -1,0 +1,4 @@
+Package: *
+Pin: origin /^(bau|mini)\./
+Pin-Priority: 747
+

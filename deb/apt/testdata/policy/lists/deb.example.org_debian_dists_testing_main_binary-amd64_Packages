@@ -1,0 +1,113 @@
+Package: hello
+Version: 2.10-2
+Architecture: amd64
+Filename: pool/main/hello_2.10-2_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package hello
+
+Package: hello
+Version: 2.10-3
+Architecture: amd64
+Filename: pool/main/hello_2.10-3_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package hello
+
+Package: libfoo1
+Version: 1.3-1
+Architecture: amd64
+Source: foosrc
+Filename: pool/main/libfoo1_1.3-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libfoo1
+
+Package: libfoo-dev
+Version: 1.3-1
+Architecture: amd64
+Source: foosrc
+Filename: pool/main/libfoo-dev_1.3-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libfoo-dev
+
+Package: foo-tools
+Version: 1.3-1+b1
+Architecture: amd64
+Source: foosrc (1.3-1)
+Filename: pool/main/foo-tools_1.3-1+b1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package foo-tools
+
+Package: libfoo2
+Version: 2.0-1
+Architecture: amd64
+Source: foo2src
+Filename: pool/main/libfoo2_2.0-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libfoo2
+
+Package: epoched
+Version: 2.0-1
+Architecture: amd64
+Filename: pool/main/epoched_2.0-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package epoched
+
+Package: multi
+Version: 1.1-1
+Architecture: amd64
+Multi-Arch: same
+Filename: pool/main/multi_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package multi
+
+Package: docs-common
+Version: 1.1-1
+Architecture: all
+Filename: pool/main/docs-common_1.1-1_all.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package docs-common
+

@@ -1,0 +1,4 @@
+Package: *
+Pin: release v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,v=1,o=Debian,a=stable
+Pin-Priority: 333
+

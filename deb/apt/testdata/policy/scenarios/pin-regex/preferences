@@ -1,0 +1,4 @@
+Package: *
+Pin: release a=/^(testing|unstable)$/
+Pin-Priority: 440
+

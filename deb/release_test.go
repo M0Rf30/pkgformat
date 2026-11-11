@@ -99,7 +99,7 @@ func TestReleaseMarshalLayout(t *testing.T) {
 		" "+strings.Repeat("a", 32)+" 1234567890123 a/Packages\n"+
 		"SHA256:\n"+
 		" "+strings.Repeat("c", 64)+" 1234567890123 a/Packages\n"+
-		" "+strings.Repeat("b", 64)+"         12 b/Packages\n", string(rel.Marshal()))
+		" "+strings.Repeat("b", 64)+"       12 b/Packages\n", string(rel.Marshal()))
 
 	assert.Empty(t, (&deb.Release{}).Marshal())
 }

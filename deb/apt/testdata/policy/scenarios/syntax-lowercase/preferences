@@ -1,0 +1,3 @@
+package: hello
+pin: release a=testing
+pin-priority: 662

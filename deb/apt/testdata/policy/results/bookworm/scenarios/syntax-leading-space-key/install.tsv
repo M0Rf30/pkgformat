@@ -1,0 +1,17 @@
+contribpkg	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+docs-common	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+epoched	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+foo-tools	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+gone	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+hello	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+libbar-dev	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+libfoo-dev	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+libfoo1	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+libfoo1:i386	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+libfoo2	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+localonly	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+multi	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+multi:i386	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+solo-bpo	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+solo-exp	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header
+solo-vendor	error=E: Invalid record in the preferences file /etc/apt/preferences, no Package header

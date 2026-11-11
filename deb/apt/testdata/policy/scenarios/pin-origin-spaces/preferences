@@ -1,0 +1,4 @@
+Package: *
+Pin: release o=Vendor PPA
+Pin-Priority: 810
+

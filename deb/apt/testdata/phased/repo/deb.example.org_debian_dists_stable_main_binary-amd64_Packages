@@ -1,0 +1,235 @@
+Package: pa0
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 0
+Filename: pool/main/pa0_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa0
+
+Package: pa1
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 1
+Filename: pool/main/pa1_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa1
+
+Package: pa10
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 10
+Filename: pool/main/pa10_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa10
+
+Package: pa25
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 25
+Filename: pool/main/pa25_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa25
+
+Package: pa37
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 37
+Filename: pool/main/pa37_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa37
+
+Package: pa50
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 50
+Filename: pool/main/pa50_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa50
+
+Package: pa63
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 63
+Filename: pool/main/pa63_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa63
+
+Package: pa75
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 75
+Filename: pool/main/pa75_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa75
+
+Package: pa90
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 90
+Filename: pool/main/pa90_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa90
+
+Package: pa99
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 99
+Filename: pool/main/pa99_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa99
+
+Package: pa100
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 100
+Filename: pool/main/pa100_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pa100
+
+Package: pb10
+Version: 1.1-1
+Architecture: amd64
+Phased-Update-Percentage: 10
+Filename: pool/main/pb10_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pb10
+
+Package: pb50
+Version: 1.1-1
+Architecture: amd64
+Phased-Update-Percentage: 50
+Filename: pool/main/pb50_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pb50
+
+Package: pb90
+Version: 1.1-1
+Architecture: amd64
+Phased-Update-Percentage: 90
+Filename: pool/main/pb90_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pb90
+
+Package: pc37
+Version: 1.1-1+b1
+Architecture: amd64
+Source: phsrc2 (2:1.1-1)
+Phased-Update-Percentage: 37
+Filename: pool/main/pc37_1.1-1+b1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pc37
+
+Package: pc50
+Version: 1.1-1+b1
+Architecture: amd64
+Source: phsrc2 (2:1.1-1)
+Phased-Update-Percentage: 50
+Filename: pool/main/pc50_1.1-1+b1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pc50
+
+Package: pd-none
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Filename: pool/main/pd-none_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pd-none
+
+Package: pd-101
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 101
+Filename: pool/main/pd-101_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pd-101
+
+Package: pd-text
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: abc
+Filename: pool/main/pd-text_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pd-text
+
+Package: psec-mid
+Version: 1.2-1
+Architecture: amd64
+Source: phsrc4
+Phased-Update-Percentage: 10
+Filename: pool/main/psec-mid_1.2-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture psec-mid
+
+Package: psec-old
+Version: 1.2-1
+Architecture: amd64
+Source: phsrc5
+Phased-Update-Percentage: 10
+Filename: pool/main/psec-old_1.2-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture psec-old
+
+Package: pnew
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc
+Phased-Update-Percentage: 10
+Filename: pool/main/pnew_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pnew
+
+Package: pmulti
+Version: 1.1-1
+Architecture: amd64
+Source: phsrc6
+Filename: pool/main/pmulti_1.1-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pmulti
+
+Package: pmulti
+Version: 1.2-1
+Architecture: amd64
+Source: phsrc6
+Phased-Update-Percentage: 10
+Filename: pool/main/pmulti_1.2-1_amd64.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Description: phasing fixture pmulti
+

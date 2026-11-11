@@ -16,7 +16,10 @@ import (
 // dpkg status of a debian container and compares the packages ResolveDeps
 // would install with what `apt-get install -s --no-install-recommends` planned
 // for them in that container. testdata/diff holds both, captured and trimmed
-// by testdata/diff/generate.sh; MANIFEST says which image and apt.
+// by testdata/diff/generate.sh; MANIFEST says which image and apt. Cache.Plan,
+// which ports apt's decisions, is compared on the same targets, on scenarios
+// that remove and replace packages and on synthetic universes in
+// diff_plan_test.go.
 //
 // The targets of the fixture all match: the same packages, at the same
 // versions. That is a property of this fixture and not a promise. ResolveDeps
@@ -33,9 +36,9 @@ import (
 //     installed and, among providers, the one apt prefers (Priority, then the
 //     one read last, candidate versions first). The first choice agrees with
 //     apt's wherever it was probed, the trees below a choice may differ.
-//   - apt weighs pin priorities, which are not modelled: the highest version
-//     is the candidate, and apt looks only at the candidate where ResolveDeps
-//     takes the highest version that meets a constraint.
+//   - apt weighs pin priorities, which ResolveDeps does not: the highest
+//     version is the candidate, and apt looks only at the candidate where
+//     ResolveDeps takes the highest version that meets a constraint.
 //
 // The comparison is on package names and, for the packages both plan, versions.
 type aptPlan struct {
@@ -72,10 +75,11 @@ func loadPlans(t *testing.T, path string) (map[string]*aptPlan, []string) {
 		}
 
 		switch kind {
-		case "Inst":
+		case "Inst", "Upgr", "Down":
 			plan.install[name] = version
 		case "Remv":
 			plan.remove = append(plan.remove, name)
+		case "None", "Kept", "Fail", "Solver3":
 		default:
 			t.Fatalf("unknown plan line %q", sc.Text())
 		}

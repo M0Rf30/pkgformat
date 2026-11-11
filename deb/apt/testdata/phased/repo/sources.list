@@ -1,0 +1,2 @@
+deb [trusted=yes] http://deb.example.org/debian stable main
+deb [trusted=yes] http://security.example.org/debian-security stable-security main

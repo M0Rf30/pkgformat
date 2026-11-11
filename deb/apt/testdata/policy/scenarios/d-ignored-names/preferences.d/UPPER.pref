@@ -1,0 +1,4 @@
+Package: epoched
+Pin: release a=testing
+Pin-Priority: 808
+

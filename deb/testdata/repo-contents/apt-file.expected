@@ -1,0 +1,11 @@
+== search usr/bin/alpha
+alpha: /usr/bin/alpha
+alpha: /usr/bin/alpha-link
+beta: /usr/bin/alpha
+== list gamma
+gamma: /usr/lib/gamma/libgamma.so.1
+gamma: /usr/lib/gamma/libgamma.so.1.0
+== search blanks
+alpha: /usr/share/with space/file one.txt
+== search etc/beta.conf
+beta: /etc/beta.conf

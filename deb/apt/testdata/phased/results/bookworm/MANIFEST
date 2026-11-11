@@ -1,0 +1,6 @@
+image: Debian GNU/Linux 12
+apt: apt 2.6.2 (amd64)
+libstdc++: libstdc++6 12.2.0-14+deb12u1
+ischroot: not a chroot
+captured: 2026-11-11T02:56:41Z
+image-reference: docker.io/library/debian:bookworm

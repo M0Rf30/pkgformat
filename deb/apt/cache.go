@@ -59,6 +59,36 @@ type PackageInfo struct {
 	Provides []deb.Relation
 	// Version is the Version field.
 	Version string
+	// SourceName and SourceVersion are the source package the version was
+	// built from: the Source field, which defaults to Name and, when it carries
+	// a version in parentheses, that one, else Version. Phased updates are
+	// seeded with them.
+	SourceName, SourceVersion string
+	// PhasedUpdatePercentage is the Phased-Update-Percentage field; nil when
+	// the version has none.
+	PhasedUpdatePercentage *int
+	// Releases lists the Release files of the indexes the version was read
+	// from, in load order; empty for a version only the status database or a
+	// hand-built entry knows. Pin matching and the Not-Automatic rules read
+	// them.
+	Releases []*ReleaseInfo
+}
+
+// ReleaseInfo is what apt keeps of the Release file of the index a version
+// was read from: the properties package pins match against, and the
+// repository's automatic-upgrade flags.
+type ReleaseInfo struct {
+	// Origin, Label, Suite (the archive, "a=" of a pin), Codename ("n="),
+	// Version ("v=") and Component ("c=") as the Release file and the index
+	// name them. Architecture is the architecture of the index ("b=").
+	Origin, Label, Suite, Codename, Version, Component, Architecture string
+	// Site is the host name of the source the index came from, matched by
+	// "origin" pins; empty for a local source.
+	Site string
+	// NotAutomatic and ButAutomaticUpgrades are the Release flags of those
+	// names: NotAutomatic repositories have pin priority 1, or 100 together
+	// with ButAutomaticUpgrades.
+	NotAutomatic, ButAutomaticUpgrades bool
 }
 
 // ArchitectureAll reports whether the package is architecture-independent.
@@ -265,6 +295,12 @@ func mergeVersion(existing, info *PackageInfo) {
 		existing.MultiArch = info.MultiArch
 	}
 
+	for _, r := range info.Releases {
+		if !slices.ContainsFunc(existing.Releases, func(e *ReleaseInfo) bool { return *e == *r }) {
+			existing.Releases = append(existing.Releases, r)
+		}
+	}
+
 	for _, prov := range info.Provides {
 		if !slices.ContainsFunc(existing.Provides, func(r deb.Relation) bool { return r.String() == prov.String() }) {
 			existing.Provides = append(existing.Provides, prov)
@@ -285,6 +321,8 @@ func mergeVersion(existing, info *PackageInfo) {
 	}
 
 	existing.HasCandidate = true
+	existing.SourceName, existing.SourceVersion = info.SourceName, info.SourceVersion
+	existing.PhasedUpdatePercentage = info.PhasedUpdatePercentage
 	existing.Depends, existing.PreDepends = info.Depends, info.PreDepends
 	existing.Conflicts, existing.Breaks = info.Conflicts, info.Breaks
 
@@ -434,6 +472,35 @@ func (c *Cache) Versions(name string) []PackageInfo {
 	}
 
 	return nil
+}
+
+// Candidate returns the version of the named package apt would install under
+// the pin policy pol: the highest priority wins, the highest version among
+// equals, and a version below priority 0 or a phased update withheld from the
+// installed system is never chosen. A nil pol applies apt's defaults (no
+// preferences). The bool is false when no version qualifies.
+func (c *Cache) Candidate(name string, pol *Policy) (PackageInfo, bool) {
+	if pol == nil {
+		pol = NewPolicy(nil, PolicyOptions{})
+	}
+
+	all := c.Versions(name)
+	versions := make([]*PackageInfo, len(all))
+
+	var installed *PackageInfo
+
+	for i := range all {
+		versions[i] = &all[i]
+		if all[i].Installed {
+			installed = &all[i]
+		}
+	}
+
+	if cand := pol.Candidate(versions, installed); cand != nil {
+		return *cand, true
+	}
+
+	return PackageInfo{}, false
 }
 
 // PackageCount is the number of packages in the cache, counting a name on two

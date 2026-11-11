@@ -1,0 +1,4 @@
+Package: *
+Pin: release 22.04
+Pin-Priority: 620
+

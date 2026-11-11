@@ -1,0 +1,81 @@
+Package: hello
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 2.10-2
+Description: fixture package hello
+
+Package: libfoo-dev
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.4~bpo12+1
+Description: fixture package libfoo-dev
+
+Package: solo-exp
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 0.5-1
+Description: fixture package solo-exp
+
+Package: libbar-dev
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 3.1-1+deb12u1
+Description: fixture package libbar-dev
+
+Package: gone
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.0-1
+Description: fixture package gone
+
+Package: multi
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: i386
+Version: 1.0-1
+Multi-Arch: same
+Description: fixture package multi
+
+Package: epoched
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1:1.0-1
+Description: fixture package epoched
+
+Package: libfoo1
+Status: install ok installed
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Architecture: amd64
+Version: 1.3-2
+Description: fixture package libfoo1
+

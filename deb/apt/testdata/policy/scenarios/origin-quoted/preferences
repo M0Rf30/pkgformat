@@ -1,0 +1,4 @@
+Package: *
+Pin: origin "security.example.org"
+Pin-Priority: 740
+

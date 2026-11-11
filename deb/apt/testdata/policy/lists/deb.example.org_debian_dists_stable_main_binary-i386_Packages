@@ -1,0 +1,26 @@
+Package: libfoo1
+Version: 1.2-1
+Architecture: i386
+Source: foosrc
+Filename: pool/main/libfoo1_1.2-1_i386.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package libfoo1
+
+Package: multi
+Version: 1.0-1
+Architecture: i386
+Multi-Arch: same
+Filename: pool/main/multi_1.0-1_i386.deb
+Size: 1000
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Priority: optional
+Section: misc
+Installed-Size: 1
+Maintainer: Fixture <fixture@example.org>
+Description: fixture package multi
+

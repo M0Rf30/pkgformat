@@ -1,0 +1,7 @@
+# a comment
+
+Package: hello
+# another
+Pin: release a=testing
+Pin-Priority: 660
+# trailing

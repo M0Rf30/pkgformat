@@ -1,0 +1,7 @@
+Package: libfoo1
+Pin: release a=testing
+Pin-Priority: 691
+
+Package: hello
+Pin: release a=testing
+Pin-Priority: abc

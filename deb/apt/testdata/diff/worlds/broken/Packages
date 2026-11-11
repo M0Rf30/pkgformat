@@ -1,0 +1,47 @@
+Package: other
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: other test package
+
+Package: fixer
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: ghost
+Description: fixer test package
+
+Package: bdep
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: bdep test package
+
+Package: bx
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ghost
+Description: bx test package
+
+Package: bw
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ghost
+Description: bw test package
+
+Package: wantsbdep
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: bdep
+Description: wantsbdep test package
+
+Package: orfix
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: ghost3
+Description: orfix test package
+

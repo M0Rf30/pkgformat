@@ -1,0 +1,4 @@
+Package: hello libfoo1
+Pin: release a=testing
+Pin-Priority: 700
+

@@ -1,0 +1,4 @@
+Package: hello
+Pin: release o=Debian
+Pin-Priority: 500
+

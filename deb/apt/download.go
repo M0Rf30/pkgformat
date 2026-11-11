@@ -81,8 +81,13 @@ func (c *Cache) DownloadClosure(
 type debJob struct {
 	name string
 	info PackageInfo
-	url  string
-	dest string
+	// url is the URL under the BaseURL of the package; cands are the URLs
+	// tried in order (cursor is the current one), which differ from it for a
+	// mirror list.
+	url    string
+	dest   string
+	cands  []candidate
+	cursor int
 }
 
 // Download fetches the named packages into destDir, each as the base name of
@@ -105,7 +110,7 @@ func (c *Cache) Download(ctx context.Context, destDir string, pkgs []string, opt
 		return nil
 	}
 
-	jobs, err := c.resolveDownloadJobs(destDir, pkgs)
+	jobs, err := c.resolveDownloadJobs(ctx, destDir, pkgs, opts)
 	if err != nil {
 		return err
 	}
@@ -119,62 +124,119 @@ func (c *Cache) Download(ctx context.Context, destDir string, pkgs []string, opt
 		dopts.Concurrency = defaultDownloadConcurrency
 	}
 
-	reqs, err := downloadRequests(jobs, opts, func(j *debJob) string { return j.url })
-	if err != nil {
-		return err
+	// Round r transfers the jobs still failing from their r-th usable
+	// candidate: the next mirror of a mirror list, or the https twin of a plain
+	// http URL after a transient failure. A truncated partial is discarded by
+	// the downloader, so a retry starts clean.
+	final := make([]error, len(jobs))
+	pending := make([]int, len(jobs))
+
+	for i := range jobs {
+		pending[i] = i
 	}
 
-	results := download.DownloadAll(ctx, reqs, dopts)
-
-	// One retry over https, for the plain-http transfers that failed
-	// transiently. A truncated partial is discarded by the downloader, so the
-	// retry starts clean.
-	var (
-		retryIdx  []int
-		retryJobs []*debJob
-		httpsURLs = make(map[*debJob]string)
-	)
-
-	for i, res := range results {
-		if res.Err == nil || !httpclient.IsRetryable(res.Err) {
-			continue
+	for len(pending) > 0 {
+		batch := make([]*debJob, len(pending))
+		for k, i := range pending {
+			batch[k] = jobs[i]
 		}
 
-		httpsURL, ok := httpclient.UpgradeToHTTPS(jobs[i].url)
-		if !ok {
-			continue
-		}
-
-		httpsURLs[jobs[i]] = httpsURL
-
-		retryIdx = append(retryIdx, i)
-		retryJobs = append(retryJobs, jobs[i])
-	}
-
-	if len(retryJobs) > 0 {
-		retryReqs, err := downloadRequests(retryJobs, opts, func(j *debJob) string { return httpsURLs[j] })
+		reqs, err := downloadRequests(batch, opts, func(j *debJob) string { return j.cands[j.cursor].url })
 		if err != nil {
 			return err
 		}
 
-		for i, res := range download.DownloadAll(ctx, retryReqs, dopts) {
-			results[retryIdx[i]] = res
+		results := transferAll(ctx, reqs, dopts)
+
+		var next []int
+
+		for k, i := range pending {
+			final[i] = results[k].Err
+			if final[i] != nil && jobs[i].advance(final[i]) {
+				next = append(next, i)
+			}
 		}
+
+		pending = next
 	}
 
-	for i, res := range results {
-		if res.Err == nil {
+	for i, err := range final {
+		if err == nil {
 			continue
 		}
 
-		if errors.Is(res.Err, download.ErrChecksumMismatch) || errors.Is(res.Err, download.ErrTooLarge) {
-			return fmt.Errorf("%w: %s: %w", ErrIntegrity, filepath.Base(jobs[i].dest), res.Err)
+		if errors.Is(err, download.ErrChecksumMismatch) || errors.Is(err, download.ErrTooLarge) {
+			return fmt.Errorf("%w: %s: %w", ErrIntegrity, filepath.Base(jobs[i].dest), err)
 		}
 
-		return fmt.Errorf("apt: download %s: %w", filepath.Base(jobs[i].dest), res.Err)
+		return fmt.Errorf("apt: download %s: %w", filepath.Base(jobs[i].dest), err)
 	}
 
 	return nil
+}
+
+// candidate is one URL a package can be fetched from.
+type candidate struct {
+	url string
+	// httpsTwin marks the https form of the previous candidate, tried only if
+	// that one failed transiently.
+	httpsTwin bool
+}
+
+// advance moves the job to its next usable candidate after err, reporting
+// whether there is one. An integrity failure is final: another mirror serving
+// the wrong bytes is not a reason to try a third.
+func (j *debJob) advance(err error) bool {
+	if errors.Is(err, download.ErrChecksumMismatch) || errors.Is(err, download.ErrTooLarge) {
+		return false
+	}
+
+	for j.cursor++; j.cursor < len(j.cands); j.cursor++ {
+		if j.cands[j.cursor].httpsTwin && !httpclient.IsRetryable(err) {
+			continue
+		}
+
+		return true
+	}
+
+	return false
+}
+
+// transferAll runs the requests: file: and copy: URLs are copied, the others
+// downloaded concurrently. Results are in request order.
+func transferAll(ctx context.Context, reqs []download.Request, opts download.Options) []download.Result {
+	results := make([]download.Result, len(reqs))
+
+	var (
+		remote    []download.Request
+		remoteIdx []int
+	)
+
+	for i, req := range reqs {
+		p, ok := localPath(req.URL)
+		if !ok {
+			if !isHTTPURL(req.URL) {
+				results[i] = download.Result{Request: req, Err: schemeError(req.URL)}
+
+				continue
+			}
+
+			remote = append(remote, req)
+			remoteIdx = append(remoteIdx, i)
+
+			continue
+		}
+
+		results[i] = download.Result{Request: req, Err: copyLocal(p, req.Dest, req.Checksum, req.MaxBytes)}
+	}
+
+	if len(remote) > 0 {
+		for k, res := range download.DownloadAll(ctx, remote, opts) {
+			results[remoteIdx[k]] = res
+		}
+	}
+
+	return results
 }
 
 // downloadRequests builds one verified request per job against the URL
@@ -203,7 +265,9 @@ func downloadRequests(jobs []*debJob, opts DownloadOptions, urlOf func(*debJob) 
 
 // resolveDownloadJobs resolves every package name to its index entry up front,
 // so that a missing package or a missing BaseURL surfaces before any HTTP.
-func (c *Cache) resolveDownloadJobs(destDir string, pkgs []string) ([]*debJob, error) {
+func (c *Cache) resolveDownloadJobs(
+	ctx context.Context, destDir string, pkgs []string, opts DownloadOptions,
+) ([]*debJob, error) {
 	jobs := make([]*debJob, 0, len(pkgs))
 	// Two jobs with one destination base name would write one file
 	// concurrently and fail the checksum.
@@ -245,7 +309,65 @@ func (c *Cache) resolveDownloadJobs(destDir string, pkgs []string) ([]*debJob, e
 		jobs = append(jobs, job)
 	}
 
+	// Candidates last: a mirror list costs a transfer, which a malformed entry
+	// above must not trigger.
+	if err := expandCandidates(ctx, jobs, opts); err != nil {
+		return nil, err
+	}
+
 	return jobs, nil
+}
+
+// expandCandidates fills the candidate URLs of every job: its URL, then, for a
+// base URL that names a mirror list, one per mirror of the list (fetched once
+// per list), each followed by its https twin when it is plain http.
+func expandCandidates(ctx context.Context, jobs []*debJob, opts DownloadOptions) error {
+	client := opts.Client
+	if client == nil {
+		client = httpclient.New(httpclient.Options{})
+	}
+
+	fetch := func(ctx context.Context, rawURL string, maxBytes int64) ([]byte, error) {
+		if p, ok := localPath(rawURL); ok {
+			return readLocal(p, maxBytes)
+		}
+
+		if !isHTTPURL(rawURL) {
+			return nil, schemeError(rawURL)
+		}
+
+		return client.FetchBytes(ctx, rawURL, maxBytes)
+	}
+
+	lists := make(map[string][]string)
+
+	for _, j := range jobs {
+		base := j.info.BaseURL
+
+		mirrors, ok := lists[base]
+		if !ok {
+			var err error
+
+			mirrors, err = expandBase(ctx, base, fetch)
+			if err != nil {
+				return fmt.Errorf("%w: %s: %w", ErrNoBaseURL, j.name, err)
+			}
+
+			lists[base] = mirrors
+		}
+
+		for _, m := range mirrors {
+			target := strings.TrimSuffix(m, "/") + "/" + j.info.Filename
+
+			j.cands = append(j.cands, candidate{url: target})
+
+			if twin, ok := httpclient.UpgradeToHTTPS(target); ok {
+				j.cands = append(j.cands, candidate{url: twin, httpsTwin: true})
+			}
+		}
+	}
+
+	return nil
 }
 
 // safeFilename reports whether a Filename from an index can be joined to a base

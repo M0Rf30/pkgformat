@@ -1,0 +1,4 @@
+Package: *
+Pin: release A=STABLE,O=DEBIAN
+Pin-Priority: 640
+

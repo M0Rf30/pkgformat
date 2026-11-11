@@ -50,6 +50,7 @@ func TestLoadParsesStanzaFields(t *testing.T) {
 	assert.Equal(t, PackageInfo{
 		Name: "gcc-12", Version: "12.2.0-14", Architecture: "amd64", Essential: true, MultiArch: "same",
 		HasCandidate: true, Filename: "pool/main/g/gcc-12/gcc-12_12.2.0-14_amd64.deb", Size: 1234,
+		SourceName: "gcc-12", SourceVersion: "12.2.0-14",
 		SHA256:  sha256Hex([]byte("x")),
 		Depends: deps(t, "libc6 (>= 2.34), libgcc-12-dev (= 12.2.0-14) | other"), PreDepends: deps(t, "dpkg (>= 1.0)"),
 	}, got)

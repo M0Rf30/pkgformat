@@ -21,7 +21,7 @@ Requires Go 1.27 or later.
 | Format | Package | Packages | Repository index | Repository client |
 | --- | --- | --- | --- | --- |
 | RPM (format 4 and 6) | [`rpm`](rpm/README.md) | write, read, verify, sign; installed database (`rpm/rpmdb`): read | repodata: write, read, sign, modules | `rpm/dnf` |
-| Debian | [`deb`](deb/README.md) | write, read, verify, sign; installed database (`deb.StatusDB`): read | Packages, Release, InRelease: write, read, sign, verify | `deb/apt` |
+| Debian | [`deb`](deb/README.md) | write, read, verify, sign; installed database (`deb.StatusDB`): read | Packages, Release, InRelease, by-hash, Contents, Translations, Packages.diff: write, read, sign, verify | `deb/apt` |
 | Debian sources | [`deb/source`](deb/source/README.md) | .dsc, .changes, .buildinfo: write, read, sign, verify; source packages 1.0, 3.0 (quilt), 3.0 (native): unpack, build (3.0) | Sources: write, read | |
 | Alpine | [`apk`](apk/README.md) | write, read, verify, sign (RSA SHA-1 and SHA-256); installed database (`apk.InstalledDB`): read | APKINDEX: write, read, sign, verify | `apk.Client` |
 | Alpine v3 (ADB) | [`apk/adb`](apk/adb/README.md) | write (`apk mkpkg` compatible), read, verify, sign (RSA, ECDSA), extract; `apk.ParsePackage` reads v3 too; verified against apk-tools 3.0.9 | APKINDEX.adb: write (`apk mkndx` compatible), read, sign, verify | |

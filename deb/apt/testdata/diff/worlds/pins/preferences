@@ -1,0 +1,27 @@
+Package: pn1
+Pin: version 2.0
+Pin-Priority: 600
+
+Package: pn2
+Pin: version 3.0
+Pin-Priority: -1
+
+Package: pn3
+Pin: version 1.0
+Pin-Priority: 1001
+
+Package: pn4
+Pin: version *
+Pin-Priority: -1
+
+Package: pn5
+Pin: version 2.0
+Pin-Priority: 50
+
+Package: gp-*
+Pin: version *
+Pin-Priority: -1
+
+Package: pn6
+Pin: version 2.0
+Pin-Priority: 990

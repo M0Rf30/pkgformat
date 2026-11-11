@@ -1,0 +1,11 @@
+# id	apt-get arguments
+u01	upgrade
+u02	upgrade --with-new-pkgs
+u03	dist-upgrade
+u04	install s1
+u05	install needsnew
+u06	install unins
+u07	install conflup
+u08	install lonely
+u09	remove s1 s2
+u10	dist-upgrade --no-install-recommends

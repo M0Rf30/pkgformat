@@ -1,0 +1,45 @@
+Origin: pkgformat test
+Label: pkgformat
+Suite: stable
+Codename: bookworm
+Date: Thu, 02 Jan 2025 03:04:05 UTC
+Acquire-By-Hash: yes
+Architectures: amd64
+Components: main
+Description: Translation end-to-end repository
+MD5Sum:
+ b560d9105e31ab956cc6386fd3d64018     1150 main/binary-amd64/Packages
+ 6beae054c16622f937462b7029479d05      659 main/binary-amd64/Packages.gz
+ d22128a327cf3b688d9803846d54ef84      752 main/binary-amd64/Packages.xz
+ 2af002c389f414853c37d3ca4507a721     1510 main/i18n/Index
+ 591291c1eb862c084f85c8a8a4bf2d17      272 main/i18n/Translation-de
+ a1d9008e863416d6341b3d536151967c      264 main/i18n/Translation-de.xz
+ c8e93dcefe0c1177018b2922c69e803e      263 main/i18n/Translation-en
+ 9446b4d5560e603253b0dafa329b72ee      252 main/i18n/Translation-en.xz
+SHA1:
+ e89110b0409d4a15c0231eb275df522af993e75d     1150 main/binary-amd64/Packages
+ c015dfa53c5623a8c3638289af2bd07b239448bb      659 main/binary-amd64/Packages.gz
+ ed9d15963ee1c1d817f2771ec67e9a4499524e1e      752 main/binary-amd64/Packages.xz
+ a76f7eba2e38ad5dcc5c0f4f2e5365632bec5af5     1510 main/i18n/Index
+ 4f88e65d69a7a28f8e3f77646788c044869f9350      272 main/i18n/Translation-de
+ 32d9af459554d11591a226fcbb2f68baa65fdf90      264 main/i18n/Translation-de.xz
+ bf1c8a79163531bc96099fe926e3d28ff640151d      263 main/i18n/Translation-en
+ b10382b41a5fb45ba162f83b907f14c74d9db511      252 main/i18n/Translation-en.xz
+SHA256:
+ 18a9c918d328beea0c7e9f32f32a02ae68eb946c40046dc08d0c54b130de59b4     1150 main/binary-amd64/Packages
+ 7503fa586a84dfc8d5add036513509564e1823fee116d569761b4a1aeee8be13      659 main/binary-amd64/Packages.gz
+ b720adb4445153aa3a6600fc8e8dc9b3879a4ad2fd1b3af5224423796bbea1cc      752 main/binary-amd64/Packages.xz
+ 7d16e892a7d3677eb35d0f1fae8ea8d921c7e52423856b2a25a2ee361266dffd     1510 main/i18n/Index
+ e3cefd95b8ffbd68deb48c79a6d0ef9900061a4c0cd23963ed8322eef1071acb      272 main/i18n/Translation-de
+ a7510671360b3567a8cb5abd5718bef319850fc007ee26b655c6cebe062acd0d      264 main/i18n/Translation-de.xz
+ 702c061f07bada93bc0ac30576e79946ff81aa29de41875090f2da0fbc24bbea      263 main/i18n/Translation-en
+ f2d637a3eb587e6b7133cad1a7455c0d584d8e5f758e9d38357a0a9a8c2682cf      252 main/i18n/Translation-en.xz
+SHA512:
+ adf5a8dcf3356b66bd22b64e3a882a61c7f9b37d242e2144a80c04836b0013fc8e1667168c592966ff6190934a865e70e498db53adffb2b81301b3cf85023d6d     1150 main/binary-amd64/Packages
+ 69de53b5903503e7faeec40ab7cc3a0672cec0a2ea4ce2a54eecd0d970c127864201f0605a77efb3385be07ba566aeabe85c4f73fa5fea8528c9b5c94febffe7      659 main/binary-amd64/Packages.gz
+ f3f38e8af37227a4e1f98f99f160aa2ddead6434d609ac97610863d95e4fea2598919712551f85f77336d62de13a43a1b7552c030c6035755672ff20d41df46e      752 main/binary-amd64/Packages.xz
+ 3196642528932bbcf6d507fc5a2d9b377365d504abde085999d4b726eeeedcbee5092048cdd3dcb382937da17f9f04ffd626ed6203b2561c9480e2b28cc541d3     1510 main/i18n/Index
+ 49f9a5372b1fedc87bdcade218ec0a254c97ad017c7d5bb0c630938a900e3c68715d613ae0ea8fed69cfb505805acb99a9313c0a57cb16da772a171fa5530b94      272 main/i18n/Translation-de
+ e55bdbaa08ddc26c21d14c139ce09f24d487b63dfabc0bb92257d12c68537b9fb799f77a7f2463287b54a7b9a4809ba695b5b3ae202d8ca8f051db7b217182cb      264 main/i18n/Translation-de.xz
+ 55aed2f28ec3b575623393f77cda01fdc9c99f1b0ef5dff11acafa79b73107a7572fb8ccca37904f9882a0456e25d3a6147c605592f5812e255e7a79dd1e8e5b      263 main/i18n/Translation-en
+ 649015b9012702ba58777b1314db592f67b64a560253f24ea11813ee3ed8d9201e830f8c143a946a9ef330af850f715d5adaa2ef3d6e8ee5ddc860124fbb506d      252 main/i18n/Translation-en.xz

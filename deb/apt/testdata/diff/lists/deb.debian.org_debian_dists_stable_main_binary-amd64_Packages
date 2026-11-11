@@ -187,29 +187,6 @@ Size: 1140648
 MD5sum: d81460b1e7fdd0d7db1aee2662235081
 SHA256: 1e2b5f31fc826e1af25e2a12e37cd8d361ff25feaf224c6bbef3cc5d6cd2596b
 
-Package: amanda-client
-Source: amanda
-Version: 1:3.5.4-2
-Installed-Size: 1103
-Maintainer: Jose M Calhariz <calhariz@debian.org>
-Architecture: amd64
-Depends: amanda-common (= 1:3.5.4-2), libxml-simple-perl, perl:any, libc6 (>= 2.38), libglib2.0-0t64 (>= 2.76.0), libreadline8t64 (>= 6.0)
-Suggests: dump, gnuplot, smbclient
-Conflicts: amanda
-Description: Advanced Maryland Automatic Network Disk Archiver (Client)
-Homepage: http://www.amanda.org/
-Description-md5: eb340217bc77fc442e67d6d525d8c0fb
-Tag: admin::backup, hardware::storage, implemented-in::c,
- interface::text-mode, network::client, network::service, role::program,
- uitoolkit::ncurses, use::storing, works-with-format::tar,
- works-with::archive
-Section: utils
-Priority: optional
-Filename: pool/main/a/amanda/amanda-client_3.5.4-2_amd64.deb
-Size: 439404
-MD5sum: f2daafa1f5b49f46350d0cd03e5d8b00
-SHA256: fd1e18755b97b7b793f65457756b11b55f572c4c400666d5361c8c04846596ee
-
 Package: amanda-common
 Source: amanda
 Version: 1:3.5.4-2
@@ -234,28 +211,6 @@ Filename: pool/main/a/amanda/amanda-common_3.5.4-2_amd64.deb
 Size: 2012272
 MD5sum: 492f731a768a20c4065f0110f39f87cd
 SHA256: afab9551895040a4572fbbef2570069c0ceee03924793baa76743b75e57f0c5b
-
-Package: amanda-server
-Source: amanda
-Version: 1:3.5.4-2
-Installed-Size: 1093
-Maintainer: Jose M Calhariz <calhariz@debian.org>
-Architecture: amd64
-Depends: amanda-common (= 1:3.5.4-2), bsd-mailx | mailx, libjson-perl, perl:any, libc6 (>= 2.38), libcurl4t64 (>= 7.16.2), libglib2.0-0t64 (>= 2.76.0)
-Suggests: amanda-client (= 1:3.5.4-2), cpio | mt-st, gnuplot
-Conflicts: amanda
-Description: Advanced Maryland Automatic Network Disk Archiver (Server)
-Homepage: http://www.amanda.org/
-Description-md5: 7a44af7cb005595215636c1ed7a211fa
-Tag: admin::backup, hardware::storage, implemented-in::c, interface::daemon,
- network::server, network::service, role::program, uitoolkit::ncurses,
- works-with-format::tar, works-with::archive
-Section: utils
-Priority: optional
-Filename: pool/main/a/amanda/amanda-server_3.5.4-2_amd64.deb
-Size: 461960
-MD5sum: 6518d894cf84b8e3902f8bd9e05690cb
-SHA256: 9d938d18b377d11199765fa179e13b9ce1ba7840521a36a5c4d96aed395822e9
 
 Package: anacron
 Version: 2.3-43
@@ -2884,6 +2839,30 @@ Size: 10880
 MD5sum: 599c91522dbca02aa95162f860327f15
 SHA256: 365fbb43619cd6dfee35e50aa38dea5497a9248e260402c97d534df5021ba84c
 
+Package: context
+Version: 2024.04.01.20240428+dfsg-2
+Installed-Size: 164938
+Maintainer: Debian TeX Task Force <debian-tex-maint@lists.debian.org>
+Architecture: all
+Replaces: tetex-bin (<< 2007), texlive-context
+Provides: texlive-context
+Depends: ruby, luametatex, texlive-binaries (>= 2019), texlive-base (>= 2019), texlive-metapost (>= 2019), lmodern, tex-gyre, tex-common (>= 6.13)
+Recommends: fonts-gfs-artemisia, fonts-gfs-baskerville, fonts-gfs-bodoni-classic, fonts-gfs-didot-classic, fonts-gfs-didot, fonts-gfs-olga, fonts-gfs-porson, fonts-gfs-gazis, fonts-gfs-neohellenic, fonts-gfs-solomos, fonts-gfs-theokritos, fonts-freefont-otf, fonts-sil-gentium, context-modules
+Suggests: perl-tk, libxml-parser-perl, fontforge, context-nonfree
+Conflicts: texlive-context
+Breaks: tetex-bin (<< 2007)
+Description: powerful TeX format
+Homepage: https://www.pragma-ade.nl/
+Description-md5: 41de4864f3fecb24d3907901e2a652a7
+Tag: made-of::tex, role::program, use::editing, works-with-format::tex,
+ works-with::text
+Section: tex
+Priority: optional
+Filename: pool/main/c/context/context_2024.04.01.20240428+dfsg-2_all.deb
+Size: 97761168
+MD5sum: 17ea29254017865296560377f448d7d8
+SHA256: bb26f92022c8e53aac44a5a808f87df4bc38f4fb50ecd6b199a3de80f64b0b13
+
 Package: courier-base
 Source: courier
 Version: 1.4.1-3+deb13u2
@@ -3067,26 +3046,6 @@ Filename: pool/main/c/cqrlog/cqrlog_2.5.2-5_amd64.deb
 Size: 4391364
 MD5sum: 1317db59aba6e53935e2d5a3ee66cf90
 SHA256: 082908e82be91556bb1e14002a51594baafc7d211d959f8dab783a49453615d3
-
-Package: cqrlog-data
-Source: cqrlog
-Version: 2.5.2-5
-Installed-Size: 20343
-Maintainer: Debian Hamradio Maintainers <debian-hams@lists.debian.org>
-Architecture: all
-Replaces: cqrlog (<< 2.4.0)
-Depends: hamradio-files
-Breaks: cqrlog (<< 2.4.0)
-Description: Advanced logging program for hamradio operators (data files)
-Multi-Arch: foreign
-Homepage: https://www.cqrlog.com
-Description-md5: ac3d58426322c151501c108a55aeb7a9
-Section: hamradio
-Priority: optional
-Filename: pool/main/c/cqrlog/cqrlog-data_2.5.2-5_all.deb
-Size: 10760540
-MD5sum: b5af66b37ad89420aa43222d90ac197c
-SHA256: 2870821945ecbd9d2a2074e6fa5af811535bab0b96b732aa17fa674b4f0c4e6e
 
 Package: cron
 Version: 3.0pl1-197
@@ -3386,25 +3345,6 @@ Filename: pool/main/d/daemon/daemon_0.8.4-1_amd64.deb
 Size: 95216
 MD5sum: 375d21e5f66eb8665587cbd08b9b73a5
 SHA256: 27aa1e65afe314807b6e3ad4f2ee2d2358d317523ea1273428ef9f526a5300c9
-
-Package: daemontools-run
-Source: daemontools
-Version: 1:0.76-14
-Installed-Size: 34
-Maintainer: Joost van Baal-Ilić <joostvb@debian.org>
-Architecture: all
-Depends: daemontools (>> 1:0.76)
-Conflicts: runit
-Description: daemontools service supervision
-Homepage: https://cr.yp.to/daemontools.html
-Description-md5: f5516980fc0d550aab9df706d83da11b
-Tag: role::program
-Section: admin
-Priority: optional
-Filename: pool/main/d/daemontools/daemontools-run_0.76-14_all.deb
-Size: 8276
-MD5sum: bfb61d89d762833b2bab52ffb1f3fde5
-SHA256: 2edeba860849adb3dd54908324c4c7a57142caf3e335203b55f6b95b3d817cb0
 
 Package: libdav1d7
 Source: dav1d
@@ -4014,6 +3954,26 @@ Filename: pool/main/d/dhcpcd/dhcpcd_10.1.0-11+deb13u4_all.deb
 Size: 14188
 MD5sum: 3bd30994809e70c006d50fad5aca3ace
 SHA256: 945719b6b0ab601811a532ad0b2aa34a8eedbbe7b8f799bee88f03e483b505eb
+
+Package: dhcpcd5
+Source: dhcpcd
+Version: 1:10.1.0-11+deb13u4
+Installed-Size: 24
+Maintainer: Martin-Éric Racine <martin-eric.racine@iki.fi>
+Architecture: all
+Depends: dhcpcd (>= 1:10.1.0-11+deb13u4~)
+Description: DHCPv4 and DHCPv6 dual-stack client (dummy transitional package)
+Homepage: https://github.com/NetworkConfiguration/dhcpcd
+Description-md5: c3387213d43dd2ed9690ef2f7ac33009
+Tag: implemented-in::c, interface::daemon, network::client,
+ network::configuration, protocol::dhcp, protocol::ip, role::program,
+ use::configuring
+Section: oldlibs
+Priority: optional
+Filename: pool/main/d/dhcpcd/dhcpcd5_10.1.0-11+deb13u4_all.deb
+Size: 11764
+MD5sum: 3feb209213bb597feb9c1ac5c271342a
+SHA256: abd6e538118510c6945d2d85ebe751c3a47a01c33d38a8a79871916edee9ec5f
 
 Package: dictem
 Version: 1.0.4-4.2
@@ -5029,29 +4989,6 @@ Size: 71937020
 MD5sum: 10b5edf4825a11c3f9b68ecc3d85d5f8
 SHA256: 6ecab8a1d17117b017f806b78efff670c111f34fa999cd12c63b41d99f7188eb
 
-Package: flim
-Version: 1:1.14.9+0.20230205-1
-Installed-Size: 439
-Maintainer: Tatsuya Kinoshita <tats@debian.org>
-Architecture: all
-Replaces: flim1.13
-Depends: emacsen-common, apel
-Recommends: emacs-nox | emacs
-Suggests: xemacs21-bin, semi, wl | wl-beta
-Conflicts: flim1.13, semi-gnus (<< 1:6.10.13), tm
-Breaks: mu-cite (<< 8.1+0.20201103-1~), semi (<< 1.14.7~0.20201104-1~), wl (<< 2.15.9+0.20190205-5~), wl-beta (<< 2.15.9+0.20200822-1~)
-Description: library about internet message for emacsen
-Homepage: https://github.com/wanderlust/flim
-Description-md5: 85a1726dcc28903f2f9ab3651ebaa1d7
-Tag: implemented-in::lisp, role::plugin, role::program, suite::emacs,
- use::converting, use::editing, works-with::mail
-Section: mail
-Priority: optional
-Filename: pool/main/f/flim/flim_1.14.9+0.20230205-1_all.deb
-Size: 134460
-MD5sum: 75ccda79a8896d1d99e8ad0c6509b7ff
-SHA256: 095b4840949d7ac5021f884cfedd8767196cd904b3c2824e81e3739e2afe2398
-
 Package: libfltk1.3-dev
 Source: fltk1.3
 Version: 1.3.11-2
@@ -5096,6 +5033,29 @@ Filename: pool/main/f/fltk1.3/libfltk1.3t64_1.3.11-2_amd64.deb
 Size: 558544
 MD5sum: 6b9cc4db196a25e7694e80374aca91d8
 SHA256: 0d90fb887407cf5ed3d60c71c27246dd601457990001cf9b074059431511d991
+
+Package: libfltk1.4-dev
+Source: fltk1.4
+Version: 1.4.3-1
+Installed-Size: 5663
+Maintainer: Aaron M. Ucko <ucko@debian.org>
+Architecture: amd64
+Replaces: libfltk-dev
+Provides: libfltk-dev
+Depends: dpkg-dev, libcairo2-dev, libfltk-cairo1.4 (= 1.4.3-1), libfltk-forms1.4 (= 1.4.3-1), libfltk-gl1.4 (= 1.4.3-1), libfltk-images1.4 (= 1.4.3-1), libfltk1.4 (= 1.4.3-1), libx11-dev
+Recommends: fluid, libgl-dev, libglu1-mesa-dev | libglu-dev
+Suggests: fltk1.4-doc, libjpeg-dev, libpng-dev, libxext-dev, libxft-dev, libxinerama-dev, zlib1g-dev | libz-dev
+Conflicts: libfltk-dev
+Description: Fast Light Toolkit - development files
+Multi-Arch: same
+Homepage: https://www.fltk.org/
+Description-md5: fd19f539170e49b3078fef85e7a556c0
+Section: libdevel
+Priority: optional
+Filename: pool/main/f/fltk1.4/libfltk1.4-dev_1.4.3-1_amd64.deb
+Size: 1058480
+MD5sum: 2cafefc8919eefaa2c5a16f4c6bb887f
+SHA256: c65c2a97b6616eeb82b29930927903b583d9b80f020fbfd8acfa9df6e992369f
 
 Package: fontconfig
 Version: 2.15.0-2.3
@@ -9415,6 +9375,28 @@ Size: 119252
 MD5sum: 782a086959310aef45199501186d42de
 SHA256: 3da776e8e796d5d475aa1fb492f3f3db21a109b2de66c98905a972d261d64934
 
+Package: libgio-2.0-dev
+Source: glib2.0
+Version: 2.84.4-3~deb13u5
+Installed-Size: 10742
+Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: libglib2.0-dev (<< 2.83), libglib2.0-dev-bin (<< 2.83)
+Depends: libffi-dev, libglib2.0-0t64 (= 2.84.4-3~deb13u5), libmount-dev, libpcre2-dev, libselinux1-dev, libsysprof-capture-4-dev (>= 3.38.0), pkgconf, zlib1g-dev
+Recommends: libgio-2.0-dev-bin (= 2.84.4-3~deb13u5), libglib2.0-bin (= 2.84.4-3~deb13u5)
+Suggests: gir1.2-glib-2.0-dev, libglib2.0-doc
+Breaks: libglib2.0-dev (<< 2.83), libglib2.0-dev-bin (<< 2.83)
+Description: Development files for the GLib, GObject and GIO libraries
+Multi-Arch: same
+Homepage: https://gitlab.gnome.org/GNOME/glib
+Description-md5: 9a7ce86f9cc5bfa3f95bff6d433aed17
+Section: libdevel
+Priority: optional
+Filename: pool/main/g/glib2.0/libgio-2.0-dev_2.84.4-3~deb13u5_amd64.deb
+Size: 1691796
+MD5sum: d61a0edfaf3be828397bb995c1a09173
+SHA256: a9bbd748ddd40a08b336e8d6b1755e698957ac640d081ddc4c330b716c6b89c3
+
 Package: libglib2.0-0t64
 Source: glib2.0
 Version: 2.84.4-3~deb13u5
@@ -10764,25 +10746,6 @@ Size: 61984
 MD5sum: 27f9b7be350670da1c4bb1357ab66bcc
 SHA256: 7941ce1e8b937a9a037fea992e963ae70bc9e07ee199762b4b581a4c35cb9dbe
 
-Package: ifupdown-ng
-Version: 0.12.1-7
-Installed-Size: 179
-Maintainer: ifupdown-ng Maintainers <team+ifupdown-ng@tracker.debian.org>
-Architecture: amd64
-Depends: adduser, iproute2, libbsd0 (>= 0.7.0), libc6 (>= 2.38)
-Recommends: ifupdown-ng-compat, isc-dhcp-client | dhcp-client, rdnssd
-Suggests: ppp
-Description: network interface configuration tool
-Multi-Arch: foreign
-Homepage: https://github.com/ifupdown-ng/ifupdown-ng
-Description-md5: 4a89365901c2a8b66e88462789790ce4
-Section: admin
-Priority: optional
-Filename: pool/main/i/ifupdown-ng/ifupdown-ng_0.12.1-7_amd64.deb
-Size: 65664
-MD5sum: df5d33e70b9fdccbfe2f984154dfd395
-SHA256: 091901ba71f70d533833c36d272069c4cb7f5a36d738ef7412aa190719914348
-
 Package: ifupdown-ng-compat
 Source: ifupdown-ng
 Version: 0.12.1-7
@@ -11230,6 +11193,25 @@ Size: 195176
 MD5sum: 370a64828b2495ed968930a6fe1dc50b
 SHA256: ea60d4434cc4be893802820337507516b8860a63a7f0196926f1450cc2a78c9a
 
+Package: kmod
+Version: 34.2-2
+Installed-Size: 255
+Maintainer: Marco d'Itri <md@linux.it>
+Architecture: amd64
+Replaces: bash-completion (<< 1:2.16.0-1)
+Depends: libc6 (>= 2.38), libssl3t64 (>= 3.0.0), libkmod2 (= 34.2-2)
+Breaks: bash-completion (<< 1:2.16.0-1)
+Description: tools for managing Linux kernel modules
+Multi-Arch: foreign
+Description-md5: 0cd8f9566ff621a593309a12fd64999f
+Tag: admin::kernel, devel::lang:c, implemented-in::c, role::program
+Section: admin
+Priority: important
+Filename: pool/main/k/kmod/kmod_34.2-2_amd64.deb
+Size: 95704
+MD5sum: 9edb239465beb5197b67f91415ccbb01
+SHA256: d56f9311beb17cd15447d11d91fd4de94d23a47d4619e8806b1b807b40c72e53
+
 Package: krb5-admin-server
 Source: krb5
 Version: 1.21.3-5+deb13u1
@@ -11446,22 +11428,6 @@ Filename: pool/main/k/krb5/libkrb5support0_1.21.3-5+deb13u1_amd64.deb
 Size: 33124
 MD5sum: 20061bfd85a525d45bdce33e5300c43c
 SHA256: 3a0acd8b37955c0e102c756b52c97df2a31f67b96453c35dab70df218d309117
-
-Package: kthresher
-Version: 1.4.1-3
-Installed-Size: 60
-Maintainer: Darshaka Pathirana <dpat@syn-net.org>
-Architecture: all
-Depends: python3-apt, python3:any
-Description: Purge Unused Kernels
-Homepage: https://github.com/rackerlabs/kthresher/
-Description-md5: 2cbf7edfa05c12e9f271ec0a6d152ea9
-Section: admin
-Priority: optional
-Filename: pool/main/k/kthresher/kthresher_1.4.1-3_all.deb
-Size: 17272
-MD5sum: 37ff75d5ed5e46bcf6eaa6ad68217973
-SHA256: f08a37666cd2212937ce3158b6cce729373ae62a985872ef586e52853be56162
 
 Package: latexml
 Version: 0.8.8-2
@@ -12042,25 +12008,6 @@ Filename: pool/main/libd/libdevel-mat-dumper-perl/libdevel-mat-dumper-perl_0.50-
 Size: 34232
 MD5sum: f1ef5c146b47422cb0e8110dd96ece92
 SHA256: 482a87b2d135a027ad98ce274e3100ca153c9777d3d796375dd3703fe5307e2c
-
-Package: libdevel-mat-perl
-Source: libdevel-mat-perl (0.53-1)
-Version: 0.53-1+b1
-Installed-Size: 725
-Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
-Architecture: amd64
-Depends: perl (>= 5.40.0-6), perlapi-5.40.0, libc6 (>= 2.14), libcommandable-perl, libdevel-mat-dumper-perl (>= 0.48), libfeature-compat-try-perl, libfile-sharedir-perl, libheap-perl, liblist-utilsby-perl, libmodule-pluggable-perl, libscalar-list-utils-perl, libstring-tagged-perl, libstring-tagged-terminal-perl, libstruct-dumb-perl, libsyntax-keyword-match-perl
-Description: Perl Memory Analysis Tool
-Homepage: https://metacpan.org/release/Devel-MAT
-Description-md5: ee83a9a5a09b1265d2be4eaee581f532
-Tag: devel::lang:perl, devel::library, implemented-in::c,
- implemented-in::perl, role::devel-lib
-Section: perl
-Priority: optional
-Filename: pool/main/libd/libdevel-mat-perl/libdevel-mat-perl_0.53-1+b1_amd64.deb
-Size: 147576
-MD5sum: e6184a6801b918d2755f0600aae376bf
-SHA256: a6cb8952339256efa76da65fb000bb8f2921a6a142addaaaabb6775e18c8c4af
 
 Package: libdigest-sha-perl
 Source: libdigest-sha-perl (6.04-1)
@@ -13308,28 +13255,6 @@ Size: 23440
 MD5sum: e12378735b9a694d15c50155c36d9c82
 SHA256: 1e1740bda3d38bf2e010348b27e25f2a69308462c368951ea89586b88efbec5d
 
-Package: libmoose-perl
-Source: libmoose-perl (2.2207-1)
-Version: 2.2207-1+b3
-Installed-Size: 2289
-Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
-Architecture: amd64
-Depends: perl (>= 5.40.0-8), perlapi-5.40.0, libc6 (>= 2.4), libclass-load-perl, libclass-load-xs-perl, libdata-optlist-perl, libdevel-globaldestruction-perl, libdevel-overloadinfo-perl, libdevel-stacktrace-perl, libeval-closure-perl, libmodule-runtime-conflicts-perl, libmodule-runtime-perl, libmro-compat-perl, libpackage-deprecationmanager-perl, libpackage-stash-perl, libpackage-stash-xs-perl, libparams-util-perl, libscalar-list-utils-perl (>= 1:1.56), libsub-exporter-perl, libtry-tiny-perl
-Recommends: libdevel-partialdump-perl
-Breaks: libcatalyst-perl (<< 5.90050+), libconfig-mvp-perl (<< 2.200004+), libdevel-repl-perl (<< 1.003020+), libdist-zilla-perl (<< 5.043+), libdist-zilla-plugin-git-perl (<< 2.016+), libfey-orm-perl (<< 0.42+), libfey-perl (<< 0.36+), libfile-changenotify-perl (<< 0.15+), libhttp-throwable-perl (<< 0.017+), libmarkdent-perl (<< 0.16+), libmason-perl (<< 2.18+), libmoose-autobox-perl (<< 0.15+), libmoosex-abc-perl (<< 0.05+), libmoosex-aliases-perl (<< 0.08+), libmoosex-alwayscoerce-perl (<< 0.13+), libmoosex-app-perl (<< 1.41-2~), libmoosex-attribute-deflator-perl (<< 2.1.7+), libmoosex-attribute-dependent-perl (<< 1.1.0+), libmoosex-attribute-prototype-perl (<< 0.10+), libmoosex-attributehelpers-perl (<< 0.22+), libmoosex-attributeindexes-perl (<< 1.0.0+), libmoosex-attributeinflate-perl (<< 0.02+), libmoosex-cascadeclearing-perl (<< 0.03+), libmoosex-classattribute-perl (<< 0.26+), libmoosex-constructor-allerrors-perl (<< 0.021+), libmoosex-declare-perl (<< 0.35+), libmoosex-followpbp-perl (<< 0.02+), libmoosex-getopt-perl (<< 0.56+), libmoosex-instancetracking-perl (<< 0.04+), libmoosex-lazyrequire-perl (<< 0.06+), libmoosex-meta-attribute-index-perl (<< 0.04+), libmoosex-meta-attribute-lvalue-perl (<< 0.05+), libmoosex-method-signatures-perl (<< 0.44+), libmoosex-methodattributes-perl (<< 0.22+), libmoosex-nonmoose-perl (<< 0.24+), libmoosex-object-pluggable-perl (<< 0.0011+), libmoosex-params-validate-perl (<< 0.05+), libmoosex-poe-perl (<< 0.214+), libmoosex-privatesetters-perl (<< 0.03+), libmoosex-role-cmd-perl (<< 0.06+), libmoosex-role-parameterized-perl (<< 1.00+), libmoosex-role-withoverloading-perl (<< 0.14+), libmoosex-runnable-perl (<< 0.03+), libmoosex-scaffold-perl (<< 0.05+), libmoosex-semiaffordanceaccessor-perl (<< 0.05+), libmoosex-setonce-perl (<< 0.100473+), libmoosex-singleton-perl (<< 0.25+), libmoosex-slurpycontructor-perl (<< 1.1+), libmoosex-storage-perl (<< 0.42+), libmoosex-strictconstructor-perl (<< 0.12+), libmoosex-traits-perl (<< 0.11+), libmoosex-types-parameterizable-perl (<< 0.05+), libmoosex-types-perl (<< 0.19+), libmoosex-types-set-object-perl (<< 0.03+), libmoosex-types-signal-perl (<< 1.101930+), libmoosex-undeftolerant-perl (<< 0.11+), libnamespace-autoclean-perl (<< 0.08+), libpod-elemental-perl (<< 0.093280+), libpod-weaver-perl (<< 3.101638+), libprang-perl (<< 0.14+), libreaction-perl (<< 0.002003+), libtest-able-perl (<< 0.10+), libtest-cleannamespaces-perl (<< 0.03+), libtest-moose-more-perl (<< 0.022+), libtest-tempdir-perl (<< 0.05+), libthrowable-perl (<< 0.102080+)
-Description: modern Perl object system framework
-Multi-Arch: same
-Homepage: https://metacpan.org/release/Moose
-Description-md5: cdb749f6802d04685cc71b5a7f9a5c87
-Tag: devel::lang:perl, devel::library, implemented-in::c,
- implemented-in::perl, role::devel-lib
-Section: perl
-Priority: optional
-Filename: pool/main/libm/libmoose-perl/libmoose-perl_2.2207-1+b3_amd64.deb
-Size: 765912
-MD5sum: bdcdb008fe8542b655c8cd6f8036888f
-SHA256: 4343c36bb7df93a9f15306ec3e3a907e943e17402c8fe6d292ed82a086aab2b5
-
 Package: libmp3-tag-perl
 Version: 1.16-1
 Installed-Size: 1162
@@ -14020,24 +13945,6 @@ Size: 27772
 MD5sum: c5ba46731fa6d66141f111279033b726
 SHA256: bf8158e63d82882ee203ee1f20f45324509566fe7806e327d52215b23f55a5eb
 
-Package: libtest-exception-perl
-Version: 0.43-3
-Installed-Size: 39
-Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
-Architecture: all
-Depends: perl:any, libsub-uplevel-perl
-Description: module for testing exception-based code
-Multi-Arch: foreign
-Homepage: https://metacpan.org/release/Test-Exception
-Description-md5: 86b2fffa95f12ffe1616dcc8453427d7
-Tag: devel::lang:perl, devel::library, implemented-in::perl
-Section: perl
-Priority: optional
-Filename: pool/main/libt/libtest-exception-perl/libtest-exception-perl_0.43-3_all.deb
-Size: 16928
-MD5sum: b56b86b4207a3119179ba46460f729b8
-SHA256: 5c7324d3fb81ad38882f40ab24ddec6623b1eebd70423a57994165f62d28636f
-
 Package: libtest-harness-perl
 Version: 3.50-1
 Installed-Size: 604
@@ -14055,41 +13962,6 @@ Filename: pool/main/libt/libtest-harness-perl/libtest-harness-perl_3.50-1_all.de
 Size: 228932
 MD5sum: 6def1ba1a3f5903bdeffcb8cd4fc4c02
 SHA256: 3506c546aa47399580ce58ec983814165e206665080cccded1c89fe2dd6e37f1
-
-Package: libtest-modern-perl
-Version: 0.013-4
-Installed-Size: 76
-Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
-Architecture: all
-Depends: libexporter-tiny-perl, libimport-into-perl, libtest-api-perl, libtest-fatal-perl, libtest-warnings-perl, libtry-tiny-perl, libmodule-runtime-perl (>= 0.012), libtest-deep-perl (>= 0.111), libtest-longstring-perl (>= 0.15), perl (>= 5.13.4) | libtest-simple-perl (>= 0.96), perl:any
-Description: precision testing for modern perl
-Homepage: https://metacpan.org/release/Test-Modern
-Description-md5: 639f5a69d6d8295bc9e124ef15811de3
-Tag: devel::lang:perl, devel::library, implemented-in::perl
-Section: perl
-Priority: optional
-Filename: pool/main/libt/libtest-modern-perl/libtest-modern-perl_0.013-4_all.deb
-Size: 36572
-MD5sum: 6215d82aea06d0ca43e6141ccdf42a91
-SHA256: 298470c475ca4788293def21939881a39b1bc0c13315f24a47fb2d0379b77b94
-
-Package: libtest-sharedfork-perl
-Version: 0.35-3
-Installed-Size: 29
-Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
-Architecture: all
-Depends: perl:any
-Description: module to run tests in multiple processes and merge results
-Multi-Arch: foreign
-Homepage: https://metacpan.org/release/Test-SharedFork
-Description-md5: ace19bd4752668af9927e5d34821b316
-Tag: devel::lang:perl, devel::library, implemented-in::perl, role::shared-lib
-Section: perl
-Priority: optional
-Filename: pool/main/libt/libtest-sharedfork-perl/libtest-sharedfork-perl_0.35-3_all.deb
-Size: 8484
-MD5sum: 7f34682e0dd5ca17a84e13445be77301
-SHA256: ad796b07f5a207fd047ce402c11c52e3a99707be8356d352ee08f4bf68c1192f
 
 Package: libtest-simple-perl
 Version: 1.302210-1
@@ -14113,40 +13985,6 @@ Filename: pool/main/libt/libtest-simple-perl/libtest-simple-perl_1.302210-1_all.
 Size: 733736
 MD5sum: 5b970d7904c6d4770a04b51eafe561d1
 SHA256: fdcd8f39c86f18ff1e2a78c06503d05bb2714a4e3c85314bebbaac60df3875cb
-
-Package: libtest-useallmodules-perl
-Version: 0.17-3
-Installed-Size: 22
-Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
-Architecture: all
-Depends: perl:any
-Description: test module to do use_ok() for all the MANIFESTed modules
-Multi-Arch: foreign
-Homepage: https://metacpan.org/release/Test-UseAllModules
-Description-md5: 77e4d3e138edde6aab3690d26542cf88
-Tag: devel::lang:perl, devel::library, implemented-in::perl, role::shared-lib
-Section: perl
-Priority: optional
-Filename: pool/main/libt/libtest-useallmodules-perl/libtest-useallmodules-perl_0.17-3_all.deb
-Size: 7528
-MD5sum: 0c3d6fb0f54907ca2dafb1267c84a7ba
-SHA256: 623225a84a310edf90491f4de7c1ed47a33fdbb1807f8797b8e1c650981e5dfe
-
-Package: libtest2-harness-perl
-Version: 1.000158-1
-Installed-Size: 1807
-Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
-Architecture: all
-Depends: perl:any, libdata-uuid-perl, libfilter-perl, libgoto-file-perl, libimporter-perl, libio-compress-perl, libjson-pp-perl, liblong-jump-perl, libscalar-list-utils-perl, libscope-guard-perl, libterm-table-perl, libtest-simple-perl, libtest2-plugin-memusage-perl, libtest2-plugin-uuid-perl, libtest2-suite-perl, libyaml-tiny-perl
-Description: new and improved test harness with better Test2 integration
-Homepage: https://metacpan.org/release/Test2-Harness
-Description-md5: 9c45a0d7131ec8883ade617f3900aab5
-Section: perl
-Priority: optional
-Filename: pool/main/libt/libtest2-harness-perl/libtest2-harness-perl_1.000158-1_all.deb
-Size: 541636
-MD5sum: 660526ad18b3b1ac53651378a44d8902
-SHA256: cc6b9f1286dcc3d24d331e8d47bf2ad33e5e4cb6c25618d798e1c68d01ec9c25
 
 Package: libtest2-suite-perl
 Version: 0.000163-1
@@ -16023,44 +15861,6 @@ Size: 2122084
 MD5sum: 9f5de2d0038fbed5284a3ac2b5a64149
 SHA256: 9de42b48394935236a31385e4bae816911cd20dc3f20250531964aec44082f63
 
-Package: manpages-cs
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 926
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Czech man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: cd2e87fca21f53b0a63f5b49632b36d5
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-cs_4.27.0-1_all.deb
-Size: 336256
-MD5sum: 9248af9d89b6b298905e65b08fa69aaf
-SHA256: e97e6769ceb2129bc4f697d1df7798f253af699386e209dda3ed1460c3935f5b
-
-Package: manpages-da
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 1061
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Danish man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 4050d832a8922258765c274370732b7e
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-da_4.27.0-1_all.deb
-Size: 436152
-MD5sum: 038b9b103c0f304b46529a479f027b67
-SHA256: e39d41541ce26b0a56ae228095db0f0fbbbe72d34b7e52915f14145c2165528a
-
 Package: manpages-de
 Source: manpages-l10n
 Version: 4.27.0-1
@@ -16081,26 +15881,6 @@ Filename: pool/main/m/manpages-l10n/manpages-de_4.27.0-1_all.deb
 Size: 4149384
 MD5sum: 1c0c46a23c5186ec948d8cde621550ca
 SHA256: 82b0674a475ff39c7a366121f5823ff842300ecdeb596ad467787459cc539845
-
-Package: manpages-de-dev
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 2727
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages-dev, glibc-doc
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: German development manpages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 1deaa46dc16b1a25115a2a013f8c6852
-Tag: culture::german, devel::doc, made-of::man, role::documentation
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-de-dev_4.27.0-1_all.deb
-Size: 1356696
-MD5sum: 3325548bb6e3379c79818a781dd20f7d
-SHA256: 53a8d3870b67b023423e95ab71636c57165b4d22a46ed3da29cfbf6384ac8766
 
 Package: manpages-es
 Source: manpages-l10n
@@ -16123,25 +15903,6 @@ Size: 1061488
 MD5sum: 0fb3106c586d0583ab0bbf152fe17d64
 SHA256: feecf5e9105f612faeddff1df07459ee94da7e1ad9e51380dedf508487a17de5
 
-Package: manpages-fi
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 843
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Finnish man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 23df10444e0ec746a6963715cd726f77
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-fi_4.27.0-1_all.deb
-Size: 278376
-MD5sum: 5ba3e0947d1aaf1d316263edeb62b585
-SHA256: 2cfe412153f763f3d458d46a2e8de149a87d8ca36759d89bd53af51a9c7fa756
-
 Package: manpages-fr
 Source: manpages-l10n
 Version: 4.27.0-1
@@ -16161,26 +15922,6 @@ Filename: pool/main/m/manpages-l10n/manpages-fr_4.27.0-1_all.deb
 Size: 2948132
 MD5sum: 710224e7ab1ba057ffdea61c952705e1
 SHA256: 20a563c41d9483796260870634bb2a07b271026b99b888db87ea0ae0a99a63e5
-
-Package: manpages-fr-dev
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 4828
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages-dev, glibc-doc
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: French development manpages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: c5d7a1d9ddf1f4eaae738cc6251b7452
-Tag: culture::french, made-of::man, role::documentation
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-fr-dev_4.27.0-1_all.deb
-Size: 2809884
-MD5sum: a7d51a74a0a2a1ae3f282ffb035dce9b
-SHA256: e7c8165ff8f1730411e31fbedd313e977022911ce51a181777aad45b8da1e54b
 
 Package: manpages-hu
 Source: manpages-l10n (4.27.0-1)
@@ -16202,64 +15943,6 @@ Size: 309292
 MD5sum: 4360bb7eadc95bac18dbaae20cf82251
 SHA256: a8a89cc7397117eebd2326f3b70821c5d7fb42abe7d128d78bb75dfd23ac111b
 
-Package: manpages-id
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 648
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Indonesian man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 3d83763bc10447d75d27bef3a8ec00d0
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-id_4.27.0-1_all.deb
-Size: 113220
-MD5sum: 15f74c3327997314d83d3577fbd30003
-SHA256: e1344a91ae9d202217ca4b5767bb851b57717465065d57ce432b73870dae8baa
-
-Package: manpages-it
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 1057
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Italian man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 5709d33bf002de69fb89df65302021b3
-Tag: culture::italian, made-of::man, role::documentation
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-it_4.27.0-1_all.deb
-Size: 476428
-MD5sum: 4b0cfba42dfecd95f0f1c5a9b5d813bb
-SHA256: a84d150e056ced478410ba47c715e9c59da08475311978a642f4f71a70d3724b
-
-Package: manpages-nl
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 972
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Dutch man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 0df1d58e7853e26b6d93515bc58938dd
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-nl_4.27.0-1_all.deb
-Size: 376508
-MD5sum: 053590573a3f0c49dbe64079c0915ceb
-SHA256: 71244eec28caeeff5298bbc24297f3f8ad4524527d76071c8f54de210923855a
-
 Package: manpages-pl
 Source: manpages-l10n (4.27.0-1)
 Version: 1:4.27.0-1
@@ -16280,101 +15963,6 @@ Filename: pool/main/m/manpages-l10n/manpages-pl_4.27.0-1_all.deb
 Size: 2017664
 MD5sum: 8459a4885596f11a06eb94326f98c9dd
 SHA256: a6bb9118f90d27c97517349b051722babcb73c9fa53b90e8806304a587d86498
-
-Package: manpages-ro
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 4441
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Romanian man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: f22ed2fd32e4fcb272525d3815bd4d9c
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-ro_4.27.0-1_all.deb
-Size: 3340328
-MD5sum: c29b656c85c9913caee7ccf9fd8416a3
-SHA256: ecc97d83f1faf0e5a7c97f39b9e7097fcc85ebe9bb1d0e301f12b95c8223494d
-
-Package: manpages-ro-dev
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 3125
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages-dev, glibc-doc
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Romanian development manpages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: e831f3c27f8798ed728237895a559872
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-ro-dev_4.27.0-1_all.deb
-Size: 1531224
-MD5sum: 379dba19187225f0f8d0bdedb6e183d0
-SHA256: dc86c2da88b2f66faf9a78d1f0c74dcc225fc754b61353b22f4104efe0530e83
-
-Package: manpages-sr
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 933
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Serbian man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 3710ea114a05c7e823628291b5a5602d
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-sr_4.27.0-1_all.deb
-Size: 345680
-MD5sum: 93e11ed8581343c9232e6144e99c4196
-SHA256: d5aa8836f262b7083408f688854f61e3c41fa17483caedb1bc433c1695b0187f
-
-Package: manpages-uk
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 1387
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Ukrainian man pages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: 52128b59d4e293cad19b3f1af4d64483
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-uk_4.27.0-1_all.deb
-Size: 813124
-MD5sum: af025839f5beeadeb7182147786ed436
-SHA256: 6e20a3e729d9c4d9473b50b16433d4ffd7d5b2067389aecfb15de0593eaf120e
-
-Package: manpages-uk-dev
-Source: manpages-l10n
-Version: 4.27.0-1
-Installed-Size: 622
-Maintainer: Dr. Helge Kreutzmann <debian@helgefjell.de>
-Architecture: all
-Suggests: man-browser, manpages-dev, glibc-doc
-Breaks: util-linux-locales (<< 2.39.1-3)
-Description: Ukrainian development manpages
-Multi-Arch: foreign
-Homepage: https://manpages-l10n-team.pages.debian.net/manpages-l10n/
-Description-md5: a22581500a814807c8f7520b3e119fd2
-Section: doc
-Priority: optional
-Filename: pool/main/m/manpages-l10n/manpages-uk-dev_4.27.0-1_all.deb
-Size: 95720
-MD5sum: e5533cfe90d38a1a0769545d06f643b3
-SHA256: 5b577b4bc8b6624c254ad6e6378283a8787da9502661513121204ac6dd053717
 
 Package: libmariadb3
 Source: mariadb
@@ -17109,26 +16697,6 @@ Size: 22556
 MD5sum: 3e002fa42ab79be8b9fcbb2407cbd998
 SHA256: 736089af4684b6fe2fc824cb118c82a9722d6a31ad45f845998debe37714cbe5
 
-Package: mu-cite
-Version: 8.1+0.20201103-3
-Installed-Size: 101
-Maintainer: Tatsuya Kinoshita <tats@debian.org>
-Architecture: all
-Depends: emacsen-common, apel, flim
-Recommends: emacs-nox | emacs
-Suggests: bbdb
-Enhances: gnus, mew, mh-e, wl
-Description: message citation utility for emacsen
-Homepage: https://github.com/cvs-m17n-org/MU-CITE
-Description-md5: 7c32ba683adeb1be99ae917a30a91a72
-Tag: implemented-in::lisp, role::plugin, suite::emacs
-Section: mail
-Priority: optional
-Filename: pool/main/m/mu-cite/mu-cite_8.1+0.20201103-3_all.deb
-Size: 26980
-MD5sum: 697bfc25851fe4c38f31d9c049edf43f
-SHA256: f4c6f4b211b7f758437dba2a517a78c0caef760932474987de45db19f3eee2cc
-
 Package: mutt
 Version: 2.2.13-1+deb13u1
 Installed-Size: 7113
@@ -17398,6 +16966,26 @@ Size: 100788
 MD5sum: 7b6630a1e2a3ee08c4653f02fb93e97d
 SHA256: 9677c55fb92c5f93501f091149f7eedd5144bf6d46802c073e5e53027d1a009d
 
+Package: libnetcdf-pnetcdf-22
+Source: netcdf-parallel
+Version: 1:4.9.3-2
+Installed-Size: 2051
+Maintainer: Alastair McKinstry <mckinstry@debian.org>
+Architecture: amd64
+Replaces: libnetcdf-pnetcdf-22
+Depends: libc6 (>= 2.38), libcurl3t64-gnutls (>= 7.16.2), libhdf5-openmpi-310 (>= 1.14.4.3), libhdf5-openmpi-hl-310 (>= 1.8.13), libopenmpi40 (>= 5.0.7), libpnetcdf6 (>= 1.14.0), libxml2 (>= 2.7.4), libzip5 (>= 1.0)
+Breaks: libnetcdf-pnetcdf-22 (<< 1:4.9.3-2)
+Description: Interface for scientific data access to large binary data
+Multi-Arch: same
+Homepage: http://www.unidata.ucar.edu/software/netcdf/
+Description-md5: 544d5abff5d8ffd3a09189e30430026f
+Section: libs
+Priority: optional
+Filename: pool/main/n/netcdf-parallel/libnetcdf-pnetcdf-22_4.9.3-2_amd64.deb
+Size: 593968
+MD5sum: 6f6b39dae1f357ac523902b50a876749
+SHA256: 8fc7ba5a2c3963563a456813e860911fecd64592948d96f64a39a19ec81d6f3f
+
 Package: libnetcdf-pnetcdf-dev
 Source: netcdf-parallel
 Version: 1:4.9.3-2
@@ -17443,24 +17031,6 @@ Size: 46156
 MD5sum: e59701b907fb100a8497225ee4d82897
 SHA256: 51c46945bcfa06b5e53c61bbcd9b567740c60314c17d49b53b704df3bd38af4b
 
-Package: netscript-ipfilter
-Source: netscript-2.4
-Version: 5.5.5+nmu3
-Installed-Size: 93
-Maintainer: Matthew Grant <matt@mattgrant.net.nz>
-Architecture: all
-Provides: netscript-ipfilter
-Depends: iptables, netbase, bash (>= 2.03)
-Conflicts: netscript-2.4
-Description: Linux 2.6/3.x iptables management system.
-Description-md5: 3c93c47afdbfe5a6326bb6b8544a76e1
-Section: net
-Priority: optional
-Filename: pool/main/n/netscript-2.4/netscript-ipfilter_5.5.5+nmu3_all.deb
-Size: 18728
-MD5sum: 6cad885a7ce1d815cd4b6062cb4ba81d
-SHA256: 856c2f4ae14e75d2760a2a38356d2145b55d1d35dbe96cb6b338a421981d6c6b
-
 Package: libhogweed6t64
 Source: nettle
 Version: 3.10.1-1
@@ -17502,6 +17072,27 @@ Filename: pool/main/n/nettle/libnettle8t64_3.10.1-1_amd64.deb
 Size: 305436
 MD5sum: 3cb9ab304fc612e62f2caeaacdfb38d9
 SHA256: 1b03d4a9cd9c8143ba50fe6396f36937e901a317d492d179f4596862c1731cfe
+
+Package: network-manager
+Version: 1.52.1-1
+Installed-Size: 7756
+Maintainer: Utopia Maintenance Team <pkg-utopia-maintainers@lists.alioth.debian.org>
+Architecture: amd64
+Depends: libaudit1 (>= 1:2.2.1), libbluetooth3 (>= 5), libc6 (>= 2.38), libcurl3t64-gnutls (>= 7.24.0), libglib2.0-0t64 (>= 2.68.0), libgnutls30t64 (>= 3.7.2), libjansson4 (>= 2.14), libmm-glib0 (>= 1.10.0), libndp0 (>= 1.2), libnewt0.52 (>= 0.52.25), libnm0 (= 1.52.1-1), libpsl5t64 (>= 0.13.0), libreadline8t64 (>= 6.0), libselinux1 (>= 3.1~), libsystemd0 (>= 209), libteamdctl0 (>= 1.9), libudev1 (>= 183), default-dbus-system-bus | dbus-system-bus, adduser
+Recommends: ppp, dnsmasq-base, modemmanager, wireless-regdb, wpasupplicant, libpam-systemd, polkitd, udev, network-manager-l10n
+Suggests: libteam-utils, iptables
+Breaks: ppp (>= 2.5.2-2~), ppp (<< 2.5.2-1+~)
+Description: network management framework (daemon and userspace tools)
+Homepage: https://networkmanager.dev/
+Description-md5: 2432aabb3349a7eaf785a0c8e978adcd
+Tag: implemented-in::c, interface::daemon, network::configuration,
+ protocol::dhcp, protocol::ip, role::program, use::configuring
+Section: net
+Priority: optional
+Filename: pool/main/n/network-manager/network-manager_1.52.1-1_amd64.deb
+Size: 2247236
+MD5sum: ca3f054d88582a50f1548305511a8d28
+SHA256: 1e1f7aab8916b1346d39c844688409184a589a9e7f8377f9932ad95ebb7aafea
 
 Package: libnewt0.52
 Source: newt
@@ -17864,6 +17455,24 @@ Size: 1158784
 MD5sum: e413690820c0b7b28a7838d8d3b63363
 SHA256: 1009d3ffff9b406bf2ca263bc102a8cd15411d87795b5666f6b2e8181d5311a2
 
+Package: ns3
+Version: 3.43-2
+Installed-Size: 196
+Maintainer: Martin Quinson <mquinson@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.0), libns3.43 (>= 3.43), libstdc++6 (>= 13.1)
+Description: discrete-event network simulator for Internet systems
+Homepage: https://www.nsnam.org/
+Description-md5: f12ce0d749c845967463616b618b054b
+Tag: implemented-in::c++, role::program, use::simulating,
+ works-with::network-traffic
+Section: net
+Priority: optional
+Filename: pool/main/n/ns3/ns3_3.43-2_amd64.deb
+Size: 101848
+MD5sum: f6415e54e281c36cfe2aabf7272e4520
+SHA256: fd4aa8e5e49e686e693b4832b964873c4bf44076c60cd1c8bacd3f7ded3f4d77
+
 Package: nsf
 Version: 2.4.0-1
 Installed-Size: 1140
@@ -17919,6 +17528,32 @@ Filename: pool/main/n/nss/libnss3_3.110-1+deb13u4_amd64.deb
 Size: 1394236
 MD5sum: 08e74796982fc84bcee7965b8000ff00
 SHA256: 8d20d0754039e15e9bd2c8484e98dc9c2982907d4f20834da29a9501913d00b5
+
+Package: ntpsec
+Version: 1.2.3+dfsg1-8
+Installed-Size: 916
+Maintainer: Richard Laager <rlaager@debian.org>
+Architecture: amd64
+Replaces: ntp (<< 1:4.2.8p15+dfsg-2~), time-daemon
+Provides: time-daemon
+Depends: adduser, netbase, python3, python3-ntp (= 1.2.3+dfsg1-8), tzdata, libbsd0 (>= 0.0), libc6 (>= 2.38), libcap2 (>= 1:2.10), libssl3t64 (>= 3.0.0)
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: systemd | cron | cron-daemon
+Suggests: apparmor, certbot, ntpsec-doc, ntpsec-ntpviz
+Conflicts: time-daemon
+Breaks: ntp (<< 1:4.2.8p15+dfsg-2~)
+Description: Network Time Protocol daemon and utility programs
+Homepage: https://www.ntpsec.org
+Description-md5: c455d4fac72d8d6e46cfdbc0a5ddb7b3
+Tag: implemented-in::c, implemented-in::python, implemented-in::shell,
+ interface::commandline, interface::daemon, network::client,
+ network::server, role::program, use::timekeeping
+Section: net
+Priority: optional
+Filename: pool/main/n/ntpsec/ntpsec_1.2.3+dfsg1-8_amd64.deb
+Size: 346148
+MD5sum: 5fe8e31d95c280fab3d148c3cb03866b
+SHA256: 0322be1ea7bf2733f6ff79065e62cb1605a5ac051a804405beb205c8b9fd287f
 
 Package: nullmailer
 Version: 1:2.2+10~g7ed88a0-6.1
@@ -18215,6 +17850,31 @@ Filename: pool/main/o/openms/libopenms-dev_2.6.0+cleaned1-4+b5_amd64.deb
 Size: 880620
 MD5sum: 06fd94c37f3fb70afdffdba6ea881f50
 SHA256: b97e9344eaeb13a4fb5bc9fbddc436645a4e7381afe5eb4cf752fbcb5aa55626
+
+Package: openntpd
+Source: openntpd (1:6.2p3-4.2)
+Version: 1:6.2p3-4.2+b2
+Installed-Size: 145
+Maintainer: Ulises Vitulli <dererk@debian.org>
+Architecture: amd64
+Replaces: ntp, time-daemon
+Provides: time-daemon
+Depends: libc6 (>= 2.36), adduser, lsb-base (>= 3.0-6), netbase
+Suggests: apparmor
+Conflicts: ntp, time-daemon
+Breaks: apparmor-profiles-extra (<< 1.8)
+Description: OpenBSD NTP daemon
+Homepage: http://www.openntpd.org
+Description-md5: 4e4924a4bc4b10b5f382ae2c8b1824c5
+Tag: admin::configuring, interface::daemon, network::server,
+ network::service, role::program, scope::utility, suite::bsd,
+ use::timekeeping
+Section: net
+Priority: optional
+Filename: pool/main/o/openntpd/openntpd_6.2p3-4.2+b2_amd64.deb
+Size: 49656
+MD5sum: c27daef42533fe65baef113c5b6d0917
+SHA256: a67689c0d1dff497fc17e899bfcc802d0c6b9ab97d571d6808bca507b3f2084c
 
 Package: opensmtpd
 Version: 7.6.0p1-1
@@ -18636,26 +18296,6 @@ Filename: pool/main/o/org-mode/elpa-org_9.7.29+dfsg-1_all.deb
 Size: 1200112
 MD5sum: ab0c8bbdb98910dc084a62cd7d93f9e7
 SHA256: 11b914343dc9a97c1a709af4033e4bd6ff1fa9c121ab38099f870ee5a9f7eac8
-
-Package: org-mode
-Version: 9.7.29+dfsg-1
-Installed-Size: 147
-Maintainer: Debian Emacsen team <debian-emacsen@lists.debian.org>
-Architecture: all
-Depends: elpa-org
-Description: Transition Package, org-mode to elpa-org
-Homepage: https://orgmode.org
-Description-md5: ec2a60b381f7be933b614f16df540152
-Tag: implemented-in::lisp, interface::commandline, role::plugin,
- role::program, scope::utility, suite::emacs, use::editing,
- use::organizing, works-with-format::plaintext, works-with::pim,
- works-with::text
-Section: misc
-Priority: optional
-Filename: pool/main/o/org-mode/org-mode_9.7.29+dfsg-1_all.deb
-Size: 123116
-MD5sum: ae543a2387fdfdd76e910fc49033dc2a
-SHA256: 1b1465cddde18517a81d6559b19bfe63e225526fb2bd4149d750d5c7658132db
 
 Package: original-awk
 Version: 2025-01-16-1
@@ -20903,26 +20543,6 @@ Size: 37944
 MD5sum: 624e0afd97bb10cfc6b1e4064e1c4d3d
 SHA256: c76700378b8234f41b95f9d0eb9f8b91fdcd2fa495480cbf6972c694f1e6d666
 
-Package: runit-run
-Source: runit
-Version: 2.2.0-3
-Installed-Size: 38
-Maintainer: Lorenzo Puliti <plorenzo@disroot.org>
-Architecture: all
-Replaces: runit (<< 2.1.2-4), runit-systemd (<= 2.1.2-36), runit-sysv (<= 2.1.2-36)
-Depends: runit
-Conflicts: runit-init
-Breaks: runit (<< 2.1.2-4), runit-systemd (<= 2.1.2-36), runit-sysv (<= 2.1.2-36)
-Description: service supervision (systemd and sysv integration)
-Homepage: http://smarden.org/runit/
-Description-md5: 4cbcc1c788c687f0b2196617c39dff9c
-Section: admin
-Priority: optional
-Filename: pool/main/r/runit/runit-run_2.2.0-3_all.deb
-Size: 13732
-MD5sum: b5aa7efdcd5fa1ac2089f4828e53a00e
-SHA256: 03b7c414d885fa4cb698abfc97ca964ad329461bcdedf2061f678481617c3e64
-
 Package: rsop
 Source: rust-rsop
 Version: 0.6.4-1
@@ -21142,29 +20762,6 @@ Filename: pool/main/s/scim/scim_1.4.18+git20211204-0.2+b4_amd64.deb
 Size: 397356
 MD5sum: d896db288db4f21de901bf9a8f0a4adb
 SHA256: 7829cf7027ed4c7245e0eb4092c91a1a6bc21c3dbf0cdc8d6f385e9c15bd6fa2
-
-Package: semi
-Version: 1.14.7~0.20230104-1
-Installed-Size: 383
-Maintainer: Tatsuya Kinoshita <tats@debian.org>
-Architecture: all
-Replaces: tm
-Depends: emacsen-common, apel, flim
-Recommends: emacs-nox | emacs
-Suggests: gnupg, mailcrypt, wl | wl-beta | t-gnus
-Conflicts: tm, wemi
-Breaks: wl (<< 2.15.9+0.20190205-5~), wl-beta (<< 2.15.9+0.20200822-1~)
-Description: library to provide MIME feature for emacsen
-Homepage: https://github.com/wanderlust/semi
-Description-md5: 1e6de22ead436b59125e05547cee7d53
-Tag: implemented-in::lisp, role::plugin, role::program, suite::emacs,
- works-with::mail
-Section: mail
-Priority: optional
-Filename: pool/main/s/semi/semi_1.14.7~0.20230104-1_all.deb
-Size: 110536
-MD5sum: b0ab4409b00b97a5936c48035e36e295
-SHA256: e244ee697cd6e9866db28a8bd14502a84676680e0be7e6c6ef40d58bb7512bcd
 
 Package: rmail
 Source: sendmail (8.18.1-6)
@@ -22497,6 +22094,56 @@ Size: 1752764
 MD5sum: d151b60df7acaa9b360b1f07626499cf
 SHA256: 524bb723e5a77b0bd0d2579ff8f2b787a250849dd3fbe6211304f1206a003493
 
+Package: texlive-base
+Version: 2024.20250309-1
+Installed-Size: 46011
+Maintainer: Debian TeX Task Force <debian-tex-maint@lists.debian.org>
+Architecture: all
+Replaces: texlive-common (<< 2013), texlive-extra-utils (<< 2024.20240829), texlive-fonts-recommended (<< 2019.20200213), texlive-fonts-recommended-doc (<< 2019.20200213), texlive-lang-cyrillic (<< 2019.20190506), texlive-lang-european (<< 2019.20190506), texlive-lang-other (<< 2019.20190506), texlive-lang-spanish (<< 2019.20190506), texlive-latex-extra (<< 2019.20190701), texlive-latex-extra-doc (<< 2019.20190701), texlive-plain-generic (<< 2020)
+Provides: dvipdfmx
+Depends: debconf (>= 0.5) | debconf-2.0, tex-common (>= 6.14), libpaper-utils, sensible-utils, texlive-binaries (>= 2024.20240313), ucf, xdg-utils
+Recommends: lmodern (>= 0.93.3)
+Suggests: ghostscript, gv | postscript-viewer, perl-tk, xpdf | pdf-viewer, xzdec
+Conflicts: tex4ht (<< 20160814), texlive (<< 2024.20240401), texlive-base (<< 2024.20240401), texlive-bibtex-extra (<< 2024.20240401), texlive-binaries (<< 2024.20240313), texlive-extra-utils (<< 2024.20240401), texlive-font-utils (<< 2024.20240401), texlive-fonts-extra (<< 2024.20240401), texlive-fonts-extra-doc (<< 2024.20240401), texlive-fonts-extra-links (<< 2024.20240401), texlive-fonts-recommended (<< 2024.20240401), texlive-fonts-recommended-doc (<< 2024.20240401), texlive-formats-extra (<< 2024.20240401), texlive-full (<< 2024.20240401), texlive-games (<< 2024.20240401), texlive-humanities (<< 2024.20240401), texlive-humanities-doc (<< 2024.20240401), texlive-lang-all (<< 2024.20240401), texlive-lang-arabic (<< 2024.20240401), texlive-lang-chinese (<< 2024.20240401), texlive-lang-cjk (<< 2024.20240401), texlive-lang-cyrillic (<< 2024.20240401), texlive-lang-czechslovak (<< 2024.20240401), texlive-lang-english (<< 2024.20240401), texlive-lang-european (<< 2024.20240401), texlive-lang-french (<< 2024.20240401), texlive-lang-german (<< 2024.20240401), texlive-lang-greek (<< 2024.20240401), texlive-lang-italian (<< 2024.20240401), texlive-lang-japanese (<< 2024.20240401), texlive-lang-korean (<< 2024.20240401), texlive-lang-other (<< 2024.20240401), texlive-lang-polish (<< 2024.20240401), texlive-lang-portuguese (<< 2024.20240401), texlive-lang-spanish (<< 2024.20240401), texlive-latex-base (<< 2024.20240401), texlive-latex-base-doc (<< 2024.20240401), texlive-latex-extra (<< 2024.20240401), texlive-latex-extra-doc (<< 2024.20240401), texlive-latex-recommended (<< 2024.20240401), texlive-latex-recommended-doc (<< 2024.20240401), texlive-luatex (<< 2024.20240401), texlive-metapost (<< 2024.20240401), texlive-metapost-doc (<< 2024.20240401), texlive-music (<< 2024.20240401), texlive-pictures (<< 2024.20240401), texlive-pictures-doc (<< 2024.20240401), texlive-plain-generic (<< 2024.20240401), texlive-pstricks (<< 2024.20240401), texlive-pstricks-doc (<< 2024.20240401), texlive-publishers (<< 2024.20240401), texlive-publishers-doc (<< 2024.20240401), texlive-science (<< 2024.20240401), texlive-science-doc (<< 2024.20240401), texlive-xetex (<< 2024.20240401)
+Breaks: texlive-common (<< 2013), texlive-extra-utils (<< 2024.20240829), texlive-fonts-recommended (<< 2019.20200213), texlive-fonts-recommended-doc (<< 2019.20200213), texlive-lang-cyrillic (<< 2019.20190506), texlive-lang-english (<< 2022.20220923), texlive-lang-european (<< 2019.20190506), texlive-lang-other (<< 2019.20190506), texlive-lang-spanish (<< 2019.20190506), texlive-latex-extra (<< 2019.20190701), texlive-latex-extra-doc (<< 2019.20190701), texlive-math-extra (<< 2017), texlive-plain-generic (<< 2020)
+Description: TeX Live: Essential programs and files
+Multi-Arch: foreign
+Homepage: http://www.tug.org/texlive/
+Description-md5: 0c5a340259305f20ccacba4e0bd51845
+Tag: interface::commandline, made-of::font, made-of::html, made-of::pdf,
+ made-of::tex, role::app-data, role::data, role::documentation,
+ role::program, suite::TODO, use::typesetting, works-with-format::pdf,
+ works-with-format::postscript, works-with-format::tex,
+ works-with::font, works-with::image, works-with::image:vector,
+ works-with::text, x11::font
+Section: tex
+Priority: optional
+Filename: pool/main/t/texlive-base/texlive-base_2024.20250309-1_all.deb
+Size: 23054552
+MD5sum: 88af5f4aa308f58e9b45d795c59eb0c9
+SHA256: 358b85d97da96193f217613bbf49909114e6dec5b0a728b5c81fdcfd9f8dad62
+
+Package: texlive-luatex
+Source: texlive-base
+Version: 2024.20250309-1
+Installed-Size: 51952
+Maintainer: Debian TeX Task Force <debian-tex-maint@lists.debian.org>
+Architecture: all
+Replaces: texlive-latex-extra (<< 2020.20200804)
+Depends: tex-common (>= 6.13), libjs-jquery, lmodern, texlive-base (>= 2024.20240401), texlive-binaries (>= 2024.20240313)
+Breaks: texlive-base (<< 2022.20220405), texlive-latex-extra (<< 2020.20200804)
+Description: TeX Live: LuaTeX packages
+Multi-Arch: foreign
+Homepage: http://www.tug.org/texlive/
+Description-md5: f0bf81cc452490b024c898fee2f8e463
+Tag: role::app-data
+Section: tex
+Priority: optional
+Filename: pool/main/t/texlive-base/texlive-luatex_2024.20250309-1_all.deb
+Size: 29141396
+MD5sum: 4554ae40c38b2489aed2577baea293ea
+SHA256: c6601d6856af0b9cd25c64fcdab4a219a6ce7fd7a37724f532305add28fc72ff
+
 Package: texlive-binaries
 Source: texlive-bin
 Version: 2024.20240313.70630+ds-6
@@ -22521,6 +22168,79 @@ Filename: pool/main/t/texlive-bin/texlive-binaries_2024.20240313.70630+ds-6_amd6
 Size: 8445956
 MD5sum: 353259e381e8a14d27439b2d74f500d5
 SHA256: 11e32b06e18c07645f0cf80cc5e1779129753c7d4f225ea5ad972e348257107b
+
+Package: texlive-extra-utils
+Source: texlive-extra
+Version: 2024.20250309-2
+Installed-Size: 82868
+Maintainer: Debian TeX Task Force <debian-tex-maint@lists.debian.org>
+Architecture: all
+Replaces: texlive-base (<< 2020.20200329-2), texlive-binaries (<< 2024.20240313.70630+ds-6), texlive-font-utils (<< 2019.20200131), texlive-lang-japanese (<< 2023.20230613)
+Depends: tex-common (>= 6.13), libfile-homedir-perl, libunicode-linebreak-perl, libyaml-tiny-perl, python3, texlive-base (>= 2024.20240401), texlive-binaries (>= 2024.20240313), texlive-latex-base (>= 2024.20240401), texlive-luatex (>= 2024.20240401), texlive-plain-generic (>= 2024.20240401)
+Recommends: ghostscript, liblog-log4perl-perl, ruby, texlive-latex-recommended
+Suggests: chktex, default-jre-headless, dvidvi, dvipng, fragmaster, lacheck, latexdiff, latexmk, purifyeps, xindy
+Breaks: texlive-base (<< 2024.20240829), texlive-binaries (<< 2024.20240313.70630+ds-6), texlive-font-utils (<< 2019.20200131), texlive-lang-japanese (<< 2023.20230613)
+Description: TeX Live: TeX auxiliary programs
+Multi-Arch: foreign
+Homepage: http://www.tug.org/texlive/
+Description-md5: 452c058a2defd638be42174e329359d3
+Tag: devel::docsystem, interface::commandline, role::program, scope::utility,
+ use::typesetting, works-with-format::dvi, works-with-format::tex,
+ works-with::font, works-with::text
+Section: tex
+Priority: optional
+Filename: pool/main/t/texlive-extra/texlive-extra-utils_2024.20250309-2_all.deb
+Size: 67638004
+MD5sum: 52590ba8b504c2aa7aee46bdac16c2f7
+SHA256: b5b8a13ffc043a975a878f22d078f004cc5d1339cda01be3af255e8f77cb43fe
+
+Package: texlive-formats-extra
+Source: texlive-extra
+Version: 2024.20250309-2
+Installed-Size: 16503
+Maintainer: Debian TeX Task Force <debian-tex-maint@lists.debian.org>
+Architecture: all
+Replaces: jadetex (<< 3.13-17), xmltex (<< 1.9.debian.1-6)
+Provides: jadetex, xmltex
+Depends: tex-common (>= 6.13), texlive-base (>= 2024.20240401), texlive-binaries (>= 2024.20240313), texlive-fonts-recommended (>= 2024.20240401), texlive-latex-base (>= 2024.20240401), texlive-plain-generic (>= 2024.20240401), texlive-xetex (>= 2024.20240401)
+Recommends: openjade
+Conflicts: jadetex (<< 3.13-17), xmltex (<< 1.9.debian.1-6)
+Breaks: jadetex (<< 3.13-17), texlive-base (<< 2022.20220405), texlive-humanities (<< 2024.20241102), xmltex (<< 1.9.debian.1-6)
+Description: TeX Live: Additional formats
+Multi-Arch: foreign
+Homepage: http://www.tug.org/texlive/
+Description-md5: 4b40294c5fc78975aa57d7f4ed3c9271
+Tag: made-of::tex, role::app-data, use::typesetting, works-with-format::tex,
+ works-with::text
+Section: tex
+Priority: optional
+Filename: pool/main/t/texlive-extra/texlive-formats-extra_2024.20250309-2_all.deb
+Size: 7795076
+MD5sum: 4a638782f0a82b626c78fd329852632b
+SHA256: 0d00c8939a1a250c4850a7c6c20f7764f461d4bb5f37d9bc3d64717db37c5159
+
+Package: texlive-music
+Source: texlive-extra
+Version: 2024.20250309-2
+Installed-Size: 96928
+Maintainer: Debian TeX Task Force <debian-tex-maint@lists.debian.org>
+Architecture: all
+Replaces: m-tx (<< 0.61.ctan20151217-2), musixtex (<< 1:1.20.ctan20151216-3), pmx (<< 2.7.0.ctan20150301-3)
+Provides: gregorio, gregoriotex, m-tx, musixtex, pmx
+Depends: tex-common (>= 6.13), python3, texlive-base (>= 2022.20220405), texlive-binaries (>= 2024.20240313), texlive-latex-base (>= 2024.20240401)
+Breaks: gregorio (<= 2.3-1), gregoriotex (<= 2.3-1), m-tx (<< 0.61.ctan20151217-2), musixtex (<< 1:1.20.ctan20151216-3), pmx (<< 2.7.0.ctan20150301-3), texlive-base (<< 2022.20220405)
+Description: TeX Live: Music packages
+Multi-Arch: foreign
+Homepage: http://www.tug.org/texlive/
+Description-md5: c0c9fc34aecb2e44965cb9f6da706d0d
+Tag: made-of::pdf, made-of::tex, role::app-data, role::documentation,
+ use::typesetting, works-with::music-notation
+Section: tex
+Priority: optional
+Filename: pool/main/t/texlive-extra/texlive-music_2024.20250309-2_all.deb
+Size: 44318752
+MD5sum: a9dec1318928aacf8928f16c0f01342e
+SHA256: 8b2a7c46debfd9829580102876c5e43be90c3f58d67f4f8e4670c408009f850f
 
 Package: libtiff6
 Source: tiff
@@ -24232,56 +23952,6 @@ Size: 5707192
 MD5sum: dd290ed4599e71bde9ba8bd16736092c
 SHA256: ff7e18ef011ff448ac799daf16134a676ccf9c5987e1a9f4b779611ed5fc3b0d
 
-Package: w3m-el
-Version: 1.4.632+0.20221206.2328.4f27810-0.2
-Installed-Size: 2679
-Maintainer: Tatsuya Kinoshita <tats@debian.org>
-Architecture: all
-Replaces: w3m-el-snapshot
-Depends: emacsen-common, w3m | w3m-ssl (>= 0.3) | w3mmee (>= 0.3)
-Recommends: emacs-nox | emacs, apel, flim
-Suggests: semi, imagemagick, wv, xlhtml, ppthtml, libmoe1.5, xpdf-utils, bzip2, namazu2, perl-doc, discount | libtext-markdown-perl | markdown
-Enhances: gnus, mew, mew-beta, wl, wl-beta
-Conflicts: w3m-el-snapshot
-Description: simple Emacs interface of w3m
-Homepage: https://emacs-w3m.github.io/
-Description-md5: 77b0c56d36f53fdb12a97f3e855b6d93
-Tag: implemented-in::lisp, protocol::http, role::plugin, role::program,
- suite::emacs, use::browsing, use::editing, web::browser,
- works-with-format::html, works-with::text
-Section: lisp
-Priority: optional
-Filename: pool/main/w/w3m-el/w3m-el_1.4.632+0.20221206.2328.4f27810-0.2_all.deb
-Size: 841644
-MD5sum: a4a28bbee3eaba513b6c2ff1fb1af285
-SHA256: bbfe2f41905b77803a5a62269e77c957a8feb8ff3a6ccd472be3dacbb96bfe90
-
-Package: w3m-el-snapshot
-Version: 1.4.632+0.20221206.2328.4f27810-1
-Installed-Size: 2678
-Maintainer: Tatsuya Kinoshita <tats@debian.org>
-Architecture: all
-Replaces: w3m-el
-Provides: w3m-el
-Depends: emacsen-common, w3m | w3m-ssl (>= 0.3) | w3mmee (>= 0.3)
-Recommends: emacs-nox | emacs, apel, flim
-Suggests: semi, imagemagick, wv, xlhtml, ppthtml, libmoe1.5, xpdf-utils, bzip2, namazu2, perl-doc, discount | libtext-markdown-perl | markdown
-Enhances: gnus, mew, mew-beta, wl, wl-beta
-Conflicts: w3m-el
-Description: simple Emacs interface of w3m (development version)
-Homepage: https://emacs-w3m.github.io/
-Description-md5: b57aa267f601102394de5b6979b940cd
-Tag: implemented-in::lisp, interface::TODO, interface::graphical,
- interface::text-mode, interface::x11, network::client, protocol::http,
- role::plugin, role::program, suite::emacs, use::browsing, web::browser,
- works-with-format::html, works-with::text, x11::application
-Section: lisp
-Priority: optional
-Filename: pool/main/w/w3m-el-snapshot/w3m-el-snapshot_1.4.632+0.20221206.2328.4f27810-1_all.deb
-Size: 841392
-MD5sum: 71e1c1ca8ec87ac0b68ed2c1ac4b8004
-SHA256: 03f6e49897a458a3ac9497e92b5942b6c779c5df4856711d3bd3d91bf10916d1
-
 Package: libwayland-client0
 Source: wayland
 Version: 1.23.1-3
@@ -24397,56 +24067,6 @@ Filename: pool/main/w/wheel/python3-wheel_0.46.1-2_all.deb
 Size: 21672
 MD5sum: 4ce05ec511db1f20d47046ad91d67ccf
 SHA256: 17b788ad15f8231e5058ed386cd6841d42b31937075b56caf4cf63263910e992
-
-Package: wl
-Version: 2.15.9+0.20210131-2
-Installed-Size: 3297
-Maintainer: Tatsuya Kinoshita <tats@debian.org>
-Architecture: all
-Replaces: wanderlust2, wl-beta
-Provides: imap-client, mail-reader, news-reader
-Depends: emacsen-common, semi, flim, apel
-Recommends: emacs-nox | emacs, ca-certificates
-Suggests: gnupg, gnutls-bin, openssl, starttls, x-face-el, w3m-el, bbdb, im, namazu2, maildir-utils, notmuch, bogofilter | bsfilter | spamassassin, mu-cite, mhc
-Conflicts: wanderlust2, wl-beta, xbase (<< 3.3.2.3a-2)
-Description: mail/news reader supporting IMAP for emacsen
-Homepage: https://github.com/wanderlust/wanderlust
-Description-md5: 89d56214f0179673d1fe28606af4cfac
-Tag: implemented-in::lisp, mail::imap, mail::pop, mail::user-agent,
- network::client, protocol::imap, protocol::nntp, protocol::pop3,
- role::plugin, role::program, suite::emacs, use::browsing, use::editing,
- works-with::mail
-Section: mail
-Priority: optional
-Filename: pool/main/w/wl/wl_2.15.9+0.20210131-2_all.deb
-Size: 605252
-MD5sum: 39725139d59a9df0f03bd614a17a2199
-SHA256: 31dfa3a952e794c26584934836d558be31416df4826117ad18753d13e0e52a41
-
-Package: wl-beta
-Version: 2.15.9+0.20230120-1
-Installed-Size: 3295
-Maintainer: Tatsuya Kinoshita <tats@debian.org>
-Architecture: all
-Replaces: wanderlust2, wl
-Provides: imap-client, mail-reader, news-reader, wl
-Depends: emacsen-common, semi, flim, apel
-Recommends: emacs-nox | emacs, ca-certificates
-Suggests: gnupg, gnutls-bin, openssl, starttls, x-face-el, w3m-el, bbdb, im, namazu2, maildir-utils, notmuch, bogofilter | bsfilter | spamassassin, mu-cite, mhc
-Conflicts: wanderlust2, wl, xbase (<< 3.3.2.3a-2)
-Description: mail/news reader supporting IMAP for emacsen (development version)
-Homepage: https://github.com/wanderlust/wanderlust
-Description-md5: d50de4139d2e7141fe9294629d1ce9a3
-Tag: implemented-in::lisp, mail::imap, mail::pop, mail::user-agent,
- network::client, protocol::imap, protocol::nntp, protocol::pop3,
- role::plugin, role::program, suite::emacs, use::browsing, use::editing,
- works-with::mail
-Section: mail
-Priority: optional
-Filename: pool/main/w/wl-beta/wl-beta_2.15.9+0.20230120-1_all.deb
-Size: 605452
-MD5sum: 454199806b72961de4487ba437563501
-SHA256: bae810003dcfd1150abdb35404c10930a431c04bd6c6e01f2dc67f5af2f70357
 
 Package: libwtmpdb0
 Source: wtmpdb
@@ -24617,23 +24237,6 @@ Filename: pool/main/x/xcb-util-wm/libxcb-icccm4_0.4.2-1_amd64.deb
 Size: 27460
 MD5sum: 0a8c715ec83c505ae255e59388149976
 SHA256: 28f04c7fa76939bbc03fbaa1191dc58200c0c894d48ac6105a7039ba4d223b4a
-
-Package: xchpst
-Version: 0.6.2-1
-Installed-Size: 82
-Maintainer: Andrew Bower <andrew@bower.uk>
-Architecture: amd64
-Depends: libc6 (>= 2.38), libcap2 (>= 1:2.31)
-Enhances: runit
-Description: eXtended CHange Process STate
-Homepage: https://gitlab.com/abower/xchpst
-Description-md5: f321b8b88d2c6516f197878b2ddfaf3c
-Section: admin
-Priority: optional
-Filename: pool/main/x/xchpst/xchpst_0.6.2-1_amd64.deb
-Size: 32024
-MD5sum: eb484a10f294b25b08f1683d0f70eabd
-SHA256: 0abf2094c28253006ae503d108061f5b7449c6bc99a2738fec16b6879398db63
 
 Package: libxfconf-0-3
 Source: xfconf

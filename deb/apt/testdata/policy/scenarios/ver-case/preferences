@@ -1,0 +1,4 @@
+Package: hello
+Pin: version 2.10-2VENDOR1
+Pin-Priority: 620
+

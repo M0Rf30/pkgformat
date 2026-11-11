@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"hash"
 	"io"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -25,7 +26,8 @@ const (
 	// maxReleaseFiles bounds the files a Release lists.
 	maxReleaseFiles = 1 << 20
 
-	releaseDateFormat = "Mon, 02 Jan 2006 15:04:05 MST"
+	releaseDateFormat        = "Mon, 02 Jan 2006 15:04:05 MST"
+	releaseDateFormatNumeric = "Mon, 02 Jan 2006 15:04:05 -0700"
 )
 
 // ErrReleaseExpired is returned by Release.CheckValidity for a Release whose
@@ -91,8 +93,71 @@ type Release struct {
 	Architectures []string
 	Components    []string
 	Description   string
+	// NotAutomatic ("NotAutomatic: yes") marks a repository whose packages must
+	// not be installed or upgraded to without an explicit request (pin
+	// priority 1); with ButAutomaticUpgrades the installed ones are upgraded
+	// (pin priority 100).
+	NotAutomatic, ButAutomaticUpgrades bool
+	// AcquireByHash ("Acquire-By-Hash: yes") says the by-hash tree (see
+	// ByHashPath) of the repository is complete: a client fetches the indexes
+	// by their digest and is immune to a repository that is updated while it
+	// downloads.
+	AcquireByHash bool
+	// SignedBy is the Signed-By field: the fingerprints of the keys that may
+	// sign the repository, which a client may enforce. It may span lines.
+	SignedBy string
+	// NoSupportForArchitectureAll is the "No-Support-for-Architecture-all"
+	// field: "Packages" says the architecture-specific Packages indexes do not
+	// carry the architecture all packages and apt must fetch the
+	// binary-all index.
+	NoSupportForArchitectureAll string
+	// Changelogs is the Changelogs field: the URL template of the changelog
+	// server, or "no".
+	Changelogs string
+	// Snapshots is the Snapshots field: the URL template of the snapshot
+	// service of the archive.
+	Snapshots string
+	// Extra holds the fields the type has no member for, by name as written,
+	// so that a Release read and marshalled again loses none.
+	Extra map[string]string
 	// Files lists the index files by Path, relative to dists/<dist>/.
 	Files map[string]FileInfo
+}
+
+// releaseKnownFields are the header fields of a Release the type models,
+// together with the checksum sections.
+var releaseKnownFields = []string{
+	"Origin", "Label", "Suite", "Version", "Codename", "Date", "Valid-Until",
+	"NotAutomatic", "ButAutomaticUpgrades", "Acquire-By-Hash", "Signed-By",
+	"No-Support-for-Architecture-all", "Changelogs", "Snapshots",
+	"Architectures", "Components", "Description",
+	"MD5Sum", "SHA1", "SHA256", "SHA512",
+}
+
+// ParseBool reads the boolean spellings apt accepts in Release files and
+// configuration: yes, true, with, on, enable and 1 are true; no, false,
+// without, off, disable and 0 are false. ok is false for anything else.
+func ParseBool(s string) (value, ok bool) {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "yes", "true", "with", "on", "enable", "1":
+		return true, true
+	case "no", "false", "without", "off", "disable", "0":
+		return false, true
+	}
+
+	return false, false
+}
+
+func boolField(cf *ControlFile, names ...string) bool {
+	for _, n := range names {
+		if v, ok := cf.Lookup(n); ok {
+			b, _ := ParseBool(v)
+
+			return b
+		}
+	}
+
+	return false
 }
 
 // AddFile records a file in the listing.
@@ -104,70 +169,184 @@ func (r *Release) AddFile(fi FileInfo) {
 	r.Files[fi.Path] = fi
 }
 
-// Marshal renders the Release. Files are listed by path, in the MD5Sum, SHA1,
-// SHA256 and SHA512 sections, and only with the digests they have. Empty
-// header fields and zero dates are omitted.
-func (r *Release) Marshal() []byte {
-	var sb strings.Builder
+// ReleaseStyle selects the layout Release.MarshalStyle writes. Both are valid
+// for every client; they differ in the order of the header fields and in the
+// width of the size column, which is what makes a rendered Release
+// byte-identical to the one the matching tool writes.
+type ReleaseStyle int
 
-	field := func(name, value string) {
+const (
+	// ReleaseStyleDebian is the layout of the Debian archive (dak): the fields
+	// in the conventional order (Origin, Label, Suite, Version, Codename,
+	// Changelogs, Snapshots, Date, Valid-Until, NotAutomatic,
+	// ButAutomaticUpgrades, Acquire-By-Hash, Signed-By,
+	// No-Support-for-Architecture-all, Architectures, Components, Description,
+	// then unknown fields by name) and sizes right-aligned in 8 columns.
+	ReleaseStyleDebian ReleaseStyle = iota
+	// ReleaseStyleAptFTPArchive is the layout of apt-ftparchive release (apt
+	// 2.6): the header fields sorted by name, dates with a numeric zone
+	// ("+0000") and sizes right-aligned in 16 columns. apt-ftparchive writes
+	// only the fields Origin, Label, Suite, Version, Codename, Date,
+	// Valid-Until, NotAutomatic, ButAutomaticUpgrades, Acquire-By-Hash,
+	// Architectures, Components and Description; the other fields of the type
+	// are rendered too, in name order.
+	ReleaseStyleAptFTPArchive
+)
+
+// dateFormat is the layout of Date and Valid-Until: the Debian archive writes
+// the zone name ("UTC"), apt-ftparchive the numeric offset ("+0000").
+func (s ReleaseStyle) dateFormat() string {
+	if s == ReleaseStyleAptFTPArchive {
+		return releaseDateFormatNumeric
+	}
+
+	return releaseDateFormat
+}
+
+// sizeWidth is the width of the size column of the style.
+func (s ReleaseStyle) sizeWidth() int {
+	if s == ReleaseStyleAptFTPArchive {
+		return 16
+	}
+
+	return 8
+}
+
+// Marshal renders the Release in the layout of the Debian archive, see
+// ReleaseStyleDebian. Files are listed by path, in the MD5Sum, SHA1, SHA256
+// and SHA512 sections, and only with the digests they have. Empty header
+// fields and zero dates are omitted.
+func (r *Release) Marshal() []byte { return r.MarshalStyle(ReleaseStyleDebian) }
+
+// MarshalStyle renders the Release in the given layout.
+func (r *Release) MarshalStyle(style ReleaseStyle) []byte {
+	type kv struct{ name, value string }
+
+	var fields []kv
+
+	add := func(name, value string) {
 		if value != "" {
-			writeField(&sb, name, value)
+			fields = append(fields, kv{name, value})
 		}
 	}
 
-	field("Origin", r.Origin)
-	field("Label", r.Label)
-	field("Suite", r.Suite)
-	field("Version", r.Version)
-	field("Codename", r.Codename)
-
-	if !r.Date.IsZero() {
-		field("Date", r.Date.UTC().Format(releaseDateFormat))
+	yes := func(name string, v bool) {
+		if v {
+			add(name, "yes")
+		}
 	}
 
-	if !r.ValidUntil.IsZero() {
-		field("Valid-Until", r.ValidUntil.UTC().Format(releaseDateFormat))
+	date := func(t time.Time) string {
+		if t.IsZero() {
+			return ""
+		}
+
+		return t.UTC().Format(style.dateFormat())
 	}
 
-	field("Architectures", strings.Join(r.Architectures, " "))
-	field("Components", strings.Join(r.Components, " "))
-	field("Description", r.Description)
+	add("Origin", r.Origin)
+	add("Label", r.Label)
+	add("Suite", r.Suite)
+	add("Version", r.Version)
+	add("Codename", r.Codename)
+	add("Changelogs", r.Changelogs)
+	add("Snapshots", r.Snapshots)
+	add("Date", date(r.Date))
+	add("Valid-Until", date(r.ValidUntil))
+	yes("NotAutomatic", r.NotAutomatic)
+	yes("ButAutomaticUpgrades", r.ButAutomaticUpgrades)
+	yes("Acquire-By-Hash", r.AcquireByHash)
+	add("Signed-By", r.SignedBy)
+	add("No-Support-for-Architecture-all", r.NoSupportForArchitectureAll)
+	add("Architectures", strings.Join(r.Architectures, " "))
+	add("Components", strings.Join(r.Components, " "))
+	add("Description", r.Description)
 
-	paths := make([]string, 0, len(r.Files))
-	for p := range r.Files {
+	extra := make([]string, 0, len(r.Extra))
+
+	for k := range r.Extra {
+		if !isReleaseKnownField(k) {
+			extra = append(extra, k)
+		}
+	}
+
+	sort.Strings(extra)
+
+	for _, k := range extra {
+		add(k, r.Extra[k])
+	}
+
+	if style == ReleaseStyleAptFTPArchive {
+		sort.SliceStable(fields, func(i, j int) bool { return fields[i].name < fields[j].name })
+	}
+
+	var sb strings.Builder
+
+	for _, f := range fields {
+		writeField(&sb, f.name, f.value)
+	}
+
+	writeSections(&sb, r.Files, style.sizeWidth())
+
+	return []byte(sb.String())
+}
+
+func isReleaseKnownField(name string) bool {
+	return slices.ContainsFunc(releaseKnownFields, func(k string) bool { return strings.EqualFold(k, name) })
+}
+
+// sectionSpecs lists the checksum sections of a Release (and of the other
+// indexes that list files: i18n/Index) with the digest each reads and writes.
+func sectionSpecs() []struct {
+	field  string
+	length int
+	get    func(FileInfo) string
+	set    func(*FileInfo, string)
+} {
+	return []struct {
+		field  string
+		length int
+		get    func(FileInfo) string
+		set    func(*FileInfo, string)
+	}{
+		{"MD5Sum", md5.Size, func(f FileInfo) string { return f.MD5sum }, func(f *FileInfo, h string) { f.MD5sum = h }},
+		{"SHA1", sha1.Size, func(f FileInfo) string { return f.SHA1 }, func(f *FileInfo, h string) { f.SHA1 = h }},
+		{"SHA256", sha256.Size, func(f FileInfo) string { return f.SHA256 }, func(f *FileInfo, h string) { f.SHA256 = h }},
+		{"SHA512", sha512.Size, func(f FileInfo) string { return f.SHA512 }, func(f *FileInfo, h string) { f.SHA512 = h }},
+	}
+}
+
+// writeSections writes the MD5Sum, SHA1, SHA256 and SHA512 sections for files,
+// by path, with only the digests each has and the sizes right-aligned in
+// sizeWidth columns.
+func writeSections(sb *strings.Builder, files map[string]FileInfo, sizeWidth int) {
+	paths := make([]string, 0, len(files))
+	for p := range files {
 		paths = append(paths, p)
 	}
 
 	sort.Strings(paths)
 
-	section := func(name string, digest func(FileInfo) string) {
+	for _, spec := range sectionSpecs() {
 		var any bool
 
 		for _, p := range paths {
-			fi := r.Files[p]
+			fi := files[p]
 
-			d := digest(fi)
+			d := spec.get(fi)
 			if d == "" {
 				continue
 			}
 
 			if !any {
-				sb.WriteString(name + ":\n")
+				sb.WriteString(spec.field + ":\n")
 
 				any = true
 			}
 
-			fmt.Fprintf(&sb, " %s %10d %s\n", d, fi.Size, p)
+			fmt.Fprintf(sb, " %s %*d %s\n", d, sizeWidth, fi.Size, p)
 		}
 	}
-
-	section("MD5Sum", func(f FileInfo) string { return f.MD5sum })
-	section("SHA1", func(f FileInfo) string { return f.SHA1 })
-	section("SHA256", func(f FileInfo) string { return f.SHA256 })
-	section("SHA512", func(f FileInfo) string { return f.SHA512 })
-
-	return []byte(sb.String())
 }
 
 // ParseRelease parses a Release or InRelease document. A clear-signed
@@ -200,19 +379,30 @@ func ParseRelease(data []byte) (*Release, error) {
 		Date:          parseReleaseTime(cf.Get("Date")),
 		ValidUntil:    parseReleaseTime(cf.Get("Valid-Until")),
 		Files:         make(map[string]FileInfo),
+
+		NotAutomatic:                boolField(cf, "NotAutomatic", "Not-Automatic"),
+		ButAutomaticUpgrades:        boolField(cf, "ButAutomaticUpgrades"),
+		AcquireByHash:               boolField(cf, "Acquire-By-Hash"),
+		SignedBy:                    cf.Get("Signed-By"),
+		NoSupportForArchitectureAll: cf.Get("No-Support-for-Architecture-all"),
+		Changelogs:                  cf.Get("Changelogs"),
+		Snapshots:                   cf.Get("Snapshots"),
 	}
 
-	for _, sec := range []struct {
-		field  string
-		length int
-		set    func(*FileInfo, string)
-	}{
-		{"MD5Sum", md5.Size, func(f *FileInfo, h string) { f.MD5sum = h }},
-		{"SHA1", sha1.Size, func(f *FileInfo, h string) { f.SHA1 = h }},
-		{"SHA256", sha256.Size, func(f *FileInfo, h string) { f.SHA256 = h }},
-		{"SHA512", sha512.Size, func(f *FileInfo, h string) { f.SHA512 = h }},
-	} {
-		if err := rel.addSection(cf.Get(sec.field), sec.length, sec.set); err != nil {
+	for _, name := range cf.Order {
+		if isReleaseKnownField(name) || strings.EqualFold(name, "Not-Automatic") {
+			continue
+		}
+
+		if rel.Extra == nil {
+			rel.Extra = make(map[string]string)
+		}
+
+		rel.Extra[name] = cf.Fields[name]
+	}
+
+	for _, sec := range sectionSpecs() {
+		if err := addSection(rel.Files, cf.Get(sec.field), sec.length, sec.set); err != nil {
 			return nil, fmt.Errorf("%s: %w", sec.field, err)
 		}
 	}
@@ -220,8 +410,8 @@ func ParseRelease(data []byte) (*Release, error) {
 	return rel, nil
 }
 
-// addSection merges the lines of one checksum section into r.Files.
-func (r *Release) addSection(value string, hashLen int, set func(*FileInfo, string)) error {
+// addSection merges the lines of one checksum section into files.
+func addSection(files map[string]FileInfo, value string, hashLen int, set func(*FileInfo, string)) error {
 	for line := range strings.SplitSeq(value, "\n") {
 		fields := strings.Fields(line)
 		if len(fields) != 3 {
@@ -243,18 +433,18 @@ func (r *Release) addSection(value string, hashLen int, set func(*FileInfo, stri
 			return fmt.Errorf("%w: unsafe path %q", ErrInvalidRelease, path)
 		}
 
-		fi, seen := r.Files[path]
+		fi, seen := files[path]
 		if seen && fi.Size != size {
 			return fmt.Errorf("%w: sections disagree on the size of %q", ErrInvalidRelease, path)
 		}
 
-		if !seen && len(r.Files) >= maxReleaseFiles {
+		if !seen && len(files) >= maxReleaseFiles {
 			return fmt.Errorf("%w: more than %d files", ErrTooLarge, maxReleaseFiles)
 		}
 
 		fi.Path, fi.Size = path, size
 		set(&fi, strings.ToLower(sum))
-		r.Files[path] = fi
+		files[path] = fi
 	}
 
 	return nil
@@ -289,14 +479,15 @@ func firstParagraph(body []byte) (*ControlFile, error) {
 // writes: RFC 1123 with a zone name or a numeric offset, with or without a
 // zero-padded day. It returns the zero time for anything else.
 func parseReleaseTime(s string) time.Time {
-	s = strings.TrimSpace(s)
+	// Ubuntu pads a one-digit day or hour with a blank ("Tue, 10 Nov 2026  7:42:48 UTC").
+	s = strings.Join(strings.Fields(s), " ")
 	if s == "" {
 		return time.Time{}
 	}
 
 	for _, layout := range []string{time.RFC1123, time.RFC1123Z, "Mon, 2 Jan 2006 15:04:05 MST", "Mon, 2 Jan 2006 15:04:05 -0700"} {
 		if t, err := time.Parse(layout, s); err == nil {
-			return t
+			return t.UTC()
 		}
 	}
 
@@ -311,44 +502,6 @@ func (r *Release) CheckValidity(now time.Time) error {
 	}
 
 	return nil
-}
-
-// packagesSuffixes lists the compressions of a Packages index, best first.
-func packagesSuffixes() []string { return []string{".xz", ".zst", ".gz", ".bz2", ".lz4", ""} }
-
-// PackagesVariants lists the paths of the Packages index of component comp
-// and architecture arch that the Release lists, best compression first.
-func (r *Release) PackagesVariants(comp, arch string) []string {
-	base := comp + "/binary-" + arch + "/Packages"
-
-	var out []string
-
-	for _, ext := range packagesSuffixes() {
-		if _, ok := r.Files[base+ext]; ok {
-			out = append(out, base+ext)
-		}
-	}
-
-	return out
-}
-
-// HasIndex reports whether the Release lists a Packages index for comp and
-// arch in any compression.
-func (r *Release) HasIndex(comp, arch string) bool {
-	return len(r.PackagesVariants(comp, arch)) > 0
-}
-
-// PackagesCandidates is PackagesVariants, except that a Release listing none
-// of them (one that only carries by-hash entries) yields the usual
-// .xz, .gz and plain paths to try.
-func (r *Release) PackagesCandidates(comp, arch string) []string {
-	if v := r.PackagesVariants(comp, arch); len(v) > 0 {
-		return v
-	}
-
-	base := comp + "/binary-" + arch + "/Packages"
-
-	return []string{base + ".xz", base + ".gz", base}
 }
 
 // StripClearsign returns the signed text of a clear-signed document, with the

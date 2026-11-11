@@ -1,0 +1,4 @@
+Package: hello
+Pin: release *
+Pin-Priority: -5
+

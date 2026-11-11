@@ -1,0 +1,591 @@
+### machine-id a4c123b1612dd272d1371c17149d4395
+pa0:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 0%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa1:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 1%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa10:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa100:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa25:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 25%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa37:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 37%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa50:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa63:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 63%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa75:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 75%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa90:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 90%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa99:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 99%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb10:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb50:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb90:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 90%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pc37:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1+b1 1 (phased 37%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pc50:
+  Installed: 1.0-1
+  Candidate: 1.1-1+b1
+  Version table:
+     1.1-1+b1 500 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-101:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-none:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-text:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pmulti:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pnew:
+  Installed: (none)
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+psec-mid:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+     1.1-1 500
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+psec-old:
+  Installed: 1.1-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.1-1 100
+        100 /var/lib/dpkg/status
+     1.0-1+deb12u1 500
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+psec-self:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+### machine-id 36b3216fdaeeb975729fae923d5a4fd1
+pa0:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 0%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa1:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 1%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa10:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa100:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa25:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 25%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa37:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 37%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa50:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa63:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 63%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa75:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 75%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa90:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 90%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa99:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 99%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb10:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb50:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb90:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 90%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pc37:
+  Installed: 1.0-1
+  Candidate: 1.1-1+b1
+  Version table:
+     1.1-1+b1 500 (phased 37%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pc50:
+  Installed: 1.0-1
+  Candidate: 1.1-1+b1
+  Version table:
+     1.1-1+b1 500 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-101:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-none:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-text:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pmulti:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pnew:
+  Installed: (none)
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+psec-mid:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+     1.1-1 500
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+psec-old:
+  Installed: 1.1-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.1-1 100
+        100 /var/lib/dpkg/status
+     1.0-1+deb12u1 500
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+psec-self:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+### machine-id 2aabfe228f219e9cb0eb53f16947ccf2
+pa0:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 0%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa1:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 1%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa10:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa100:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa25:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 25%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa37:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 37%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa50:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa63:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 63%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa75:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 75%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa90:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 90%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pa99:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 99%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb10:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb50:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pb90:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500 (phased 90%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pc37:
+  Installed: 1.0-1
+  Candidate: 1.1-1+b1
+  Version table:
+     1.1-1+b1 500 (phased 37%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pc50:
+  Installed: 1.0-1
+  Candidate: 1.1-1+b1
+  Version table:
+     1.1-1+b1 500 (phased 50%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-101:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-none:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pd-text:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pmulti:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+     1.1-1 500
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+pnew:
+  Installed: (none)
+  Candidate: 1.1-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+psec-mid:
+  Installed: 1.0-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+     1.1-1 500
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status
+psec-old:
+  Installed: 1.1-1
+  Candidate: 1.1-1
+  Version table:
+     1.2-1 1 (phased 10%)
+        500 http://deb.example.org/debian stable/main amd64 Packages
+ *** 1.1-1 100
+        100 /var/lib/dpkg/status
+     1.0-1+deb12u1 500
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+psec-self:
+  Installed: 1.0-1
+  Candidate: 1.0-1
+  Version table:
+     1.1-1 1 (phased 10%)
+        500 http://security.example.org/debian-security stable-security/main amd64 Packages
+ *** 1.0-1 100
+        100 /var/lib/dpkg/status

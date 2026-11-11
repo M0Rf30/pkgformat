@@ -1,0 +1,4 @@
+Package: multi:i386
+Pin: release a=testing
+Pin-Priority: 740
+

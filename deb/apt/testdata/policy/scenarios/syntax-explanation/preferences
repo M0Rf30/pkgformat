@@ -1,0 +1,4 @@
+Explanation: why
+Package: hello
+Pin: release a=testing
+Pin-Priority: 667

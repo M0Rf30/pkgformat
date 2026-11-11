@@ -1,0 +1,24 @@
+Origin: Ubuntu
+Label: Ubuntu
+Suite: jammy-backports
+Version: 22.04
+Codename: jammy
+Date: Tue, 10 Nov 2026  7:42:48 UTC
+Architectures: amd64 arm64 armhf i386 ppc64el riscv64 s390x
+Components: main restricted universe multiverse
+Description: Ubuntu Jammy Backports
+NotAutomatic: yes
+ButAutomaticUpgrades: yes
+MD5Sum:
+ 1d83cfcd371593d14dff9f322a50ea01           449659 main/binary-amd64/Packages
+ 520dbf6ef8fabe0c9e47256e6d5050d0            82884 main/binary-amd64/Packages.gz
+ 5efe3d5d7c80efa12495160e0cb0ee9f            70196 main/binary-amd64/Packages.xz
+SHA1:
+ 51df70146b1776b964900ecbccb19b64ab09e218           449659 main/binary-amd64/Packages
+ c64b6c269cfddd03ce3565b52e5d4a17404d877a            82884 main/binary-amd64/Packages.gz
+ db9167bd5033135263d8f120df0629eb7cd79dc3            70196 main/binary-amd64/Packages.xz
+SHA256:
+ b1ff365f2ad07d8d76d099461be490e214cc43d3c2fa3a398fb2b2d3546939d1           449659 main/binary-amd64/Packages
+ 78fa5392ea39d2fc768233ca735c889517cc6b5aff0139313a636c31c10ff106            82884 main/binary-amd64/Packages.gz
+ c3619e2b5b1a6ce38a70c8025b9d55c9c84317849b671220e0cab118ffe5938c            70196 main/binary-amd64/Packages.xz
+Acquire-By-Hash: yes

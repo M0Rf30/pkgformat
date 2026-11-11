@@ -1,0 +1,8 @@
+# id	apt-get arguments
+h01	upgrade
+h02	upgrade --with-new-pkgs
+h03	dist-upgrade
+h04	install h3
+h05	install h2
+h06	remove h1
+h07	install h1
