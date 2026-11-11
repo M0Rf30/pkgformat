@@ -2,6 +2,7 @@ package repodata
 
 import (
 	"bytes"
+	"encoding/xml"
 	"errors"
 	"io"
 	"math/rand/v2"
@@ -110,47 +111,60 @@ func equivalenceFixtures() map[string][]pkgrpm.Package {
 	}
 }
 
-func TestStreamedXMLMatchesReflectionEncoder(t *testing.T) {
-	generators := []struct {
-		name string
-		got  func([]pkgrpm.Package) ([]byte, error)
-		want func([]pkgrpm.Package) ([]byte, error)
-	}{
-		{
-			"primary",
-			func(p []pkgrpm.Package) ([]byte, error) { return renderXML(WritePrimaryXML, p) },
-			func(p []pkgrpm.Package) ([]byte, error) { return refGeneratePrimaryXML(p, "") },
-		},
-		{
-			"filelists",
-			func(p []pkgrpm.Package) ([]byte, error) { return renderXML(WriteFilelistsXML, p) },
-			refGenerateFilelistsXML,
-		},
-		{
-			"other",
-			func(p []pkgrpm.Package) ([]byte, error) { return renderXML(WriteOtherXML, p) },
-			refGenerateOtherXML,
-		},
+// TestStreamedXMLIsWellFormed checks that every document, whatever the
+// strings in the package, is well-formed XML with one <package> per package:
+// non-XML characters must come out as U+FFFD, not break the document.
+func TestStreamedXMLIsWellFormed(t *testing.T) {
+	writers := map[string]func(io.Writer, []pkgrpm.Package) error{
+		"primary":       WritePrimaryXML,
+		"filelists":     WriteFilelistsXML,
+		"filelists-ext": WriteFilelistsExtXML,
+		"other":         WriteOtherXML,
 	}
 
 	for fixture, pkgs := range equivalenceFixtures() {
-		for _, g := range generators {
-			t.Run(g.name+"/"+fixture, func(t *testing.T) {
-				want, err := g.want(pkgs)
+		for name, write := range writers {
+			t.Run(name+"/"+fixture, func(t *testing.T) {
+				doc, err := renderXML(write, pkgs)
 				if err != nil {
 					t.Fatal(err)
 				}
 
-				got, err := g.got(pkgs)
-				if err != nil {
-					t.Fatal(err)
+				dec := xml.NewDecoder(bytes.NewReader(doc))
+				packages := 0
+
+				for {
+					tok, err := dec.Token()
+					if errors.Is(err, io.EOF) {
+						break
+					}
+
+					if err != nil {
+						t.Fatalf("not well-formed: %v", err)
+					}
+
+					if se, ok := tok.(xml.StartElement); ok && se.Name.Local == "package" {
+						packages++
+					}
 				}
 
-				if !bytes.Equal(want, got) {
-					t.Fatalf("output differs at byte %d\nwant: %q\ngot:  %q", firstDiff(want, got), excerpt(want, got), excerpt(got, want))
+				if packages != len(pkgs) {
+					t.Fatalf("%d <package> elements for %d packages", packages, len(pkgs))
 				}
 			})
 		}
+	}
+}
+
+func TestLibxmlEscaping(t *testing.T) {
+	const in = "a<b>&\"'\r\n\t\x01\xff end"
+
+	if got, want := string(appendText(nil, in)), "a&lt;b&gt;&amp;\"'&#13;\n\t\uFFFD\uFFFD end"; got != want {
+		t.Errorf("text: got %q, want %q", got, want)
+	}
+
+	if got, want := string(appendAttrValue(nil, in)), "a&lt;b&gt;&amp;&quot;'&#13;&#10;&#9;\uFFFD\uFFFD end"; got != want {
+		t.Errorf("attribute: got %q, want %q", got, want)
 	}
 }
 

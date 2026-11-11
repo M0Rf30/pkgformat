@@ -87,6 +87,7 @@ type packageScanner struct {
 	pkgBase int // depth at which the current package started
 	info    PackageInfo
 	out     bytes.Buffer
+	scratch []byte
 	capture *string // text sink of a leaf child being read
 }
 
@@ -139,7 +140,8 @@ func (s *packageScanner) token(tok xml.Token) (bool, error) {
 		}
 
 		if s.withElement {
-			_ = xml.EscapeText(&s.out, t)
+			s.scratch = appendText(s.scratch[:0], string(t))
+			s.out.Write(s.scratch)
 		}
 	}
 
@@ -209,7 +211,8 @@ func (s *packageScanner) writeStart(t xml.StartElement) {
 		s.out.WriteByte(' ')
 		s.out.WriteString(qname(a.Name))
 		s.out.WriteString(`="`)
-		_ = xml.EscapeText(&s.out, []byte(a.Value))
+		s.scratch = appendAttrValue(s.scratch[:0], a.Value)
+		s.out.Write(s.scratch)
 		s.out.WriteByte('"')
 	}
 

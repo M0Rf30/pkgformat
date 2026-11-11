@@ -10,20 +10,23 @@ import (
 	"github.com/M0Rf30/pkgformat/rpm"
 )
 
-// The primary/filelists/other writers emit exactly what
-// xml.MarshalIndent(..., "", "  ") produced for the struct models of those documents
-// (empty elements as <a></a>, two-space indent, no trailing newline), but
-// append straight into a reusable buffer that is flushed to the destination
-// every flushThreshold bytes, so memory stays flat regardless of repo size.
+// The primary/filelists/filelists-ext/other writers emit byte for byte what
+// createrepo_c (libxml2 serialization) writes for the same packages:
+// <package> elements at column 0, their children indented by two spaces,
+// empty text elements as <a></a>, attribute-only elements self-closed, text
+// and attribute values escaped like libxml2, no trailing newline. They append
+// straight into a reusable buffer that is flushed to the destination every
+// flushThreshold bytes, so memory stays flat regardless of repo size.
 
 const (
 	xmlHeader      = `<?xml version="1.0" encoding="UTF-8"?>` + "\n"
 	flushThreshold = 64 << 10
 
-	nsRPM       = "http://linux.duke.edu/metadata/rpm"
-	nsCommon    = "http://linux.duke.edu/metadata/common"
-	nsFilelists = "http://linux.duke.edu/metadata/filelists"
-	nsOther     = "http://linux.duke.edu/metadata/other"
+	nsRPM          = "http://linux.duke.edu/metadata/rpm"
+	nsCommon       = "http://linux.duke.edu/metadata/common"
+	nsFilelists    = "http://linux.duke.edu/metadata/filelists"
+	nsFilelistsExt = "http://linux.duke.edu/metadata/filelists-ext"
+	nsOther        = "http://linux.duke.edu/metadata/other"
 )
 
 // xmlOut accumulates XML text and writes it out in large chunks. The first
@@ -45,22 +48,21 @@ func (o *xmlOut) i64(v int64) { o.buf = strconv.AppendInt(o.buf, v, 10) }
 
 func (o *xmlOut) u32(v uint32) { o.buf = strconv.AppendUint(o.buf, uint64(v), 10) }
 
-// text appends s escaped like encoding/xml.EscapeText (used for both
-// character data and attribute values).
+// text appends s escaped as the character data of an element.
 func (o *xmlOut) text(s string) {
-	o.buf = appendEscaped(o.buf, s)
+	o.buf = appendText(o.buf, s)
 }
 
-// attr appends ` name="value"` with the value escaped.
+// attr appends ` name="value"` with the value escaped as an attribute value.
 func (o *xmlOut) attr(name, value string) {
 	o.buf = append(o.buf, ' ')
 	o.buf = append(o.buf, name...)
 	o.buf = append(o.buf, '=', '"')
-	o.buf = appendEscaped(o.buf, value)
+	o.buf = appendAttrValue(o.buf, value)
 	o.buf = append(o.buf, '"')
 }
 
-// optAttr is attr that skips empty values (the omitempty behaviour).
+// optAttr is attr that skips empty values.
 func (o *xmlOut) optAttr(name, value string) {
 	if value != "" {
 		o.attr(name, value)
@@ -96,25 +98,21 @@ func (o *xmlOut) closeTag(tag string) {
 	o.buf = append(o.buf, '>')
 }
 
-// emptyClose ends an attribute-only element: `></tag>`.
-func (o *xmlOut) emptyClose(tag string) {
-	o.buf = append(o.buf, '>')
-	o.closeTag(tag)
+// selfClose ends an attribute-only element: `/>`.
+func (o *xmlOut) selfClose() {
+	o.buf = append(o.buf, '/', '>')
 }
 
-// version writes `<version [epoch=".."] ver=".." rel=".."></version>`.
+// version writes `<version epoch=".." ver=".." rel=".."/>`; the epoch is
+// always written, "0" included, as createrepo_c does.
 func (o *xmlOut) version(indent string, p *rpm.Package) {
 	o.open(indent, "version")
-
-	if p.Epoch > 0 {
-		o.buf = append(o.buf, ` epoch="`...)
-		o.u32(p.Epoch)
-		o.buf = append(o.buf, '"')
-	}
-
+	o.raw(` epoch="`)
+	o.u32(p.Epoch)
+	o.raw(`"`)
 	o.attr("ver", p.Version)
 	o.attr("rel", p.Release)
-	o.emptyClose("version")
+	o.selfClose()
 }
 
 func (o *xmlOut) flush() {
@@ -137,33 +135,33 @@ func (o *xmlOut) finish() error {
 	return o.err
 }
 
-const (
-	escQuot = "&#34;"
-	escApos = "&#39;"
-	escAmp  = "&amp;"
-	escLT   = "&lt;"
-	escGT   = "&gt;"
-	escTab  = "&#x9;"
-	escNL   = "&#xA;"
-	escCR   = "&#xD;"
-	escFFFD = "\uFFFD"
-)
+// appendText appends s escaped like libxml2 escapes the content of a text
+// node: &, < and > and a carriage return become entities, a character that
+// XML 1.0 does not allow (and invalid UTF-8) becomes U+FFFD, everything else,
+// quotes and tabs included, is copied.
+func appendText(dst []byte, s string) []byte {
+	return appendEscaped(dst, s, false)
+}
 
-// appendEscaped appends s to dst escaped exactly like encoding/xml's
-// EscapeText (the escaping used for chardata and attribute values).
-func appendEscaped(dst []byte, s string) []byte {
+// appendAttrValue appends s escaped like libxml2 escapes an attribute value:
+// the text escapes plus the double quote, the tab and the line feed.
+func appendAttrValue(dst []byte, s string) []byte {
+	return appendEscaped(dst, s, true)
+}
+
+func appendEscaped(dst []byte, s string, attr bool) []byte {
 	last := 0
 
 	for i := 0; i < len(s); {
 		c := s[i]
-		if c >= 0x20 && c < utf8.RuneSelf && c != '"' && c != '\'' && c != '&' && c != '<' && c != '>' {
+		if c >= 0x20 && c < utf8.RuneSelf && c != '"' && c != '&' && c != '<' && c != '>' {
 			i++
 			continue
 		}
 
 		r, width := utf8.DecodeRuneInString(s[i:])
 
-		esc, ok := xmlEscape(r, width)
+		esc, ok := xmlEscape(r, width, attr)
 		if !ok {
 			i += width
 			continue
@@ -180,28 +178,38 @@ func appendEscaped(dst []byte, s string) []byte {
 
 // xmlEscape returns the replacement for r (decoded with the given width), or
 // false when r is emitted unchanged.
-func xmlEscape(r rune, width int) (string, bool) {
+func xmlEscape(r rune, width int, attr bool) (string, bool) {
 	switch r {
-	case '"':
-		return escQuot, true
-	case '\'':
-		return escApos, true
 	case '&':
-		return escAmp, true
+		return "&amp;", true
 	case '<':
-		return escLT, true
+		return "&lt;", true
 	case '>':
-		return escGT, true
-	case '\t':
-		return escTab, true
-	case '\n':
-		return escNL, true
+		return "&gt;", true
 	case '\r':
-		return escCR, true
+		return "&#13;", true
+	case '"':
+		if attr {
+			return "&quot;", true
+		}
+
+		return "", false
+	case '\n':
+		if attr {
+			return "&#10;", true
+		}
+
+		return "", false
+	case '\t':
+		if attr {
+			return "&#9;", true
+		}
+
+		return "", false
 	}
 
 	if !isXMLChar(r) || (r == utf8.RuneError && width == 1) {
-		return escFFFD, true
+		return "\uFFFD", true
 	}
 
 	return "", false
@@ -219,26 +227,47 @@ func isXMLChar(r rune) bool {
 type DocKind int
 
 const (
+	// DocPrimary is primary.xml.
 	DocPrimary DocKind = iota
+	// DocFilelists is filelists.xml.
 	DocFilelists
+	// DocOther is other.xml.
 	DocOther
+	// DocFilelistsExt is filelists-ext.xml (createrepo_c --filelists-ext):
+	// filelists.xml with the digest of every regular file.
+	DocFilelistsExt
 )
 
-// DocWriter streams one repodata document (primary, filelists or other)
-// package by package, for a caller that merges packages from several sources:
-// rendered ones from the database (Package) and verbatim elements read from an
-// another document (Raw). count is the number of packages the caller will
-// write; it is the document's packages attribute.
+// Location is where a package is served from: Href relative to the
+// repository, or to Base when set (createrepo_c --baseurl).
+type Location struct {
+	Href string
+	Base string
+}
+
+// DocWriter streams one repodata document (primary, filelists, filelists-ext
+// or other) package by package, for a caller that merges packages from several
+// sources: rendered ones from the database (Package) and verbatim elements
+// read from an another document (Raw). count is the number of packages the
+// caller will write; it is the document's packages attribute.
 type DocWriter struct {
 	kind  DocKind
 	o     *xmlOut
 	rf    *requiresFilter
-	wrote bool
+	limit int
 }
+
+// DefaultChangelogLimit is the number of changelog entries per package an
+// other.xml document keeps, as createrepo_c does by default.
+const DefaultChangelogLimit = 10
+
+// SetChangelogLimit sets how many of the newest changelog entries of each
+// package an other document keeps; zero or less keeps all of them.
+func (d *DocWriter) SetChangelogLimit(n int) { d.limit = n }
 
 // NewDocWriter writes the document header of kind to w.
 func NewDocWriter(w io.Writer, kind DocKind, count int) *DocWriter {
-	d := &DocWriter{kind: kind, o: newXMLOut(w)}
+	d := &DocWriter{kind: kind, o: newXMLOut(w), limit: DefaultChangelogLimit}
 
 	d.o.raw(xmlHeader)
 
@@ -248,6 +277,8 @@ func NewDocWriter(w io.Writer, kind DocKind, count int) *DocWriter {
 		d.o.raw(`<metadata xmlns="` + nsCommon + `" xmlns:rpm="` + nsRPM + `" packages="`)
 	case DocFilelists:
 		d.o.raw(`<filelists xmlns="` + nsFilelists + `" packages="`)
+	case DocFilelistsExt:
+		d.o.raw(`<filelists-ext xmlns="` + nsFilelistsExt + `" packages="`)
 	case DocOther:
 		d.o.raw(`<otherdata xmlns="` + nsOther + `" packages="`)
 	}
@@ -258,17 +289,24 @@ func NewDocWriter(w io.Writer, kind DocKind, count int) *DocWriter {
 	return d
 }
 
-// Package renders p into the document.
+// Package renders p into the document. A primary document lists it under
+// [PackageLocation].
 func (d *DocWriter) Package(p *rpm.Package) {
-	d.wrote = true
+	d.PackageAt(p, Location{Href: PackageLocation(p)})
+}
 
+// PackageAt renders p into the document; loc is the location a primary
+// document lists the package under and the other documents ignore.
+func (d *DocWriter) PackageAt(p *rpm.Package, loc Location) {
 	switch d.kind {
 	case DocPrimary:
-		writePrimaryPackage(d.o, d.rf, p)
+		writePrimaryPackage(d.o, d.rf, p, loc)
 	case DocFilelists:
-		writeFilelistsPackage(d.o, p)
+		writeFilelistsPackage(d.o, p, false)
+	case DocFilelistsExt:
+		writeFilelistsPackage(d.o, p, true)
 	case DocOther:
-		writeOtherPackage(d.o, p)
+		writeOtherPackage(d.o, p, d.limit)
 	}
 
 	d.o.flushIfFull()
@@ -276,24 +314,22 @@ func (d *DocWriter) Package(p *rpm.Package) {
 
 // Raw appends an already serialized <package> element.
 func (d *DocWriter) Raw(element []byte) {
-	d.wrote = true
-
-	d.o.raw("\n  ")
+	d.o.raw("\n")
 	d.o.buf = append(d.o.buf, element...)
 	d.o.flushIfFull()
 }
 
 // Close writes the closing tag and reports the first write error.
 func (d *DocWriter) Close() error {
-	if d.wrote {
-		d.o.raw("\n")
-	}
+	d.o.raw("\n")
 
 	switch d.kind {
 	case DocPrimary:
 		d.o.raw("</metadata>")
 	case DocFilelists:
 		d.o.raw("</filelists>")
+	case DocFilelistsExt:
+		d.o.raw("</filelists-ext>")
 	case DocOther:
 		d.o.raw("</otherdata>")
 	}
@@ -322,23 +358,23 @@ func PackageLocation(p *rpm.Package) string {
 	return "Packages/" + url.PathEscape(p.Name+"-"+p.Version+"-"+p.Release+"."+p.Arch+".rpm")
 }
 
-func writePrimaryPackage(o *xmlOut, rf *requiresFilter, p *rpm.Package) {
-	o.raw("\n  <package type=\"rpm\">")
-	o.elem("    ", "name", p.Name)
-	o.elem("    ", "arch", p.Arch)
-	o.version("    ", p)
+func writePrimaryPackage(o *xmlOut, rf *requiresFilter, p *rpm.Package, loc Location) {
+	o.raw("\n<package type=\"rpm\">")
+	o.elem("  ", "name", p.Name)
+	o.elem("  ", "arch", p.Arch)
+	o.version("  ", p)
 
-	o.open("    ", "checksum")
+	o.open("  ", "checksum")
 	o.raw(` type="sha256" pkgid="YES">`)
 	o.text(p.SHA256)
 	o.closeTag("checksum")
 
-	o.elem("    ", "summary", p.Summary)
-	o.elem("    ", "description", p.Description)
-	o.optElem("    ", "packager", p.Packager)
-	o.optElem("    ", "url", p.URL)
+	o.elem("  ", "summary", p.Summary)
+	o.elem("  ", "description", p.Description)
+	o.elem("  ", "packager", p.Packager)
+	o.elem("  ", "url", p.URL)
 
-	o.open("    ", "time")
+	o.open("  ", "time")
 	o.raw(` file="`)
 
 	if p.FileTime > 0 {
@@ -350,9 +386,9 @@ func writePrimaryPackage(o *xmlOut, rf *requiresFilter, p *rpm.Package) {
 	o.raw(`" build="`)
 	o.i64(p.BuildTime)
 	o.raw(`"`)
-	o.emptyClose("time")
+	o.selfClose()
 
-	o.open("    ", "size")
+	o.open("  ", "size")
 	o.raw(` package="`)
 	o.i64(p.PackageSize)
 	o.raw(`" installed="`)
@@ -360,34 +396,35 @@ func writePrimaryPackage(o *xmlOut, rf *requiresFilter, p *rpm.Package) {
 	o.raw(`" archive="`)
 	o.i64(p.ArchiveSize)
 	o.raw(`"`)
-	o.emptyClose("size")
+	o.selfClose()
 
 	// The element is lower-case: libdnf and createrepo_c only recognise
 	// <location>, and cannot download a package listed under any other name.
-	o.open("    ", "location")
-	o.attr("href", PackageLocation(p))
-	o.emptyClose("location")
+	o.open("  ", "location")
+	o.optAttr("xml:base", loc.Base)
+	o.attr("href", loc.Href)
+	o.selfClose()
 
 	writePrimaryFormat(o, rf, p)
 
-	o.raw("\n  </package>")
+	o.raw("\n</package>")
 }
 
 func writePrimaryFormat(o *xmlOut, rf *requiresFilter, p *rpm.Package) {
-	o.raw("\n    <format xmlns:rpm=\"" + nsRPM + "\">")
-	o.optElem("      ", "rpm:license", p.License)
-	o.optElem("      ", "rpm:vendor", p.Vendor)
-	o.optElem("      ", "rpm:group", p.Group)
-	o.optElem("      ", "rpm:buildhost", p.BuildHost)
-	o.optElem("      ", "rpm:sourcerpm", p.SourceRPM)
+	o.raw("\n  <format>")
+	o.elem("    ", "rpm:license", p.License)
+	o.elem("    ", "rpm:vendor", p.Vendor)
+	o.elem("    ", "rpm:group", p.Group)
+	o.elem("    ", "rpm:buildhost", p.BuildHost)
+	o.elem("    ", "rpm:sourcerpm", p.SourceRPM)
 
-	o.open("      ", "rpm:header-range")
+	o.open("    ", "rpm:header-range")
 	o.raw(` start="`)
 	o.i64(p.HeaderStart)
 	o.raw(`" end="`)
 	o.i64(p.HeaderEnd)
 	o.raw(`"`)
-	o.emptyClose("rpm:header-range")
+	o.selfClose()
 
 	writeDepList(o, "rpm:provides", p.Provides, false)
 	writeDepList(o, "rpm:requires", rf.filter(p), true)
@@ -400,21 +437,17 @@ func writePrimaryFormat(o *xmlOut, rf *requiresFilter, p *rpm.Package) {
 
 	for j := range p.Files {
 		if isPrimaryFile(p.Files[j].Path) {
-			writeFile(o, "      ", &p.Files[j])
+			writeFile(o, "    ", &p.Files[j], false)
 		}
 	}
 
-	o.raw("\n    </format>")
+	o.raw("\n  </format>")
 }
 
 // writeDepList renders a dependency list the way createrepo_c does. When
 // isRequires is set, rpmlib(...) features are skipped and script-time
-// requirements carry pre="1". The wrapper element is always emitted, empty
-// when no entry survives.
+// requirements carry pre="1". A list without an entry is not written.
 func writeDepList(o *xmlOut, tag string, deps []rpm.Dependency, isRequires bool) {
-	o.open("      ", tag)
-	o.raw(">")
-
 	wrote := false
 
 	for i := range deps {
@@ -423,9 +456,14 @@ func writeDepList(o *xmlOut, tag string, deps []rpm.Dependency, isRequires bool)
 			continue
 		}
 
-		wrote = true
+		if !wrote {
+			o.open("    ", tag)
+			o.raw(">")
 
-		o.open("        ", "rpm:entry")
+			wrote = true
+		}
+
+		o.open("      ", "rpm:entry")
 		o.attr("name", d.Name)
 
 		flags := rpm.SenseFlagsString(d.Flags)
@@ -440,18 +478,17 @@ func writeDepList(o *xmlOut, tag string, deps []rpm.Dependency, isRequires bool)
 			o.optAttr("rel", rel)
 		}
 
-		if isRequires && d.IsPre() {
+		if isRequires && isPre(*d) {
 			o.raw(` pre="1"`)
 		}
 
-		o.emptyClose("rpm:entry")
+		o.selfClose()
 	}
 
 	if wrote {
-		o.raw("\n      ")
+		o.raw("\n    ")
+		o.closeTag(tag)
 	}
-
-	o.closeTag(tag)
 }
 
 // WriteFilelistsXML streams filelists.xml for packages to w.
@@ -459,14 +496,52 @@ func WriteFilelistsXML(w io.Writer, packages []rpm.Package) error {
 	return writeDocument(w, DocFilelists, packages)
 }
 
-func writeFilelistsPackage(o *xmlOut, p *rpm.Package) {
+// WriteFilelistsExtXML streams filelists-ext.xml, the filelists with the
+// digest of each regular file, for packages to w.
+func WriteFilelistsExtXML(w io.Writer, packages []rpm.Package) error {
+	return writeDocument(w, DocFilelistsExt, packages)
+}
+
+func writeFilelistsPackage(o *xmlOut, p *rpm.Package, ext bool) {
 	writePackageRef(o, p)
 
-	for j := range p.Files {
-		writeFile(o, "    ", &p.Files[j])
+	if ext {
+		o.open("  ", "checksum")
+		o.attr("type", digestAlgorithm(p))
+		o.selfClose()
 	}
 
-	o.raw("\n  </package>")
+	for j := range p.Files {
+		writeFile(o, "  ", &p.Files[j], ext)
+	}
+
+	o.raw("\n</package>")
+}
+
+// digestAlgorithm names the algorithm of the file digests of p, told by the
+// length of the first one; sha256 when p has none, which is what createrepo_c
+// writes.
+func digestAlgorithm(p *rpm.Package) string {
+	for i := range p.Files {
+		switch len(p.Files[i].Digest) {
+		case 0:
+			continue
+		case 32:
+			return "md5"
+		case 40:
+			return "sha1"
+		case 56:
+			return "sha224"
+		case 96:
+			return "sha384"
+		case 128:
+			return "sha512"
+		default:
+			return "sha256"
+		}
+	}
+
+	return "sha256"
 }
 
 // WriteOtherXML streams other.xml for packages to w.
@@ -474,44 +549,63 @@ func WriteOtherXML(w io.Writer, packages []rpm.Package) error {
 	return writeDocument(w, DocOther, packages)
 }
 
-func writeOtherPackage(o *xmlOut, p *rpm.Package) {
+func writeOtherPackage(o *xmlOut, p *rpm.Package, limit int) {
 	writePackageRef(o, p)
 
-	for j := range p.Changelogs {
+	// A header lists the changelog newest first; createrepo_c keeps the
+	// newest limit entries and writes them oldest first.
+	n := len(p.Changelogs)
+	if limit > 0 && n > limit {
+		n = limit
+	}
+
+	// Entries sharing a date are told apart by a second, as createrepo_c does.
+	prev := int64(-1)
+
+	for j := n - 1; j >= 0; j-- {
 		cl := &p.Changelogs[j]
 
-		o.open("    ", "changelog")
+		date := cl.Time
+		if date <= prev {
+			date = prev + 1
+		}
+
+		prev = date
+
+		o.open("  ", "changelog")
 		o.attr("author", cl.Author)
 		o.raw(` date="`)
-		o.i64(cl.Time)
+		o.i64(date)
 		o.raw(`">`)
 		o.text(cl.Description)
 		o.closeTag("changelog")
 	}
 
-	o.raw("\n  </package>")
+	o.raw("\n</package>")
 }
 
 // writePackageRef opens a filelists/other <package> element and its <version>.
 func writePackageRef(o *xmlOut, p *rpm.Package) {
-	o.raw("\n  <package")
+	o.raw("\n<package")
 	o.attr("pkgid", p.SHA256)
 	o.attr("name", p.Name)
 	o.attr("arch", p.Arch)
 	o.raw(">")
-	o.version("    ", p)
+	o.version("  ", p)
 }
 
 // writeFile writes a <file> element: the path, typed "dir" or "ghost" when it
-// is one.
-func writeFile(o *xmlOut, indent string, f *rpm.FileEntry) {
+// is one, and with its digest when withHash is set and the header has one.
+func writeFile(o *xmlOut, indent string, f *rpm.FileEntry, withHash bool) {
 	o.open(indent, "file")
 
 	switch {
-	case f.IsGhost():
-		o.raw(` type="ghost"`)
 	case f.IsDir():
 		o.raw(` type="dir"`)
+	case f.IsGhost():
+		o.raw(` type="ghost"`)
+	case withHash:
+		o.optAttr("hash", f.Digest)
 	}
 
 	o.raw(">")
@@ -523,7 +617,5 @@ func writeFile(o *xmlOut, indent string, f *rpm.FileEntry) {
 // are commonly depended upon (configuration, commands), the rest being in
 // filelists.xml only.
 func isPrimaryFile(p string) bool {
-	return strings.HasPrefix(p, "/etc/") || p == "/usr/lib/sendmail" ||
-		strings.HasPrefix(p, "/bin/") || strings.HasPrefix(p, "/sbin/") ||
-		strings.HasPrefix(p, "/usr/bin/") || strings.HasPrefix(p, "/usr/sbin/")
+	return strings.HasPrefix(p, "/etc/") || p == "/usr/lib/sendmail" || strings.Contains(p, "bin/")
 }
