@@ -65,16 +65,16 @@ func fromADB(p *adb.Package, size int64) *Package {
 		Origin:           in.Origin,
 		Maintainer:       in.Maintainer,
 		Commit:           in.RepoCommit,
-		BuildTime:        int64(in.BuildTime),     //nolint:gosec // a Unix time
-		InstalledSize:    int64(in.InstalledSize), //nolint:gosec // bounded by the reader limits
+		BuildTime:        int64(in.BuildTime),
+		InstalledSize:    int64(in.InstalledSize),
 		Depends:          in.Depends,
 		Provides:         in.Provides,
 		Replaces:         in.Replaces,
 		Triggers:         p.Triggers,
 		InstallIf:        in.InstallIf,
 		Recommends:       in.Recommends,
-		ProviderPriority: int(in.ProviderPriority), //nolint:gosec // small by construction
-		ReplacesPriority: int(p.ReplacesPriority),  //nolint:gosec // small by construction
+		ProviderPriority: int(in.ProviderPriority),
+		ReplacesPriority: int(p.ReplacesPriority),
 		Hashes:           in.Hashes,
 		Size:             size,
 		Format:           FormatV3,
