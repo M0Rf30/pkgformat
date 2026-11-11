@@ -13,9 +13,11 @@ import (
 	"github.com/M0Rf30/pkgformat/internal/pathseg"
 )
 
-// PackageInfo identifies a <package> element of a primary, filelists
-// or other document. Filelists and other documents carry no checksum element
-// but the pkgid attribute; primary carries the location.
+// PackageInfo identifies a <package> element of a primary, filelists,
+// filelists-ext or other document. Filelists, filelists-ext and other
+// documents identify the package by the pkgid attribute (a filelists-ext
+// <checksum> element only names the algorithm of the file digests); primary
+// carries the checksum and the location.
 type PackageInfo struct {
 	Name  string
 	Arch  string
@@ -37,10 +39,11 @@ func (i PackageInfo) NEVRA() string {
 // errTruncatedDocument reports an XML document that ends inside an element.
 var errTruncatedDocument = errors.New("repodata: parsing metadata: document ends inside an element")
 
-// ScanPackages reads the <package> elements of a primary, filelists or other
-// document in order. When withElement is set fn also receives the element
-// serialized (without the xml:base attribute of a location, which would send a
-// client to another host); the slice is only valid during the call.
+// ScanPackages reads the <package> elements of a primary, filelists,
+// filelists-ext or other document in order. When withElement is set fn also
+// receives the element serialized (without the xml:base attribute of a
+// location, which would send a client to another host); the slice is only valid
+// during the call.
 func ScanPackages(r io.Reader, withElement bool, fn func(info PackageInfo, element []byte) error) error {
 	d := xml.NewDecoder(r)
 	s := packageScanner{withElement: withElement}
@@ -89,10 +92,13 @@ type packageScanner struct {
 	out     bytes.Buffer
 	scratch []byte
 	capture *string // text sink of a leaf child being read
+	// pkgIDAttr is set when the <package> element carries a pkgid attribute,
+	// which then wins over a <checksum> child.
+	pkgIDAttr bool
 }
 
 func (s *packageScanner) reset() {
-	s.inPkg, s.capture = false, nil
+	s.inPkg, s.capture, s.pkgIDAttr = false, nil, false
 	s.info = PackageInfo{}
 
 	s.out.Reset()
@@ -157,6 +163,7 @@ func (s *packageScanner) startPackage(t xml.StartElement) {
 		switch a.Name.Local {
 		case "pkgid":
 			s.info.PkgID = a.Value
+			s.pkgIDAttr = a.Value != ""
 		case "name":
 			s.info.Name = a.Value
 		case "arch":
@@ -173,6 +180,13 @@ func (s *packageScanner) child(t xml.StartElement) {
 	case "arch":
 		s.capture = &s.info.Arch
 	case "checksum":
+		// A filelists-ext package has a <checksum type="sha256"/> element
+		// naming the algorithm of its file digests; the pkgid attribute is
+		// the package checksum there.
+		if s.pkgIDAttr {
+			break
+		}
+
 		s.info.PkgID = ""
 		s.capture = &s.info.PkgID
 	case "version":
