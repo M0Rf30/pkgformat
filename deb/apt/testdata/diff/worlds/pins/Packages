@@ -1,0 +1,119 @@
+Package: pn1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn1 test package
+
+Package: pn1
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn1 test package
+
+Package: pn1
+Version: 3.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn1 test package
+
+Package: pn2
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn2 test package
+
+Package: pn2
+Version: 3.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn2 test package
+
+Package: pn3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn3 test package
+
+Package: pn3
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn3 test package
+
+Package: pn4
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn4 test package
+
+Package: pn5
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn5 test package
+
+Package: pn5
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn5 test package
+
+Package: gp-one
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: gp-one test package
+
+Package: gp-two
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: gp-two test package
+
+Package: dep-pn4
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: pn4 | pn5
+Description: dep-pn4 test package
+
+Package: dep-gp
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: gp-one
+Description: dep-gp test package
+
+Package: dep-pn1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: pn1 (>= 2.0)
+Description: dep-pn1 test package
+
+Package: dep-pn1-old
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: pn1 (<< 3.0)
+Description: dep-pn1-old test package
+
+Package: conf-pn
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: pn6
+Description: conf-pn test package
+
+Package: pn6
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn6 test package
+
+Package: pn6
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pn6 test package
+

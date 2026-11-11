@@ -1,0 +1,112 @@
+Package: s1
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: s1 test package
+
+Package: s2
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: s2 test package
+
+Package: needsnew
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: brandnew
+Description: needsnew test package
+
+Package: brandnew
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: brandnew test package
+
+Package: conflup
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: oldc
+Description: conflup test package
+
+Package: depchain
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: depbase (>= 2.0)
+Description: depchain test package
+
+Package: depbase
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: depbase test package
+
+Package: brk
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Breaks: brkd (<< 2.0)
+Description: brk test package
+
+Package: brkd
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: brkd test package
+
+Package: unins
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: nonexist
+Description: unins test package
+
+Package: ess-new
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Essential: yes
+Description: ess-new test package
+
+Package: lonely
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: libgone2
+Description: lonely test package
+
+Package: newer-dep
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: liba (>= 2.0) | libb
+Description: newer-dep test package
+
+Package: liba
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: liba test package
+
+Package: libb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: libb test package
+
+Package: cyc-a
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc-b (>= 2.0)
+Description: cyc-a test package
+
+Package: cyc-b
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc-a (>= 2.0)
+Description: cyc-b test package
+

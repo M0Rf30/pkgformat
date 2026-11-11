@@ -1,12 +1,17 @@
 #!/bin/bash
 # Runs inside a debian container (see generate.sh): refreshes the package
-# indexes, then records the dpkg status, the plain Packages indexes and what
-# `apt-get install -s --no-install-recommends` would do for every target.
+# indexes, then records the dpkg status, the plain Packages indexes, what
+# `apt-get -s install --no-install-recommends` plans for every target, and,
+# after installing packages on top of the image, what it plans for the
+# scenarios of installed/scenarios.txt.
 set -euo pipefail
 
-export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive LC_ALL=C
 out=/out
 targets=/targets.txt
+
+# shellcheck source=record.sh
+. /record.sh
 
 # Plain, uncompressed indexes, whatever the image's apt configuration says.
 rm -f /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-clean
@@ -33,18 +38,20 @@ done
 while read -r target; do
 	case "$target" in '' | '#'*) continue ;; esac
 
-	plan=$(apt-get -s install --no-install-recommends "$target")
-
-	# Inst name [installed-version] (candidate-version origin [arch])
-	# Inst name (candidate-version origin [arch])
-	# Remv name [installed-version]
-	echo "$plan" | awk -v t="$target" '
-		$1 == "Inst" {
-			ver = ($3 ~ /^\[/) ? $4 : $3
-			sub(/^\(/, "", ver)
-			print t "\tInst\t" $2 "\t" ver
-		}
-		$1 == "Remv" {
-			print t "\tRemv\t" $2 "\t-"
-		}' >>"$out/expected.tsv"
+	record_plan "$target" install "$target" >>"$out/expected.tsv"
 done <"$targets"
+
+# Second state: packages installed on top of the image.
+mkdir -p "$out/installed"
+# shellcheck disable=SC2046 # one argument per line, none with spaces
+apt-get install -y -qq --no-install-recommends $(grep -v '^#' /installed/preinstall.txt) >/dev/null
+cp /var/lib/dpkg/status "$out/installed/status"
+
+: >"$out/installed/expected.tsv"
+
+while IFS=$'\t' read -r id args; do
+	case "$id" in '' | '#'*) continue ;; esac
+
+	# shellcheck disable=SC2086 # the arguments are split on purpose
+	record_plan "$id" $args >>"$out/installed/expected.tsv"
+done </installed/scenarios.txt

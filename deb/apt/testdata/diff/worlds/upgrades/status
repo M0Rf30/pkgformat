@@ -1,0 +1,116 @@
+Package: s1
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: s1 test package
+
+Package: s2
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: s2 test package
+
+Package: needsnew
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: needsnew test package
+
+Package: oldc
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: oldc test package
+
+Package: conflup
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: conflup test package
+
+Package: depchain
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: depbase
+Description: depchain test package
+
+Package: depbase
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: depbase test package
+
+Package: brk
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: brk test package
+
+Package: brkd
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: brkd test package
+
+Package: unins
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: unins test package
+
+Package: lonely
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: lonely test package
+
+Package: obsol
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: obsol test package
+
+Package: newer-dep
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: liba
+Description: newer-dep test package
+
+Package: liba
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: liba test package
+
+Package: cyc-a
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc-b
+Description: cyc-a test package
+
+Package: cyc-b
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc-a
+Description: cyc-b test package
+

@@ -1,0 +1,48 @@
+Package: bx
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ghost
+Description: bx test package
+
+Package: by
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ghost2 | ghost3
+Description: by test package
+
+Package: bz
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: bdep
+Description: bz test package
+
+Package: bzuser
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: bz
+Description: bzuser test package
+
+Package: bq
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: nowhere
+Description: bq test package
+
+Package: bqq
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: bq
+Description: bqq test package
+

@@ -2,5 +2,5 @@ image: Debian GNU/Linux 13 (trixie)
 apt: apt 3.0.4 (amd64)
 dpkg: Debian 'dpkg' package management program version 1.22.22 (amd64).
 architecture: amd64
-captured: 2026-11-10T17:35:39Z
+captured: 2026-11-11T03:16:11Z
 image-reference: docker.io/library/debian:stable-slim

@@ -1,0 +1,4 @@
+# installed on top of the base image before the scenarios are recorded
+exim4-daemon-light
+sudo
+bsd-mailx

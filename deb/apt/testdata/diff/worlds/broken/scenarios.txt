@@ -1,0 +1,20 @@
+# id	apt-get arguments
+b01	install other
+b02	install fixer
+b03	install bdep
+b04	install -f
+b05	install orfix
+b06	remove bx
+b07	remove by
+b08	remove bz
+b09	install bw
+b10	upgrade
+b11	dist-upgrade
+b12	install bx
+b13	install wantsbdep
+b14	install -f other
+b15	upgrade -f
+b16	dist-upgrade -f
+b17	remove -f bz
+b18	install -f bx
+b19	install -f fixer

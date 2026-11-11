@@ -1,0 +1,22 @@
+# id	apt-get arguments
+c01	install mta-a
+c02	install newlib
+c03	install vc
+c04	install vc2
+c05	install br
+c06	install br2
+c07	install replacer
+c08	install alt1
+c09	install alt2
+c10	install alt3
+c11	install vuser
+c12	install vuser2
+c13	remove lib
+c14	remove altb
+c15	install conf-a conf-b
+c16	install broken
+c17	install evil
+c18	install newdl
+c19	install dc
+c20	remove core
+c21	remove lib app

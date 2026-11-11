@@ -1,0 +1,16 @@
+# id	apt-get arguments
+r01	install postfix
+r02	install sudo-ldap
+r03	remove exim4-daemon-light
+r04	remove exim4-base
+r05	install mutt
+r06	install mailutils
+r07	install nullmailer
+r08	install msmtp-mta
+r09	remove sudo
+r10	upgrade
+r11	dist-upgrade
+r12	install exim4
+r13	install exim4-daemon-heavy
+r14	remove bsd-mailx
+r15	install opensmtpd

@@ -1,0 +1,24 @@
+# id	apt-get arguments
+s01	install t1
+s02	install t2 t3
+s03	install t4
+s04	install t5
+s05	install t7
+s06	install t9
+s07	install t10
+s08	install t11
+s09	install m1
+s10	install heavy
+s11	install lvl1
+s12	install ors
+s13	install pre1
+s14	install mg1
+s15	install usesvc
+s16	install usesvc2
+s17	install repl-a
+s18	install t8
+s19	install t7 t8
+s20	remove lib2
+s21	remove bi
+s22	remove lvl3
+s23	remove prov3
