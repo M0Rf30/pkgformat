@@ -274,7 +274,9 @@ func TestInteropRpmQueries(t *testing.T) {
 func TestInteropFileSignaturesMatchRpmsign(t *testing.T) {
 	r := newSignBase(t)
 	r.SetFileSigning(loadSigningKeys(t))
-	got := parseRPM(t, writePackage(t, r))
+	raw := writePackage(t, r)
+	verifyFileSignatures(t, raw)
+	got := parseRPM(t, raw)
 	ref := parseRPM(t, readFixture(t, "signbase-signed.rpm"))
 	for _, id := range []int{sigFileSignatures, sigFileSignatureLength, tag.SIG_VERITYSIGNATURES, tag.SIG_VERITYSIGNATUREALGO} {
 		w, ok := ref.sig.entries[id]
