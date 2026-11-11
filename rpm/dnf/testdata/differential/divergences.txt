@@ -1,0 +1,4 @@
+# label<TAB>reason: targets whose result differs from dnf on purpose or by a choice we do not reproduce.
+# A target listed here must still differ; remove the line when it no longer does.
+dnf5	libsolv chooses systemd-standalone-sysusers for /usr/bin/systemd-sysusers before the requirement of dnf5 on coreutils, and then prefers coreutils-single, which that package suggests; we decide coreutils first and take coreutils, as the name asked for
+yum	the same choice as for dnf5: yum is obsoleted by dnf5, which requires coreutils

@@ -1,0 +1,46 @@
+# label: specs of one `dnf install` run
+nano: nano
+vim: vim-enhanced
+git: git
+curl: curl
+curl-minimal: curl-minimal
+httpd: httpd
+nginx: nginx
+postgresql: postgresql-server
+requests: python3-requests
+ruby: ruby
+gcc: gcc
+resolved: systemd-resolved
+podman: podman
+openjdk: java-latest-openjdk-headless
+perl-harness: perl-Test-Harness
+mailx: mailx
+sendmail-file: /usr/sbin/sendmail
+python-file: /usr/bin/python3
+dist-capability: python3dist(requests)
+glibc-i686: glibc.i686
+libstdcpp-i686: libstdc++.i686
+openssl-i686: openssl-libs.i686
+glibc-both: glibc glibc.i686
+glibc-devel: glibc-devel
+coreutils-single: coreutils-single
+dnf5: dnf5
+rsync: rsync
+tmux: tmux
+nodejs: nodejs
+mariadb: mariadb-server
+firewalld: firewalld
+texinfo: texinfo
+make: make
+yum: yum
+curl-both: curl curl-minimal
+postfix: postfix
+libcurl-both: libcurl libcurl.i686
+zlib-i686: zlib-ng-compat.i686
+systemd: systemd
+sudo: sudo
+cmake: cmake
+pip: python3-pip
+emacs: emacs-nox
+wget2: wget2-wget
+exim-sendmail: sendmail
