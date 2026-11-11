@@ -23,6 +23,9 @@ github.com/M0Rf30/pkgformat/deb/apt    apt client: update, load, resolve, downlo
 
 Compression of written packages: `gzip`, `xz`, `zstd` (default) or none. Index decoders also read `bzip2` and `lz4`.
 
+Source packages, `.dsc`, `.changes`, `.buildinfo` and Sources indexes are in
+the [`deb/source`](source/README.md) package.
+
 ## Design
 
 * **The writer takes plain structs.** `Spec` carries the control fields, scripts, conffiles, Multi-Arch, debconf and the compression. Nothing in the package knows any build recipe format.
