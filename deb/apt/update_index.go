@@ -89,7 +89,10 @@ func (u *updater) updateSource(ctx context.Context, src *Source) (int, error) {
 func (u *updater) indexTasks(src *Source, rel *deb.Release) []indexTask {
 	targets := src.EffectiveTargets(u.opts.DefaultLanguages)
 	wants := func(name string) bool {
-		return slices.ContainsFunc(targets, func(t string) bool { return strings.EqualFold(t, name) })
+		return slices.ContainsFunc(targets, func(t string) bool {
+			// apt names the Contents target Contents-deb.
+			return strings.EqualFold(t, name) || (name == "Contents" && strings.EqualFold(t, "Contents-deb"))
+		})
 	}
 
 	var tasks []indexTask

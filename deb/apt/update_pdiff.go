@@ -73,7 +73,7 @@ func (u *updater) tryPDiff(
 		return u.storeUncompressed(src, base, dest, local) == nil
 	}
 
-	data, err := u.fetchFromBases(ctx, src, fr, indexPath, indexEntry.Size+1)
+	data, err := u.fetchFirst(ctx, u.indexURLs(src, fr, indexPath), indexEntry.Size+1)
 	if err != nil || !matchesEntry(data, indexEntry) {
 		u.debug("apt: pdiff index unusable", "path", indexPath, "error", err)
 
@@ -167,10 +167,20 @@ func (u *updater) storeUncompressed(src *Source, base, dest string, data []byte)
 func (u *updater) fetchFromBases(
 	ctx context.Context, src *Source, fr *fetchedRelease, relPath string, maxBytes int64,
 ) ([]byte, error) {
-	var lastErr error
+	urls := make([]string, len(fr.bases))
+	for i, base := range fr.bases {
+		urls[i] = distURLBase(base, src, relPath)
+	}
 
-	for _, base := range fr.bases {
-		data, err := u.fetchBytes(ctx, distURLBase(base, src, relPath), maxBytes)
+	return u.fetchFirst(ctx, urls, maxBytes)
+}
+
+// fetchFirst fetches the first of the URLs that answers.
+func (u *updater) fetchFirst(ctx context.Context, urls []string, maxBytes int64) ([]byte, error) {
+	lastErr := errors.New("no URL to fetch from")
+
+	for _, target := range urls {
+		data, err := u.fetchBytes(ctx, target, maxBytes)
 		if err == nil {
 			return data, nil
 		}
@@ -179,10 +189,6 @@ func (u *updater) fetchFromBases(
 		if ctx.Err() != nil {
 			break
 		}
-	}
-
-	if lastErr == nil {
-		lastErr = errors.New("no mirror")
 	}
 
 	return nil, lastErr
