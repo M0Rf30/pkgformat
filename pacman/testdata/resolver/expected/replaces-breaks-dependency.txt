@@ -1,0 +1,5 @@
+status error
+info Starting full system upgrade...
+info Replace gone with core/renamed? [Y/n] 
+error failed to prepare transaction (could not satisfy dependencies)
+info removing gone breaks dependency 'gone' required by uses-gone

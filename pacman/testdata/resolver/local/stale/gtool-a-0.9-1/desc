@@ -1,0 +1,36 @@
+%NAME%
+gtool-a
+
+%VERSION%
+0.9-1
+
+%BASE%
+gtool-a
+
+%DESC%
+resolver test package
+
+%URL%
+
+
+%ARCH%
+any
+
+%BUILDDATE%
+1700000000
+
+%INSTALLDATE%
+1794366759
+
+%PACKAGER%
+pkgformat tests <tests@example.invalid>
+
+%GROUPS%
+tools
+
+%VALIDATION%
+sha256
+
+%XDATA%
+pkgtype=pkg
+

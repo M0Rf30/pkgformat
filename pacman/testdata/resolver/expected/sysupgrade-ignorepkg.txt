@@ -1,0 +1,14 @@
+status ok
+pkg core bash 5.2-1
+pkg core coreutils 9.5-1
+pkg core dup 1-1
+pkg core glibc 2.40-1
+pkg extra gtool-a 1-1
+pkg extra gtool-b 1-1
+final bash 5.2-1
+final coreutils 9.5-1
+final dup 1-1
+final glibc 2.40-1
+final gtool-a 1-1
+final gtool-b 1-1
+final util 1.0-1

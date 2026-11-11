@@ -1,0 +1,4 @@
+status ok
+pkg core vrepl-a 1-1
+final vb 3-1
+final vrepl-a 1-1

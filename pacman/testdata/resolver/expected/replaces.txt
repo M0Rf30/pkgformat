@@ -1,0 +1,4 @@
+status ok
+pkg core repl-new 2-1
+final repl-new 2-1
+final uses-old 1-1

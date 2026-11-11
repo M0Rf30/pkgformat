@@ -1,0 +1,5 @@
+status ok
+pkg core libbar-a 1-1
+pkg core needs-bar-eq 1-1
+final libbar-a 1-1
+final needs-bar-eq 1-1

@@ -1,0 +1,4 @@
+status ok
+pkg core a-new 1-1
+pkg extra a-old 1-1
+final a-new 1-1

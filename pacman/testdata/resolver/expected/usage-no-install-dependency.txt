@@ -1,0 +1,5 @@
+status ok
+pkg extra extra-lib 1-1
+pkg extra needs-extra 1-1
+final extra-lib 1-1
+final needs-extra 1-1

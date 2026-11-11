@@ -1,0 +1,5 @@
+status ok
+pkg core aprov 1-1
+pkg core needs-zvirt 1-1
+final aprov 1-1
+final needs-zvirt 1-1

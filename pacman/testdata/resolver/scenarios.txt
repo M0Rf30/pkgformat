@@ -1,0 +1,62 @@
+# name|mode|installed set|options|targets
+# mode: S is "pacman -S targets", Su is "pacman -Su".
+# options, separated by ';': IgnorePkg=<patterns>, IgnoreGroup=<patterns>, Usage.<repo>=<Usage value>
+plain-deps|S|empty||app
+versioned-provide|S|empty||needs-bar
+versioned-provide-equal|S|empty||needs-bar-eq
+unversioned-provide-versioned-dep|S|empty||needs-plainprov-versioned
+unversioned-provide-plain-dep|S|empty||needs-plainprov
+exact-name-beats-provider|S|empty||needs-mail
+provider-choice|S|empty||needs-zvirt
+provider-installed|S|inst-prov||needs-zvirt
+provider-installed-sh|S|dash||needs-sh
+target-by-provider|S|empty||sh
+installed-dep-satisfied|S|glibc-new||util
+installed-dep-too-old|S|glibc-old||util
+group|S|empty||base
+group-ignored|S|empty|IgnoreGroup=tools|tools
+conflict-between-targets|S|empty||conf-a conf-b
+conflict-with-installed|S|mta-one||mta-two
+conflict-provides-installed|S|virtholder||virt-conf
+conflict-versioned-installed|S|vlib1||new-vc
+conflict-versioned-clear|S|vlib2||new-vc
+conflict-self-provide|S|empty||gitver
+conflict-target-provides-target|S|empty||gitver thing
+conflict-provided-name|S|empty||a-new a-old
+cycle|S|empty||cyc-a
+optdepends-not-installed|S|empty||app-opt
+epoch|S|empty||needs-epoch
+epoch-unsatisfied|S|empty||needs-epoch-low
+missing-dependency|S|empty||missing-dep
+target-not-found|S|empty||ghost
+repo-order|S|empty||dup
+install-upgrades-dependency|S|stale||util
+install-ignored-target|S|stale|IgnorePkg=util|util
+sysupgrade|Su|stale||
+sysupgrade-nothing|Su|glibc-new||
+sysupgrade-ignorepkg|Su|stale|IgnorePkg=util|
+sysupgrade-ignorepkg-glob|Su|stale|IgnorePkg=gtool-*|
+sysupgrade-ignoregroup|Su|stale|IgnoreGroup=tools|
+sysupgrade-ignoregroup-base|Su|stale|IgnoreGroup=base|
+sysupgrade-repo-order|Su|stale||
+replaces|Su|renamed||
+replaces-ignored-replacement|Su|renamed|IgnorePkg=repl-new|
+replaces-without-provides|Su|renamed2||
+replaces-versioned|Su|vreplace||
+usage-no-install|S|empty|Usage.extra=Sync Search Upgrade|extra-only
+usage-no-install-dependency|S|empty|Usage.extra=Sync Search Upgrade|needs-extra
+usage-no-upgrade|Su|stale|Usage.extra=Sync Search Install|
+breaks-dependency|S|libuser||libold
+breaks-dependency-sysupgrade|Su|libuser||
+ignored-dependency|S|empty|IgnorePkg=glibc|util
+target-by-provider-installed|S|dash||sh
+replaces-via-install|S|renamed||repl-new
+conflict-provided-name-installed|S|aold||a-new
+ignored-target-plain|S|empty|IgnorePkg=glibc|glibc
+ignored-provider|S|empty|IgnorePkg=bash|needs-sh
+sysupgrade-ignored-dependency|Su|stale|IgnorePkg=glibc|
+replaces-breaks-dependency|Su|renamed3||
+sysupgrade-new-dependency|Su|newdep||
+usage-search-only|S|empty|Usage.extra=Search|extra-only
+usage-upgrade-only-installs|S|empty|Usage.extra=Upgrade|extra-only
+usage-search-only-sysupgrade|Su|stale|Usage.extra=Search|

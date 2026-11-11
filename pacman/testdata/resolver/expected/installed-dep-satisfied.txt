@@ -1,0 +1,4 @@
+status ok
+pkg core util 1.10-1
+final glibc 2.40-1
+final util 1.10-1

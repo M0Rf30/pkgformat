@@ -159,6 +159,24 @@ type Index struct {
 	// byProvide maps a provided name to the packages that provide it, never
 	// listing a package for its own name.
 	byProvide map[string][]*IndexedPackage
+	// usage holds the Usage of the repositories that have one set.
+	usage map[string]Usage
+	// rank is the position of each repository in the order it was added.
+	rank map[string]int
+	// byGroup maps a group name to its members.
+	byGroup map[string][]*IndexedPackage
+	// replacers are the packages with a replaces entry, in the order added.
+	replacers []*IndexedPackage
+}
+
+// SetUsage sets what the repository repo may be used for. A repository never
+// set is usable for everything, as one without a Usage line in pacman.conf.
+func (x *Index) SetUsage(repo string, u Usage) {
+	if x.usage == nil {
+		x.usage = map[string]Usage{}
+	}
+
+	x.usage[repo] = u
 }
 
 // Len returns the number of packages.
@@ -173,6 +191,12 @@ func (x *Index) Add(repo string, entries []DBEntry) error {
 	if x.byName == nil {
 		x.byName = map[string][]*IndexedPackage{}
 		x.byProvide = map[string][]*IndexedPackage{}
+		x.byGroup = map[string][]*IndexedPackage{}
+		x.rank = map[string]int{}
+	}
+
+	if _, ok := x.rank[repo]; !ok {
+		x.rank[repo] = len(x.rank)
 	}
 
 	for i := range entries {
@@ -180,6 +204,14 @@ func (x *Index) Add(repo string, entries []DBEntry) error {
 
 		x.pkgs = append(x.pkgs, p)
 		x.byName[p.Name] = append(x.byName[p.Name], p)
+
+		for _, g := range p.Groups {
+			x.byGroup[g] = append(x.byGroup[g], p)
+		}
+
+		if len(p.Replaces) > 0 {
+			x.replacers = append(x.replacers, p)
+		}
 
 		seen := map[string]bool{}
 
@@ -256,114 +288,57 @@ func (x *Index) Providers(dep Dependency) []*IndexedPackage {
 	return out
 }
 
-// Resolve returns the package that satisfies dep. A package of that name with
-// an acceptable version wins (the newest one of the first repository that has
-// one); otherwise the first provider, in repository order, does. It fails with
-// ErrUnresolved when nothing does.
+// Resolve returns the package that satisfies dep, as libalpm picks one: a
+// package of that name with an acceptable version wins (the newest one of the
+// first repository that has one); otherwise a provider does, the first one in
+// repository order and then name order. Repositories whose Usage does not
+// allow UsageInstall are not searched. It fails with ErrUnresolved when
+// nothing satisfies dep.
 func (x *Index) Resolve(dep Dependency) (*IndexedPackage, error) {
-	if p, ok := newest(x.byName[dep.Name], func(p *IndexedPackage) bool { return dep.Allows(p.Version) }); ok {
+	if p, ok := x.pick(dep, nil, nil); ok {
 		return p, nil
-	}
-
-	if prov := x.Providers(dep); len(prov) > 0 {
-		return prov[0], nil
 	}
 
 	return nil, fmt.Errorf("%w: %s", ErrUnresolved, dep)
 }
 
-// ResolveOptions tunes ResolveDeps.
+// ResolveOptions tunes ResolveDeps, Index.Install and Index.Sysupgrade.
 type ResolveOptions struct {
 	// Installed, when set, reports a dependency the system already satisfies;
 	// such dependencies are not resolved further.
 	Installed func(Dependency) bool
+	// Local is the set of installed packages (LocalDB.List). A dependency one
+	// of them satisfies is not resolved further, and Index.Install and
+	// Index.Sysupgrade check the transaction against them for conflicts and
+	// broken dependencies. Index.Sysupgrade uses its own installed argument
+	// instead.
+	Local []*InstalledPackage
+	// IgnorePkg lists package names or glob patterns, as pacman's IgnorePkg
+	// option does. An ignored package is not upgraded or replaced by
+	// Index.Sysupgrade and is not picked to satisfy a dependency. A package
+	// asked for explicitly is installed all the same, as pacman does when it is
+	// not asked.
+	IgnorePkg []string
+	// IgnoreGroup lists group names or glob patterns, as pacman's IgnoreGroup
+	// option does; a package is ignored when one of its groups matches.
+	IgnoreGroup []string
+	// WithOptional also installs the optional dependencies the index can
+	// satisfy. Without it they are never installed, as in pacman.
+	WithOptional bool
 }
 
 // ResolveDeps returns the packages needed to install roots (dependency
-// expressions such as "foo" or "bar>=2"), the roots included, with every
-// package after the ones it depends on. A dependency cycle is tolerated: the
-// package that closes it is placed before the one that needed it. A
-// dependency nothing satisfies fails with an error wrapping ErrUnresolved that
-// names the package that asked for it.
+// expressions such as "foo" or "bar>=2", or a group name), the roots included,
+// with every package after the ones it depends on. A dependency cycle is
+// tolerated: the package that closes it is placed before the one that needed
+// it. A dependency nothing satisfies fails with an error wrapping ErrUnresolved
+// that names the package that asked for it. It is Index.Install without the
+// classification of the result.
 func (x *Index) ResolveDeps(roots []string, opts ResolveOptions) ([]*IndexedPackage, error) {
-	type frame struct {
-		pkg  *IndexedPackage
-		deps []Dependency
-		next int
+	tx, err := x.Install(roots, opts)
+	if err != nil {
+		return nil, err
 	}
 
-	var (
-		order   []*IndexedPackage
-		visited = map[*IndexedPackage]bool{}
-		stack   []frame
-	)
-
-	// enter resolves dep (asked for by who) and, when its package is new,
-	// pushes it onto the stack.
-	enter := func(dep Dependency, who string) error {
-		if opts.Installed != nil && opts.Installed(dep) {
-			return nil
-		}
-
-		p, err := x.Resolve(dep)
-		if err != nil {
-			if who != "" {
-				return fmt.Errorf("%w (required by %s)", err, who)
-			}
-
-			return err
-		}
-
-		if visited[p] {
-			return nil
-		}
-
-		visited[p] = true
-
-		deps := make([]Dependency, 0, len(p.Depends))
-
-		for _, s := range p.Depends {
-			d, err := ParseDependency(s)
-			if err != nil {
-				return fmt.Errorf("package %s: %w", p.Name, err)
-			}
-
-			deps = append(deps, d)
-		}
-
-		stack = append(stack, frame{pkg: p, deps: deps})
-
-		return nil
-	}
-
-	for _, r := range roots {
-		dep, err := ParseDependency(r)
-		if err != nil {
-			return nil, err
-		}
-
-		if err := enter(dep, ""); err != nil {
-			return nil, err
-		}
-
-		for len(stack) > 0 {
-			top := &stack[len(stack)-1]
-
-			if top.next == len(top.deps) {
-				order = append(order, top.pkg)
-				stack = stack[:len(stack)-1]
-
-				continue
-			}
-
-			d := top.deps[top.next]
-			top.next++
-
-			if err := enter(d, top.pkg.Name); err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	return order, nil
+	return tx.Packages, nil
 }

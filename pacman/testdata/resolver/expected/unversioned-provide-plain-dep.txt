@@ -1,0 +1,5 @@
+status ok
+pkg core libfoo 2.1-1
+pkg core needs-plainprov 1-1
+final libfoo 2.1-1
+final needs-plainprov 1-1

@@ -1,0 +1,5 @@
+status ok
+pkg core nd 2-1
+pkg extra extra-lib 1-1
+final extra-lib 1-1
+final nd 2-1
