@@ -17,19 +17,25 @@ const (
 // it exists, else a directory dnf named <id>-<hash>, else <CacheDir>/<id> for
 // the caller to create.
 func (c *Client) repoCacheDir(id string) string {
-	exact := filepath.Join(c.opts.CacheDir, id)
+	return findRepoDir(c.opts.CacheDir, id)
+}
+
+// findRepoDir returns <base>/<id> if it exists, else a directory dnf named
+// <id>-<hash> in base, else <base>/<id> for the caller to create.
+func findRepoDir(base, id string) string {
+	exact := filepath.Join(base, id)
 	if isDir(exact) {
 		return exact
 	}
 
-	entries, err := os.ReadDir(c.opts.CacheDir)
+	entries, err := os.ReadDir(base)
 	if err != nil {
 		return exact
 	}
 
 	for _, e := range entries {
 		if e.IsDir() && isDNFCacheName(e.Name(), id) {
-			return filepath.Join(c.opts.CacheDir, e.Name())
+			return filepath.Join(base, e.Name())
 		}
 	}
 

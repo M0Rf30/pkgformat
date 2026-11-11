@@ -1,0 +1,2 @@
++ vm-image noarch 3.0-1 new
+- vm-image noarch 1.0-1

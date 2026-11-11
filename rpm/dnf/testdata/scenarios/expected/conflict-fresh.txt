@@ -1,0 +1,2 @@
++ mailer noarch 1.0-1 base
++ mta-a noarch 1.0-1 base

@@ -1,0 +1,118 @@
+### bash-5.3.0-2.fc43.x86_64
+postinstall scriptlet (using <lua>):
+nl        = '\n'
+sh        = '/bin/sh'..nl
+bash      = '/bin/bash'..nl
+f = io.open('/etc/shells', 'a+')
+if f then
+  local shells = nl..f:read('*all')..nl
+  if not shells:find(nl..sh) then f:write(sh) end
+  if not shells:find(nl..bash) then f:write(bash) end
+  f:close()
+end
+postuninstall scriptlet (using <lua>):
+-- Run it only if we are uninstalling
+if arg[2] == 0
+then
+  t={}
+  for line in io.lines("/etc/shells")
+  do
+    if line ~= "/bin/bash" and line ~= "/bin/sh"
+    then
+      table.insert(t,line)
+    end
+  end
+
+  f = io.open("/etc/shells", "w+")
+  for n,line in pairs(t)
+  do
+    f:write(line.."\n")
+  end
+  f:close()
+end
+### fontconfig-2.17.0-3.fc43.x86_64
+postinstall scriptlet (using /bin/sh):
+umask 0022
+
+mkdir -p /usr/lib/fontconfig/cache
+
+[[ -d /var/cache/fontconfig ]] && rm -rf /var/cache/fontconfig/* 2> /dev/null || :
+
+# Force regeneration of all fontconfig cache files
+# The check for existance is needed on dual-arch installs (the second
+#  copy of fontconfig might install the binary instead of the first)
+# The HOME setting is to avoid problems if HOME hasn't been reset
+if [ -x /usr/bin/fc-cache ] && /usr/bin/fc-cache --version 2>&1 | grep -q 2.17.0 ; then
+  HOME=/root /usr/bin/fc-cache -f
+fi
+postuninstall scriptlet (using /bin/sh):
+if [ $1 == 0 ] && [ -e /etc/xml/catalog ]; then
+  /usr/bin/xmlcatalog --noout --del "urn:fontconfig:fonts.dtd" /etc/xml/catalog
+fi
+posttrans scriptlet (using /bin/sh):
+if [ -e /etc/xml/catalog ]; then
+  /usr/bin/xmlcatalog --noout --add system \
+                        "urn:fontconfig:fonts.dtd" \
+                        "file:///usr/share/xml/fontconfig/fonts.dtd" \
+                        /etc/xml/catalog
+fi
+transfiletriggerin scriptlet (using /bin/sh) -- /usr/local/share/fonts, /usr/share/X11/fonts/TTF, /usr/share/X11/fonts/Type1, /usr/share/fonts
+HOME=/root /usr/bin/fc-cache -s
+transfiletriggerpostun scriptlet (using /bin/sh) -- /usr/local/share/fonts, /usr/share/X11/fonts/TTF, /usr/share/X11/fonts/Type1, /usr/share/fonts
+HOME=/root /usr/bin/fc-cache -s
+### info-7.2-7.fc43.x86_64
+transfiletriggerin scriptlet (using /bin/sh) -- /usr/share/info
+[ -f /usr/share/info/dir ] && create_arg="" || create_arg="--create"
+/usr/bin/fix-info-dir $create_arg /usr/share/info/dir &>/dev/null || :
+transfiletriggerpostun scriptlet (using /bin/sh) -- /usr/share/info
+[ -f /usr/share/info/dir ] && /usr/bin/fix-info-dir --delete /usr/share/info/dir &>/dev/null || :
+### qdb-base-1:1.2.3-1.q1.noarch
+pretrans scriptlet (using <lua>):
+print("pretrans of qdb-base")
+preinstall scriptlet (using /bin/sh):
+echo "pre $1"
+postinstall scriptlet (using /bin/sh):
+echo "post qdb-base $1"
+preuninstall scriptlet (using /bin/sh):
+echo "preun qdb-base $1"
+postuninstall program: /sbin/ldconfig
+posttrans scriptlet (using /bin/sh):
+echo "posttrans $1"
+preuntrans scriptlet (using /bin/sh):
+echo "preuntrans $1"
+postuntrans scriptlet (using <lua>):
+print("postuntrans")
+verify scriptlet (using /bin/sh):
+echo "verify qdb-base"
+triggerprein scriptlet (using /bin/sh) -- qdb-old < 0.5
+echo "triggerprein $1 $2"
+triggerin scriptlet (using /bin/sh) -- qdb-lib >= 1.0, qdb-x
+echo "triggerin $1 $2"
+triggerun scriptlet (using /bin/sh) -- qdb-lib
+echo "triggerun $1 $2"
+triggerpostun scriptlet (using /bin/sh) -- qdb-old
+echo "triggerpostun $1 $2"
+filetriggerin scriptlet (using /bin/sh) -- /usr/share/qdb
+echo "filetriggerin"
+filetriggerun scriptlet (using /bin/bash) -- /usr/lib/qdb, /usr/share/qdb-extra
+echo "filetriggerun"
+filetriggerpostun scriptlet (using /bin/sh) -- /usr/share/qdb-alt
+echo "filetriggerpostun"
+transfiletriggerin scriptlet (using /bin/sh) -- /usr/share/qdb
+echo "transfiletriggerin"
+transfiletriggerun scriptlet (using <lua>) -- /usr/lib/qdb
+print("transfiletriggerun")
+transfiletriggerpostun scriptlet (using /bin/sh) -- /usr/share/qdb-alt
+echo "transfiletriggerpostun"
+### qdb-lib-1.4-1.q1.x86_64
+### qdb-lib-1.5-2.q1.i686
+### qdb-lib-1.5-2.q1.x86_64
+### qdb-old-0.4-1.q1.noarch
+### qdb-x-3.1-1.q1.noarch
+### shared-mime-info-2.4-2.fc43.x86_64
+postinstall scriptlet (using /bin/sh):
+/bin/touch --no-create /usr/share/mime/packages &>/dev/null ||:
+transfiletriggerin scriptlet (using /bin/sh) -- /usr/share/mime
+update-mime-database -n /usr/share/mime &> /dev/null ||:
+transfiletriggerpostun scriptlet (using /bin/sh) -- /usr/share/mime
+update-mime-database -n /usr/share/mime &> /dev/null ||:

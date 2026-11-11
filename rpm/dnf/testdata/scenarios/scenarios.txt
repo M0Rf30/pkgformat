@@ -1,0 +1,39 @@
+# label | repos of the transaction (id[:priority[:cost]], comma separated) | installed first (repo: specs, or -) | options (dnf.conf keys: best=0, install_weak_deps=0, installonly_limit=2, or -) | specs to install
+priority         | hi:10,lo:50       | -                       | -                  | app
+priority-direct  | hi:10,lo:50       | -                       | -                  | lib
+priority-equal   | hi:50,lo:50       | -                       | -                  | app
+priority-order   | lo:50,hi:10       | -                       | -                  | app
+cost-equal       | dear:99:1000,cheap:99:500 | -               | -                  | tool
+cost-order       | cheap:99:500,dear:99:1000 | -               | -                  | tool
+cost-version     | dear:99:1000,cheap:99:500 | -               | -                  | gadget
+cost-version-rev | dear:99:500,cheap:99:1000 | -               | -                  | gadget
+upgrade-deps     | v2                | v1: core core-plugin    | -                  | core
+upgrade-plugin   | v2                | v1: core core-plugin    | -                  | core-plugin
+upgrade-ranged   | v2                | v1: core core-other     | -                  | core
+upgrade-nothing  | v1                | v1: core core-plugin    | -                  | core
+obsoletes        | v2                | v1: oldname             | -                  | newname
+obsoletes-user   | v2                | v1: oldname             | -                  | user-of-old
+obsoletes-name   | v2                | v1: oldname             | -                  | oldname
+obsoletes-fresh  | v2                | -                       | -                  | oldname
+conflict-choice  | base              | base: mta-b             | -                  | mailer
+conflict-fresh   | base              | -                       | -                  | mailer
+conflict-both    | base              | -                       | -                  | mta-a mta-b
+conflict-installed | base            | base: mta-b             | -                  | mta-a
+installonly-new  | new               | old: kernel-1.0 kernel-2.0 kernel-3.0 | -    | kernel
+installonly-limit2 | new             | old: kernel-1.0 kernel-2.0 kernel-3.0 | installonly_limit=2 | kernel
+installonly-limit5 | new             | old: kernel-1.0 kernel-2.0 kernel-3.0 | installonly_limit=5 | kernel
+installonly-fresh | new,old          | -                       | -                  | kernel
+installonly-old  | old               | old: kernel-3.0         | -                  | kernel-1.0
+installonly-vm   | new               | old: vm-image-1.0 vm-image-2.0 | installonly_limit=2 | vm-image
+installonly-nolimit | new            | old: kernel-1.0 kernel-2.0 kernel-3.0 | installonly_limit=0 | kernel
+best             | best              | -                       | -                  | app-b
+best-off         | best              | -                       | best=0             | app-b
+best-dep         | best              | -                       | -                  | app-c
+best-dep-off     | best              | -                       | best=0             | app-c
+best-conflict    | best              | best: blocker           | -                  | app-d
+best-conflict-off | best             | best: blocker           | best=0             | app-d
+weak             | weak              | -                       | -                  | app-w
+weak-off         | weak              | -                       | install_weak_deps=0 | app-w
+weak-supplement  | weak              | -                       | -                  | app-w langpack
+weak-installed   | weak              | weak: app-w             | -                  | unrelated
+weak-installed-lang | weak           | weak: app-w             | -                  | langpack

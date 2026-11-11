@@ -1,0 +1,127 @@
+label	qdb-lib	qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+label	qdb-lib-1.5	qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+label	qdb-lib-1.5-2.q1	qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+label	qdb-lib-1.4-1.q1	qdb-lib-1.4-1.q1.x86_64
+label	qdb-lib.i686	qdb-lib-1.5-2.q1.i686
+label	qdb-lib.x86_64	qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.x86_64
+label	qdb-lib-1.5.i686	qdb-lib-1.5-2.q1.i686
+label	qdb-lib-1.5-2.q1.x86_64	qdb-lib-1.5-2.q1.x86_64
+label	qdb-lib-1.5-2.q1.i686	qdb-lib-1.5-2.q1.i686
+label	qdb-base-1.2.3	qdb-base-1:1.2.3-1.q1.noarch
+label	qdb-base-1:1.2.3	qdb-base-1:1.2.3-1.q1.noarch
+label	qdb-base-1:1.2.3-1.q1	qdb-base-1:1.2.3-1.q1.noarch
+label	qdb-base-0:1.2.3-1.q1	
+label	qdb-base-2:1.2.3-1.q1	
+label	qdb-base-1:1.2.3-1.q1.noarch	qdb-base-1:1.2.3-1.q1.noarch
+label	qdb-base-1.2.4	
+label	qdb-base-1.2.3-2.q1	
+label	shared-mime-info	shared-mime-info-2.4-2.fc43.x86_64
+label	nosuchpackage	
+label	qdb	
+file	/usr/share/qdb/a.txt	qdb-base-1:1.2.3-1.q1.noarch
+file	/usr/share/qdb/dir/b.txt	qdb-base-1:1.2.3-1.q1.noarch
+file	/usr/share/qdb	qdb-base-1:1.2.3-1.q1.noarch
+file	/usr/share/qdb/dir	qdb-base-1:1.2.3-1.q1.noarch
+file	/etc/qdb.conf	qdb-base-1:1.2.3-1.q1.noarch
+file	/var/lib/qdb/state	qdb-base-1:1.2.3-1.q1.noarch
+file	/usr/bin/qdb	qdb-base-1:1.2.3-1.q1.noarch
+file	/usr/share/doc/qdb-base/README	qdb-base-1:1.2.3-1.q1.noarch
+file	/usr/share/doc/qdb-x/NOTES	qdb-x-3.1-1.q1.noarch
+file	/usr/lib/qdb/libqdb.so.1.5	qdb-lib-1.5-2.q1.i686
+file	/usr/lib64/qdb/libqdb.so.1.5	qdb-lib-1.5-2.q1.x86_64
+file	/usr/lib64/qdb/libqdb.so.1.4	qdb-lib-1.4-1.q1.x86_64
+file	/usr/share/qdb/x.txt	qdb-x-3.1-1.q1.noarch
+file	/usr/share/qdb/old.txt	qdb-x-3.1-1.q1.noarch
+whatprovides	/usr/share/qdb/old.txt	qdb-x-3.1-1.q1.noarch
+file	/usr/bin/bash	bash-5.3.0-2.fc43.x86_64
+file	/nonexistent/path	
+whatprovides	qdb-virt	qdb-base-1:1.2.3-1.q1.noarch qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64 qdb-old-0.4-1.q1.noarch
+whatprovides	qdb-multi	qdb-base-1:1.2.3-1.q1.noarch
+whatprovides	qdb-plain	qdb-base-1:1.2.3-1.q1.noarch
+whatprovides	qdb-base	qdb-base-1:1.2.3-1.q1.noarch
+whatprovides	qdb-lib	qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+whatprovides	qdb-lib-api	qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+whatprovides	libqdb.so.1()(64bit)	qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+whatprovides	config(qdb-base)	qdb-base-1:1.2.3-1.q1.noarch
+whatprovides	/usr/share/qdb/a.txt	qdb-base-1:1.2.3-1.q1.noarch
+whatprovides	/var/lib/qdb/state	qdb-base-1:1.2.3-1.q1.noarch
+whatprovides	/usr/bin/bash	bash-5.3.0-2.fc43.x86_64
+whatprovides	nosuchcapability	
+whatrequires	qdb-lib	qdb-base-1:1.2.3-1.q1.noarch
+whatrequires	qdb-virt	qdb-x-3.1-1.q1.noarch
+whatrequires	qdb-multi	qdb-x-3.1-1.q1.noarch
+whatrequires	qdb-plain	qdb-x-3.1-1.q1.noarch
+whatrequires	qdb-base	qdb-x-3.1-1.q1.noarch
+whatrequires	qdb-opt	qdb-base-1:1.2.3-1.q1.noarch
+whatrequires	qdb-x	
+whatrequires	qdb-alt	qdb-base-1:1.2.3-1.q1.noarch
+whatrequires	qdb-other	qdb-base-1:1.2.3-1.q1.noarch
+whatrequires	/bin/sh	fontconfig-2.17.0-3.fc43.x86_64 info-7.2-7.fc43.x86_64 qdb-base-1:1.2.3-1.q1.noarch shared-mime-info-2.4-2.fc43.x86_64
+whatrequires	/usr/share/qdb/a.txt	qdb-x-3.1-1.q1.noarch
+whatrequires	nosuchcapability	
+whatrecommends	qdb-extra	qdb-base-1:1.2.3-1.q1.noarch
+whatsuggests	qdb-docs	qdb-base-1:1.2.3-1.q1.noarch
+whatsupplements	qdb-x	qdb-base-1:1.2.3-1.q1.noarch
+whatenhances	qdb-x	qdb-base-1:1.2.3-1.q1.noarch
+whatconflicts	qdb-old	qdb-base-1:1.2.3-1.q1.noarch
+whatconflicts	qdb-clash	qdb-base-1:1.2.3-1.q1.noarch
+whatconflicts	qdb-base	qdb-old-0.4-1.q1.noarch
+whatobsoletes	qdb-legacy	qdb-base-1:1.2.3-1.q1.noarch
+whatobsoletes	qdb-ancient	qdb-base-1:1.2.3-1.q1.noarch qdb-old-0.4-1.q1.noarch
+whatobsoletes	qdb-base	
+v:provides	qdb-virt	qdb-base-1:1.2.3-1.q1.noarch qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64 qdb-old-0.4-1.q1.noarch
+v:provides	qdb-virt >= 1.5	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-virt > 2.0-1	
+v:provides	qdb-virt >= 2.0-1	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-virt = 2.0	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-virt < 1.0	qdb-old-0.4-1.q1.noarch
+v:provides	qdb-virt <= 1.0-1	qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64 qdb-old-0.4-1.q1.noarch
+v:provides	qdb-virt = 0.4	qdb-old-0.4-1.q1.noarch
+v:provides	qdb-virt = 0:0.4-1	qdb-old-0.4-1.q1.noarch
+v:provides	qdb-virt = 1:0.4	
+v:provides	qdb-multi >= 3.0	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-multi >= 1:3.0	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-multi > 1:3.0	
+v:provides	qdb-multi = 2:1.0	
+v:provides	qdb-multi < 1:3.5	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-lib = 1.5-2.q1	qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+v:provides	qdb-lib = 1.5	qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+v:provides	qdb-lib >= 1.4-2	qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+v:provides	qdb-lib < 1.5	qdb-lib-1.4-1.q1.x86_64
+v:provides	qdb-lib-api >= 1.4	qdb-lib-1.4-1.q1.x86_64 qdb-lib-1.5-2.q1.i686 qdb-lib-1.5-2.q1.x86_64
+v:provides	qdb-lib-api > 1.5	
+v:provides	qdb-base = 1:1.2.3-1.q1	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-base = 1.2.3-1.q1	
+v:provides	qdb-base = 1:1.2.3	qdb-base-1:1.2.3-1.q1.noarch
+v:provides	qdb-base >= 2:0	
+v:requires	qdb-lib = 1.5-2.q1	qdb-base-1:1.2.3-1.q1.noarch
+v:requires	qdb-lib = 0.9	qdb-base-1:1.2.3-1.q1.noarch
+v:requires	qdb-lib = 2.0	qdb-base-1:1.2.3-1.q1.noarch
+v:requires	qdb-lib	qdb-base-1:1.2.3-1.q1.noarch
+v:requires	qdb-virt = 2.0-1	qdb-x-3.1-1.q1.noarch
+v:requires	qdb-virt = 1.9	
+v:requires	qdb-virt = 0.3	
+v:requires	qdb-multi = 1:3.0	qdb-x-3.1-1.q1.noarch
+v:requires	qdb-multi = 1:1.0	
+v:requires	qdb-multi = 3.0	
+v:requires	qdb-base = 1:1.2.3-1.q1	qdb-x-3.1-1.q1.noarch
+v:requires	qdb-base = 1:1.2.4	
+v:requires	qdb-base = 1.2.3-1.q1	
+v:recommends	qdb-extra = 2	qdb-base-1:1.2.3-1.q1.noarch
+v:recommends	qdb-extra = 1	
+v:recommends	qdb-extra = 3.4-1	qdb-base-1:1.2.3-1.q1.noarch
+v:enhances	qdb-x = 3.1	qdb-base-1:1.2.3-1.q1.noarch
+v:enhances	qdb-x = 2.0	
+v:enhances	qdb-x = 3	qdb-base-1:1.2.3-1.q1.noarch
+v:conflicts	qdb-old = 0.4	qdb-base-1:1.2.3-1.q1.noarch
+v:conflicts	qdb-old = 0.5	
+v:conflicts	qdb-old = 0.1	qdb-base-1:1.2.3-1.q1.noarch
+v:conflicts	qdb-old = 0.4-1.q1	qdb-base-1:1.2.3-1.q1.noarch
+v:conflicts	qdb-clash = 9	qdb-base-1:1.2.3-1.q1.noarch
+v:conflicts	qdb-base = 1.0	qdb-old-0.4-1.q1.noarch
+v:obsoletes	qdb-legacy = 0.9	qdb-base-1:1.2.3-1.q1.noarch
+v:obsoletes	qdb-legacy = 1.0	
+v:obsoletes	qdb-legacy = 2.0	
+v:obsoletes	qdb-ancient = 1.0	qdb-base-1:1.2.3-1.q1.noarch qdb-old-0.4-1.q1.noarch
+v:obsoletes	qdb-ancient = 5.0	qdb-base-1:1.2.3-1.q1.noarch
+v:obsoletes	qdb-ancient	qdb-base-1:1.2.3-1.q1.noarch qdb-old-0.4-1.q1.noarch

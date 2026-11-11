@@ -1,0 +1,4 @@
++ core noarch 2.0-1 v2
++ core-plugin noarch 2.0-1 v2
+- core noarch 1.0-1
+- core-plugin noarch 1.0-1

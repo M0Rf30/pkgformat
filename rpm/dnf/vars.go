@@ -9,11 +9,11 @@ import (
 	"github.com/M0Rf30/pkgformat/internal/pathseg"
 )
 
-// expandVars substitutes $name and ${name} in s: $basearch and $releasever
-// from the options, then Options.Vars, then the files of Options.VarsDir. An
-// unknown variable is left as written. The URL it yields has the double
-// slashes of its path collapsed, which a variable that ends in a slash would
-// otherwise leave.
+// expandVars substitutes $name and ${name} in s: $basearch, $arch, $releasever,
+// $releasever_major and $releasever_minor from the options, then Options.Vars,
+// then the files of Options.VarsDirs. An unknown variable is left as written.
+// The URL it yields has the double slashes of its path collapsed, which a
+// variable that ends in a slash would otherwise leave.
 func (c *Client) expandVars(s string) string {
 	var b strings.Builder
 
@@ -88,15 +88,26 @@ func (c *Client) lookupVar(name string) (string, bool) {
 	switch name {
 	case "basearch":
 		return c.opts.BaseArch, true
+	case "arch":
+		return c.opts.Arch, true
 	case "releasever":
 		return c.opts.Releasever, c.opts.Releasever != ""
+	case "releasever_major":
+		major, _, _ := strings.Cut(c.opts.Releasever, ".")
+
+		return major, c.opts.Releasever != ""
+	case "releasever_minor":
+		_, minor, _ := strings.Cut(c.opts.Releasever, ".")
+
+		return minor, c.opts.Releasever != ""
 	}
 
 	if v, ok := c.opts.Vars[name]; ok {
 		return v, true
 	}
 
-	if c.opts.VarsDir == "" || !pathseg.Name(name) {
+	dirs := c.varsDirs()
+	if len(dirs) == 0 || !pathseg.Name(name) {
 		return "", false
 	}
 
@@ -112,16 +123,31 @@ func (c *Client) lookupVar(name string) (string, bool) {
 	// A variable file does not change under a running program; remember
 	// misses too, so that expanding the URLs of many repositories does not
 	// touch the file system for each.
-	val, ok := readVarFile(filepath.Join(c.opts.VarsDir, name))
-	if !ok {
-		c.vars.Store(name, (*string)(nil))
+	for _, dir := range dirs {
+		if val, ok := readVarFile(filepath.Join(dir, name)); ok {
+			c.vars.Store(name, &val)
 
-		return "", false
+			return val, true
+		}
 	}
 
-	c.vars.Store(name, &val)
+	c.vars.Store(name, (*string)(nil))
 
-	return val, true
+	return "", false
+}
+
+// varsDirs returns the directories of variable files: Options.VarsDirs, else
+// the varsdir of dnf.conf.
+func (c *Client) varsDirs() []string {
+	if len(c.opts.VarsDirs) > 0 {
+		return c.opts.VarsDirs
+	}
+
+	if cfg, err := c.Config(); err == nil {
+		return cfg.VarsDirs
+	}
+
+	return nil
 }
 
 func readVarFile(path string) (string, bool) {

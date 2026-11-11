@@ -44,7 +44,7 @@ var fixtures = []struct {
 
 // copyFixture copies a fixture into a temporary directory, so that SQLite's
 // side files never appear in testdata.
-func copyFixture(t *testing.T, name string) string {
+func copyFixture(t testing.TB, name string) string {
 	t.Helper()
 
 	data, err := os.ReadFile(filepath.Join("testdata", name))
@@ -187,8 +187,21 @@ func TestPackagesMatchRpm(t *testing.T) {
 			assert.Equal(t, order, names)
 
 			// The sets the resolver asks for.
-			gotNames, err := db.InstalledNames(t.Context())
+			installed, err := db.InstalledPackages(t.Context())
 			require.NoError(t, err)
+
+			var gotNames, gotProvides []string
+
+			for _, p := range installed {
+				gotNames = append(gotNames, p.Name)
+				gotProvides = append(gotProvides, p.Name)
+
+				for _, d := range p.Provides {
+					gotProvides = append(gotProvides, d.Name)
+				}
+			}
+
+			slices.Sort(gotNames)
 			assert.Equal(t, order, gotNames)
 
 			var provides []string
@@ -203,15 +216,14 @@ func TestPackagesMatchRpm(t *testing.T) {
 
 			slices.Sort(provides)
 
-			gotProvides, err := db.InstalledProvides(t.Context())
-			require.NoError(t, err)
-			assert.Equal(t, slices.Compact(provides), gotProvides)
+			slices.Sort(gotProvides)
+			assert.Equal(t, slices.Compact(provides), slices.Compact(gotProvides))
 		})
 	}
 }
 
 // orNil lets an empty list equal a missing one.
-func orNil(s [][]string) [][]string {
+func orNil[S ~[]E, E any](s S) S {
 	if len(s) == 0 {
 		return nil
 	}
@@ -389,10 +401,7 @@ func TestContextCancelStopsEveryFormat(t *testing.T) {
 			_, err = db.List(ctx)
 			require.ErrorIs(t, err, context.Canceled)
 
-			_, err = db.InstalledNames(ctx)
-			require.ErrorIs(t, err, context.Canceled)
-
-			_, err = db.InstalledProvides(ctx)
+			_, err = db.InstalledPackages(ctx)
 			require.ErrorIs(t, err, context.Canceled)
 
 			// Cancelling in the middle of a walk.
@@ -445,7 +454,7 @@ func TestOptions(t *testing.T) {
 			_, err = db.List(t.Context())
 			require.ErrorIs(t, err, rpmdb.ErrTooLarge)
 
-			_, err = db.InstalledNames(t.Context())
+			_, err = db.InstalledPackages(t.Context())
 			require.ErrorIs(t, err, rpmdb.ErrTooLarge)
 			require.NoError(t, db.Close())
 
@@ -486,14 +495,14 @@ func TestOptions(t *testing.T) {
 func TestImmutableSQLite(t *testing.T) {
 	path := copyFixture(t, "rpmdb.sqlite")
 
-	db, err := rpmdb.Open(path, rpmdb.Options{Immutable: true})
+	db, err := rpmdb.Open(path, rpmdb.Options{SQLite: rpmdb.SQLiteImmutable})
 	require.NoError(t, err)
 
 	defer db.Close()
 
-	names, err := db.InstalledNames(t.Context())
+	installed, err := db.InstalledPackages(t.Context())
 	require.NoError(t, err)
-	assert.Contains(t, names, "setup")
+	assert.True(t, slices.ContainsFunc(installed, func(p *rpm.Package) bool { return p.Name == "setup" }))
 
 	// Nothing was created next to the database.
 	entries, err := os.ReadDir(filepath.Dir(path))

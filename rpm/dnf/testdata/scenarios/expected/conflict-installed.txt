@@ -1,0 +1,4 @@
+error: dnf could not solve mta-a
+error: - installed package mta-b-1.0-1.noarch conflicts with mta-b provided by mta-a-1.0-1.noarch from base
+error: - package mta-a-1.0-1.noarch from base conflicts with mta-b provided by mta-b-1.0-1.noarch from base
+error: - conflicting requests

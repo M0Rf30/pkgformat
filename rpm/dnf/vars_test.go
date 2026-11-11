@@ -17,7 +17,7 @@ func TestExpandVars(t *testing.T) {
 	c := New(Options{
 		Releasever: "9.4",
 		Arch:       "x86_64",
-		VarsDir:    varsDir,
+		VarsDirs:   []string{varsDir},
 		Vars:       map[string]string{"infra": "override", "extra": "x"},
 	})
 
@@ -54,7 +54,7 @@ func TestVarFileIsNotAPathEscape(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := New(Options{VarsDir: filepath.Join(dir, "vars")})
+	c := New(Options{VarsDirs: []string{filepath.Join(dir, "vars")}})
 	// A name is [A-Za-z0-9_]+, so it cannot reach outside VarsDir; the
 	// lookup of a name that is not a segment is refused outright.
 	if _, ok := c.lookupVar("../secret"); ok {
@@ -70,7 +70,7 @@ func TestVarFileMemoizedAndLimited(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := New(Options{VarsDir: dir})
+	c := New(Options{VarsDirs: []string{dir}})
 	if got := c.expandVars("$v"); got != "one" {
 		t.Fatal(got)
 	}
@@ -119,5 +119,64 @@ func TestArchMapping(t *testing.T) {
 
 	if goArchToRPM() == "" {
 		t.Error("no architecture for the running program")
+	}
+}
+
+func TestExpandVersionVariables(t *testing.T) {
+	for rel, want := range map[string]string{
+		"9.4":     "9.4|9|4",
+		"40":      "40|40|",
+		"9.4.1":   "9.4.1|9|4.1",
+		"rawhide": "rawhide|rawhide|",
+	} {
+		c := New(Options{Releasever: rel, Arch: "x86_64"})
+		if got := c.expandVars("$releasever|$releasever_major|$releasever_minor"); got != want {
+			t.Errorf("%s: %q, want %q", rel, got, want)
+		}
+	}
+
+	// without a releasever, none of them is known
+	c := New(Options{Arch: "x86_64"})
+	if got := c.expandVars("$releasever_major.$releasever_minor"); got != "$releasever_major.$releasever_minor" {
+		t.Errorf("got %q", got)
+	}
+
+	if got := New(Options{Arch: "i686"}).expandVars("$arch/$basearch"); got != "i686/i386" {
+		t.Errorf("got %q", got)
+	}
+}
+
+func TestVarsDirsOfDnfConf(t *testing.T) {
+	first, second := t.TempDir(), t.TempDir()
+
+	for dir, name := range map[string]string{first: "one", second: "two"} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte("v-"+name), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	c := New(Options{Config: &Config{VarsDirs: []string{first, second}}})
+	if got := c.expandVars("$one/$two/$three"); got != "v-one/v-two/$three" {
+		t.Errorf("got %q", got)
+	}
+
+	// Options.VarsDirs takes precedence
+	c = New(Options{Config: &Config{VarsDirs: []string{first}}, VarsDirs: []string{second}})
+	if got := c.expandVars("$one/$two"); got != "$one/v-two" {
+		t.Errorf("got %q", got)
+	}
+}
+
+func TestArchNames(t *testing.T) {
+	for in, want := range map[string]string{
+		"i686": "i386", "i586": "i386", "armv7hl": "armhfp", "armv6l": "armhfp", "x86_64": "x86_64", "ppc64le": "ppc64le",
+	} {
+		if got := baseArch(in); got != want {
+			t.Errorf("baseArch(%q) = %q, want %q", in, got, want)
+		}
+	}
+
+	if goArchToRPM() == "" {
+		t.Error("no architecture for this host")
 	}
 }

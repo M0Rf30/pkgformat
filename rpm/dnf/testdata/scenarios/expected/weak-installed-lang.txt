@@ -1,0 +1,2 @@
++ app-w-lang noarch 1.0-1 weak
++ langpack noarch 1.0-1 weak

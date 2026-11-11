@@ -10,10 +10,10 @@ import (
 	"iter"
 	"log/slog"
 	"os"
-	"slices"
+	"sync/atomic"
+	"time"
 
 	"github.com/M0Rf30/pkgformat/rpm"
-	"github.com/M0Rf30/pkgformat/rpm/tag"
 	"github.com/M0Rf30/pkgformat/safepath"
 )
 
@@ -29,9 +29,19 @@ var (
 	// ErrCorrupt means the container of a database is damaged: a page, slot
 	// or overflow chain points outside the file or contradicts itself.
 	ErrCorrupt = errors.New("rpmdb: corrupt database")
-	// ErrTooLarge means a database holds more records than
-	// [Options.MaxRecords].
+	// ErrTooLarge means a database, or what a read of it would have to keep
+	// in memory, exceeds a limit: [Options.MaxRecords] records,
+	// [Options.MaxIndexEntries] indexed entries or
+	// [Options.MaxSnapshotBytes] bytes of snapshot.
 	ErrTooLarge = errors.New("rpmdb: too many records")
+	// ErrLocked means a SQLite database stayed busy or locked, for example
+	// under an exclusive transaction of rpm, for longer than
+	// [Options.BusyTimeout] and [Options.LockRetries] allow. Reading again
+	// later may succeed.
+	ErrLocked = errors.New("rpmdb: database is locked")
+	// ErrInvalidQuery means the argument of a query is not one: an empty name
+	// or path, or a capability that does not parse.
+	ErrInvalidQuery = errors.New("rpmdb: invalid query")
 )
 
 // Format is the storage format of an rpm database.
@@ -73,6 +83,10 @@ const (
 	// DefaultMaxBlobBytes bounds one record: the header image of a package.
 	// rpm itself refuses headers whose data is larger than 256 MiB.
 	DefaultMaxBlobBytes = 1 << 28
+	// DefaultMaxIndexEntries bounds what the query index keeps: about 16
+	// million files and dependency entries, several times what the largest
+	// installations hold.
+	DefaultMaxIndexEntries = 1 << 24
 	// defaultMaxArrayEntries and defaultMaxFileListBytes bound the arrays of
 	// one header: the header size already bounds them, these only keep the
 	// file list of a very large package from being cut short.
@@ -100,12 +114,37 @@ type Options struct {
 	// Logger receives debug messages about skipped records. Optional: nil
 	// discards them.
 	Logger *slog.Logger
-	// Immutable opens a SQLite database with immutable=1: SQLite then takes
-	// no lock and ignores the write-ahead log. Use it for a database on
-	// read-only media or one that nothing writes, such as a container layer;
-	// on a live host it could miss what rpm has not checkpointed yet. It has
-	// no effect on the other formats.
-	Immutable bool
+	// SQLite selects how a SQLite database is opened: in place, immutable or
+	// from a private snapshot. The zero value, [SQLiteAuto], opens in place
+	// and falls back when the directory is read-only. It has no effect on the
+	// other formats.
+	SQLite SQLiteMode
+	// BusyTimeout is how long one SQLite operation waits for a writer that
+	// holds the database before it reports it locked. Zero selects
+	// [DefaultBusyTimeout].
+	BusyTimeout time.Duration
+	// LockRetries is how many times a SQLite read is repeated, with a growing
+	// pause, after it reported the database locked. Zero selects
+	// [DefaultLockRetries], a negative value disables the retries. When they
+	// are used up the error matches [ErrLocked].
+	LockRetries int
+	// TempDir is where [SQLiteSnapshot] makes its copy. Empty selects
+	// os.TempDir.
+	TempDir string
+	// MaxSnapshotBytes bounds the files [SQLiteSnapshot] copies; a larger
+	// database fails with [ErrTooLarge]. Zero selects
+	// [DefaultMaxSnapshotBytes].
+	MaxSnapshotBytes int64
+	// MaxIndexEntries bounds what the query methods keep in memory: the
+	// number of files and dependency entries of all packages together. A
+	// database that holds more makes them fail with [ErrTooLarge]. Zero
+	// selects [DefaultMaxIndexEntries].
+	MaxIndexEntries int
+	// IncludeUninstalledFiles makes the file queries also match files that a
+	// package lists but did not install, those that --excludedocs or a
+	// replacement by another package left out. rpm -qf skips them, and so do
+	// the file queries by default; ghost files are matched either way.
+	IncludeUninstalledFiles bool
 	// MaxRecords bounds the number of records read from a database; reading
 	// more fails with [ErrTooLarge]. Zero selects [DefaultMaxRecords].
 	MaxRecords int
@@ -121,6 +160,25 @@ type Options struct {
 func (o Options) normalized() Options {
 	if o.Logger == nil {
 		o.Logger = slog.New(slog.DiscardHandler)
+	}
+
+	if o.BusyTimeout <= 0 {
+		o.BusyTimeout = DefaultBusyTimeout
+	}
+
+	switch {
+	case o.LockRetries == 0:
+		o.LockRetries = DefaultLockRetries
+	case o.LockRetries < 0:
+		o.LockRetries = 0
+	}
+
+	if o.MaxSnapshotBytes <= 0 {
+		o.MaxSnapshotBytes = DefaultMaxSnapshotBytes
+	}
+
+	if o.MaxIndexEntries <= 0 {
+		o.MaxIndexEntries = DefaultMaxIndexEntries
 	}
 
 	if o.MaxRecords <= 0 {
@@ -160,6 +218,11 @@ type DB struct {
 	format Format
 	opts   Options
 	st     store
+
+	// ix is the query index, nil until a query needs it; building holds a
+	// token while one is built, so that callers wait for it with their ctx.
+	ix       atomic.Pointer[queryIndex]
+	building chan struct{}
 }
 
 // Find looks for an rpm database under root, the directory that holds the
@@ -302,7 +365,7 @@ func Open(path string, opts Options) (*DB, error) {
 		return nil, fmt.Errorf("rpmdb: %s: %w", path, err)
 	}
 
-	return &DB{format: format, opts: opts, st: st}, nil
+	return &DB{format: format, opts: opts, st: st, building: make(chan struct{}, 1)}, nil
 }
 
 // Format returns the storage format of the database.
@@ -354,9 +417,33 @@ func (db *DB) headers(ctx context.Context) iter.Seq2[*rpm.RpmHeader, error] {
 // error is the last pair it yields. Stopping early releases everything.
 func (db *DB) Packages(ctx context.Context) iter.Seq2[*rpm.Package, error] {
 	return func(yield func(*rpm.Package, error) bool) {
-		for hdr, err := range db.headers(ctx) {
+		for rec, err := range db.records(ctx) {
 			if err != nil {
 				yield(nil, err)
+
+				return
+			}
+
+			if !yield(rec.pkg, nil) {
+				return
+			}
+		}
+	}
+}
+
+// record is an installed package with the header it was decoded from.
+type record struct {
+	hdr *rpm.RpmHeader
+	pkg *rpm.Package
+}
+
+// records yields the packages of the database with their headers; a header
+// that is not a package is skipped.
+func (db *DB) records(ctx context.Context) iter.Seq2[record, error] {
+	return func(yield func(record, error) bool) {
+		for hdr, err := range db.headers(ctx) {
+			if err != nil {
+				yield(record{}, err)
 
 				return
 			}
@@ -368,7 +455,7 @@ func (db *DB) Packages(ctx context.Context) iter.Seq2[*rpm.Package, error] {
 				continue
 			}
 
-			if !yield(pkg, nil) {
+			if !yield(record{hdr: hdr, pkg: pkg}, nil) {
 				return
 			}
 		}
@@ -388,64 +475,4 @@ func (db *DB) List(ctx context.Context) ([]*rpm.Package, error) {
 	}
 
 	return pkgs, nil
-}
-
-// InstalledNames returns the names of the installed packages, sorted and
-// without duplicates (a package installed in several versions counts once).
-// It decodes the names only, which is much cheaper than [DB.List].
-func (db *DB) InstalledNames(ctx context.Context) ([]string, error) {
-	var names []string
-
-	for hdr, err := range db.headers(ctx) {
-		if err != nil {
-			return nil, err
-		}
-
-		if name := firstString(hdr, tag.NAME); name != "" {
-			names = append(names, name)
-		}
-	}
-
-	return uniq(names), nil
-}
-
-// InstalledProvides returns the capabilities the installed packages provide,
-// as names without version constraints, sorted and without duplicates. Each
-// package's own name is included, as dnf does. It decodes the dependency names
-// only, which is much cheaper than [DB.List].
-func (db *DB) InstalledProvides(ctx context.Context) ([]string, error) {
-	var provides []string
-
-	for hdr, err := range db.headers(ctx) {
-		if err != nil {
-			return nil, err
-		}
-
-		name := firstString(hdr, tag.NAME)
-		if name == "" {
-			continue
-		}
-
-		provides = append(provides, name)
-
-		if names, err := hdr.GetStrings(tag.PROVIDENAME); err == nil {
-			provides = append(provides, names...)
-		}
-	}
-
-	return uniq(provides), nil
-}
-
-func firstString(hdr *rpm.RpmHeader, id int) string {
-	if strs, err := hdr.GetStrings(id); err == nil && len(strs) > 0 {
-		return strs[0]
-	}
-
-	return ""
-}
-
-func uniq(s []string) []string {
-	slices.Sort(s)
-
-	return slices.Compact(s)
 }

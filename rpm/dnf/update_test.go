@@ -52,7 +52,7 @@ func TestUpdateLoadRoundTrip(t *testing.T) {
 	}
 
 	p, ok := ix.Lookup("hello")
-	if !ok || p.Version != "1.0" || p.BaseURL != repo.url() || p.Requires[0] != "bash" ||
+	if !ok || p.Version != "1.0" || p.BaseURL != repo.url() || p.Requires[0].Name != "bash" ||
 		p.Location != "Packages/hello-1.0-1.x86_64.rpm" || p.ChecksumType != "sha256" {
 		t.Errorf("hello = %+v", p)
 	}

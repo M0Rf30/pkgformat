@@ -9,26 +9,33 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"golang.org/x/sync/errgroup"
 
 	"github.com/M0Rf30/pkgformat/rpm"
 	"github.com/M0Rf30/pkgformat/rpm/repodata"
+	"github.com/M0Rf30/pkgformat/rpm/richdep"
+	"github.com/M0Rf30/pkgformat/rpm/tag"
 )
 
-const archNoarch = "noarch"
+// SystemRepo is the Repo of a [Package] that is installed on the host.
+const SystemRepo = "@System"
 
-// Package is what the index keeps of a package of primary.xml: enough to
-// resolve its dependencies and to download it.
+// Package is a package, from a repository or installed: what the index keeps
+// of an entry of primary.xml, enough to resolve its dependencies and to
+// download it.
 type Package struct {
 	Name    string
 	Arch    string
 	Version string
 	Release string
 	Epoch   uint32
-	// Location is the path of the .rpm relative to the repository.
+	// Location is the path of the .rpm relative to the repository; empty for
+	// an installed package.
 	Location string
 	// Checksum is the hex digest of the .rpm and ChecksumType its algorithm
 	// (sha256 or sha512 can be verified).
@@ -43,23 +50,43 @@ type Package struct {
 	// MirrorList is the repository's mirror list or metalink URL, with its
 	// variables expanded. It supplies the fallbacks of a download.
 	MirrorList string
-	// Requires, Provides and Recommends are capability names with the
-	// version constraints dropped; Requires leaves out rpmlib() features.
-	// Provides also lists the file paths the package owns.
-	Requires   []string
-	Provides   []string
-	Recommends []string
-	// Repo is the id of the repository the package comes from.
+	// The dependency lists of the package. Provides always has the package's
+	// own name at its own version. Requires leaves out the rpmlib() features,
+	// which no package provides. An entry may be a rich dependency: its Name
+	// is the text in parentheses, see [richdep].
+	Provides    []rpm.Dependency
+	Requires    []rpm.Dependency
+	Conflicts   []rpm.Dependency
+	Obsoletes   []rpm.Dependency
+	Recommends  []rpm.Dependency
+	Suggests    []rpm.Dependency
+	Supplements []rpm.Dependency
+	Enhances    []rpm.Dependency
+	// Files are the file paths the package owns that its repository lists in
+	// primary.xml (the ones under /etc, /usr/bin, ...), or all of an installed
+	// package's. The others are in filelists.xml, which a resolution reads
+	// when a requirement of a file needs it.
+	Files []string
+	// Repo is the id of the repository the package comes from, [SystemRepo]
+	// for an installed one.
 	Repo string
-	// Priority is the priority of that repository (see [Repo.Priority]): of
-	// two packages with the same name the lower number wins, whatever the
-	// versions.
+	// Priority and Cost are those of that repository (see [Repo.Priority] and
+	// [Repo.Cost]).
 	Priority int
+	Cost     int
 
 	// repo carries the settings a download needs (proxy, gpgcheck, gpgkey).
 	// It is nil for a Package not built by [Client.Load].
 	repo *Repo
+	// src is the repository source of a package from the index.
+	src *repoSource
+	// seq is the position of the package in the metadata, the last tie-break
+	// of a choice.
+	seq int
 }
+
+// Installed reports whether the package is one the host has.
+func (p *Package) Installed() bool { return p.Repo == SystemRepo }
 
 // EVR renders "epoch:version-release". It is for display: the string is not
 // comparable with [rpm.Vercmp], which would run the version into the release
@@ -67,6 +94,15 @@ type Package struct {
 func (p *Package) EVR() string {
 	return strconv.FormatUint(uint64(p.Epoch), 10) + ":" + p.Version + "-" + p.Release
 }
+
+// NEVRA renders "name-epoch:version-release.arch", the way dnf shows a
+// package.
+func (p *Package) NEVRA() string {
+	return p.Name + "-" + p.EVR() + "." + p.Arch
+}
+
+// String is [Package.NEVRA].
+func (p *Package) String() string { return p.NEVRA() }
 
 // Compare orders the versions of two packages the way rpm does: the epoch
 // numerically, then the version and then the release with [rpm.Vercmp], each
@@ -87,134 +123,295 @@ func (p *Package) Compare(other *Package) int {
 	return rpm.Vercmp(p.Release, other.Release)
 }
 
-// Index is an in-memory view of the primary metadata of the repositories,
-// keyed by package name and by provided capability. It is read-only once
-// [Client.Load] returns it, so it is safe for concurrent use.
-type Index struct {
-	arch      string
-	installed Installed
-	logger    *slog.Logger
-	packages  map[string]*Package
-	providers map[string][]*Package
-	modules   *repodata.ModuleIndex
+// self is the provide every package has of its own name and version.
+func (p *Package) self() rpm.Dependency {
+	return rpm.Dependency{
+		Name:    p.Name,
+		Flags:   tag.RPMSENSE_EQUAL,
+		Version: p.Version + "-" + p.Release,
+		Epoch:   p.Epoch,
+	}
 }
 
-func newIndex(arch string, installed Installed, logger *slog.Logger) *Index {
+// addSelfProvide appends the own-name provide when the list lacks one.
+func (p *Package) addSelfProvide() {
+	for _, d := range p.Provides {
+		if d.Name == p.Name {
+			return
+		}
+	}
+
+	p.Provides = append(p.Provides, p.self())
+}
+
+// provRef is one entry of the provides index.
+type provRef struct {
+	pkg  *Package
+	atom richdep.Atom
+}
+
+// Index is an in-memory view of the metadata of the repositories, keyed by
+// package name and by provided capability. It keeps every version and
+// architecture of a package. It is safe for concurrent use once [Client.Load]
+// returns it: the file lists a resolution needs are read lazily under a lock.
+type Index struct {
+	arch      string
+	ranks     map[string]int
+	cfg       *Config
+	client    *Client
+	installed Installed
+	logger    *slog.Logger
+	modules   *repodata.ModuleIndex
+
+	// pending collects the packages as they are added, before finalize.
+	pending []*Package
+	// names holds the packages by name, the preferred first.
+	names    map[string][]*Package
+	provides map[string][]provRef
+	// supplements maps a capability named by a Supplements entry, in a rich
+	// one too, to the packages that supplement it.
+	supplements map[string][]*Package
+	// obsoleters maps the name of an Obsoletes entry to the packages that
+	// have it.
+	obsoleters map[string][]*Package
+	// files maps a path of primary.xml to the packages that own it.
+	files map[string][]*Package
+	// wantFiles are the file paths some package requires, the ones a file
+	// list is scanned for.
+	wantFiles map[string]struct{}
+	sources   []*repoSource
+
+	lazyMu  sync.Mutex
+	scanned map[string]struct{}
+	owners  map[string][]*Package
+}
+
+func newIndex(c *Client, cfg *Config) *Index {
 	return &Index{
-		arch:      arch,
-		installed: installed,
-		logger:    logger,
-		packages:  make(map[string]*Package),
-		providers: make(map[string][]*Package),
-		modules:   &repodata.ModuleIndex{},
+		arch:        c.opts.Arch,
+		ranks:       archRanks(c.opts.Arch),
+		cfg:         cfg,
+		client:      c,
+		installed:   c.opts.Installed,
+		logger:      c.opts.Logger,
+		modules:     &repodata.ModuleIndex{},
+		names:       make(map[string][]*Package),
+		provides:    make(map[string][]provRef),
+		supplements: make(map[string][]*Package),
+		obsoleters:  make(map[string][]*Package),
+		files:       make(map[string][]*Package),
+		wantFiles:   make(map[string]struct{}),
+		scanned:     make(map[string]struct{}),
+		owners:      make(map[string][]*Package),
 	}
 }
 
 // Len returns the number of distinct package names in the index.
-func (ix *Index) Len() int { return len(ix.packages) }
+func (ix *Index) Len() int { return len(ix.names) }
+
+// Versions returns every package of the given name (versions and
+// architectures) the index keeps, the one a resolution prefers first. The
+// result is not to be modified.
+func (ix *Index) Versions(name string) []*Package { return ix.names[name] }
 
 // Lookup returns the package of the given name that a resolution would choose,
-// and whether there is one.
+// and whether there is one: of the best repository priority, the host
+// architecture, the highest version.
 func (ix *Index) Lookup(name string) (*Package, bool) {
-	p, ok := ix.packages[name]
+	if list := ix.names[name]; len(list) > 0 {
+		return list[0], true
+	}
 
-	return p, ok
+	return nil, false
+}
+
+// Providers returns the packages that provide the capability, written as
+// "name" or "name >= 1.2" (a file path is a name), the ones a resolution
+// prefers first. File paths that only filelists.xml lists are not found here.
+func (ix *Index) Providers(capability string) []*Package {
+	a := parseCapability(capability)
+	list := ix.providersOf(a)
+	slices.SortStableFunc(list, ix.compare)
+
+	return list
 }
 
 // ResolveVirtual returns the name of the package to take for a capability: the
 // name itself when it is a downloadable package, else the best provider, else
 // the name unchanged.
 func (ix *Index) ResolveVirtual(name string) string {
-	if p, ok := ix.packages[name]; ok && p.Location != "" {
+	if p, ok := ix.Lookup(name); ok && p.Location != "" {
 		return name
 	}
 
-	if providers := ix.providers[name]; len(providers) > 0 {
-		return ix.pickProvider(providers).Name
+	if providers := ix.Providers(name); len(providers) > 0 {
+		return providers[0].Name
 	}
 
 	return name
 }
 
-// pickProvider chooses the best concrete provider of a capability: among the
-// providers of the best repository priority, the host architecture, then
-// noarch, then whatever comes first. This keeps a foreign architecture (i686
-// on x86_64) from being pulled in by a capability lookup.
-func (ix *Index) pickProvider(providers []*Package) *Package {
-	best := providers[0].Priority
-	for _, p := range providers[1:] {
-		best = min(best, p.Priority)
-	}
+// rank returns the rank of an architecture on the host (0 is the best), and
+// false for one the host cannot run.
+func (ix *Index) rank(arch string) (int, bool) {
+	r, ok := ix.ranks[arch]
 
-	var noarch, first *Package
-
-	for _, p := range providers {
-		if p.Priority != best {
-			continue
-		}
-
-		if first == nil {
-			first = p
-		}
-
-		if p.Arch == ix.arch {
-			return p
-		}
-
-		if p.Arch == archNoarch && noarch == nil {
-			noarch = p
-		}
-	}
-
-	if noarch != nil {
-		return noarch
-	}
-
-	return first
+	return r, ok
 }
 
-// shouldReplace reports whether candidate should take the place of existing as
-// the package of its name: downloadable beats not, a repository with a lower
-// priority number beats any other, the host architecture beats another, noarch
-// beats a foreign architecture, and on the same architecture the higher version
-// wins.
-func (ix *Index) shouldReplace(existing, candidate *Package) bool {
-	if existing.Location == "" && candidate.Location != "" {
-		return true
+// compare orders candidates by preference: the lower priority number, the
+// better architecture, the higher version, the lower cost, the earlier in the
+// metadata come first. It is a total order on the packages of an index.
+func (ix *Index) compare(a, b *Package) int {
+	if a.Priority != b.Priority {
+		return a.Priority - b.Priority
 	}
 
-	if existing.Priority != candidate.Priority {
-		return candidate.Priority < existing.Priority
+	ra, _ := ix.rank(a.Arch)
+	rb, _ := ix.rank(b.Arch)
+
+	if ra != rb {
+		return ra - rb
 	}
 
-	if existing.Arch != candidate.Arch {
-		if candidate.Arch == ix.arch {
-			return true
-		}
-
-		return candidate.Arch == archNoarch && existing.Arch != ix.arch
+	if c := a.Compare(b); c != 0 {
+		return -c
 	}
 
-	return candidate.Compare(existing) > 0
+	if a.Cost != b.Cost {
+		return a.Cost - b.Cost
+	}
+
+	return a.seq - b.seq
 }
 
-// add inserts p, unless it belongs to a non-default module stream, and indexes
-// the capabilities it provides.
+// add queues p, unless the host cannot run its architecture or it belongs to a
+// module stream that is not the default (and its repository does not set
+// module_hotfixes); finalize puts the queue in the index.
 func (ix *Index) add(p *Package) {
-	nevra := repodata.PackageNEVRA(p.Name, strconv.FormatUint(uint64(p.Epoch), 10), p.Version, p.Release, p.Arch)
-	if ix.modules.Blocked(p.Release, nevra) {
+	if _, ok := ix.rank(p.Arch); !ok {
 		return
 	}
 
-	if existing, ok := ix.packages[p.Name]; !ok || ix.shouldReplace(existing, p) {
-		ix.packages[p.Name] = p
-	}
-
-	for _, prov := range p.Provides {
-		if name := StripRPMConstraint(prov); name != "" && name != p.Name {
-			ix.providers[name] = append(ix.providers[name], p)
+	if p.repo == nil || !p.repo.ModuleHotfixes {
+		nevra := repodata.PackageNEVRA(p.Name, strconv.FormatUint(uint64(p.Epoch), 10), p.Version, p.Release, p.Arch)
+		if ix.modules.Blocked(p.Release, nevra) {
+			return
 		}
 	}
+
+	p.seq = len(ix.pending)
+	ix.pending = append(ix.pending, p)
+}
+
+// finalize builds the lookups: of the packages of one name only those of the
+// repositories of the best priority stay (a repository of a better priority
+// hides the packages of the others, whatever their versions), and the lists
+// are put in order of preference.
+func (ix *Index) finalize() {
+	bestPrio := make(map[string]int)
+
+	for _, p := range ix.pending {
+		if cur, ok := bestPrio[p.Name]; !ok || p.Priority < cur {
+			bestPrio[p.Name] = p.Priority
+		}
+	}
+
+	for _, p := range ix.pending {
+		if p.Priority == bestPrio[p.Name] {
+			ix.names[p.Name] = append(ix.names[p.Name], p)
+		}
+	}
+
+	ix.pending = nil
+
+	for _, list := range ix.names {
+		slices.SortStableFunc(list, ix.compare)
+
+		for _, p := range list {
+			ix.index(p)
+		}
+	}
+}
+
+// index adds p to the capability and file lookups.
+func (ix *Index) index(p *Package) {
+	for _, d := range p.Provides {
+		ix.provides[d.Name] = append(ix.provides[d.Name], provRef{pkg: p, atom: richdep.AtomOf(d)})
+	}
+
+	for _, f := range p.Files {
+		ix.files[f] = append(ix.files[f], p)
+	}
+
+	for _, d := range p.Requires {
+		ix.noteFileRequires(d.Name)
+	}
+
+	ix.indexSupplements(p)
+
+	for _, d := range p.Obsoletes {
+		if d.Name != p.Name {
+			ix.obsoleters[d.Name] = append(ix.obsoleters[d.Name], p)
+		}
+	}
+}
+
+// indexSupplements records the capabilities p supplements.
+func (ix *Index) indexSupplements(p *Package) {
+	var seen []string
+
+	add := func(name string) {
+		if !slices.Contains(seen, name) {
+			seen = append(seen, name)
+			ix.supplements[name] = append(ix.supplements[name], p)
+		}
+	}
+
+	for _, d := range p.Supplements {
+		if !strings.HasPrefix(d.Name, "(") {
+			add(d.Name)
+
+			continue
+		}
+
+		if n, err := richdep.Parse(d.Name); err == nil {
+			for _, a := range richdep.Atoms(n) {
+				add(a.Name)
+			}
+		}
+	}
+}
+
+// noteFileRequires records the file paths a requirement names, in a rich
+// dependency too.
+func (ix *Index) noteFileRequires(name string) {
+	switch {
+	case strings.HasPrefix(name, "/"):
+		ix.wantFiles[name] = struct{}{}
+	case strings.HasPrefix(name, "(") && strings.Contains(name, "/"):
+		if n, err := richdep.Parse(name); err == nil {
+			for _, a := range richdep.Atoms(n) {
+				if strings.HasPrefix(a.Name, "/") {
+					ix.wantFiles[a.Name] = struct{}{}
+				}
+			}
+		}
+	}
+}
+
+// providersOf returns the packages with a provide that meets the atom, in no
+// particular order.
+func (ix *Index) providersOf(a richdep.Atom) []*Package {
+	var out []*Package
+
+	for _, ref := range ix.provides[a.Name] {
+		if ref.atom.Overlaps(a) && !slices.Contains(out, ref.pkg) {
+			out = append(out, ref.pkg)
+		}
+	}
+
+	return out
 }
 
 // repoSource is a repository whose metadata is in the cache.
@@ -224,6 +421,14 @@ type repoSource struct {
 	mirrorList string
 	primary    string
 	modules    string
+	dataDir    string
+	// filelists is the cached filelists.xml, which may not be on disk yet
+	// (see filelistsEntry); empty when the repository has none.
+	filelists      string
+	filelistsEntry repodata.RepomdData
+	// bySum finds the package of the repository by the checksum filelists.xml
+	// names it with.
+	bySum map[string]*Package
 }
 
 // Load builds an Index from the metadata Update left in Options.CacheDir. A
@@ -234,12 +439,17 @@ func (c *Client) Load(ctx context.Context) (*Index, error) {
 		return nil, ErrNoCacheDir
 	}
 
+	cfg, err := c.Config()
+	if err != nil {
+		return nil, err
+	}
+
 	repos, err := c.enabledRepos()
 	if err != nil {
 		return nil, err
 	}
 
-	var sources []repoSource
+	var sources []*repoSource
 
 	for i := range repos {
 		src, err := c.cachedSource(&repos[i])
@@ -252,7 +462,8 @@ func (c *Client) Load(ctx context.Context) (*Index, error) {
 		sources = append(sources, src)
 	}
 
-	ix := newIndex(c.opts.Arch, c.opts.Installed, c.opts.Logger)
+	ix := newIndex(c, cfg)
+	ix.sources = sources
 
 	// The module filter must be complete before the first package is added.
 	for _, src := range sources {
@@ -275,7 +486,7 @@ func (c *Client) Load(ctx context.Context) (*Index, error) {
 
 	for i := range sources {
 		group.Go(func() error {
-			pkgs, err := c.readPrimary(&sources[i])
+			pkgs, err := c.readPrimary(cfg, sources[i])
 			if err != nil {
 				c.opts.Logger.Warn("ignoring unreadable repository metadata", "repo", sources[i].repo.ID, "error", err)
 			}
@@ -298,38 +509,40 @@ func (c *Client) Load(ctx context.Context) (*Index, error) {
 		}
 	}
 
+	ix.finalize()
+
 	return ix, nil
 }
 
 // cachedSource locates the cached metadata of a repository through its cached
 // repomd.xml, so that only the generation Update committed is read.
-func (c *Client) cachedSource(repo *Repo) (repoSource, error) {
+func (c *Client) cachedSource(repo *Repo) (*repoSource, error) {
 	cacheDir := c.repoCacheDir(repo.ID)
 	dataDir := filepath.Join(cacheDir, repodataDir)
 
 	raw, err := readCapped(filepath.Join(dataDir, repomdName), maxRepomdBytes)
 	if err != nil {
-		return repoSource{}, err
+		return nil, err
 	}
 
 	md, err := repodata.ParseRepomd(bytes.NewReader(raw))
 	if err != nil {
-		return repoSource{}, err
+		return nil, err
 	}
 
-	src := repoSource{repo: repo}
+	src := &repoSource{repo: repo, dataDir: dataDir, bySum: make(map[string]*Package)}
 
 	entry, ok := md.Find("primary")
 	if !ok {
-		return repoSource{}, ErrNoPrimary
+		return nil, ErrNoPrimary
 	}
 
 	if src.primary, err = metadataPath(dataDir, entry.Location); err != nil {
-		return repoSource{}, err
+		return nil, err
 	}
 
 	if _, err := os.Stat(src.primary); err != nil {
-		return repoSource{}, err
+		return nil, err
 	}
 
 	if entry, ok := md.Find("modules"); ok {
@@ -337,6 +550,13 @@ func (c *Client) cachedSource(repo *Repo) (repoSource, error) {
 			if _, err := os.Stat(p); err == nil {
 				src.modules = p
 			}
+		}
+	}
+
+	if entry, ok := md.Find("filelists"); ok {
+		if p, err := metadataPath(dataDir, entry.Location); err == nil {
+			src.filelists = p
+			src.filelistsEntry = entry
 		}
 	}
 
@@ -403,9 +623,10 @@ func (c *Client) readModules(m *repodata.ModuleIndex, p string) error {
 	return m.Add(rc, c.opts.MaxDocumentBytes)
 }
 
-// readPrimary parses the primary metadata of one repository. Source packages
-// are left out.
-func (c *Client) readPrimary(src *repoSource) ([]*Package, error) {
+// readPrimary parses the primary metadata of one repository. Source packages,
+// those the excludepkgs and includepkgs of the repository and of dnf.conf
+// leave out, and those of an architecture the host cannot run are left out.
+func (c *Client) readPrimary(cfg *Config, src *repoSource) ([]*Package, error) {
 	rc, err := c.openMetadata(src.primary)
 	if err != nil {
 		return nil, err
@@ -413,26 +634,31 @@ func (c *Client) readPrimary(src *repoSource) ([]*Package, error) {
 
 	defer func() { _ = rc.Close() }()
 
+	ranks := archRanks(c.opts.Arch)
+
 	var pkgs []*Package
 
 	err = repodata.ReadPrimary(rc, repodata.PrimaryLimits{}, func(pp *repodata.PrimaryPackage) error {
-		if pp.Arch == "src" {
+		if _, ok := ranks[pp.Arch]; !ok {
 			return nil
 		}
 
-		if src.repo.excludes(pp) {
+		epoch := strconv.FormatUint(uint64(pp.Epoch), 10)
+		if !cfg.allowed(src.repo, pp.Name, epoch, pp.Version, pp.Release, pp.Arch) {
 			return nil
 		}
 
-		pkgs = append(pkgs, newPackage(pp, src))
+		p := newPackage(pp, src)
+		pkgs = append(pkgs, p)
+
+		if pp.Checksum != "" {
+			src.bySum[pp.Checksum] = p
+		}
 
 		return nil
 	})
-	if err != nil {
-		return pkgs, err
-	}
 
-	return pkgs, nil
+	return pkgs, err
 }
 
 // newPackage condenses a primary.xml entry.
@@ -449,35 +675,80 @@ func newPackage(pp *repodata.PrimaryPackage, src *repoSource) *Package {
 		Size:         pp.PackageSize,
 		Repo:         src.repo.ID,
 		Priority:     src.repo.Priority,
+		Cost:         src.repo.Cost,
 		repo:         src.repo,
+		src:          src,
 		BaseURL:      src.baseURL,
 		MirrorList:   src.mirrorList,
-		Requires:     depNames(pp.Requires, true),
-		Recommends:   depNames(pp.Recommends, true),
-		Provides:     depNames(pp.Provides, false),
+		Provides:     pp.Provides,
+		Requires:     withoutRPMLib(pp.Requires),
+		Conflicts:    pp.Conflicts,
+		Obsoletes:    pp.Obsoletes,
+		Recommends:   pp.Recommends,
+		Suggests:     pp.Suggests,
+		Supplements:  pp.Supplements,
+		Enhances:     pp.Enhances,
 	}
 
 	for _, f := range pp.Files {
-		p.Provides = append(p.Provides, f.Path)
+		p.Files = append(p.Files, f.Path)
 	}
+
+	p.addSelfProvide()
 
 	return p
 }
 
-// depNames lists the capability names of deps without constraints. With
-// skipRPMLib the rpmlib() feature requirements, which no package provides, are
-// left out.
-func depNames(deps []rpm.Dependency, skipRPMLib bool) []string {
-	var out []string
-
-	for _, d := range deps {
-		name := StripRPMConstraint(d.Name)
-		if name == "" || (skipRPMLib && strings.HasPrefix(name, "rpmlib(")) {
-			continue
-		}
-
-		out = append(out, name)
+// withoutRPMLib drops the rpmlib() feature requirements, which only the rpm of
+// the host can satisfy.
+func withoutRPMLib(deps []rpm.Dependency) []rpm.Dependency {
+	if !slices.ContainsFunc(deps, isRPMLib) {
+		return deps
 	}
 
-	return out
+	return slices.DeleteFunc(slices.Clone(deps), isRPMLib)
+}
+
+func isRPMLib(d rpm.Dependency) bool {
+	return d.Flags&tag.RPMSENSE_RPMLIB != 0 || strings.HasPrefix(d.Name, "rpmlib(")
+}
+
+// fromInstalled converts a package of the host's database.
+func fromInstalled(p *rpm.Package) *Package {
+	ip := &Package{
+		Name:        p.Name,
+		Arch:        p.Arch,
+		Version:     p.Version,
+		Release:     p.Release,
+		Epoch:       p.Epoch,
+		Repo:        SystemRepo,
+		Provides:    p.Provides,
+		Requires:    withoutRPMLib(p.Requires),
+		Conflicts:   p.Conflicts,
+		Obsoletes:   p.Obsoletes,
+		Recommends:  p.Recommends,
+		Suggests:    p.Suggests,
+		Supplements: p.Supplements,
+		Enhances:    p.Enhances,
+	}
+
+	for _, f := range p.Files {
+		ip.Files = append(ip.Files, f.Path)
+	}
+
+	ip.addSelfProvide()
+
+	return ip
+}
+
+// parseCapability reads "name", "name >= 1.2" or "name = 1:1.2-3" as written
+// in a command line.
+func parseCapability(s string) richdep.Atom {
+	if n, err := richdep.Parse(s); err == nil {
+		if a, ok := n.(richdep.Atom); ok {
+			return a
+		}
+	}
+
+	return richdep.Atom{Name: strings.TrimSpace(s)}
 }

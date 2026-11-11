@@ -1,0 +1,4 @@
+error: dnf could not solve app-d
+error: - installed package blocker-1.0-1.noarch conflicts with blocker provided by app-d-2.0-1.noarch from best
+error: - package app-d-2.0-1.noarch from best conflicts with blocker provided by blocker-1.0-1.noarch from best
+error: - cannot install the best candidate for the job
