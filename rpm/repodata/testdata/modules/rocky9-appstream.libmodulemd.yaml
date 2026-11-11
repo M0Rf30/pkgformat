@@ -1,0 +1,574 @@
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: mariadb
+  profiles:
+    "10.11": [server]
+    "11.8": [server]
+...
+---
+document: modulemd
+version: 2
+data:
+  name: mariadb
+  stream: "10.11"
+  version: 9070020260310235954
+  context: rhel9
+  static_context: true
+  arch: x86_64
+  summary: MariaDB Module
+  description: >-
+    MariaDB is a community developed branch of MySQL. MariaDB is a multi-user, multi-threaded
+    SQL database server. It is a client/server implementation consisting of a server
+    daemon (mysqld) and many different client programs and libraries. The base package
+    contains the standard MariaDB/MySQL client programs and generic MySQL files.
+  license:
+    module:
+    - MIT
+    content:
+    - GPLv2
+    - GPLv2 and LGPLv2
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      platform: [el9.7.0]
+    requires:
+      platform: [el9]
+  references:
+    community: http://mariadb.org
+    documentation: https://mariadb.com/kb/en/library/documentation/
+    tracker: http://bugzilla.redhat.com
+  profiles:
+    client:
+      rpms:
+      - mariadb
+    galera:
+      rpms:
+      - mariadb-server
+      - mariadb-server-galera
+    server:
+      rpms:
+      - mariadb-server
+  api:
+    rpms:
+    - mariadb
+    - mariadb-server
+  buildopts:
+    rpms:
+      macros: >
+        %runselftest 1
+
+        %ignore_testsuite_result 0
+  components:
+    rpms:
+      galera:
+        rationale: Galera package for MariaDB server replication
+        ref: r9-stream-10.11
+        buildorder: 16
+        arches: [aarch64, i686, x86_64]
+      mariadb:
+        rationale: MariaDB package
+        ref: r9-stream-10.11
+        buildorder: 8
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - galera-0:26.4.20-1.module+el9.7.0+40024+12a6f3b4.src
+    - galera-0:26.4.20-1.module+el9.7.0+40024+12a6f3b4.x86_64
+    - galera-debuginfo-0:26.4.20-1.module+el9.7.0+40024+12a6f3b4.x86_64
+    - galera-debugsource-0:26.4.20-1.module+el9.7.0+40024+12a6f3b4.x86_64
+    - mariadb-3:10.11.15-2.module+el9.7.0+40104+317ef232.src
+    - mariadb-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-backup-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-backup-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-common-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-debugsource-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-devel-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-embedded-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-embedded-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-embedded-devel-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-errmsg-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-gssapi-server-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-gssapi-server-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-oqgraph-engine-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-oqgraph-engine-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-pam-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-pam-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-server-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-server-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-server-galera-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-server-utils-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-server-utils-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-test-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+    - mariadb-test-debuginfo-3:10.11.15-2.module+el9.7.0+40104+317ef232.x86_64
+...
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: maven
+  profiles:
+    "3.8": [common]
+    "3.9": [common]
+...
+---
+document: modulemd
+version: 2
+data:
+  name: maven
+  stream: "3.9"
+  version: 9080020260304233905
+  context: 470dcefd
+  static_context: true
+  arch: x86_64
+  summary: Java project management and project comprehension tool
+  description: >-
+    Maven is a software project management and comprehension tool. Based on the concept
+    of a project object model (POM), Maven can manage a project's build, reporting
+    and documentation from a central piece of information.
+  license:
+    module:
+    - MIT
+    content:
+    - Apache-1.1 AND Apache-2.0 AND xpp AND BSD-3-Clause AND LicenseRef-Fedora-Public-Domain
+    - Apache-2.0
+    - Apache-2.0 AND Apache-1.1 AND MIT
+    - Apache-2.0 AND CC0-1.0
+    - Apache-2.0 AND MIT
+    - Apache-2.0 AND MIT AND xpp
+    - Apache-2.0 AND Plexus
+    - BSD-3-Clause AND Apache-2.0
+    - EPL-1.0 AND BSD-3-Clause
+    - EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0
+    - LicenseRef-Fedora-Public-Domain
+    - MIT AND Apache-2.0
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      javapackages-tools: ["202501"]
+      platform: [el9.8.0]
+    requires:
+      platform: [el9]
+  profiles:
+    common:
+      rpms:
+      - maven
+    openjdk11:
+      rpms:
+      - maven-openjdk11
+    openjdk17:
+      rpms:
+      - maven-openjdk17
+    openjdk21:
+      rpms:
+      - maven-openjdk21
+    openjdk25:
+      rpms:
+      - maven-openjdk25
+    openjdk8:
+      rpms:
+      - maven-openjdk8
+  api:
+    rpms:
+    - maven
+    - maven-openjdk11
+    - maven-openjdk17
+    - maven-openjdk21
+    - maven-openjdk25
+    - maven-openjdk8
+  filter:
+    rpms:
+    - aopalliance-javadoc
+    - apache-commons-cli-javadoc
+    - apache-commons-codec-javadoc
+    - apache-commons-io-javadoc
+    - atinject-javadoc
+    - google-guice-javadoc
+    - guava-javadoc
+    - guava-testlib
+    - guice-assistedinject
+    - guice-bom
+    - guice-extensions
+    - guice-grapher
+    - guice-jmx
+    - guice-jndi
+    - guice-parent
+    - guice-servlet
+    - guice-throwingproviders
+    - httpcomponents-client-javadoc
+    - httpcomponents-core-javadoc
+    - jakarta-annotations-javadoc
+    - jansi-debuginfo
+    - jansi-debugsource
+    - jansi-javadoc
+    - jsr-305-javadoc
+    - jul-to-slf4j
+    - log4j-over-slf4j
+    - maven-javadoc
+    - maven-resolver-javadoc
+    - maven-shared-utils-javadoc
+    - maven-wagon-javadoc
+    - plexus-cipher-javadoc
+    - plexus-classworlds-javadoc
+    - plexus-containers-component-metadata
+    - plexus-containers-javadoc
+    - plexus-interpolation-javadoc
+    - plexus-sec-dispatcher-javadoc
+    - plexus-utils-javadoc
+    - sisu-javadoc
+    - sisu-maven-plugin
+    - slf4j-javadoc
+    - slf4j-jcl
+    - slf4j-jdk14
+    - slf4j-manual
+    - slf4j-migrator
+    - slf4j-sources
+  buildopts:
+    rpms:
+      macros: >
+        %java_arches aarch64 ppc64le s390x x86_64
+  components:
+    rpms:
+      aopalliance:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      apache-commons-cli:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      apache-commons-codec:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      apache-commons-io:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      atinject:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      google-guice:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 30
+        arches: [aarch64, i686, x86_64]
+      guava:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 20
+        arches: [aarch64, i686, x86_64]
+      httpcomponents-client:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 20
+        arches: [aarch64, i686, x86_64]
+      httpcomponents-core:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      jakarta-annotations:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      jansi:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      jsr-305:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      maven:
+        rationale: Runtime dependency of maven.
+        ref: r9s-stream-3.9
+        buildorder: 50
+        arches: [aarch64, i686, x86_64]
+      maven-resolver:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 40
+        arches: [aarch64, i686, x86_64]
+      maven-shared-utils:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 20
+        arches: [aarch64, i686, x86_64]
+      maven-wagon:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 30
+        arches: [aarch64, i686, x86_64]
+      plexus-cipher:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 20
+        arches: [aarch64, i686, x86_64]
+      plexus-classworlds:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      plexus-containers:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      plexus-interpolation:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      plexus-sec-dispatcher:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 30
+        arches: [aarch64, i686, x86_64]
+      plexus-utils:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+      sisu:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 20
+        arches: [aarch64, i686, x86_64]
+      slf4j:
+        rationale: Runtime dependency of maven.
+        ref: r9-stream-3.9
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - aopalliance-0:1.0-51.module+el9.7.0+40002+8e3c44a9.noarch
+    - aopalliance-0:1.0-51.module+el9.7.0+40002+8e3c44a9.src
+    - apache-commons-cli-0:1.9.0-4.module+el9.7.0+40002+8e3c44a9.noarch
+    - apache-commons-cli-0:1.9.0-4.module+el9.7.0+40002+8e3c44a9.src
+    - apache-commons-codec-0:1.17.1-8.module+el9.7.0+40002+8e3c44a9.noarch
+    - apache-commons-codec-0:1.17.1-8.module+el9.7.0+40002+8e3c44a9.src
+    - apache-commons-io-1:2.16.1-9.module+el9.7.0+40002+8e3c44a9.noarch
+    - apache-commons-io-1:2.16.1-9.module+el9.7.0+40002+8e3c44a9.src
+    - atinject-0:1.0.5-14.module+el9.7.0+40002+8e3c44a9.noarch
+    - atinject-0:1.0.5-14.module+el9.7.0+40002+8e3c44a9.src
+    - google-guice-0:5.1.0-23.module+el9.7.0+40002+8e3c44a9.noarch
+    - google-guice-0:5.1.0-23.module+el9.7.0+40002+8e3c44a9.src
+    - guava-0:33.3.0-5.module+el9.7.0+40002+8e3c44a9.noarch
+    - guava-0:33.3.0-5.module+el9.7.0+40002+8e3c44a9.src
+    - httpcomponents-client-0:4.5.14-21.module+el9.7.0+40002+8e3c44a9.noarch
+    - httpcomponents-client-0:4.5.14-21.module+el9.7.0+40002+8e3c44a9.src
+    - httpcomponents-core-0:4.4.16-21.module+el9.7.0+40002+8e3c44a9.noarch
+    - httpcomponents-core-0:4.4.16-21.module+el9.7.0+40002+8e3c44a9.src
+    - jakarta-annotations-0:1.3.5-38.module+el9.7.0+40002+8e3c44a9.noarch
+    - jakarta-annotations-0:1.3.5-38.module+el9.7.0+40002+8e3c44a9.src
+    - jansi-0:2.4.1-12.module+el9.7.0+40002+8e3c44a9.src
+    - jansi-0:2.4.1-12.module+el9.7.0+40002+8e3c44a9.x86_64
+    - jcl-over-slf4j-0:1.7.36-9.module+el9.7.0+40002+8e3c44a9.noarch
+    - jsr-305-0:3.0.2-36.module+el9.7.0+40002+8e3c44a9.noarch
+    - jsr-305-0:3.0.2-36.module+el9.7.0+40002+8e3c44a9.src
+    - maven-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-1:3.9.9-13.module+el9.8.0+40095+a2161487.src
+    - maven-lib-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-openjdk11-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-openjdk17-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-openjdk21-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-openjdk25-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-openjdk8-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-resolver-1:1.9.22-6.module+el9.7.0+40002+8e3c44a9.noarch
+    - maven-resolver-1:1.9.22-6.module+el9.7.0+40002+8e3c44a9.src
+    - maven-shared-utils-0:3.4.2-19.module+el9.7.0+40002+8e3c44a9.noarch
+    - maven-shared-utils-0:3.4.2-19.module+el9.7.0+40002+8e3c44a9.src
+    - maven-unbound-1:3.9.9-13.module+el9.8.0+40095+a2161487.noarch
+    - maven-wagon-0:3.5.3-17.module+el9.7.0+40002+8e3c44a9.noarch
+    - maven-wagon-0:3.5.3-17.module+el9.7.0+40002+8e3c44a9.src
+    - plexus-cipher-0:2.0-25.module+el9.7.0+40002+8e3c44a9.noarch
+    - plexus-cipher-0:2.0-25.module+el9.7.0+40002+8e3c44a9.src
+    - plexus-classworlds-0:2.8.0-9.module+el9.7.0+40002+8e3c44a9.noarch
+    - plexus-classworlds-0:2.8.0-9.module+el9.7.0+40002+8e3c44a9.src
+    - plexus-containers-0:2.2.0-10.module+el9.7.0+40002+8e3c44a9.src
+    - plexus-containers-component-annotations-0:2.2.0-10.module+el9.7.0+40002+8e3c44a9.noarch
+    - plexus-interpolation-0:1.27-10.module+el9.7.0+40002+8e3c44a9.noarch
+    - plexus-interpolation-0:1.27-10.module+el9.7.0+40002+8e3c44a9.src
+    - plexus-sec-dispatcher-0:2.0-28.module+el9.7.0+40002+8e3c44a9.noarch
+    - plexus-sec-dispatcher-0:2.0-28.module+el9.7.0+40002+8e3c44a9.src
+    - plexus-utils-0:3.5.1-17.module+el9.7.0+40002+8e3c44a9.noarch
+    - plexus-utils-0:3.5.1-17.module+el9.7.0+40002+8e3c44a9.src
+    - sisu-1:0.9.0~M3-7.module+el9.7.0+40002+8e3c44a9.noarch
+    - sisu-1:0.9.0~M3-7.module+el9.7.0+40002+8e3c44a9.src
+    - slf4j-0:1.7.36-9.module+el9.7.0+40002+8e3c44a9.noarch
+    - slf4j-0:1.7.36-9.module+el9.7.0+40002+8e3c44a9.src
+...
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: nginx
+  profiles:
+    "1.22": [common]
+    "1.24": [common]
+    "1.26": [common]
+...
+---
+document: modulemd
+version: 2
+data:
+  name: nginx
+  stream: "1.22"
+  version: 9070020251118192037
+  context: "9"
+  static_context: true
+  arch: x86_64
+  summary: nginx webserver
+  description: >-
+    nginx 1.22 webserver module
+  license:
+    module:
+    - MIT
+    content:
+    - BSD
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      platform: [el9.7.0]
+    requires:
+      platform: [el9]
+  references:
+    documentation: http://nginx.org/en/docs/
+    tracker: https://trac.nginx.org/nginx/
+  profiles:
+    common:
+      rpms:
+      - nginx
+      - nginx-all-modules
+      - nginx-filesystem
+      - nginx-mod-http-image-filter
+      - nginx-mod-http-perl
+      - nginx-mod-http-xslt-filter
+      - nginx-mod-mail
+      - nginx-mod-stream
+  api:
+    rpms:
+    - nginx
+    - nginx-all-modules
+    - nginx-filesystem
+    - nginx-mod-http-image-filter
+    - nginx-mod-http-perl
+    - nginx-mod-http-xslt-filter
+    - nginx-mod-mail
+    - nginx-mod-stream
+  components:
+    rpms:
+      nginx:
+        rationale: Module API.
+        ref: r9-stream-1.22
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - nginx-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.src
+    - nginx-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-all-modules-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.noarch
+    - nginx-core-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-core-debuginfo-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-debuginfo-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-debugsource-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-filesystem-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.noarch
+    - nginx-mod-devel-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-http-image-filter-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-http-image-filter-debuginfo-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-http-perl-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-http-perl-debuginfo-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-http-xslt-filter-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-http-xslt-filter-debuginfo-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-mail-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-mail-debuginfo-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-stream-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+    - nginx-mod-stream-debuginfo-1:1.22.1-8.module+el9.7.0+40008+ca1c123e.1.x86_64
+...
+---
+document: modulemd
+version: 2
+data:
+  name: nginx
+  stream: "1.26"
+  version: 9080020260520105659
+  context: "9"
+  static_context: true
+  arch: x86_64
+  summary: nginx webserver
+  description: >-
+    nginx 1.26 webserver module
+  license:
+    module:
+    - MIT
+    content:
+    - BSD-2-Clause
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      platform: [el9.8.0]
+    requires:
+      platform: [el9]
+  references:
+    documentation: http://nginx.org/en/docs/
+    tracker: https://trac.nginx.org/nginx/
+  profiles:
+    common:
+      rpms:
+      - nginx
+      - nginx-all-modules
+      - nginx-filesystem
+      - nginx-mod-http-image-filter
+      - nginx-mod-http-perl
+      - nginx-mod-http-xslt-filter
+      - nginx-mod-mail
+      - nginx-mod-stream
+  api:
+    rpms:
+    - nginx
+    - nginx-all-modules
+    - nginx-filesystem
+    - nginx-mod-http-image-filter
+    - nginx-mod-http-perl
+    - nginx-mod-http-xslt-filter
+    - nginx-mod-mail
+    - nginx-mod-stream
+  components:
+    rpms:
+      nginx:
+        rationale: Module API.
+        ref: r9-stream-1.26
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - nginx-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.src
+    - nginx-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-all-modules-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.noarch
+    - nginx-core-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-core-debuginfo-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-debuginfo-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-debugsource-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-filesystem-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.noarch
+    - nginx-mod-devel-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-http-image-filter-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-http-image-filter-debuginfo-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-http-perl-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-http-perl-debuginfo-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-http-xslt-filter-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-http-xslt-filter-debuginfo-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-mail-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-mail-debuginfo-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-stream-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+    - nginx-mod-stream-debuginfo-2:1.26.3-9.module+el9.8.0+40194+40adfc1b.x86_64
+...

@@ -1,0 +1,24 @@
+---
+document: modulemd-translations
+version: 1
+data:
+  module: foo
+  stream: "latest"
+  modified: 201805231425
+  translations:
+    es_ES:
+      summary: Un módulo de ejemplo
+      description: Un módulo de ejemplo.
+      profiles:
+        profile_a: Un perfil de ejemplo
+    ja:
+      summary: モジュールの例
+      description: モジュールの例です。
+      profiles:
+        profile_a: プロファイルの例
+    en_GB:
+      summary: An example module
+      description: An example module.
+      profiles:
+        profile_a: An example profile
+...

@@ -1,0 +1,21 @@
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: foo
+  modified: 201812071200
+  stream: "x.y"
+  profiles:
+    bar: [baz, snafu]
+    x.y: []
+  intents:
+    desktop:
+      stream: "y.z"
+      profiles:
+        x.y: [other]
+        y.z: [blah]
+    server:
+      stream: "x.y"
+      profiles:
+        x.y: []
+...

@@ -1,0 +1,579 @@
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: go-toolset
+  stream: "rhel8"
+  profiles:
+    rhel8: [common]
+...
+---
+document: modulemd
+version: 2
+data:
+  name: go-toolset
+  stream: "rhel8"
+  version: 8100020240523095745
+  context: 7e2b282f
+  arch: x86_64
+  summary: Go
+  description: >-
+    Go Tools and libraries
+  license:
+    module:
+    - MIT
+    content:
+    - BSD and Public Domain
+    - MIT
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      go-toolset: [rhel8]
+      platform: [el8.10.0]
+    requires:
+      platform: [el8]
+  profiles:
+    common:
+      rpms:
+      - go-toolset
+  api:
+    rpms:
+    - golang
+  buildopts:
+    rpms:
+      whitelist:
+      - delve
+      - go-toolset
+      - go-toolset-1.10
+      - go-toolset-1.10-golang
+      - go-toolset-golang
+      - golang
+  components:
+    rpms:
+      delve:
+        rationale: A debugger for the Go programming language
+        ref: ca35aac3fd3349de34635e7f0fec723eb195d860
+        buildorder: 2
+        arches: [aarch64, i686, x86_64]
+      go-toolset:
+        rationale: Meta package for go-toolset providing scl enable scripts.
+        ref: 27cb9900f604b713011dcfb50ef647592158a47e
+        arches: [aarch64, i686, x86_64]
+      golang:
+        rationale: Package providing the Go compiler toolchain.
+        ref: b84124ce4934c5020de33c7d474c0f20e4b38841
+        buildorder: 1
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - delve-0:1.21.2-3.module+el8.10.0+1814+f68f8a63.src
+    - delve-0:1.21.2-3.module+el8.10.0+1814+f68f8a63.x86_64
+    - delve-debuginfo-0:1.21.2-3.module+el8.10.0+1814+f68f8a63.x86_64
+    - delve-debugsource-0:1.21.2-3.module+el8.10.0+1814+f68f8a63.x86_64
+    - go-toolset-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.src
+    - go-toolset-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.x86_64
+    - golang-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.src
+    - golang-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.x86_64
+    - golang-bin-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.x86_64
+    - golang-docs-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.noarch
+    - golang-misc-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.noarch
+    - golang-src-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.noarch
+    - golang-tests-0:1.21.9-1.module+el8.10.0+1814+f68f8a63.noarch
+...
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: llvm-toolset
+  stream: "rhel8"
+  profiles:
+    rhel8: [common]
+...
+---
+document: modulemd
+version: 2
+data:
+  name: llvm-toolset
+  stream: "rhel8"
+  version: 8100020240205185413
+  context: e155f54d
+  arch: x86_64
+  summary: LLVM
+  description: >-
+    LLVM Tools and libraries
+  license:
+    module:
+    - MIT
+    content:
+    - Apache-2.0 WITH LLVM-exception OR NCSA
+    - NCSA
+    - NCSA and MIT
+    - NCSA or MIT
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      platform: [el8.10.0]
+    requires:
+      platform: [el8]
+  profiles:
+    common:
+      rpms:
+      - llvm-toolset
+  api:
+    rpms:
+    - clang
+    - clang-analyzer
+    - clang-devel
+    - clang-libs
+    - clang-tools-extra
+    - git-clang-format
+    - lld
+    - lld-libs
+    - lldb
+    - lldb-devel
+    - llvm
+    - llvm-devel
+    - llvm-libs
+  components:
+    rpms:
+      clang:
+        rationale: clang tools and libraries
+        ref: r8s-stream-rhel8
+        buildorder: 1
+        arches: [aarch64, i686, x86_64]
+        multilib: [x86_64]
+      compiler-rt:
+        rationale: LLVM compiler intrinsic and sanitizer libraries
+        ref: r8s-stream-rhel8
+        buildorder: 2
+        arches: [aarch64, i686, x86_64]
+        multilib: [x86_64]
+      libomp:
+        rationale: LLVM OpenMP runtime
+        ref: r8s-stream-rhel8
+        buildorder: 2
+        arches: [aarch64, i686, x86_64]
+        multilib: [x86_64]
+      lld:
+        rationale: LLVM linker
+        ref: r8s-stream-rhel8
+        buildorder: 1
+        arches: [aarch64, i686, x86_64]
+        multilib: [x86_64]
+      lldb:
+        rationale: lldb debugger
+        ref: r8s-stream-rhel8
+        buildorder: 2
+        arches: [aarch64, i686, x86_64]
+        multilib: [x86_64]
+      llvm:
+        rationale: LLVM tools and libraries
+        ref: r8s-stream-rhel8
+        arches: [aarch64, i686, x86_64]
+        multilib: [x86_64]
+      python-lit:
+        rationale: Lit test runner for LLVM
+        ref: r8s-stream-rhel8
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - clang-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.src
+    - clang-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-analyzer-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.noarch
+    - clang-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-devel-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-devel-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-libs-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-libs-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-libs-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-libs-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-resource-filesystem-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.noarch
+    - clang-tools-extra-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-tools-extra-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-tools-extra-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-tools-extra-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - clang-tools-extra-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - clang-tools-extra-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - compiler-rt-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - compiler-rt-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.src
+    - compiler-rt-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - compiler-rt-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - compiler-rt-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - compiler-rt-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - compiler-rt-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - git-clang-format-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - git-clang-format-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - libomp-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - libomp-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.src
+    - libomp-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - libomp-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - libomp-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - libomp-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - libomp-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - libomp-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - libomp-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lld-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lld-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.src
+    - lld-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lld-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lld-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lld-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lld-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lld-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lld-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lld-libs-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lld-libs-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lld-libs-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lld-libs-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lldb-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lldb-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.src
+    - lldb-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lldb-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lldb-debuginfo-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lldb-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lldb-debugsource-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - lldb-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - lldb-devel-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - llvm-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-0:17.0.6-2.module+el8.10.0+1694+aabef26e.src
+    - llvm-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-cmake-utils-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-cmake-utils-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-debugsource-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-debugsource-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-devel-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-devel-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-devel-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-devel-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-doc-0:17.0.6-2.module+el8.10.0+1694+aabef26e.noarch
+    - llvm-googletest-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-googletest-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-libs-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-libs-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-libs-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-libs-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-static-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-static-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-test-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-test-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-test-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-test-debuginfo-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - llvm-toolset-0:17.0.6-2.module+el8.10.0+1694+aabef26e.i686
+    - llvm-toolset-0:17.0.6-2.module+el8.10.0+1694+aabef26e.x86_64
+    - python-lit-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.src
+    - python3-clang-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - python3-clang-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+    - python3-lit-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.noarch
+    - python3-lldb-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.i686
+    - python3-lldb-0:17.0.6-1.module+el8.10.0+1595+29ffb9b1.x86_64
+...
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: ruby
+  stream: "2.5"
+  profiles:
+    2.5: [common]
+    2.6: [common]
+    2.7: [common]
+    3.0: [common]
+    3.1: [common]
+    3.3: [common]
+...
+---
+document: modulemd
+version: 2
+data:
+  name: ruby
+  stream: "2.5"
+  version: 8090020231017035111
+  context: b46abd14
+  arch: x86_64
+  summary: An interpreter of object-oriented scripting language
+  description: >-
+    Ruby is the interpreted scripting language for quick and easy object-oriented
+    programming.  It has many features to process text files and to do system management
+    tasks (as in Perl).  It is simple, straight-forward, and extensible.
+  license:
+    module:
+    - MIT
+    content:
+    - (BSD or Ruby) and PostgreSQL
+    - (Ruby or BSD) and (Ruby or BSD or Python) and (Ruby or BSD or LGPLv2+)
+    - (Ruby or BSD) and Public Domain and MIT and CC0 and zlib and UCD
+    - (Ruby or GPLv2) and UCD
+    - ASL 2.0
+    - GPLv2 and Ruby and MIT and OFL
+    - MIT
+    - Ruby or BSD
+    - Ruby or MIT
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      platform: [el8.9.0]
+    requires:
+      platform: [el8]
+  references:
+    community: http://ruby-lang.org/
+    documentation: https://www.ruby-lang.org/en/documentation/
+    tracker: https://bugs.ruby-lang.org/
+  profiles:
+    common:
+      rpms:
+      - ruby
+  api:
+    rpms:
+    - ruby
+    - ruby-devel
+    - ruby-irb
+    - ruby-libs
+    - rubygem-abrt
+    - rubygem-bigdecimal
+    - rubygem-bson
+    - rubygem-bundler
+    - rubygem-did_you_mean
+    - rubygem-io-console
+    - rubygem-json
+    - rubygem-minitest
+    - rubygem-mongo
+    - rubygem-mysql2
+    - rubygem-net-telnet
+    - rubygem-openssl
+    - rubygem-pg
+    - rubygem-power_assert
+    - rubygem-psych
+    - rubygem-rake
+    - rubygem-rdoc
+    - rubygem-test-unit
+    - rubygem-xmlrpc
+    - rubygems
+    - rubygems-devel
+  buildopts:
+    rpms:
+      macros: >
+        %_without_rubypick 1
+  components:
+    rpms:
+      ruby:
+        rationale: An interpreter of object-oriented scripting language
+        ref: r8s-stream-2.5
+        buildorder: 101
+        arches: [aarch64, i686, x86_64]
+        multilib: [x86_64]
+      rubygem-abrt:
+        rationale: ABRT support for Ruby
+        ref: r8s-stream-2.5
+        buildorder: 102
+        arches: [aarch64, i686, x86_64]
+      rubygem-bson:
+        rationale: Ruby Implementation of the BSON specification
+        ref: r8s-stream-2.5
+        buildorder: 102
+        arches: [aarch64, i686, x86_64]
+      rubygem-bundler:
+        rationale: Library and utilities to manage a Ruby application's gem dependencies
+        ref: r8s-stream-2.5
+        buildorder: 102
+        arches: [aarch64, i686, x86_64]
+      rubygem-mongo:
+        rationale: Ruby driver for MongoDB
+        ref: r8s-stream-2.5
+        buildorder: 103
+        arches: [aarch64, i686, x86_64]
+      rubygem-mysql2:
+        rationale: A simple, fast Mysql library for Ruby, binding to libmysql
+        ref: r8s-stream-2.5
+        buildorder: 102
+        arches: [aarch64, i686, x86_64]
+      rubygem-pg:
+        rationale: A Ruby interface to the PostgreSQL RDBMS
+        ref: r8s-stream-2.5
+        buildorder: 102
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - ruby-0:2.5.9-111.module+el8.9.0+1536+5f79634e.i686
+    - ruby-0:2.5.9-111.module+el8.9.0+1536+5f79634e.src
+    - ruby-0:2.5.9-111.module+el8.9.0+1536+5f79634e.x86_64
+    - ruby-debuginfo-0:2.5.9-111.module+el8.9.0+1536+5f79634e.i686
+    - ruby-debuginfo-0:2.5.9-111.module+el8.9.0+1536+5f79634e.x86_64
+    - ruby-debugsource-0:2.5.9-111.module+el8.9.0+1536+5f79634e.i686
+    - ruby-debugsource-0:2.5.9-111.module+el8.9.0+1536+5f79634e.x86_64
+    - ruby-devel-0:2.5.9-111.module+el8.9.0+1536+5f79634e.i686
+    - ruby-devel-0:2.5.9-111.module+el8.9.0+1536+5f79634e.x86_64
+    - ruby-doc-0:2.5.9-111.module+el8.9.0+1536+5f79634e.noarch
+    - ruby-irb-0:2.5.9-111.module+el8.9.0+1536+5f79634e.noarch
+    - ruby-libs-0:2.5.9-111.module+el8.9.0+1536+5f79634e.i686
+    - ruby-libs-0:2.5.9-111.module+el8.9.0+1536+5f79634e.x86_64
+    - ruby-libs-debuginfo-0:2.5.9-111.module+el8.9.0+1536+5f79634e.i686
+    - ruby-libs-debuginfo-0:2.5.9-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-abrt-0:0.3.0-4.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-abrt-0:0.3.0-4.module+el8.9.0+1536+5f79634e.src
+    - rubygem-abrt-doc-0:0.3.0-4.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-bigdecimal-0:1.3.4-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-bigdecimal-0:1.3.4-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-bigdecimal-debuginfo-0:1.3.4-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-bigdecimal-debuginfo-0:1.3.4-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-bson-0:4.3.0-2.module+el8.9.0+1536+5f79634e.src
+    - rubygem-bson-0:4.3.0-2.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-bson-debuginfo-0:4.3.0-2.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-bson-debugsource-0:4.3.0-2.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-bson-doc-0:4.3.0-2.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-bundler-0:1.16.1-4.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-bundler-0:1.16.1-4.module+el8.9.0+1536+5f79634e.src
+    - rubygem-bundler-doc-0:1.16.1-4.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-did_you_mean-0:1.2.0-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-io-console-0:0.4.6-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-io-console-0:0.4.6-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-io-console-debuginfo-0:0.4.6-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-io-console-debuginfo-0:0.4.6-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-json-0:2.1.0-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-json-0:2.1.0-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-json-debuginfo-0:2.1.0-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-json-debuginfo-0:2.1.0-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-minitest-0:5.10.3-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-mongo-0:2.5.1-2.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-mongo-0:2.5.1-2.module+el8.9.0+1536+5f79634e.src
+    - rubygem-mongo-doc-0:2.5.1-2.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-mysql2-0:0.4.10-4.module+el8.9.0+1536+5f79634e.src
+    - rubygem-mysql2-0:0.4.10-4.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-mysql2-debuginfo-0:0.4.10-4.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-mysql2-debugsource-0:0.4.10-4.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-mysql2-doc-0:0.4.10-4.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-net-telnet-0:0.1.1-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-openssl-0:2.1.2-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-openssl-0:2.1.2-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-openssl-debuginfo-0:2.1.2-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-openssl-debuginfo-0:2.1.2-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-pg-0:1.0.0-3.module+el8.9.0+1536+5f79634e.src
+    - rubygem-pg-0:1.0.0-3.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-pg-debuginfo-0:1.0.0-3.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-pg-debugsource-0:1.0.0-3.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-pg-doc-0:1.0.0-3.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-power_assert-0:1.1.1-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-psych-0:3.0.2-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-psych-0:3.0.2-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-psych-debuginfo-0:3.0.2-111.module+el8.9.0+1536+5f79634e.i686
+    - rubygem-psych-debuginfo-0:3.0.2-111.module+el8.9.0+1536+5f79634e.x86_64
+    - rubygem-rake-0:12.3.3-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-rdoc-0:6.0.1.1-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-test-unit-0:3.2.7-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygem-xmlrpc-0:0.3.0-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygems-0:2.7.6.3-111.module+el8.9.0+1536+5f79634e.noarch
+    - rubygems-devel-0:2.7.6.3-111.module+el8.9.0+1536+5f79634e.noarch
+...
+---
+document: modulemd-defaults
+version: 1
+data:
+  module: nodejs
+  stream: "10"
+  profiles:
+    10: [common]
+    12: [common]
+    14: [common]
+    16: [common]
+    18: [common]
+    20: [common]
+    22: [common]
+    24: [common]
+...
+---
+document: modulemd
+version: 2
+data:
+  name: nodejs
+  stream: "10"
+  version: 8030020210426100849
+  context: 30b713e6
+  arch: x86_64
+  summary: Javascript runtime
+  description: >-
+    Node.js is a platform built on Chrome's JavaScript runtime for easily building
+    fast, scalable network applications. Node.js uses an event-driven, non-blocking
+    I/O model that makes it lightweight and efficient, perfect for data-intensive
+    real-time applications that run across distributed devices.
+  license:
+    module:
+    - MIT
+    content:
+    - MIT
+    - MIT and ASL 2.0 and ISC and BSD
+  xmd: {}
+  dependencies:
+  - buildrequires:
+      platform: [el8.3.0]
+    requires:
+      platform: [el8]
+  references:
+    community: http://nodejs.org
+    documentation: http://nodejs.org/en/docs
+    tracker: https://github.com/nodejs/node/issues
+  profiles:
+    common:
+      rpms:
+      - nodejs
+      - npm
+    development:
+      rpms:
+      - nodejs
+      - nodejs-devel
+      - npm
+    minimal:
+      rpms:
+      - nodejs
+    s2i:
+      rpms:
+      - nodejs
+      - nodejs-nodemon
+      - npm
+  api:
+    rpms:
+    - nodejs
+    - nodejs-devel
+    - npm
+  buildopts:
+    rpms:
+      macros: >
+        %_with_bootstrap 1
+  components:
+    rpms:
+      nodejs:
+        rationale: Javascript runtime and npm package manager.
+        ref: 4210a7839846ccbf03a1445d292355e9e009e838
+        buildorder: 100
+        arches: [aarch64, i686, x86_64]
+      nodejs-nodemon:
+        rationale: Simple monitor script for use during development of a node.js app
+        ref: a24ad76bc20a30fc0043c55c133d73d146ad2bef
+        buildorder: 200
+        arches: [aarch64, i686, x86_64]
+      nodejs-packaging:
+        rationale: RPM Macros and Utilities for Node.js Packaging
+        ref: a2288ad519257d2dacc09b3fe509a617c6f648bd
+        buildorder: 10
+        arches: [aarch64, i686, x86_64]
+  artifacts:
+    rpms:
+    - nodejs-1:10.24.0-1.module+el8.3.0+101+f84c7154.src
+    - nodejs-1:10.24.0-1.module+el8.3.0+101+f84c7154.x86_64
+    - nodejs-debuginfo-1:10.24.0-1.module+el8.3.0+101+f84c7154.x86_64
+    - nodejs-debugsource-1:10.24.0-1.module+el8.3.0+101+f84c7154.x86_64
+    - nodejs-devel-1:10.24.0-1.module+el8.3.0+101+f84c7154.x86_64
+    - nodejs-docs-1:10.24.0-1.module+el8.3.0+101+f84c7154.noarch
+    - nodejs-full-i18n-1:10.24.0-1.module+el8.3.0+101+f84c7154.x86_64
+    - nodejs-nodemon-0:1.18.3-1.module+el8.3.0+101+f84c7154.noarch
+    - nodejs-nodemon-0:1.18.3-1.module+el8.3.0+101+f84c7154.src
+    - nodejs-packaging-0:17-3.module+el8.3.0+101+f84c7154.noarch
+    - nodejs-packaging-0:17-3.module+el8.3.0+101+f84c7154.src
+    - npm-1:6.14.11-1.10.24.0.1.module+el8.3.0+101+f84c7154.x86_64
+...
