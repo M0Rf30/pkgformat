@@ -1,0 +1,15 @@
+$ debsig-verify real-debsigs.deb
+debsig: Starting verification for: real-debsigs.deb
+debsig: Using policy directory: /etc/debsig/policies/41C7B96A49F41AFF
+debsig:   Parsing policy file: /etc/debsig/policies/41C7B96A49F41AFF/pkgformat.pol
+debsig:     Checking Selection group(s).
+debsig:       Processing 'origin' key...
+debsig:     Selection group(s) passed, policy is usable.
+debsig: Using policy file: /etc/debsig/policies/41C7B96A49F41AFF/pkgformat.pol
+debsig:     Checking Verification group(s).
+debsig:       Processing 'origin' key...
+debsig:     Verification group(s) passed, deb is validated.
+debsig: Verified package from 'pkgformat test key' (pkgformat-test)
+$ dpkg-sig --verify real-dpkg-sig.deb
+Processing real-dpkg-sig.deb...
+GOODSIG _gpgbuilder 1A6DA535A47D5AA159F9AF0441C7B96A49F41AFF 1794364855

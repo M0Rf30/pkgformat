@@ -25,6 +25,9 @@ const (
 	// MaxControlFileSize caps one file of the control archive.
 	MaxControlFileSize = 1 << 20
 
+	// MaxSignatureSize caps one package signature member.
+	MaxSignatureSize = 1 << 20
+
 	// maxControlEntries bounds the number of entries read from a control
 	// archive; real ones hold fewer than ten.
 	maxControlEntries = 256
@@ -48,9 +51,38 @@ type DebFile struct {
 	// conffiles, preinst, postinst, prerm, postrm, config, templates, ...) by
 	// name, without a leading "./".
 	Control map[string][]byte
+	// Signatures are the package signature members (debsigs' _gpgorigin and
+	// dpkg-sig's _gpgbuilder, _gpgmaint, ...) in archive order. They are not
+	// verified here; see VerifySignatures.
+	Signatures []SignatureMember
 
-	r    io.ReaderAt
-	data *arMember
+	r       io.ReaderAt
+	data    *arMember
+	members []arMember
+}
+
+// SignatureMember is one package signature member of the ar archive.
+type SignatureMember struct {
+	// Name is the member name, such as "_gpgorigin".
+	Name string
+	// Data is the raw content of the member.
+	Data []byte
+}
+
+// Triggers parses the triggers control member. A package without one has no
+// triggers.
+func (d *DebFile) Triggers() ([]Trigger, error) {
+	return ParseTriggers(bytes.NewReader(d.Control["triggers"]))
+}
+
+// Shlibs parses the shlibs control member.
+func (d *DebFile) Shlibs() ([]Shlib, error) {
+	return ParseShlibs(bytes.NewReader(d.Control["shlibs"]))
+}
+
+// Symbols parses the symbols control member.
+func (d *DebFile) Symbols() ([]SymbolsLibrary, error) {
+	return ParseSymbols(bytes.NewReader(d.Control["symbols"]))
 }
 
 // Conffiles returns the configuration files the package declares, one path per
@@ -146,7 +178,41 @@ func parseDebFile(r io.ReaderAt, size int64, opts ParseOptions) (*DebFile, error
 		return nil, fmt.Errorf("parsing package metadata: %w", err)
 	}
 
-	return &DebFile{Package: pkg, ControlFile: cf, ControlTarGz: raw, Control: files, r: r, data: data}, nil
+	sigs, err := readSignatureMembers(r, members)
+	if err != nil {
+		return nil, err
+	}
+
+	return &DebFile{
+		Package: pkg, ControlFile: cf, ControlTarGz: raw, Control: files, Signatures: sigs,
+		r: r, data: data, members: members,
+	}, nil
+}
+
+// readSignatureMembers reads the members whose name starts with "_gpg".
+func readSignatureMembers(r io.ReaderAt, members []arMember) ([]SignatureMember, error) {
+	var out []SignatureMember
+
+	for i := range members {
+		m := &members[i]
+		if !strings.HasPrefix(m.Name, "_gpg") {
+			continue
+		}
+
+		if m.Size > MaxSignatureSize {
+			return nil, fmt.Errorf("%w: member %q declares size %d, max %d",
+				ErrARMemberTooLarge, m.Name, m.Size, int64(MaxSignatureSize))
+		}
+
+		buf := make([]byte, m.Size)
+		if _, err := r.ReadAt(buf, m.dataOff); err != nil && (!errors.Is(err, io.EOF) || m.Size != 0) {
+			return nil, fmt.Errorf("reading %s: %w", m.Name, err)
+		}
+
+		out = append(out, SignatureMember{Name: m.Name, Data: buf})
+	}
+
+	return out, nil
 }
 
 // readControlArchive decompresses a control archive member and returns the
