@@ -19,6 +19,7 @@ package main
 
 import (
 	"flag"
+	"io"
 	"log"
 	"os"
 
@@ -86,7 +87,7 @@ func main() {
 			Group: "root",
 		})
 	if *sign {
-		r.SetPGPSigner(func([]byte) ([]byte, error) {
+		r.SetPGPSigner(func(io.Reader) ([]byte, error) {
 			return []byte(`this is not a signature`), nil
 		})
 	}

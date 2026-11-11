@@ -5,14 +5,15 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/M0Rf30/pkgformat/rpm/tag"
+	"io"
 	"testing"
 	"time"
 )
 
 // goldenV4Sum is the goldenDigest of the package written by buildGoldenV4. It pins
-// the v4 output (recorded with the code at v0.7.1 plus v6 support): any change to
+// the v4 output (recorded with the streaming payload writer): any change to
 // it needs to be a deliberate format change.
-const goldenV4Sum = "fe1648f19d134819df218d99595fcd8eea11878c453c1e6d7491ae42b04a1e6b"
+const goldenV4Sum = "fc584cd655879596f7165db22138d0fbed449ad06cd3aa76f551b8c5b57dc94a"
 
 func buildGoldenV4(t *testing.T) []byte {
 	t.Helper()
@@ -33,7 +34,11 @@ func buildGoldenV4(t *testing.T) []byte {
 	r.AddFile(RPMFile{Name: "/opt/golden/link", Body: []byte("a.txt"), Mode: 0120777, Owner: "root", Group: "root", MTime: 1700000004})
 	r.AddFile(RPMFile{Name: "/opt/golden/ghost", Mode: 0644, Owner: "root", Group: "root", Type: GhostFile})
 	r.AddPostin("echo hi")
-	r.SetPGPSigner(func(b []byte) ([]byte, error) {
+	r.SetPGPSigner(func(rd io.Reader) ([]byte, error) {
+		b, err := io.ReadAll(rd)
+		if err != nil {
+			return nil, err
+		}
 		s := sha256.Sum256(b)
 		return s[:], nil
 	})
