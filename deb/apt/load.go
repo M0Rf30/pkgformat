@@ -375,7 +375,7 @@ func packageInfoOf(cf *deb.ControlFile, baseURL string) (*PackageInfo, error) {
 
 	info.Size, _ = strconv.ParseInt(cf.Get("Size"), 10, 64)
 
-	info.SourceName, info.SourceVersion = sourceOf(cf, name, info.Version)
+	info.SourceName, info.SourceVersion = sourceFieldOf(cf, name, info.Version)
 
 	if v := strings.TrimSpace(cf.Get("Phased-Update-Percentage")); v != "" {
 		if pct, err := strconv.Atoi(v); err == nil && pct >= 0 && pct <= 100 {
@@ -450,10 +450,10 @@ func parseFlat(cf *deb.ControlFile, field string) ([]deb.Relation, error) {
 	return out, nil
 }
 
-// sourceOf reads the Source field of a paragraph: the source package the
+// sourceFieldOf reads the Source field of a paragraph: the source package the
 // version was built from and its version, which are the package's own name
 // and version when the field is absent or carries no version.
-func sourceOf(cf *deb.ControlFile, name, version string) (srcName, srcVersion string) {
+func sourceFieldOf(cf *deb.ControlFile, name, version string) (srcName, srcVersion string) {
 	src := strings.TrimSpace(cf.Get("Source"))
 	if src == "" {
 		return name, version
