@@ -99,8 +99,7 @@ the tools read the fixtures and check them against the writer.
 
 ## Fuzzing
 
-`FuzzReader`, `FuzzExtract`, `FuzzParseDependency`, `FuzzCompareVersions` and
-`FuzzWriteRead` run with `go test -run=^$ -fuzz=FuzzReader -fuzztime=15s`.
+`FuzzReader`, `FuzzExtract`, `FuzzParseDependency` and `FuzzWriteRead` run with `go test -run=^$ -fuzz=FuzzReader -fuzztime=15s`.
 
 ## Differences from apk worth knowing
 

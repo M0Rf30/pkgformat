@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/M0Rf30/pkgformat/internal/apkver"
 )
 
 // ErrInvalidDependency is wrapped by the errors of [ParseDependency].
@@ -12,55 +14,28 @@ var ErrInvalidDependency = errors.New("apk: invalid dependency")
 // Op is the comparison of a versioned dependency, a set of the results a
 // version comparison may have. The zero value, [OpAny], is a dependency
 // without a version.
-type Op uint8
+type Op = apkver.Op
 
 // The comparison bits of an Op. The textual operators are what a depend,
 // provides or world entry uses: "=" is [OpEqual], "<" [OpLess], "<=" the two
 // together, ">" [OpGreater], ">=", and "~" the fuzzy equality.
 const (
 	// OpAny matches every version.
-	OpAny Op = 0
+	OpAny = apkver.Any
 	// OpEqual accepts a version equal to the dependency's.
-	OpEqual Op = 1
+	OpEqual = apkver.Equal
 	// OpLess accepts an older version.
-	OpLess Op = 2
+	OpLess = apkver.Less
 	// OpGreater accepts a newer version.
-	OpGreater Op = 4
+	OpGreater = apkver.Greater
 	// OpFuzzy, always together with [OpEqual] ("~"), accepts a version that
 	// starts with all the components of the dependency's: "foo~1.2" is met by
 	// 1.2, 1.2.9 and 1.2.9-r3 but not by 1.3.
-	OpFuzzy Op = 8
+	OpFuzzy = apkver.Fuzzy
 	// OpChecksum is "><": the version is not a version but the checksum of one
 	// package, as "apk add foo><Q1..." pins it.
-	OpChecksum = OpLess | OpGreater
+	OpChecksum = apkver.Checksum
 )
-
-// opSets are the spellings of the operators, indexed by their bits.
-var opStrings = map[Op]string{
-	OpAny:                          "",
-	OpEqual:                        "=",
-	OpLess:                         "<",
-	OpLess | OpEqual:               "<=",
-	OpGreater:                      ">",
-	OpGreater | OpEqual:            ">=",
-	OpEqual | OpFuzzy:              "~",
-	OpFuzzy:                        "~",
-	OpLess | OpEqual | OpFuzzy:     "<~",
-	OpGreater | OpEqual | OpFuzzy:  ">~",
-	OpChecksum:                     "><",
-	OpLess | OpGreater | OpEqual:   "",
-	OpChecksum | OpEqual | OpFuzzy: "",
-}
-
-// String returns the operator as written in a dependency: "", "=", "<", "<=",
-// ">", ">=", "~", "<~", ">~" or "><".
-func (o Op) String() string {
-	if s, ok := opStrings[o]; ok {
-		return s
-	}
-
-	return "?"
-}
 
 // Dependency is one entry of a depend, provides, replaces, install_if or world
 // list: [!]name[@tag][op version].
@@ -94,33 +69,14 @@ func ParseDependency(spec string) (Dependency, error) {
 		return d, fmt.Errorf("%w: %q", ErrInvalidDependency, short(spec))
 	}
 
-	rest, conflict := strings.CutPrefix(spec, "!")
-	d.Conflict = conflict
-
-	name, rest := rest, ""
-	if i := strings.IndexAny(name, "<>=~"); i >= 0 {
-		name, rest = name[:i], name[i:]
+	parts, err := apkver.Split(spec)
+	if err != nil {
+		return Dependency{}, fmt.Errorf("%w: %q: %w", ErrInvalidDependency, short(spec), err)
 	}
 
-	if rest != "" {
-		n := 0
-		for n < len(rest) && strings.IndexByte("<>=~", rest[n]) >= 0 {
-			n++
-		}
+	d.Conflict, d.Op, d.Version = parts.Conflict, parts.Op, parts.Version
 
-		op, ver := opFromChars(rest[:n]), rest[n:]
-		if op == 0 || ver == "" {
-			return Dependency{}, fmt.Errorf("%w: %q has no version", ErrInvalidDependency, short(spec))
-		}
-
-		if op&(OpLess|OpEqual|OpGreater) == OpLess|OpEqual|OpGreater {
-			// Every result is accepted: the dependency has no constraint.
-			op, ver = OpAny, ""
-		}
-
-		d.Op, d.Version = op, ver
-	}
-
+	name := parts.Name
 	if base, tag, ok := strings.Cut(name, "@"); ok {
 		if tag == "" || base == "" || strings.Contains(tag, "@") {
 			return Dependency{}, fmt.Errorf("%w: %q has a malformed tag", ErrInvalidDependency, short(spec))
@@ -135,32 +91,7 @@ func ParseDependency(spec string) (Dependency, error) {
 
 	d.Name = name
 
-	if d.Op != OpAny && d.Op != OpChecksum && !ValidVersion(d.Version) {
-		return Dependency{}, fmt.Errorf("%w: %q has an invalid version", ErrInvalidDependency, short(spec))
-	}
-
 	return d, nil
-}
-
-// opFromChars converts the operator characters to bits: every '<', '>' and
-// '=' sets its bit and '~' sets the fuzzy and equal bits.
-func opFromChars(chars string) Op {
-	var o Op
-
-	for i := range len(chars) {
-		switch chars[i] {
-		case '<':
-			o |= OpLess
-		case '>':
-			o |= OpGreater
-		case '=':
-			o |= OpEqual
-		case '~':
-			o |= OpFuzzy | OpEqual
-		}
-	}
-
-	return o
 }
 
 // String returns the dependency as it is written: "!name@tag>=1.2".
@@ -190,28 +121,7 @@ func (d Dependency) String() string {
 // that declares no version ("provides: foo"), which meets any constraint, as
 // it does in apk.
 func (d Dependency) MatchVersion(have string) bool {
-	if d.Op == OpAny || have == "" {
-		return true
-	}
-
-	if d.Op == OpChecksum {
-		return have == d.Version
-	}
-
-	r := compareVersions(have, d.Version, d.Op&OpFuzzy != 0)
-
-	var bit Op
-
-	switch {
-	case r < 0:
-		bit = OpLess
-	case r > 0:
-		bit = OpGreater
-	default:
-		bit = OpEqual
-	}
-
-	return d.Op&bit != 0
+	return d.Op.Satisfied(have, d.Version)
 }
 
 // MatchesPackage reports whether p, a package of an index or the installed

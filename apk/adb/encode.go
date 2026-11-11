@@ -2,6 +2,7 @@ package adb
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/hex"
 	"slices"
 	"strings"
@@ -220,10 +221,10 @@ func compareInfo(a, b *Info) int {
 		strings.Compare(a.Maintainer, b.Maintainer),
 		strings.Compare(a.URL, b.URL),
 		strings.Compare(a.RepoCommit, b.RepoCommit),
-		cmpUint(a.BuildTime, b.BuildTime),
-		cmpUint(a.InstalledSize, b.InstalledSize),
-		cmpUint(a.FileSize, b.FileSize),
-		cmpUint(a.ProviderPriority, b.ProviderPriority),
+		cmp.Compare(a.BuildTime, b.BuildTime),
+		cmp.Compare(a.InstalledSize, b.InstalledSize),
+		cmp.Compare(a.FileSize, b.FileSize),
+		cmp.Compare(a.ProviderPriority, b.ProviderPriority),
 	} {
 		if r != 0 {
 			return r

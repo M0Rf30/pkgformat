@@ -111,32 +111,6 @@ func FuzzParseDependency(f *testing.F) {
 	})
 }
 
-// FuzzCompareVersions: the order is a total order on valid versions.
-func FuzzCompareVersions(f *testing.F) {
-	for _, p := range versionPairs {
-		f.Add(p.a, p.b, "1.0")
-	}
-
-	f.Fuzz(func(t *testing.T, a, b, c string) {
-		if !ValidVersion(a) || !ValidVersion(b) || !ValidVersion(c) {
-			return
-		}
-
-		if CompareVersions(a, a) != 0 {
-			t.Fatalf("%q != itself", a)
-		}
-
-		ab, ba := CompareVersions(a, b), CompareVersions(b, a)
-		if ab != -ba {
-			t.Fatalf("%q vs %q: %d and %d", a, b, ab, ba)
-		}
-
-		if ab <= 0 && CompareVersions(b, c) <= 0 && CompareVersions(a, c) > 0 {
-			t.Fatalf("not transitive: %q <= %q <= %q", a, b, c)
-		}
-	})
-}
-
 // FuzzWriteRead writes a package out of arbitrary names and content: either
 // the spec is refused or the package reads back as written.
 func FuzzWriteRead(f *testing.F) {

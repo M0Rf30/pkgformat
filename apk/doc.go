@@ -21,6 +21,14 @@
 // install_if. [ParsePackage] reads one back under explicit
 // limits, [SignPackage] adds a signature and [VerifyPackage] checks it.
 //
+// # APKv3
+//
+// [ParsePackage] also reads the ADB packages of apk-tools 3 and sets
+// [Package.Format] to [FormatV3]. The sub-package [github.com/M0Rf30/pkgformat/apk/adb]
+// reads, verifies and extracts v3 packages and indexes, writes them the way
+// "apk mkpkg" and "apk mkndx" do, and signs with RSA and ECDSA keys; it is
+// tested against apk-tools 3.0.9.
+//
 // # Signatures
 //
 // Alpine signs with RSA and PKCS#1 v1.5, either over a SHA-1 digest

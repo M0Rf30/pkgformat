@@ -24,6 +24,7 @@ Requires Go 1.27 or later.
 | Debian | [`deb`](deb/README.md) | write, read, verify, sign; installed database (`deb.StatusDB`): read | Packages, Release, InRelease: write, read, sign, verify | `deb/apt` |
 | Debian sources | [`deb/source`](deb/source/README.md) | .dsc, .changes, .buildinfo: write, read, sign, verify; source packages 1.0, 3.0 (quilt), 3.0 (native): unpack, build (3.0) | Sources: write, read | |
 | Alpine | [`apk`](apk/README.md) | write, read, verify, sign (RSA SHA-1 and SHA-256); installed database (`apk.InstalledDB`): read | APKINDEX: write, read, sign, verify | `apk.Client` |
+| Alpine v3 (ADB) | [`apk/adb`](apk/adb/README.md) | write (`apk mkpkg` compatible), read, verify, sign (RSA, ECDSA), extract; `apk.ParsePackage` reads v3 too; verified against apk-tools 3.0.9 | APKINDEX.adb: write (`apk mkndx` compatible), read, sign, verify | |
 | Arch Linux | [`pacman`](pacman/README.md) | write, read, sign; installed database (`pacman.LocalDB`): read | sync database: write, read | `pacman.Client` |
 
 Each format has its own README with its supported features, examples and

@@ -30,6 +30,17 @@ Requires Go 1.27 or later.
 | Installed packages | `FindInstalled`, `OpenInstalled`, `(*InstalledDB)`: `Packages`, `List`, `InstalledNames`, `InstalledProvides`. Reads `/lib/apk/db/installed`, with the file lists. |
 | Repositories | `ParseRepositories`; `Client` fetches and verifies the indexes and downloads packages; `Index` resolves names, capabilities and dependencies. |
 
+### APKv3
+
+`ParsePackage` reads the ADB packages of apk-tools 3 as well (the metadata comes
+back in the same `Package`, with `Format` set to `FormatV3`). The sub-package
+[`apk/adb`](adb/README.md) does the rest of v3: read, verify and extract
+packages and indexes, write them the way `apk mkpkg` and `apk mkndx` do, and
+sign with RSA and ECDSA keys. It is verified against apk-tools 3.0.9: the ADB
+block it writes is identical to `apk mkpkg`'s, `apk verify` and `apk add`
+accept its packages, and the packages and indexes apk makes read and verify in
+it.
+
 A package written by `WritePackage` has, as abuild writes it: an optional
 signature segment, a control segment (`.PKGINFO` first, then the install
 scripts as `.pre-install`, `.post-install`, `.pre-upgrade`, `.post-upgrade`,

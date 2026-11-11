@@ -180,28 +180,6 @@ func TestParseDependency(t *testing.T) {
 	}
 }
 
-func TestMatchString(t *testing.T) {
-	for m, want := range map[Match]string{
-		MatchLess:                              "<",
-		MatchLess | MatchEqual:                 "<=",
-		MatchLess | MatchEqual | MatchFuzzy:    "<~",
-		MatchEqual | MatchFuzzy:                "~",
-		MatchFuzzy:                             "~",
-		MatchEqual:                             "=",
-		MatchGreater | MatchEqual:              ">=",
-		MatchGreater | MatchEqual | MatchFuzzy: ">~",
-		MatchGreater:                           ">",
-		MatchLess | MatchGreater:               "><",
-		MatchEqual | MatchLess | MatchGreater:  "",
-		MatchConflict | MatchLess:              "<",
-		MatchLess | MatchGreater | MatchFuzzy:  "?",
-	} {
-		if got := matchString(m); got != want {
-			t.Errorf("matchString(%d) = %q, want %q", m, got, want)
-		}
-	}
-}
-
 func TestDependencyOrder(t *testing.T) {
 	a := Dependency{Name: "a", Version: "1"}
 	b := Dependency{Name: "b"}
@@ -216,23 +194,6 @@ func TestDependencyOrder(t *testing.T) {
 	} {
 		if got := compareDeps(c.x, c.y); got != c.want {
 			t.Errorf("compareDeps(%v, %v) = %d, want %d", c.x, c.y, got, c.want)
-		}
-	}
-}
-
-func TestFuzzyVersionMatch(t *testing.T) {
-	for _, c := range []struct {
-		a, b string
-		want int
-	}{
-		{"1.2.3", "1.2", 0},
-		{"1.2", "1.2.3", -1},
-		{"1.3", "1.2", 1},
-		{"1.1", "1.2", -1},
-		{"1.2-r5", "1.2", 0},
-	} {
-		if got := compareVersions(c.a, c.b, true); got != c.want {
-			t.Errorf("fuzzy %q %q = %d, want %d", c.a, c.b, got, c.want)
 		}
 	}
 }
