@@ -1,0 +1,3 @@
++ newname noarch 1.0-1 v2
++ user-of-old noarch 1.0-1 v2
+- oldname noarch 1.0-1

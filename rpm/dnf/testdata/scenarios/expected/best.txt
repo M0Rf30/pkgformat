@@ -1,0 +1,2 @@
+error: dnf could not solve app-b
+error: - nothing provides libnothing needed by app-b-2.0-1.noarch from best

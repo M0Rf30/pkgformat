@@ -60,10 +60,10 @@ func readTargets(t *testing.T) []target {
 }
 
 // readDivergences returns label -> reason.
-func readDivergences(t *testing.T) map[string]string {
+func readDivergences(t *testing.T, dir string) map[string]string {
 	t.Helper()
 
-	data, err := os.ReadFile(filepath.Join(differentialDir, "divergences.txt"))
+	data, err := os.ReadFile(filepath.Join(dir, "divergences.txt"))
 	if os.IsNotExist(err) {
 		return nil
 	}
@@ -139,7 +139,7 @@ func snapshotIndex(t *testing.T) *Index {
 
 func TestDifferentialAgainstDnf(t *testing.T) {
 	ix := snapshotIndex(t)
-	divergences := readDivergences(t)
+	divergences := readDivergences(t, differentialDir)
 	seen := map[string]bool{}
 
 	for _, tg := range readTargets(t) {

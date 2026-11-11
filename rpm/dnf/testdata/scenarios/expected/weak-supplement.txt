@@ -1,0 +1,5 @@
++ app-w noarch 1.0-1 weak
++ app-w-docs noarch 1.0-1 weak
++ app-w-lang noarch 1.0-1 weak
++ langpack noarch 1.0-1 weak
++ rec-w noarch 1.0-1 weak

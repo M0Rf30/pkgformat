@@ -1,0 +1,2 @@
+error: dnf could not solve mta-a mta-b
+error: - conflicting requests
