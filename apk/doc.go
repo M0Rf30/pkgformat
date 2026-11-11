@@ -14,7 +14,11 @@
 //
 // [WritePackage] writes a package from a [Spec] of plain structs: the
 // metadata ([Info]), the [Scripts] and the [File] entries; [FilesFromDir]
-// lists a staged directory tree. [ParsePackage] reads one back under explicit
+// lists a staged directory tree. A package may hold directories (parents are
+// added automatically), files, symbolic links, hard links, FIFOs, device nodes,
+// owners and extended attributes, and the metadata includes a license list,
+// origin, commit, triggers, replaces_priority, provider_priority and
+// install_if. [ParsePackage] reads one back under explicit
 // limits, [SignPackage] adds a signature and [VerifyPackage] checks it.
 //
 // # Signatures
@@ -24,7 +28,10 @@
 // explicit choice: a [Signer] is made for one [SigAlgorithm], and
 // [VerifyOptions] lists the types a verifier accepts, with the trusted keys in
 // a [Keyring] ([LoadKeyring] reads an apk keys directory). Nothing defaults to
-// SHA-1.
+// SHA-1. A Signer wraps any [crypto.Signer] with an RSA key, so the key may live
+// in an HSM or a KMS; the signature is checked against the advertised public
+// key before it is used. [ParsePrivateKeyPEM] reads PKCS#1 and PKCS#8 keys and
+// [PublicKeyName] gives a keys-directory file name.
 //
 // # The installed database
 //
@@ -45,7 +52,35 @@
 // of each repository, requires a valid signature by a trusted key (unless the
 // caller opts out), and downloads packages, checking each against its index
 // entry. The [Index] it returns resolves package names, provided
-// capabilities and dependencies ([Index.ResolveDeps]).
+// capabilities, and [Index.Solve] chooses the packages for a world.
+//
+// # Reading packages
+//
+// [OpenArchive] reads a package for its contents: [Archive.Files] and
+// [Archive.Walk] give every [Entry] (type, mode, owner, hard link and symbolic
+// link targets, device numbers, the recorded SHA-1 and the extended attributes
+// such as security.capability), and [Archive.Extract] unpacks the data segment
+// into a directory with every path confined to it and every file checked
+// against its checksum. Owners, device nodes and extended attributes are opt-in
+// because they need privileges.
+//
+// # Versions and dependencies
+//
+// [CompareVersions] orders versions exactly as "apk version -t" does (it is
+// tested against that tool on thousands of pairs); [ParseDependency] and
+// [Dependency.MatchVersion] read and test "name>=1.2", "name~1.2", "!name",
+// "name@tag" and "name><checksum". Alpine versions have no epoch: a version
+// with a colon is refused.
+//
+// # Choosing packages
+//
+// [Index.Solve] follows apk's solver: constraints, conflicts, versioned and
+// unversioned provides, provider_priority, install_if, @tag repositories, the
+// preference for what is installed, and backtracking when a choice leads to a
+// conflict. Its answers are tested against "apk add --simulate" on synthetic
+// and real Alpine indexes. [ParseWorld], [WorldAdd], [WorldDel] and
+// [RenderWorld] handle the world file, and [ReplacesFile] decides who owns a
+// file that two packages ship, from replaces and replaces_priority.
 //
 // Everything that reads untrusted bytes has explicit size and entry limits and
 // returns typed errors; none of it panics on malformed input.

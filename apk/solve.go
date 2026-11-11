@@ -231,7 +231,7 @@ type solver struct {
 	extra map[string][]provider // installed packages the index does not list, by name
 	// orphans are the installed packages the index does not list.
 	orphans []*RepoPackage
-	names map[string]*nameState
+	names   map[string]*nameState
 
 	reqOrder []*nameState
 	cursor   int
@@ -904,9 +904,7 @@ func (s *solver) solution() *Solution {
 		state = make(map[*cand]uint8)
 	)
 
-	var visit func(c *cand)
-
-	visit = func(root *cand) {
+	visit := func(root *cand) {
 		type item struct {
 			c    *cand
 			next int

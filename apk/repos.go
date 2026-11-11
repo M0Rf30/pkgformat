@@ -15,8 +15,8 @@ type Repo struct {
 	// index is at <URL>/<arch>/APKINDEX.tar.gz.
 	URL string
 	// Tag is the tag of a tagged repository ("edge" for "@edge https://…"),
-	// empty for an untagged one. The tag is carried for the caller: the
-	// resolver does not use it.
+	// empty for an untagged one. [Index.Solve] uses it: a package of a tagged
+	// repository is only chosen when a "name@tag" dependency allows it.
 	Tag string
 }
 

@@ -76,8 +76,8 @@ client, err := apk.NewClient(apk.ClientOptions{
 	Algorithms: []apk.SigAlgorithm{apk.SigRSASHA1},
 })
 index, err := client.Update(ctx)
-res, err := index.ResolveDeps([]string{"curl"})
-paths, err := client.Download(ctx, "/var/cache/apk", res.Packages...)
+sol, err := index.Solve(apk.SolveRequest{World: []string{"curl"}})
+paths, err := client.Download(ctx, "/var/cache/apk", sol.Packages...)
 ```
 
 ## The installed database
@@ -126,21 +126,70 @@ The caller supplies everything that comes from the host: the repositories
 keys directory. Retry, backoff and timeouts come from the `httpclient.Client`
 you pass in `ClientOptions.HTTP`.
 
-The resolver is not a solver. `ResolveDeps` follows `depend` entries
-depth-first, drops version constraints, skips `!conflicts` and `/path`
-dependencies and picks the first package that provides a capability (the
-highest `provider_priority` wins). It does not compare versions and has no
-notion of `@tag` pinning; the tag of a repository is only carried along.
+## Reading and extracting packages
+
+`OpenArchive` reads a package for its contents. `Files` and `Walk` give each
+`Entry`: type (file, directory, symbolic link, hard link, device, FIFO), mode
+with setuid, setgid and sticky, owner, link target, device numbers, the SHA-1 the
+package records and the extended attributes (`security.capability` among them).
+`Walk` verifies the checksum of each file as it is read (`ErrChecksum`).
+`Extract` unpacks into an existing directory with every path confined to it
+(`ErrUnsafeEntry`; an absolute symbolic link target is read relative to the
+directory, as in a chroot), limits on bytes and entries (`ErrExtractLimit`) and
+opt-in `Owners`, `Devices` and `Xattrs`. The entries and the extracted trees
+of real Alpine packages (busybox, ca-certificates, iputils, fping and
+shadow-subids with file capabilities, bind-tools with hard links) are compared
+with what `apk extract` makes: `testdata/extract`.
+
+## Versions, dependencies and the solver
+
+`CompareVersions` orders versions as `apk version -t` does, `ParseDependency`
+reads `name`, `name>=1.2`, `name~1.2`, `name><checksum`, `!name` and
+`name@tag`, and `Dependency.MatchVersion` tests a version. Both are tested
+against the host `apk`: `testdata/version` holds 3000+ generated pairs.
+
+`Index.Solve(SolveRequest{World, Installed, Upgrade})` chooses the packages
+with apk's rules: constraints, conflicts, versioned and unversioned provides,
+`provider_priority` (an unversioned virtual without priority is not chosen on
+its own), `install_if`, `@tag` repository pinning, the installed version
+preferred unless `Upgrade`, the highest version, then the first repository. It
+backtracks when a choice leads to a conflict, within a step budget
+(`ErrSolveLimit`); an unsatisfiable request is a `*SolveError` that wraps
+`ErrUnsatisfiable` and lists the problems with who required them. The result
+has the packages in dependency order and the `Changes` (install, upgrade,
+downgrade, reinstall, remove) from the installed set. 59 synthetic cases and
+15 targets against a real Alpine 3.24 index agree with `apk add --simulate`:
+`testdata/resolve`. `ParseWorld`, `WorldAdd` (an entry replaces the one of the
+same name), `WorldDel` and `RenderWorld` handle `/etc/apk/world`. `ReplacesFile`
+decides which of two packages that ship the same file keeps it, from `replaces`
+and `replaces_priority` (checked against `apk add`: `testdata/replaces`).
+
+## Writing
+
+`Spec.Files` may hold directories, files, symbolic links (with the SHA-1 of the
+target recorded, as abuild does), hard links (`File.Hardlink`, a target earlier
+in the package), FIFOs, character and block devices (`DevMajor`, `DevMinor`),
+owners and `Xattrs` (`security.capability` as the kernel's binary value). The
+parent directories of the entries are added as root-owned 0755 directories
+unless `WriteOptions.NoParentDirs`. `Info` has `Licenses` (a list, joined with
+a space as abuild does), `Origin`, `Commit`, `Maintainer`, `Triggers`,
+`ReplacesPriority`, `ProviderPriority` and `InstallIf`. Alpine versions have no
+epoch; `WritePackage` refuses `1:2.0-r0`.
+
+Signing takes any `crypto.Signer` with an RSA public key (an HSM or KMS client
+works): the signature is checked against the advertised key before it is used
+and a signer that fails, returns an oversized signature or signs other data
+gives `ErrSign`. `ParsePrivateKeyPEM` reads PKCS#1 and PKCS#8 keys,
+`MarshalPrivateKeyPEM` (PKCS#8) and `MarshalPrivateKeyPKCS1PEM` write them,
+`MarshalPublicKeyPEM` writes the keys-directory file and `PublicKeyName` its
+name. `apk verify` accepts the packages written with an opaque signer
+(`testdata/extract/listings/apk.verdicts`).
 
 ## Not covered
 
-- Package versions have no epoch: Alpine's version syntax has none, and
-  `WritePackage` refuses `1:2.0-r0`.
-- `Info.License` is one string (abuild joins several licenses with a space).
-- Entries of the data segment are directories, regular files, symbolic links
-  and named pipes. Devices and hard links are refused.
-- Installing packages, writing the installed database, version comparison and
-  `@tag` repository pinning are out of scope.
+- Installing packages and writing the installed database are out of scope.
+- Package versions have no epoch: Alpine's version syntax has none.
+- Data segment entries other than those listed above (sockets) are refused.
 
 ## Security notes
 
