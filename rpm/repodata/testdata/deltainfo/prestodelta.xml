@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prestodelta>
+  <newpackage name="delta-demo" epoch="1" version="1.2" release="1" arch="noarch">
+    <delta oldepoch="1" oldversion="1.1" oldrelease="1">
+      <filename>drpms/delta-demo-1.1-1_1.2-1.noarch.drpm</filename>
+      <sequence>delta-demo-1:1.1-1-e8dc98a6e3721d68b676ab99649b547010</sequence>
+      <size>2748</size>
+      <checksum type="sha256">0f69b2a8d5e307a3409a46f9443532ea8b2e7d05c70b0bbdb89133c05215aa3c</checksum>
+    </delta>
+    <delta oldepoch="1" oldversion="1.0" oldrelease="1">
+      <filename>drpms/delta-demo-1.0-1_1.2-1.noarch.drpm</filename>
+      <sequence>delta-demo-1:1.0-1-5c8c029b2051935dfc1d202f7360934c10</sequence>
+      <size>2765</size>
+      <checksum type="sha256">f379f8fc3c9669184ec299f3f6f51e0c60698e8fe9a2d04025ae49fc2cc5c205</checksum>
+    </delta>
+  </newpackage>
+  <newpackage name="delta-lib" epoch="0" version="2.4" release="1.el9" arch="x86_64">
+    <delta oldepoch="0" oldversion="2.3" oldrelease="4.el9">
+      <filename>drpms/delta-lib-2.3-4.el9_2.4-1.el9.x86_64.drpm</filename>
+      <sequence>delta-lib-2.3-4.el9-5451756ba9a11a48209a26aa15f0a20f10</sequence>
+      <size>2825</size>
+      <checksum type="sha256">cca9cee155a39d6637b08417edd08beabe76c3a172aafcf380ed8dee764429d0</checksum>
+    </delta>
+  </newpackage>
+</prestodelta>
