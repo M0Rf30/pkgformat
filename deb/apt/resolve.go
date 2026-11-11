@@ -53,7 +53,8 @@ const maxResolveSteps = 1 << 20
 //     Dependencies are read for the architecture of the package that declares
 //     them.
 //
-// Differences from apt-get install --no-install-recommends, on purpose:
+// Differences from apt-get install --no-install-recommends, on purpose (use
+// [Cache.Plan] for the behaviour of apt itself):
 //
 //   - apt looks only at the candidate (the highest version), so a constraint
 //     it fails ("foo (<< 3)" with 3 available) is unsatisfiable to it; here
@@ -61,7 +62,8 @@ const maxResolveSteps = 1 << 20
 //   - apt resolves a clash with an installed package by removing it, and a
 //     Breaks by upgrading or removing the broken one. Here the candidate is
 //     refused and the next one tried, and the clash is an error when none is
-//     left; nothing is ever removed or upgraded to make room.
+//     left; nothing is ever removed or upgraded to make room, which is what
+//     an extractor that must leave the host's packages alone needs.
 //   - Pin priorities and apt's pkgProblemResolver scoring are not modelled,
 //     nor is the ordering of configuration (Pre-Depends loops).
 //
@@ -576,6 +578,11 @@ func providesMatch(rel *deb.Relation, p *pkg) bool {
 // archOK applies the Multi-Arch rules of a dependency written for arch to a
 // version of another or the same architecture.
 func (r *resolution) archOK(rel *deb.Relation, arch string, p *pkg) bool {
+	return relArchOK(r.native, rel, arch, p)
+}
+
+// relArchOK is archOK for a host architecture native.
+func relArchOK(native string, rel *deb.Relation, arch string, p *pkg) bool {
 	pa := p.Architecture
 	if pa == "" || pa == archAll {
 		return true
@@ -587,7 +594,7 @@ func (r *resolution) archOK(rel *deb.Relation, arch string, p *pkg) bool {
 	case "any":
 		return strings.EqualFold(p.MultiArch, "allowed")
 	case "native":
-		return pa == r.native
+		return pa == native
 	default:
 		return pa == rel.Arch
 	}
@@ -805,10 +812,15 @@ func (r *resolution) eachEffective(name string, fn func(e *pkg) bool) {
 // (a versioned relation only through a versioned Provides). A qualified
 // relation hits only that architecture.
 func (r *resolution) negMatches(rel *deb.Relation, p *pkg) bool {
+	return relNegMatches(r.native, rel, p)
+}
+
+// relNegMatches is negMatches for a host architecture native.
+func relNegMatches(native string, rel *deb.Relation, p *pkg) bool {
 	if rel.Arch != "" && rel.Arch != "any" {
 		want := rel.Arch
 		if want == "native" {
-			want = r.native
+			want = native
 		}
 
 		if pa := p.Architecture; pa != want && pa != archAll && pa != "" {
@@ -816,7 +828,7 @@ func (r *resolution) negMatches(rel *deb.Relation, p *pkg) bool {
 		}
 	}
 
-	return r.realMatch(rel, p) || providesMatch(rel, p)
+	return (p.Name == rel.Name && rel.Satisfied(p.Version)) || providesMatch(rel, p)
 }
 
 // checkConflicts refuses a selected version that Conflicts with or Breaks an
