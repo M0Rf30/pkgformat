@@ -44,7 +44,7 @@ var fixtures = []struct {
 
 // copyFixture copies a fixture into a temporary directory, so that SQLite's
 // side files never appear in testdata.
-func copyFixture(t *testing.T, name string) string {
+func copyFixture(t testing.TB, name string) string {
 	t.Helper()
 
 	data, err := os.ReadFile(filepath.Join("testdata", name))
@@ -211,7 +211,7 @@ func TestPackagesMatchRpm(t *testing.T) {
 }
 
 // orNil lets an empty list equal a missing one.
-func orNil(s [][]string) [][]string {
+func orNil[S ~[]E, E any](s S) S {
 	if len(s) == 0 {
 		return nil
 	}
@@ -486,7 +486,7 @@ func TestOptions(t *testing.T) {
 func TestImmutableSQLite(t *testing.T) {
 	path := copyFixture(t, "rpmdb.sqlite")
 
-	db, err := rpmdb.Open(path, rpmdb.Options{Immutable: true})
+	db, err := rpmdb.Open(path, rpmdb.Options{SQLite: rpmdb.SQLiteImmutable})
 	require.NoError(t, err)
 
 	defer db.Close()

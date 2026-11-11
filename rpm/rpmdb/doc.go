@@ -13,10 +13,15 @@
 // look at the running system, or the root of a container image or an install
 // directory.
 //
-// The database is only ever read. SQLite is opened with mode=ro (or
-// immutable=1, see [Options.Immutable]), the other two formats with a plain
-// read-only file handle, so a database that rpm is using at the same time is
-// not modified or locked for writing.
+// The database is only ever read. SQLite is opened with mode=ro, the other two
+// formats with a plain read-only file handle, so a database that rpm is using
+// at the same time is not modified or locked for writing. [Options.SQLite]
+// says what to do when SQLite cannot open a database in place, for example
+// because it lies on read-only media with a write-ahead log (see [SQLiteMode]):
+// the default falls back to an immutable read, or to a private copy when a log
+// holds transactions the read has to see, and never creates a file next to the
+// original in that case. A database that stays locked fails with [ErrLocked]
+// after [Options.BusyTimeout] and [Options.LockRetries].
 //
 // # Reading
 //
@@ -26,6 +31,37 @@
 // install time. [DB.List] collects them. [DB.InstalledNames] and
 // [DB.InstalledProvides] answer the two questions a dependency resolver asks,
 // and make a *DB usable as a [dnf.Installed].
+//
+// # Queries
+//
+// [DB.InstalledPackages] and the query methods answer from an index that the
+// first of them builds from the whole database, once, safely for concurrent
+// callers and within [Options.MaxIndexEntries]; [DB.Refresh] builds it again
+// after rpm changed the database. The index follows rpm's own:
+//
+//   - [DB.ByName], [DB.ByNEVRA] and [DB.ByLabel] (what rpm -q takes: "bash",
+//     "bash-5.2", "bash-5.2-1.fc40.x86_64");
+//   - [DB.WhatProvides] with a capability that carries a version and a
+//     comparison ([ParseCapability]): a provide "foo = 1.2-3" satisfies
+//     "foo >= 1.0", by the overlap rules of librpm ([richdep.Atom.Overlaps]),
+//     and a path is provided by the packages that own it;
+//   - [DB.WhatRequires], [DB.WhatRecommends], [DB.WhatSuggests],
+//     [DB.WhatSupplements], [DB.WhatEnhances], [DB.WhatConflicts] and
+//     [DB.WhatObsoletes], which also find the capabilities inside rich
+//     dependencies the way rpm does, and [DB.ConflictsOf], [DB.ObsoletedBy]
+//     and [DB.ObsoletesOf] for the relations of one package;
+//   - [DB.FileOwners]: rpm -qf, with the path cleaned, ghost files included
+//     and files a package did not install left out.
+//
+// # Scripts
+//
+// [DB.Scripts] and [DB.AllScripts] return the [Scripts] of a package, read
+// from the raw tags of its header: the scriptlets with their interpreter and
+// flags, the triggers with their conditions, and the file triggers and
+// transaction file triggers with their prefixes and priorities. [Scripts.String]
+// prints them as rpm -q --scripts --triggers --filetriggers does.
+//
+// # Records
 //
 // The records of the database are the header images of the packages (see
 // [rpm.ReadHeaderBlob]); the three formats differ only in how they store them.
@@ -42,4 +78,5 @@
 // panics on malformed input.
 //
 // [dnf.Installed]: https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/dnf#Installed
+// [richdep.Atom.Overlaps]: https://pkg.go.dev/github.com/M0Rf30/pkgformat/rpm/richdep#Atom.Overlaps
 package rpmdb
