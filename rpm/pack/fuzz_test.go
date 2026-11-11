@@ -162,7 +162,7 @@ func checkPackage(t *testing.T, pkg []byte, files map[string]RPMFile, v6 bool) {
 			t.Errorf("%s: mode %o, want %o", want, modes[i], wantMode)
 		}
 		wantDigest := ""
-		if !isDir && !isLink {
+		if !isDir && !isLink && f.Type != GhostFile { // rpm records no digest for a ghost
 			wantDigest = fmt.Sprintf("%x", sha256.Sum256(f.Body))
 		}
 		if digests[i] != wantDigest {

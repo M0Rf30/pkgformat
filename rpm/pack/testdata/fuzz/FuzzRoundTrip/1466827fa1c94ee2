@@ -1,0 +1,8 @@
+go test fuzz v1
+string("/0")
+string("/")
+[]byte("0")
+uint32(434)
+uint32(596)
+byte(';')
+bool(false)
