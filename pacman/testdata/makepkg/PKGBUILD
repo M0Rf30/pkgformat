@@ -1,0 +1,29 @@
+# Maintainer: pkgformat test fixtures
+pkgname=tree-shapes
+pkgver=1.0
+pkgrel=1
+pkgdesc="Every file type and owner a package can hold"
+arch=(any)
+license=(MIT)
+backup=(etc/shapes.conf)
+install=shapes.install
+changelog=ChangeLog
+options=(!strip !debug !docs !emptydirs)
+
+package() {
+  install -Dm644 /dev/stdin "$pkgdir/etc/shapes.conf" <<<'x=1'
+  install -Dm755 /dev/stdin "$pkgdir/usr/bin/shape" <<<'#!/bin/sh'
+  ln "$pkgdir/usr/bin/shape" "$pkgdir/usr/bin/shape-hard"
+  ln -s shape "$pkgdir/usr/bin/shape-sym"
+  mkfifo -m 640 "$pkgdir/usr/bin/shape-fifo"
+  install -Dm4755 /dev/stdin "$pkgdir/usr/bin/shape-suid" <<<'s'
+  install -dm1777 "$pkgdir/var/tmp/shapes"
+  install -dm750 "$pkgdir/var/lib/shapes"
+  mkdir -p "$pkgdir/usr/share/a b"
+  echo hi >"$pkgdir/usr/share/a b/c=d"
+  echo owned >"$pkgdir/usr/share/owned"
+  chown 1234:5678 "$pkgdir/usr/share/owned"
+  echo tagged >"$pkgdir/usr/share/tagged"
+  setfattr -n user.shape -v tagged "$pkgdir/usr/share/tagged"
+  touch -d @1000000000 "$pkgdir/usr/share/a b/c=d"
+}

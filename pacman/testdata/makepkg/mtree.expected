@@ -1,0 +1,22 @@
+#mtree
+/set type=file uid=0 gid=0 mode=644
+./.BUILDINFO time=1700000000.0 size=912 sha256digest=b4ec90f1b8bd899b31683436b496fdf7884d33d04a9b65ab4a81dbed0b9381c4
+./.CHANGELOG time=1700000000.0 size=49 sha256digest=e7568a37a973885a77f51b362fdcdbb2295d358ecbe4f471d27740cff3b4d229
+./.INSTALL time=1700000000.0 size=259 sha256digest=9c9c680a60138ba3e82935e6ab7a48305844d42a2c5bdb8ee742a9afeff6cc5d
+./.PKGINFO time=1700000000.0 size=313 sha256digest=6079b9abda5af435479406482f54c6aa6af6626f7a32c4d661c8c4388143bc58
+./etc time=1700000000.0 mode=755 type=dir
+./etc/shapes.conf time=1700000000.0 size=4 sha256digest=98752ee28d5484bdc2814fb70adb6a0b2fb31f6a9b8ee7ae81fd2fc9cf300b3b
+/set mode=755
+./usr time=1700000000.0 type=dir
+./usr/bin time=1700000000.0 type=dir
+./usr/bin/shape time=1700000000.0 size=10 sha256digest=a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf
+./usr/bin/shape-fifo time=1700000000.0 mode=640 type=fifo
+./usr/bin/shape-hard time=1700000000.0 size=10 sha256digest=a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf
+./usr/bin/shape-suid time=1700000000.0 mode=4755 size=2 sha256digest=cbc80bb5c0c0f8944bf73b3a429505ac5cde16644978bc9a1e74c5755f8ca556
+./usr/bin/shape-sym time=1700000000.0 mode=777 type=link link=shape
+/set mode=644
+./usr/share time=1700000000.0 mode=755 type=dir
+./usr/share/owned time=1700000000.0 gid=5678 uid=1234 size=6 sha256digest=33bff9108736f23280e9cd50cb1472e3a5b4403ed3f2da1fe67b8487a4fb75c6
+./usr/share/tagged time=1700000000.0 gid=1000 uid=1000 size=7 sha256digest=f714d1bcd49a02f62aa22e47ea818ce5b4d653cf2220eeb8a4fa3aaa02a14370
+./usr/share/a\040b time=1700000000.0 mode=755 type=dir
+./usr/share/a\040b/c\075d time=1700000000.0 size=3 sha256digest=98ea6e4f216f2fb4b69fff9b3a44842c38686ca685f3f55dc48c5d3fb1107be4

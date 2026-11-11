@@ -1,0 +1,23 @@
+pre_install() {
+	echo "pre_install $1"
+}
+
+post_install() {
+	echo "post_install $1"
+}
+
+pre_upgrade() {
+	echo "pre_upgrade $1 $2"
+}
+
+post_upgrade() {
+	echo "post_upgrade $1 $2"
+}
+
+pre_remove() {
+	echo "pre_remove $1"
+}
+
+post_remove() {
+	echo "post_remove $1"
+}

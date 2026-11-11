@@ -1,0 +1,19 @@
+-rw-r--r--  0 0      0         912 Nov 14  2023 .BUILDINFO
+-rw-r--r--  0 0      0          49 Nov 14  2023 .CHANGELOG
+-rw-r--r--  0 0      0         259 Nov 14  2023 .INSTALL
+-rw-r--r--  0 0      0         747 Nov 14  2023 .MTREE
+-rw-r--r--  0 0      0         313 Nov 14  2023 .PKGINFO
+drwxr-xr-x  0 0      0           0 Nov 14  2023 etc/
+-rw-r--r--  0 0      0           4 Nov 14  2023 etc/shapes.conf
+drwxr-xr-x  0 0      0           0 Nov 14  2023 usr/
+drwxr-xr-x  0 0      0           0 Nov 14  2023 usr/bin/
+-rwxr-xr-x  0 0      0          10 Nov 14  2023 usr/bin/shape
+prw-r-----  0 0      0           0 Nov 14  2023 usr/bin/shape-fifo
+hrwxr-xr-x  0 0      0           0 Nov 14  2023 usr/bin/shape-hard link to usr/bin/shape
+-rwsr-xr-x  0 0      0           2 Nov 14  2023 usr/bin/shape-suid
+lrwxrwxrwx  0 0      0           0 Nov 14  2023 usr/bin/shape-sym -> shape
+drwxr-xr-x  0 0      0           0 Nov 14  2023 usr/share/
+drwxr-xr-x  0 0      0           0 Nov 14  2023 usr/share/a b/
+-rw-r--r--  0 0      0           3 Nov 14  2023 usr/share/a b/c=d
+-rw-r--r--  0 1234   5678        6 Nov 14  2023 usr/share/owned
+-rw-r--r--  0 1000   1000        7 Nov 14  2023 usr/share/tagged
