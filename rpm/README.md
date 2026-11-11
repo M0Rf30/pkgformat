@@ -105,6 +105,14 @@ if err != nil {
 fmt.Println(pkg.Name, pkg.Version, len(pkg.Requires), len(pkg.Files))
 ```
 
+`Package` also carries the scriptlets with their interpreters and flags
+(`Scripts`), package triggers (`Triggers`), file and transaction file triggers
+(`FileTriggers`), per-file capabilities, hard link counts, languages, verify
+flags, SELinux contexts, IMA and fs-verity signatures (`Files[i]`), the
+sources and patches of a source package, and the build metadata (modularity
+label, dist tag, platform, cookie, policies, sysusers). The values match what
+librpm reads (`testdata/meta/golden.py`).
+
 Sign a package into a new file with a key from `pkgformat/gpg`:
 
 ```go
@@ -140,9 +148,12 @@ tar2rpm -name example -version 1.0 -release 1 -file example.rpm < example.tar
 Packages and archives are often untrusted input.
 
 - **Bound decompression.** A few KiB of compressed payload can expand to many
-  GiB, and the sizes declared in the header are attacker controlled. Call
-  `Rpm.SetMaxPayloadSize` before `ExpandPayload`, `PayloadReader` or
-  `PayloadReaderExtended`. The default is no limit.
+  GiB, and the sizes declared in the header are attacker controlled. The
+  payload readers stop at `rpm.DefaultMaxPayloadSize` (4 GiB), or at twice the
+  declared size when that is larger; `Rpm.SetMaxPayloadSize` sets a bound of
+  your own (a negative value removes it). `Rpm.SetVerifyPayloadDigest` checks
+  the compressed payload against the payload digest of the header, so a
+  verified header proves the payload too.
 - **Check that a package is signed.** `Verify` returns an empty list of
   signatures, and no error, for a package that carries none: it is intact, not
   authentic. A caller that requires a signature uses `VerifyWithOptions` with
@@ -183,7 +194,14 @@ Packages and archives are often untrusted input.
   Dependencies are matched by name, without comparing versions; of several
   versions of a package the newest by epoch, version and release (`rpm.Vercmp`)
   is chosen, unless a repository with a lower `priority` number has the name.
-- **OpenPGP v3 signatures** (found in some very old packages) are not supported.
+- **Every OpenPGP signature version is verified**: version 3 packets (RSA and
+  DSA, the packages of RHEL 7 and earlier), version 4, and the salted version 6
+  of RFC 9580. `VerifyWithKeyring` takes the `gpg.Keyring` the other formats
+  use.
+- **Signing keys stay where they are.** `rpm.Sign` takes any `gpg.Signer`:
+  `gpg.NewCryptoSigner` wraps an RSA or ECDSA `crypto.Signer` (HSM, KMS, smart
+  card) and a signer that only implements `DetachedSign` (gpg-agent, a remote
+  service) gets the header-only signature rpm 4.16 and later make.
 - Parsers enforce limits on header sizes and counts, and are fuzzed
   (`go test -fuzz`).
 

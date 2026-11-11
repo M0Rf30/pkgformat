@@ -12,6 +12,9 @@ import (
 )
 
 func parseSignature(blob []byte, vf *verifier) (*Signature, error) {
+	if isV3Signature(blob) {
+		return parseSignatureV3(blob, vf)
+	}
 	reader := bytes.NewReader(blob)
 	genpkt, err := packet.Read(reader)
 	if err != nil {
