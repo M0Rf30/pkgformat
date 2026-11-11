@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updates>
+  <update from="updates@fedoraproject.org" status="stable" type="security" version="2.0">
+    <id>FEDORA-2026-727b73bfa0</id>
+    <title>python-scitokens-1.9.7-1.fc43</title>
+    <issued date="2026-03-13 21:14:55"/>
+    <updated date="2026-03-22 00:52:45"/>
+    <rights>Copyright (C) 2026 Red Hat, Inc. and others.</rights>
+    <release>Fedora 43</release>
+    <severity>Important</severity>
+    <summary>python-scitokens-1.9.7-1.fc43 security update</summary>
+    <description>- Remove legacy parent SciToken chaining behavior from token initialization and claim handling
+- Harden Enforcer scope path traversal validation (including encoded traversal checks)
+- Clean up documentation references to parent/chained SciTokens
+
+----
+
+- Fix SQL injection risk in KeyCache by using parameterized SQLite queries
+- Prevent sibling-path authorization bypass in Enforcer scope checks</description>
+    <references/>
+    <pkglist>
+      <collection short="F43">
+        <name>Fedora 43</name>
+        <package name="python-scitokens" version="1.9.7" release="1.fc43" epoch="0" arch="src" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/SRPMS/p/python-scitokens-1.9.7-1.fc43.src.rpm">
+          <filename>python-scitokens-1.9.7-1.fc43.src.rpm</filename>
+          <reboot_suggested>True</reboot_suggested>
+        </package>
+        <package name="python3-scitokens" version="1.9.7" release="1.fc43" epoch="0" arch="noarch" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/i386/p/python3-scitokens-1.9.7-1.fc43.noarch.rpm">
+          <filename>python3-scitokens-1.9.7-1.fc43.noarch.rpm</filename>
+          <reboot_suggested>True</reboot_suggested>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="updates@fedoraproject.org" status="stable" type="enhancement" version="2.0">
+    <id>FEDORA-2025-5efdb69e46</id>
+    <title>gnome-shell-extension-screen-autorotate-27-1.fc43</title>
+    <issued date="2025-12-05 17:14:29"/>
+    <updated date="2025-12-14 00:54:54"/>
+    <rights>Copyright (C) 2026 Red Hat, Inc. and others.</rights>
+    <release>Fedora 43</release>
+    <severity>Low</severity>
+    <summary>gnome-shell-extension-screen-autorotate-27-1.fc43 enhancement update</summary>
+    <description>What's changed in v27
+--------------------------------
+* Use async dbus calls and set a 100ms timeout
+* Added toggle to skip initial rotation
+
+[Full changelog](https://github.com/shyzus/gnome-shell-extension-screen-autorotate/compare/v26...v27)</description>
+    <references>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2419383" id="2419383" type="bugzilla" title="gnome-shell-extension-screen-autorotate-27 is available"/>
+    </references>
+    <pkglist>
+      <collection short="F43">
+        <name>Fedora 43</name>
+        <package name="gnome-shell-extension-screen-autorotate" version="27" release="1.fc43" epoch="0" arch="src" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/SRPMS/g/gnome-shell-extension-screen-autorotate-27-1.fc43.src.rpm">
+          <filename>gnome-shell-extension-screen-autorotate-27-1.fc43.src.rpm</filename>
+          <relogin_suggested>True</relogin_suggested>
+        </package>
+        <package name="gnome-shell-extension-screen-autorotate" version="27" release="1.fc43" epoch="0" arch="noarch" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/i386/g/gnome-shell-extension-screen-autorotate-27-1.fc43.noarch.rpm">
+          <filename>gnome-shell-extension-screen-autorotate-27-1.fc43.noarch.rpm</filename>
+          <relogin_suggested>True</relogin_suggested>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="updates@fedoraproject.org" status="stable" type="security" version="2.0">
+    <id>FEDORA-2026-eb2fc8e93d</id>
+    <title>task-3.4.2-3.fc43</title>
+    <issued date="2026-03-04 13:53:08"/>
+    <updated date="2026-03-13 01:17:50"/>
+    <rights>Copyright (C) 2026 Red Hat, Inc. and others.</rights>
+    <release>Fedora 43</release>
+    <severity>Low</severity>
+    <summary>task-3.4.2-3.fc43 security update</summary>
+    <description>Update to new release, includes updated dependencies that fix for a number of CVEs</description>
+    <references>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2438090" id="2438090" type="bugzilla" title="CVE-2026-25727 task: time affected by a stack exhaustion denial of service attack [fedora-42]"/>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2438156" id="2438156" type="bugzilla" title="CVE-2026-25727 task: time affected by a stack exhaustion denial of service attack [fedora-43]"/>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2444169" id="2444169" type="bugzilla" title="CVE-2026-3338 task: AWS-LC: Signature bypass due to improper validation in PKCS7_verify() [fedora-all]"/>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2444179" id="2444179" type="bugzilla" title="CVE-2026-3337 task: AWS-LC: Information disclosure via timing discrepancy in AES-CCM decryption [fedora-all]"/>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2444189" id="2444189" type="bugzilla" title="CVE-2026-3336 task: aws-lc: Certificate validation bypass via improper handling of PKCS7 objects [fedora-all]"/>
+    </references>
+    <pkglist>
+      <collection short="F43">
+        <name>Fedora 43</name>
+        <package name="task" version="3.4.2" release="3.fc43" epoch="0" arch="src" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/SRPMS/t/task-3.4.2-3.fc43.src.rpm">
+          <filename>task-3.4.2-3.fc43.src.rpm</filename>
+        </package>
+        <package name="task-debuginfo" version="3.4.2" release="3.fc43" epoch="0" arch="x86_64" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/x86_64/t/task-debuginfo-3.4.2-3.fc43.x86_64.rpm">
+          <filename>task-debuginfo-3.4.2-3.fc43.x86_64.rpm</filename>
+        </package>
+        <package name="task" version="3.4.2" release="3.fc43" epoch="0" arch="x86_64" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/x86_64/t/task-3.4.2-3.fc43.x86_64.rpm">
+          <filename>task-3.4.2-3.fc43.x86_64.rpm</filename>
+        </package>
+        <package name="task-debugsource" version="3.4.2" release="3.fc43" epoch="0" arch="x86_64" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/x86_64/t/task-debugsource-3.4.2-3.fc43.x86_64.rpm">
+          <filename>task-debugsource-3.4.2-3.fc43.x86_64.rpm</filename>
+        </package>
+        <package name="task-debuginfo" version="3.4.2" release="3.fc43" epoch="0" arch="aarch64" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/aarch64/t/task-debuginfo-3.4.2-3.fc43.aarch64.rpm">
+          <filename>task-debuginfo-3.4.2-3.fc43.aarch64.rpm</filename>
+        </package>
+        <package name="task" version="3.4.2" release="3.fc43" epoch="0" arch="aarch64" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/aarch64/t/task-3.4.2-3.fc43.aarch64.rpm">
+          <filename>task-3.4.2-3.fc43.aarch64.rpm</filename>
+        </package>
+        <package name="task-debugsource" version="3.4.2" release="3.fc43" epoch="0" arch="aarch64" src="https://download.fedoraproject.org/pub/fedora/linux/updates/43/aarch64/t/task-debugsource-3.4.2-3.fc43.aarch64.rpm">
+          <filename>task-debugsource-3.4.2-3.fc43.aarch64.rpm</filename>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+</updates>

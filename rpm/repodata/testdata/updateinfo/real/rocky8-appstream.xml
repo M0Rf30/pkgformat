@@ -1,0 +1,83 @@
+<updates>
+  <update from="releng@rockylinux.org" status="final" type="security" version="2">
+    <id>RLSA-2019:2512</id>
+    <title>Important: subversion:1.10 security update</title>
+    <issued date="2019-08-15 17:34:10" />
+    <updated date="2023-02-02 12:56:04" />
+    <rights>Copyright 2026 Rocky Enterprise Software Foundation. Advisory content derived from Red Hat RHSA-2019:2512 (https://access.redhat.com/errata/RHSA-2019:2512), © Red Hat, Inc., used under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), with modifications.</rights>
+    <release>Rocky Linux 8</release>
+    <pushcount>1</pushcount>
+    <severity>Important</severity>
+    <summary>An update is available for utf8proc, libserf.
+This update affects Rocky Linux 8.
+A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list</summary>
+    <description>Subversion (SVN) is a concurrent version control system which enables one or more users to collaborate in developing and maintaining a hierarchy of files and directories while keeping a history of all changes.
+
+Security Fix(es):
+
+* subversion: NULL pointer dereference in svnserve leading to an unauthenticated remote DoS (CVE-2019-0203)
+
+For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.</description>
+    <solution />
+    <references>
+      <reference href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0203" id="CVE-2019-0203" type="cve" title="CVE-2019-0203" />
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=1733073" id="1733073" type="bugzilla" title="" />
+      <reference href="https://errata.rockylinux.org/RLSA-2019:2512" id="RLSA-2019:2512" type="self" title="RLSA-2019:2512" />
+      <reference href="https://access.redhat.com/errata/RHSA-2019:2512" id="RHSA-2019:2512" type="vendor" title="Red Hat RHSA-2019:2512" />
+      <reference href="https://creativecommons.org/licenses/by/4.0/" id="CC-BY-4.0" type="other" title="License: CC-BY-4.0" />
+    </references>
+    <pkglist>
+      <collection short="rocky-linux-8-x86-64-appstream-rpms__subversion">
+        <name>rocky-linux-8-x86-64-appstream-rpms__subversion</name>
+        <module name="subversion" stream="1.10" version="8070020221108111308" context="78111232" arch="x86_64" />
+        <package name="libserf" arch="x86_64" epoch="0" version="1.3.9" release="9.module+el8.7.0+1065+42200b2e" src="libserf-1.3.9-9.module+el8.7.0+1065+42200b2e.src.rpm">
+          <filename>libserf-1.3.9-9.module+el8.7.0+1065+42200b2e.x86_64.rpm</filename>
+          <sum type="sha256">16f0154bb58b939d80e145c2c77bd093963d9ba62ac46bedb133b0e60d6ec50a</sum>
+        </package>
+        <package name="libserf" arch="x86_64" epoch="0" version="1.3.9" release="9.module+el8.4.0+407+38733e5a" src="libserf-1.3.9-9.module+el8.7.0+1065+42200b2e.src.rpm">
+          <filename>libserf-1.3.9-9.module+el8.4.0+407+38733e5a.x86_64.rpm</filename>
+          <sum type="sha256">77a92f4ec27ff5ed345ff0cd7159045bc3072b1d3d89e37c9ea6dfe84ad61721</sum>
+        </package>
+        <package name="utf8proc" arch="x86_64" epoch="0" version="2.1.1" release="5.module+el8.4.0+407+38733e5a" src="utf8proc-2.1.1-5.module+el8.4.0+407+38733e5a.src.rpm">
+          <filename>utf8proc-2.1.1-5.module+el8.4.0+407+38733e5a.x86_64.rpm</filename>
+          <sum type="sha256">24c2b5df6648ce33193f806cac5b4d243abda47699bdf9ee3cf94d107010fb4f</sum>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="releng@rockylinux.org" status="final" type="bugfix" version="2">
+    <id>RLBA-2019:3522</id>
+    <title>perl-DBD-SQLite bug fix and enhancement update</title>
+    <issued date="2019-11-05 17:55:49" />
+    <updated date="2023-02-02 12:50:29" />
+    <rights>Copyright 2026 Rocky Enterprise Software Foundation. Advisory content derived from Red Hat RHBA-2019:3522 (https://access.redhat.com/errata/RHBA-2019:3522), © Red Hat, Inc., used under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), with modifications.</rights>
+    <release>Rocky Linux 8</release>
+    <pushcount>1</pushcount>
+    <severity>None</severity>
+    <summary>An update is available for perl-DBD-SQLite.
+This update affects Rocky Linux 8.
+A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list</summary>
+    <description>For detailed information on changes in this release, see the Rocky Linux 8.1 Release Notes linked from the References section.</description>
+    <solution />
+    <references>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=1691243" id="1691243" type="bugzilla" title="" />
+      <reference href="https://errata.rockylinux.org/RLBA-2019:3522" id="RLBA-2019:3522" type="self" title="RLBA-2019:3522" />
+      <reference href="https://access.redhat.com/errata/RHBA-2019:3522" id="RHBA-2019:3522" type="vendor" title="Red Hat RHBA-2019:3522" />
+      <reference href="https://creativecommons.org/licenses/by/4.0/" id="CC-BY-4.0" type="other" title="License: CC-BY-4.0" />
+    </references>
+    <pkglist>
+      <collection short="rocky-linux-8-x86-64-appstream-rpms__perl-DBD-SQLite">
+        <name>rocky-linux-8-x86-64-appstream-rpms__perl-DBD-SQLite</name>
+        <module name="perl-DBD-SQLite" stream="1.58" version="8060020220513012746" context="bce9b2db" arch="x86_64" />
+        <package name="perl-DBD-SQLite" arch="x86_64" epoch="0" version="1.58" release="2.module+el8.6.0+896+21008253" src="perl-DBD-SQLite-1.58-2.module+el8.6.0+896+21008253.src.rpm">
+          <filename>perl-DBD-SQLite-1.58-2.module+el8.6.0+896+21008253.x86_64.rpm</filename>
+          <sum type="sha256">8ef1750722a4af50b752d0a03b17fb7366250cc9a31c6d88e1d966f15daa4fc8</sum>
+        </package>
+        <package name="perl-DBD-SQLite" arch="x86_64" epoch="0" version="1.58" release="2.module+el8.4.0+515+05eb0571" src="perl-DBD-SQLite-1.58-2.module+el8.6.0+896+21008253.src.rpm">
+          <filename>perl-DBD-SQLite-1.58-2.module+el8.4.0+515+05eb0571.x86_64.rpm</filename>
+          <sum type="sha256">6898a6d7b273df331d03b1624ff3ba757651f3ca413cfe21c1a8d7ed825c5080</sum>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+</updates>

@@ -1,0 +1,56 @@
+Name        : FEDORA-2026-c3b1d2e4f5
+Title       : bash-5.3.99-1.fc45
+Severity    : Important
+Type        : security
+Status      : stable
+Vendor      : updates@fedoraproject.org
+Issued      : 2026-10-15 01:07:46
+Description : Update to bash 5.3 patch level 99.
+            : 
+            : Fixes an out-of-bounds read in the history expansion code (CVE-2026-0101).
+Message     : 
+Rights      : Copyright (C) 2026 Red Hat, Inc. and others.
+Reference   : 
+  Title     : CVE-2026-0101 bash: out-of-bounds read in history expansion
+  Id        : 2410101
+  Type      : bugzilla
+  Url       : https://bugzilla.redhat.com/show_bug.cgi?id=2410101
+Reference   : 
+  Title     : FEDORA-2026-c3b1d2e4f5
+  Id        : FEDORA-2026-c3b1d2e4f5
+  Type      : self
+  Url       : https://bodhi.fedoraproject.org/updates/FEDORA-2026-c3b1d2e4f5
+Collection  : 
+  Packages  : bash-99:5.3.99-1.fc45.x86_64
+
+Name        : FEDORA-2026-7e8f9a0b1c
+Title       : coreutils-9.99-1.fc45
+Severity    : None
+Type        : bugfix
+Status      : stable
+Vendor      : updates@fedoraproject.org
+Issued      : 2026-09-20 17:05:01
+Description : Fix `ls --color` crashing on a dangling symlink in a directory that is being removed.
+Message     : 
+Rights      : Copyright (C) 2026 Red Hat, Inc. and others.
+Reference   : 
+  Title     : ls --color segfaults on a dangling symlink
+  Id        : 2409999
+  Type      : bugzilla
+  Url       : https://bugzilla.redhat.com/show_bug.cgi?id=2409999
+Collection  : 
+  Packages  : coreutils-99:9.99-1.fc45.x86_64
+
+Name        : FEDORA-2026-a0b1c2d3e4
+Title       : filesystem-3.99-1.fc45
+Severity    : Low
+Type        : enhancement
+Status      : stable
+Vendor      : updates@fedoraproject.org
+Issued      : 2026-08-03 06:00:00
+Description : Add /usr/share/factory to the directories the filesystem package owns.
+Message     : 
+Rights      : Copyright (C) 2026 Red Hat, Inc. and others.
+Collection  : 
+  Packages  : filesystem-99:3.99-1.fc45.x86_64
+

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updates>
+  <update from="updates@fedoraproject.org" status="stable" type="security" version="2.0">
+    <id>FEDORA-2026-c3b1d2e4f5</id>
+    <title>bash-5.3.99-1.fc45</title>
+    <issued date="2026-10-02 11:43:19"/>
+    <updated date="2026-10-15 01:07:46"/>
+    <rights>Copyright (C) 2026 Red Hat, Inc. and others.</rights>
+    <release>Fedora 45</release>
+    <severity>Important</severity>
+    <summary>bash-5.3.99-1.fc45 security update</summary>
+    <description>Update to bash 5.3 patch level 99.
+
+Fixes an out-of-bounds read in the history expansion code (CVE-2026-0101).</description>
+    <references>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2410101" id="2410101" type="bugzilla" title="CVE-2026-0101 bash: out-of-bounds read in history expansion"/>
+      <reference href="https://bodhi.fedoraproject.org/updates/FEDORA-2026-c3b1d2e4f5" id="FEDORA-2026-c3b1d2e4f5" type="self" title="FEDORA-2026-c3b1d2e4f5"/>
+    </references>
+    <pkglist>
+      <collection short="F45">
+        <name>Fedora 45</name>
+        <package name="bash" version="5.3.99" release="1.fc45" epoch="99" arch="x86_64" src="bash-5.3.99-1.fc45.src.rpm">
+          <filename>bash-5.3.99-1.fc45.x86_64.rpm</filename>
+          <sum type="sha256">0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0</sum>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="updates@fedoraproject.org" status="stable" type="bugfix" version="2.0">
+    <id>FEDORA-2026-7e8f9a0b1c</id>
+    <title>coreutils-9.99-1.fc45</title>
+    <issued date="2026-09-12 08:30:00"/>
+    <updated date="2026-09-20 17:05:01"/>
+    <rights>Copyright (C) 2026 Red Hat, Inc. and others.</rights>
+    <release>Fedora 45</release>
+    <severity>None</severity>
+    <summary>coreutils-9.99-1.fc45 bugfix update</summary>
+    <description>Fix `ls --color` crashing on a dangling symlink in a directory that is being removed.</description>
+    <reboot_suggested>True</reboot_suggested>
+    <references>
+      <reference href="https://bugzilla.redhat.com/show_bug.cgi?id=2409999" id="2409999" type="bugzilla" title="ls --color segfaults on a dangling symlink"/>
+    </references>
+    <pkglist>
+      <collection short="F45">
+        <name>Fedora 45</name>
+        <package name="coreutils" version="9.99" release="1.fc45" epoch="99" arch="x86_64" src="coreutils-9.99-1.fc45.src.rpm">
+          <filename>coreutils-9.99-1.fc45.x86_64.rpm</filename>
+          <sum type="sha256">1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f809</sum>
+          <reboot_suggested>True</reboot_suggested>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+  <update from="updates@fedoraproject.org" status="stable" type="enhancement" version="2.0">
+    <id>FEDORA-2026-a0b1c2d3e4</id>
+    <title>filesystem-3.99-1.fc45</title>
+    <issued date="2026-08-01 06:00:00"/>
+    <updated date="2026-08-03 06:00:00"/>
+    <rights>Copyright (C) 2026 Red Hat, Inc. and others.</rights>
+    <release>Fedora 45</release>
+    <severity>Low</severity>
+    <summary>filesystem-3.99-1.fc45 enhancement update</summary>
+    <description>Add /usr/share/factory to the directories the filesystem package owns.</description>
+    <references/>
+    <pkglist>
+      <collection short="F45">
+        <name>Fedora 45</name>
+        <package name="filesystem" version="3.99" release="1.fc45" epoch="99" arch="x86_64" src="filesystem-3.99-1.fc45.src.rpm">
+          <filename>filesystem-3.99-1.fc45.x86_64.rpm</filename>
+        </package>
+      </collection>
+    </pkglist>
+  </update>
+</updates>
