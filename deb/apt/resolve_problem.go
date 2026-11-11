@@ -15,6 +15,9 @@ const (
 	flagUpgradable
 	flagReInstateTried
 	flagToRemove
+	// flagPolicyAllowed is apt's BrokenPolicyAllowed: an unmet Recommends or
+	// Suggests of the package is not a reason to keep it back.
+	flagPolicyAllowed
 )
 
 // Score constants of apt's MakeScores.
@@ -72,7 +75,25 @@ func (r *resolver) markRemove(s *pstate) {
 
 // clear is apt's Clear.
 func (r *resolver) clear(s *pstate) {
-	r.flags[s.key] = r.flag(s.key) &^ (flagProtected | flagToRemove)
+	r.flags[s.key] = r.flag(s.key) &^ (flagProtected | flagToRemove | flagPolicyAllowed)
+}
+
+// allowBrokenPolicy is apt's AllowBrokenPolicy.
+func (r *resolver) allowBrokenPolicy(s *pstate) {
+	r.flags[s.key] = r.flag(s.key) | flagPolicyAllowed
+}
+
+// instOrNewPolicyBroken is apt's InstOrNewPolicyBroken: the version to install
+// has an unmet critical dependency, or an unmet Recommends or Suggests that
+// the installed version did not have.
+func (r *resolver) instOrNewPolicyBroken(s *pstate) bool {
+	e := r.e
+
+	if e.instBroken(s) {
+		return true
+	}
+
+	return r.flag(s.key)&flagPolicyAllowed == 0 && !e.nowPolicyBroken(s) && e.instPolicyBroken(s)
 }
 
 // ignorableNeg reports a negative dependency on its own package group.
@@ -90,7 +111,7 @@ func (r *resolver) makeScores() {
 	e := r.e
 	r.scores = make(map[string]int)
 
-	depScore := [...]int{kindPreDepends: 1, kindDepends: 1, kindConflicts: -1, kindBreaks: -1}
+	depScore := [...]int{kindPreDepends: 1, kindDepends: 1, kindConflicts: -1, kindBreaks: -1, kindRecommends: 1, kindSuggests: 0}
 
 	for _, key := range e.keys() {
 		s := e.state(key)
@@ -115,7 +136,7 @@ func (r *resolver) makeScores() {
 
 		r.scores[key] += score
 
-		for _, g := range e.depsOf(s.inst) {
+		for _, g := range e.scoredOf(s.inst) {
 			for i := range g.alts {
 				rel := &g.alts[i]
 				target := e.targetSlot(rel, e.ownerArch(s.inst))
@@ -162,7 +183,7 @@ func (r *resolver) makeScores() {
 			continue
 		}
 
-		for _, g := range e.depsOf(s.inst) {
+		for _, g := range e.scoredOf(s.inst) {
 			if g.negative() {
 				continue
 			}
@@ -330,6 +351,13 @@ func (r *resolver) resolveInternal(brokenFix bool) error {
 
 	if e.brokenCount() != 0 {
 		return e.planError()
+	}
+
+	// A package the resolver itself brought in is installed automatically.
+	for _, key := range e.keys() {
+		if s := e.state(key); s.mode == modeInstall && s.cur == nil && r.flag(key)&flagPreInstalled == 0 {
+			e.markAuto(s, true)
+		}
 	}
 
 	return nil
@@ -713,14 +741,14 @@ func (r *resolver) resolveByKeep() error {
 			}
 
 			s, ok := e.st[key]
-			if !ok || s.inst == nil || !e.instBroken(s) {
+			if !ok || s.inst == nil || !r.instOrNewPolicyBroken(s) {
 				continue
 			}
 
 			if !s.protect {
 				e.markKeep(s, false, 0)
 
-				if !e.instBroken(s) {
+				if !r.instOrNewPolicyBroken(s) {
 					restart = true
 
 					break
@@ -729,7 +757,7 @@ func (r *resolver) resolveByKeep() error {
 
 			r.keepAround(s)
 
-			if e.instBroken(s) {
+			if r.instOrNewPolicyBroken(s) {
 				continue
 			}
 
@@ -774,17 +802,17 @@ func (r *resolver) keepAround(s *pstate) {
 					e.markKeep(ps, false, 0)
 				}
 
-				if !e.instBroken(s) {
+				if !r.instOrNewPolicyBroken(s) {
 					break
 				}
 			}
 
-			if !e.instBroken(s) {
+			if !r.instOrNewPolicyBroken(s) {
 				break
 			}
 		}
 
-		if !e.instBroken(s) {
+		if !r.instOrNewPolicyBroken(s) {
 			break
 		}
 	}

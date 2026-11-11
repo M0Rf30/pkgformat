@@ -157,8 +157,17 @@ func (e *engine) distUpgrade() error {
 		return err
 	}
 
-	// Revert the phased updates with keeps, on a resolver of its own.
+	// Revert the phased updates with keeps, on a resolver of its own. Keeping
+	// also holds back a package for a Recommends that is unmet, which the
+	// upgrade accepted already, so those packages are allowed to be so.
 	fix := newResolver(e)
+
+	for _, key := range e.keys() {
+		if s := e.state(key); e.instPolicyBroken(s) {
+			fix.allowBrokenPolicy(s)
+		}
+	}
+
 	fix.keepPhased()
 
 	return fix.resolveByKeep()

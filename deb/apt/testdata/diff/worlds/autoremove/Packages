@@ -1,0 +1,315 @@
+Package: m1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: a1
+Description: m1 test package
+
+Package: a1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: a1 test package
+
+Package: m2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: a2 | a2b
+Recommends: rcm
+Description: m2 test package
+
+Package: a2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: a2 test package
+
+Package: a2b
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: a2b test package
+
+Package: rcm
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rcm test package
+
+Package: m3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Suggests: sg1
+Description: m3 test package
+
+Package: sg1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: sg1 test package
+
+Package: lone
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: lone test package
+
+Package: chain1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: chain2
+Description: chain1 test package
+
+Package: chain2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: chain2 test package
+
+Package: cyc1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc2
+Description: cyc1 test package
+
+Package: cyc2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc1
+Description: cyc2 test package
+
+Package: m4
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc3
+Description: m4 test package
+
+Package: cyc3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc4
+Description: cyc3 test package
+
+Package: cyc4
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: cyc3
+Description: cyc4 test package
+
+Package: m5
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: vsvc
+Description: m5 test package
+
+Package: vprov
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vsvc
+Description: vprov test package
+
+Package: vprov2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vsvc
+Description: vprov2 test package
+
+Package: ess
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Essential: yes
+Description: ess test package
+
+Package: req
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Description: req test package
+
+Package: linux-image-6
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: linux-image-6 test package
+
+Package: firmware-linux-free
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: firmware-linux-free test package
+
+Package: meta
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Section: metapackages
+Depends: md1, md2
+Description: meta test package
+
+Package: md1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: md1 test package
+
+Package: md2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: md2 test package
+
+Package: hold-auto
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: hold-auto test package
+
+Package: allauto
+Version: 1.0
+Architecture: all
+Maintainer: Test <test@example.org>
+Description: allauto test package
+
+Package: m6
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: vd (>= 2.0)
+Description: m6 test package
+
+Package: vd
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: vd test package
+
+Package: vold
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: vold test package
+
+Package: up1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: u1
+Description: up1 test package
+
+Package: u1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: u1 test package
+
+Package: up1
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: u2
+Description: up1 test package
+
+Package: u2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: u2 test package
+
+Package: ol
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Section: libs
+Description: ol test package
+
+Package: ol
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Section: oldlibs
+Depends: olnew
+Description: ol test package
+
+Package: olnew
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: olnew test package
+
+Package: sec1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Section: admin
+Description: sec1 test package
+
+Package: m8
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: a2b
+Description: m8 test package
+
+Package: m9
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: nine
+Description: m9 test package
+
+Package: nine
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: nine test package
+
+Package: manual-lonely
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: manual-lonely test package
+
+Package: x1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: y1 | y2
+Description: x1 test package
+
+Package: y1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: y1 test package
+
+Package: y2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: y2 test package
+
+Package: kernel-hold
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: khr
+Description: kernel-hold test package
+
+Package: khr
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: khr test package

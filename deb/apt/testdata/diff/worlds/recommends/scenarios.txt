@@ -1,0 +1,31 @@
+# id	apt-get arguments
+r01	install rec-main
+r02	install rec-main --install-recommends
+r03	install rec-main --install-suggests
+r04	install rec-main --install-recommends --install-suggests
+r05	install rd1 rec-main --install-recommends
+r06	install rc-main --install-recommends
+r07	install conf-a conf-b --install-recommends
+r08	install vrec-main --install-recommends
+r09	install cyc-a --install-recommends
+r10	install chain-a --install-recommends
+r11	install dep-main --install-recommends
+r12	install orrec --install-recommends
+r13	install upr --install-recommends
+r14	install upr2 --install-recommends
+r15	install upr3 --install-recommends
+r16	install inst-a --install-recommends
+r17	upgrade --install-recommends
+r18	upgrade --with-new-pkgs --install-recommends
+r19	dist-upgrade --install-recommends
+r20	dist-upgrade --install-recommends --install-suggests
+r21	install up-susp --install-suggests
+r22	install rec-main rr1 --install-recommends
+r23	install rec-main --install-recommends --no-install-recommends
+r24	install rec2 --install-recommends
+r25	install tied-a --install-recommends
+r26	install hasrec --install-recommends
+r27	install rr1 --install-recommends --install-suggests
+r28	install rec-main=1.0 --install-recommends
+r29	remove rd1 --install-recommends
+r30	remove sat --install-recommends

@@ -85,3 +85,29 @@ Only apt-scoring-only or out-of-scope ones; each is also in
   installed by hand (so nothing is garbage).
 * Scenarios in which apt falls back to its 3.0 solver are recorded as
   `Solver3` and skipped.
+
+## Soft dependencies, automatic marks and generated worlds
+
+Recorded with apt 3.0.4 (the `debian:stable-slim` image) by `SKIP_ARCHIVE=1 ./generate.sh`:
+
+- `worlds/recommends` (30 scenarios): Recommends and Suggests of new, upgraded
+  and kept packages, with `--install-recommends` and `--install-suggests`. apt
+  removes an installed package that a recommended package conflicts with, so
+  Plan does as well.
+- `worlds/autoremove` (40 scenarios): `autoremove`, `autopurge`, `install`,
+  `remove --auto-remove`, upgrades, metapackages, `oldlibs`, NeverAutoRemove
+  names and the `APT::AutoRemove::*Important` options, over an
+  `extended_states` file. The rows `Manu` ("set to manually installed") and
+  `Auto` ("no longer required") carry those lists; `Purg` rows are read as
+  `Remv`.
+- `worlds/soft1` to `worlds/soft6` (48 scenarios each) come from
+  `softgen` (`go run ./deb/apt/testdata/diff/softgen -seed N -out DIR`), a
+  seeded random universe with a consistent installed system, automatic marks
+  and a hold. Twelve of their scenarios are not matched yet and are listed in
+  `randomWorldDivergences` of `diff_plan_test.go`; they also fail without any
+  Recommends or Suggests in the world, so they are resolver cascades, not
+  soft-dependency logic.
+
+Not modelled: the versioned-kernel protection of autoremove, purge as distinct
+from remove, and the ordering of configuration (`scoring/s13` stays in
+`aptDivergences`).

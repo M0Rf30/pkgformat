@@ -15,11 +15,15 @@ targets=/targets.txt
 
 # Plain, uncompressed indexes, whatever the image's apt configuration says.
 rm -f /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-clean
+rm -f /etc/apt/apt.conf.d/docker-autoremove-suggests
 rm -rf /var/lib/apt/lists/*
 apt-get -o Acquire::GzipIndexes=false update -qq
 
 mkdir -p "$out/lists"
 cp /var/lib/dpkg/status "$out/status"
+# The image's auto-installed marks (empty when apt never installed anything).
+touch /var/lib/apt/extended_states
+cp /var/lib/apt/extended_states "$out/extended_states"
 
 for f in /var/lib/apt/lists/*_Packages; do
 	cp "$f" "$out/lists/$(basename "$f")"
@@ -46,6 +50,8 @@ mkdir -p "$out/installed"
 # shellcheck disable=SC2046 # one argument per line, none with spaces
 apt-get install -y -qq --no-install-recommends $(grep -v '^#' /installed/preinstall.txt) >/dev/null
 cp /var/lib/dpkg/status "$out/installed/status"
+# The marks apt wrote for what it installed (the preinstalled packages' deps).
+cp /var/lib/apt/extended_states "$out/installed/extended_states"
 
 : >"$out/installed/expected.tsv"
 

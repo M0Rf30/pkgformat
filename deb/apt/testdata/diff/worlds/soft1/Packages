@@ -1,0 +1,646 @@
+Package: p00
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: utils
+Depends: p03, virt4, p35
+Recommends: p26, p22
+Suggests: p29
+Description: p00 test package
+
+Package: p00
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: libs
+Depends: p21 (>= 2.0) | p31 (>= 1.0), p30 (>= 2.0), virt3
+Recommends: p32 (>= 1.0) | p21, p03
+Description: p00 test package
+
+Package: p01
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: libs
+Depends: p00, p00 (>= 1.0) | p00
+Recommends: p00
+Conflicts: p00
+Description: p01 test package
+
+Package: p01
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: metapackages
+Depends: virt3, p00
+Recommends: p00, p06
+Suggests: p00
+Description: p01 test package
+
+Package: p02
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: metapackages
+Depends: p01 | p00, p00
+Suggests: p00
+Description: p02 test package
+
+Package: p02
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Recommends: p01
+Description: p02 test package
+
+Package: p03
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: standard
+Section: libs
+Depends: p01 (>= 2.0), p01, p04
+Suggests: p01 (>= 1.0), p01
+Description: p03 test package
+
+Package: p04
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: libs
+Depends: p00 | p01, p00 (>= 2.0) | p02
+Recommends: virt1
+Suggests: p02, virt1
+Description: p04 test package
+
+Package: p04
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: metapackages
+Depends: p00 (>= 1.0) | p01 (>= 1.0), p03
+Recommends: p02, p00
+Description: p04 test package
+
+Package: p05
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: admin
+Depends: p04, p00
+Suggests: p12, p02 | p04 (>= 1.0)
+Description: p05 test package
+
+Package: p06
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: utils
+Depends: virt2 | p05, p01, p01 (>= 2.0) | p02
+Description: p06 test package
+
+Package: p07
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: libs
+Suggests: p06, p05
+Description: p07 test package
+
+Package: p07
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: metapackages
+Depends: p03, p00 | p35, p02 (>= 1.0)
+Recommends: p00, p02 (>= 1.0)
+Suggests: p12, p22
+Description: p07 test package
+
+Package: p08
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: libs
+Depends: p02, p40, p03
+Recommends: p05 | p07 (>= 1.0)
+Suggests: p01 (>= 2.0)
+Description: p08 test package
+
+Package: p08
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: oldlibs
+Depends: virt0
+Recommends: p06 (>= 2.0)
+Suggests: p00, p02
+Description: p08 test package
+
+Package: p09
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Depends: p06 (>= 2.0), virt0 | p08, p06
+Recommends: p03 (>= 1.0)
+Suggests: p01
+Description: p09 test package
+
+Package: p09
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Depends: p00
+Recommends: p02
+Conflicts: p10
+Description: p09 test package
+
+Package: p10
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: libs
+Suggests: p08, p29 (>= 2.0)
+Description: p10 test package
+
+Package: p11
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: libs
+Recommends: p06, p05
+Suggests: p07 (<< 2.0) | p09, p43
+Description: p11 test package
+
+Package: p11
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: net
+Depends: p04, p22, p10
+Recommends: p05 | p05 (>= 1.0), p07 | p04 (>= 2.0)
+Suggests: virt3
+Description: p11 test package
+
+Package: p12
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: metapackages
+Depends: p04 | p01, p04 (>= 2.0)
+Suggests: p01, p10
+Description: p12 test package
+
+Package: p13
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: metapackages
+Depends: p24
+Recommends: p00 (<< 2.0), p07 (>= 2.0)
+Suggests: p12 (>= 2.0), p03
+Description: p13 test package
+
+Package: p13
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: utils
+Depends: p00 | p28
+Recommends: p07, virt2
+Description: p13 test package
+
+Package: p14
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: oldlibs
+Depends: p35 (>= 1.0) | p10 (>= 1.0)
+Suggests: p12, p01
+Provides: virt0
+Description: p14 test package
+
+Package: p15
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: admin
+Depends: p13 | p06
+Recommends: p26, p10
+Description: p15 test package
+
+Package: p16
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Recommends: p26
+Suggests: p07, p07
+Provides: virt4
+Description: p16 test package
+
+Package: p16
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: oldlibs
+Depends: p09, p09, p10
+Recommends: p14
+Suggests: p05 | p08
+Description: p16 test package
+
+Package: p17
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: admin
+Depends: p02 | p37, p03
+Suggests: p04 | p10
+Description: p17 test package
+
+Package: p17
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: libs
+Depends: p10
+Recommends: p05 (>= 1.0)
+Suggests: p03, p03
+Description: p17 test package
+
+Package: p18
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: utils
+Recommends: p34
+Suggests: p17, p06
+Description: p18 test package
+
+Package: p19
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: utils
+Depends: p16, p04 | p09
+Recommends: p06
+Suggests: p17 (>= 1.0)
+Description: p19 test package
+
+Package: p20
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: net
+Depends: p17 (>= 2.0)
+Recommends: p10 (>= 1.0), virt4 | p04
+Conflicts: p14
+Description: p20 test package
+
+Package: p20
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: admin
+Depends: p05 | p16, p15 (>= 1.0)
+Recommends: p16, p17
+Suggests: p04
+Provides: virt2
+Description: p20 test package
+
+Package: p21
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: utils
+Description: p21 test package
+
+Package: p21
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: libs
+Description: p21 test package
+
+Package: p22
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: metapackages
+Depends: p02 (>= 1.0)
+Recommends: p11 | p14, p07
+Conflicts: virt1
+Description: p22 test package
+
+Package: p22
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: admin
+Depends: p14 | virt4
+Recommends: p19, p07
+Description: p22 test package
+
+Package: p23
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: metapackages
+Depends: p06 (>= 2.0), p17, p42
+Recommends: p08 (>= 1.0) | p38 (>= 1.0), p01
+Suggests: p05
+Description: p23 test package
+
+Package: p24
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: utils
+Suggests: p23
+Provides: virt1
+Description: p24 test package
+
+Package: p25
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: libs
+Recommends: p05 (>= 1.0)
+Provides: virt3
+Description: p25 test package
+
+Package: p25
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: net
+Depends: p40, p17 | p07
+Recommends: p18, p04 | virt2
+Provides: virt2
+Description: p25 test package
+
+Package: p26
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Essential: yes
+Priority: optional
+Section: libs
+Depends: p05
+Recommends: p10 | p16 (<< 2.0), p13
+Description: p26 test package
+
+Package: p27
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: net
+Depends: p05, p03, virt2
+Suggests: p35
+Description: p27 test package
+
+Package: p28
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: admin
+Depends: p09, p12, p27
+Recommends: p10, virt2 | virt2
+Suggests: p13
+Description: p28 test package
+
+Package: p29
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: libs
+Recommends: p06, p08 (>= 1.0)
+Description: p29 test package
+
+Package: p30
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Recommends: p09 (>= 1.0) | virt2, p02
+Suggests: p01, virt0
+Provides: virt0
+Description: p30 test package
+
+Package: p31
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Depends: p04
+Suggests: p32
+Description: p31 test package
+
+Package: p32
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Depends: virt4 | virt3
+Recommends: p42 (>= 1.0), p31 (<< 2.0)
+Suggests: p15 (>= 2.0)
+Description: p32 test package
+
+Package: p32
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: utils
+Depends: p06 | p31 (>= 1.0), p21 (<< 2.0)
+Description: p32 test package
+
+Package: p33
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: libs
+Depends: p02
+Description: p33 test package
+
+Package: p34
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: libs
+Depends: p17, p33 (>= 2.0)
+Recommends: virt0, p31 (>= 2.0)
+Description: p34 test package
+
+Package: p35
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: oldlibs
+Recommends: p13 (>= 1.0), p32
+Suggests: p24, p06 (>= 2.0)
+Provides: virt1
+Description: p35 test package
+
+Package: p36
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: oldlibs
+Description: p36 test package
+
+Package: p37
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: standard
+Section: libs
+Recommends: p30, p04
+Suggests: p30, p01
+Description: p37 test package
+
+Package: p38
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: utils
+Depends: p09 (>= 1.0), virt2, p10
+Suggests: virt2
+Description: p38 test package
+
+Package: p39
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: metapackages
+Depends: p34 | p34
+Recommends: p28, virt3
+Suggests: p01 (<< 2.0)
+Description: p39 test package
+
+Package: p40
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: metapackages
+Depends: virt3
+Recommends: p08 (>= 2.0)
+Suggests: p05 | p30, p04 (>= 2.0)
+Provides: virt4
+Description: p40 test package
+
+Package: p41
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: libs
+Depends: p38 (>= 1.0)
+Suggests: p17
+Description: p41 test package
+
+Package: p42
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: metapackages
+Depends: virt0, p19 (<< 2.0), p10
+Recommends: p40, p13
+Suggests: p00, p18
+Description: p42 test package
+
+Package: p43
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: libs
+Depends: p11, p35 (<< 2.0) | p02
+Suggests: p03
+Description: p43 test package
+
+Package: p44
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: metapackages
+Description: p44 test package
+
+Package: p45
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: utils
+Suggests: p41 (>= 1.0)
+Description: p45 test package
+
+Package: p45
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: libs
+Depends: p10
+Recommends: p23
+Suggests: p25
+Description: p45 test package
+

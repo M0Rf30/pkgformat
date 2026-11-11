@@ -1,7 +1,8 @@
 #!/bin/bash
 # Runs inside a debian container (see generate.sh): for every world under
 # /worlds it builds a flat repository from the world's Packages file, installs
-# the world's dpkg status, applies its preferences and holds, then records what
+# the world's dpkg status and extended_states (the auto-installed marks),
+# applies its preferences and holds, then records what
 # `apt-get -s` plans for each line of the world's scenarios.txt
 # (<id> TAB <apt-get arguments>) into /out/worlds/<world>/expected.tsv, in the
 # format record.sh documents.
@@ -13,6 +14,9 @@ export DEBIAN_FRONTEND=noninteractive LC_ALL=C
 . /record.sh
 
 rm -f /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-clean
+# The image ships a setting that makes autoremove ignore Suggests; apt's own
+# default (APT::AutoRemove::SuggestsImportant true) is what the worlds record.
+rm -f /etc/apt/apt.conf.d/docker-autoremove-suggests
 rm -f /etc/apt/sources.list.d/* /etc/apt/sources.list
 rm -rf /etc/apt/preferences.d /etc/apt/preferences
 
@@ -39,6 +43,12 @@ for world in /worlds/*/; do
 
 	cp "$world/status" /var/lib/dpkg/status
 	: >/var/lib/dpkg/available
+	# The auto-installed marks: the world's own, or none.
+	if [ -f "$world/extended_states" ]; then
+		cp "$world/extended_states" /var/lib/apt/extended_states
+	else
+		rm -f /var/lib/apt/extended_states
+	fi
 	if [ -f "$world/holds" ]; then
 		while read -r pkg; do
 			[ -n "$pkg" ] && echo "$pkg hold" | dpkg --set-selections

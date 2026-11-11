@@ -1,0 +1,112 @@
+Package: a1
+Architecture: amd64
+Auto-Installed: 1
+
+Package: a2
+Architecture: amd64
+Auto-Installed: 1
+
+Package: a2b
+Architecture: amd64
+Auto-Installed: 1
+
+Package: rcm
+Architecture: amd64
+Auto-Installed: 1
+
+Package: sg1
+Architecture: amd64
+Auto-Installed: 1
+
+Package: lone
+Architecture: amd64
+Auto-Installed: 1
+
+Package: chain1
+Architecture: amd64
+Auto-Installed: 1
+
+Package: chain2
+Architecture: amd64
+Auto-Installed: 1
+
+Package: cyc1
+Architecture: amd64
+Auto-Installed: 1
+
+Package: cyc2
+Architecture: amd64
+Auto-Installed: 1
+
+Package: cyc3
+Architecture: amd64
+Auto-Installed: 1
+
+Package: cyc4
+Architecture: amd64
+Auto-Installed: 1
+
+Package: vprov
+Architecture: amd64
+Auto-Installed: 1
+
+Package: vprov2
+Architecture: amd64
+Auto-Installed: 1
+
+Package: ess
+Architecture: amd64
+Auto-Installed: 1
+
+Package: req
+Architecture: amd64
+Auto-Installed: 1
+
+Package: linux-image-6
+Architecture: amd64
+Auto-Installed: 1
+
+Package: firmware-linux-free
+Architecture: amd64
+Auto-Installed: 1
+
+Package: md1
+Architecture: amd64
+Auto-Installed: 1
+
+Package: md2
+Architecture: amd64
+Auto-Installed: 1
+
+Package: hold-auto
+Architecture: amd64
+Auto-Installed: 1
+
+Package: allauto
+Architecture: all
+Auto-Installed: 1
+
+Package: vd
+Architecture: amd64
+Auto-Installed: 1
+
+Package: vold
+Architecture: amd64
+Auto-Installed: 1
+
+Package: u1
+Architecture: amd64
+Auto-Installed: 1
+
+Package: y2
+Architecture: amd64
+Auto-Installed: 1
+
+Package: kernel-hold
+Architecture: amd64
+Auto-Installed: 1
+
+Package: khr
+Architecture: amd64
+Auto-Installed: 1
+

@@ -2,6 +2,7 @@ package apt
 
 import (
 	"cmp"
+	"regexp"
 	"slices"
 	"sort"
 	"strings"
@@ -51,11 +52,13 @@ const (
 	kindDepends
 	kindConflicts
 	kindBreaks
+	kindRecommends
+	kindSuggests
 )
 
 // depGroup is one entry of the dependencies of a version: a dependency group
-// (Depends, Pre-Depends) of alternatives, or one relation of Conflicts or
-// Breaks.
+// (Depends, Pre-Depends, Recommends, Suggests) of alternatives, or one
+// relation of Conflicts or Breaks.
 type depGroup struct {
 	owner *pkg
 	kind  depKind
@@ -63,7 +66,23 @@ type depGroup struct {
 }
 
 // negative reports a Conflicts or Breaks entry.
-func (g *depGroup) negative() bool { return g.kind >= kindConflicts }
+func (g *depGroup) negative() bool { return g.kind == kindConflicts || g.kind == kindBreaks }
+
+// critical reports an entry apt always honours: everything but Recommends and
+// Suggests (apt's IsCritical).
+func (g *depGroup) critical() bool { return g.kind <= kindBreaks }
+
+// reasonKind is the reason a package brought in to meet the group has.
+func (g *depGroup) reasonKind() ReasonKind {
+	switch g.kind {
+	case kindRecommends:
+		return ReasonRecommends
+	case kindSuggests:
+		return ReasonSuggests
+	default:
+		return ReasonDependency
+	}
+}
 
 // pstate is the plan's view of one package (a name:arch slot).
 type pstate struct {
@@ -79,10 +98,26 @@ type pstate struct {
 	protect bool
 	// held is a package whose state dpkg or the user froze.
 	held bool
-	// auto is the automatic-installation flag of a package new to the system.
+	// auto is apt's Auto flag: the package was installed to satisfy a
+	// dependency, not by request.
 	auto bool
 	// why is the reason of the last change of mode.
 	why Reason
+}
+
+// engineConfig is what a plan reads from PlanOptions, resolved to the values
+// apt's configuration would hold.
+type engineConfig struct {
+	held     []string
+	maxSteps int
+	// recommends and suggests are APT::Install-Recommends and
+	// APT::Install-Suggests.
+	recommends, suggests bool
+	// followRecommends and followSuggests are
+	// APT::AutoRemove::RecommendsImportant and SuggestsImportant.
+	followRecommends, followSuggests bool
+	// neverRemove are the APT::NeverAutoRemove patterns.
+	neverRemove []*regexp.Regexp
 }
 
 // engine is one planning run over a cache; c.mu is held for its duration.
@@ -91,14 +126,24 @@ type engine struct {
 	native string
 	pol    candidatePolicy
 	held   map[string]bool
+	cfg    engineConfig
 
 	st     map[string]*pstate
 	deps   map[*pkg][]depGroup
-	active map[string]struct{}
-	order  []string
-	every  []string
-	revCur map[string][]revEntry
-	bySrc  map[string][]*pkg
+	soft   map[*pkg][]depGroup
+	imp    map[*pkg][]depGroup
+	revAll map[string][]revAllEntry
+	// marked is the result of the last mark phase of the auto-remover as
+	// apt's Marked flags hold it: the state at the end of the previous
+	// top-level action.
+	marked map[string]bool
+	// anyAuto is true when an installed package is marked automatic.
+	anyAuto bool
+	active  map[string]struct{}
+	order   []string
+	every   []string
+	revCur  map[string][]revEntry
+	bySrc   map[string][]*pkg
 
 	steps    int
 	maxSteps int
@@ -117,20 +162,38 @@ type revEntry struct {
 	rel   *deb.Relation
 }
 
+// revAllEntry is one important dependency of any version on a package name.
+type revAllEntry struct {
+	owner *pkg
+	group *depGroup
+	rel   *deb.Relation
+}
+
 // newEngine sets up the states of the installed packages.
-func newEngine(c *Cache, pol candidatePolicy, held []string, maxSteps int) *engine {
+func newEngine(c *Cache, pol candidatePolicy, cfg engineConfig) *engine {
 	e := &engine{
 		c:        c,
 		native:   c.hostArch,
 		pol:      pol,
-		held:     make(map[string]bool, len(held)),
+		cfg:      cfg,
+		held:     make(map[string]bool, len(cfg.held)),
 		st:       make(map[string]*pstate, len(c.installed)),
 		deps:     make(map[*pkg][]depGroup),
+		soft:     make(map[*pkg][]depGroup),
+		imp:      make(map[*pkg][]depGroup),
 		active:   make(map[string]struct{}, len(c.installed)),
-		maxSteps: maxSteps,
+		maxSteps: cfg.maxSteps,
 	}
 
-	for _, h := range held {
+	for _, p := range c.installed {
+		if p.AutoInstalled {
+			e.anyAuto = true
+
+			break
+		}
+	}
+
+	for _, h := range cfg.held {
 		e.held[h] = true
 	}
 
@@ -161,7 +224,8 @@ func (e *engine) state(key string) *pstate {
 	s.inst = s.cur
 	s.cand = selectCandidate(e.pol, e.c.slots[key], s.cur)
 	s.updateStatus()
-	s.held = e.held[key] || e.held[keyName(key)]
+	s.held = e.held[key] || e.held[keyName(key)] || (s.cur != nil && s.cur.Held)
+	s.auto = s.cur != nil && s.cur.AutoInstalled
 	e.st[key] = s
 
 	return s
@@ -261,6 +325,114 @@ func (e *engine) depsOf(p *pkg) []depGroup {
 	e.deps[p] = out
 
 	return out
+}
+
+// softOf lists the Recommends and Suggests groups of a version, in the order
+// apt stores them (after the critical ones).
+func (e *engine) softOf(p *pkg) []depGroup {
+	if g, ok := e.soft[p]; ok {
+		return g
+	}
+
+	out := make([]depGroup, 0, len(p.Recommends)+len(p.Suggests))
+
+	for _, a := range p.Recommends {
+		out = append(out, depGroup{owner: p, kind: kindRecommends, alts: a})
+	}
+
+	for _, a := range p.Suggests {
+		out = append(out, depGroup{owner: p, kind: kindSuggests, alts: a})
+	}
+
+	e.soft[p] = out
+
+	return out
+}
+
+// scoredOf lists the groups of a version that give the packages they name
+// score in the problem resolver: the critical ones and the Recommends, which
+// count whether or not the options install them.
+func (e *engine) scoredOf(p *pkg) []depGroup {
+	soft := e.softOf(p)
+	if len(p.Recommends) == 0 {
+		return e.depsOf(p)
+	}
+
+	out := slices.Clone(e.depsOf(p))
+
+	for _, g := range soft {
+		if g.kind == kindRecommends {
+			out = append(out, g)
+		}
+	}
+
+	return out
+}
+
+// isImportant is apt's IsImportantDep: a dependency the install follows.
+// Critical ones always are; Recommends and Suggests when the options ask.
+func (e *engine) isImportant(g *depGroup) bool {
+	switch g.kind {
+	case kindRecommends:
+		return e.cfg.recommends
+	case kindSuggests:
+		return e.cfg.suggests
+	default:
+		return true
+	}
+}
+
+// importantOf lists the dependency groups of a version that installing it
+// follows: the critical ones, then the Recommends and Suggests the options
+// make important.
+func (e *engine) importantOf(p *pkg) []depGroup {
+	if g, ok := e.imp[p]; ok {
+		return g
+	}
+
+	out := slices.Clone(e.depsOf(p))
+
+	for _, g := range e.softOf(p) {
+		if e.isImportant(&g) {
+			out = append(out, g)
+		}
+	}
+
+	e.imp[p] = out
+
+	return out
+}
+
+// instPolicyBroken is apt's InstPolicyBroken: the version the plan installs
+// has an important dependency that is not met, whether critical or not.
+func (e *engine) instPolicyBroken(s *pstate) bool {
+	if s.inst == nil {
+		return false
+	}
+
+	for _, g := range e.softOf(s.inst) {
+		if e.isImportant(&g) && !e.groupOK(&g, whenInstall) {
+			return true
+		}
+	}
+
+	return e.instBroken(s)
+}
+
+// nowPolicyBroken is apt's NowPolicyBroken: the installed version has an
+// important dependency that the installed packages do not meet.
+func (e *engine) nowPolicyBroken(s *pstate) bool {
+	if s.cur == nil {
+		return false
+	}
+
+	for _, g := range e.importantOf(s.cur) {
+		if !e.groupOK(&g, whenNow) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // relMatch reports whether v meets a relation of group owner: the Multi-Arch
@@ -601,6 +773,10 @@ func (e *engine) markDelete(s *pstate, depth int, fromUser bool) bool {
 		return false
 	}
 
+	if !fromUser {
+		e.releaseDependencies(s)
+	}
+
 	if s.cur == nil {
 		s.mode = modeKeep
 	} else {
@@ -625,7 +801,7 @@ func (e *engine) reason(fromUser bool) Reason {
 }
 
 // stateChange is apt's MarkInstall_StateChange.
-func (e *engine) stateChange(s *pstate, fromUser bool) bool {
+func (e *engine) stateChange(s *pstate, autoInst, fromUser bool) bool {
 	if s.protect && s.inst == s.cand {
 		return true
 	}
@@ -635,7 +811,10 @@ func (e *engine) stateChange(s *pstate, fromUser bool) bool {
 	s.why = e.reason(fromUser)
 
 	if fromUser {
-		if s.status == 2 {
+		// A new install or an installed package the plan changes becomes
+		// manual, unless the auto-remover still counts on it (aptitude
+		// relies on that) and no automatic installation follows.
+		if s.status == 2 || (s.cur != nil && (autoInst || !e.isMarked(s.key))) {
 			s.auto = false
 		}
 	} else if s.status == 2 {
@@ -744,7 +923,7 @@ func (e *engine) isInstallOK(s *pstate, autoInst, fromUser bool) bool {
 // collectDependencies splits the unmet dependency groups of a version into
 // those to install and those to remove (apt's MarkInstall_CollectDependencies).
 func (e *engine) collectDependencies(s *pstate, pv *pkg) (toInstall, toRemove []*depGroup) {
-	groups := e.depsOf(pv)
+	groups := e.importantOf(pv)
 
 	for i := range groups {
 		g := &groups[i]
