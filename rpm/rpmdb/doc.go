@@ -28,9 +28,9 @@
 // [DB.Packages] iterates over the installed packages as [rpm.Package] values:
 // name, epoch, version, release and architecture, the dependencies, the file
 // list with modes, sizes, digests, link targets, owners and times, and the
-// install time. [DB.List] collects them. [DB.InstalledNames] and
-// [DB.InstalledProvides] list the names and capabilities, and
-// [DB.InstalledPackages] makes a *DB usable as a [dnf.Installed].
+// install time. [DB.List] collects them.
+// [DB.InstalledPackages] returns them too, which makes a *DB usable as a
+// [dnf.Installed].
 //
 // # Queries
 //

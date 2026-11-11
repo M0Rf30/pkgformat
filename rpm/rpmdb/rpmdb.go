@@ -10,12 +10,10 @@ import (
 	"iter"
 	"log/slog"
 	"os"
-	"slices"
 	"sync/atomic"
 	"time"
 
 	"github.com/M0Rf30/pkgformat/rpm"
-	"github.com/M0Rf30/pkgformat/rpm/tag"
 	"github.com/M0Rf30/pkgformat/safepath"
 )
 
@@ -477,64 +475,4 @@ func (db *DB) List(ctx context.Context) ([]*rpm.Package, error) {
 	}
 
 	return pkgs, nil
-}
-
-// InstalledNames returns the names of the installed packages, sorted and
-// without duplicates (a package installed in several versions counts once).
-// It decodes the names only, which is much cheaper than [DB.List].
-func (db *DB) InstalledNames(ctx context.Context) ([]string, error) {
-	var names []string
-
-	for hdr, err := range db.headers(ctx) {
-		if err != nil {
-			return nil, err
-		}
-
-		if name := firstString(hdr, tag.NAME); name != "" {
-			names = append(names, name)
-		}
-	}
-
-	return uniq(names), nil
-}
-
-// InstalledProvides returns the capabilities the installed packages provide,
-// as names without version constraints, sorted and without duplicates. Each
-// package's own name is included, as dnf does. It decodes the dependency names
-// only, which is much cheaper than [DB.List].
-func (db *DB) InstalledProvides(ctx context.Context) ([]string, error) {
-	var provides []string
-
-	for hdr, err := range db.headers(ctx) {
-		if err != nil {
-			return nil, err
-		}
-
-		name := firstString(hdr, tag.NAME)
-		if name == "" {
-			continue
-		}
-
-		provides = append(provides, name)
-
-		if names, err := hdr.GetStrings(tag.PROVIDENAME); err == nil {
-			provides = append(provides, names...)
-		}
-	}
-
-	return uniq(provides), nil
-}
-
-func firstString(hdr *rpm.RpmHeader, id int) string {
-	if strs, err := hdr.GetStrings(id); err == nil && len(strs) > 0 {
-		return strs[0]
-	}
-
-	return ""
-}
-
-func uniq(s []string) []string {
-	slices.Sort(s)
-
-	return slices.Compact(s)
 }

@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"time"
 
 	"github.com/M0Rf30/pkgformat/rpm/rpmdb"
@@ -60,11 +61,17 @@ func Example() {
 		}
 	}
 
-	names, err := db.InstalledNames(context.Background())
+	installed, err := db.InstalledPackages(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	var names []string
+	for _, p := range installed {
+		names = append(names, p.Name)
+	}
+
+	slices.Sort(names)
 	fmt.Println(names)
 	// Output:
 	// format: ndb
