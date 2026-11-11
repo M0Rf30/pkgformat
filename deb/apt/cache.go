@@ -474,6 +474,35 @@ func (c *Cache) Versions(name string) []PackageInfo {
 	return nil
 }
 
+// Candidate returns the version of the named package apt would install under
+// the pin policy pol: the highest priority wins, the highest version among
+// equals, and a version below priority 0 or a phased update withheld from the
+// installed system is never chosen. A nil pol applies apt's defaults (no
+// preferences). The bool is false when no version qualifies.
+func (c *Cache) Candidate(name string, pol *Policy) (PackageInfo, bool) {
+	if pol == nil {
+		pol = NewPolicy(nil, PolicyOptions{})
+	}
+
+	all := c.Versions(name)
+	versions := make([]*PackageInfo, len(all))
+
+	var installed *PackageInfo
+
+	for i := range all {
+		versions[i] = &all[i]
+		if all[i].Installed {
+			installed = &all[i]
+		}
+	}
+
+	if cand := pol.Candidate(versions, installed); cand != nil {
+		return *cand, true
+	}
+
+	return PackageInfo{}, false
+}
+
 // PackageCount is the number of packages in the cache, counting a name on two
 // architectures twice and every version of one once.
 func (c *Cache) PackageCount() int {

@@ -1006,3 +1006,45 @@ func TestLoadParsesSourceAndPhased(t *testing.T) {
 	assert.Equal(t, "srcempty", bin3.SourceName)
 	assert.Equal(t, "2", bin3.SourceVersion)
 }
+
+func TestCacheCandidateFollowsPins(t *testing.T) {
+	t.Parallel()
+
+	c := NewCache("amd64")
+	stable := &ReleaseInfo{Suite: "stable", Codename: "bookworm", Origin: "Debian"}
+	testing_ := &ReleaseInfo{Suite: "testing", Codename: "trixie", Origin: "Debian"}
+
+	c.AddEntry(&PackageInfo{Name: "x", Version: "1", Architecture: "amd64", HasCandidate: true, Filename: "x1.deb", Releases: []*ReleaseInfo{stable}})
+	c.AddEntry(&PackageInfo{Name: "x", Version: "2", Architecture: "amd64", HasCandidate: true, Filename: "x2.deb", Releases: []*ReleaseInfo{testing_}})
+
+	got, ok := c.Candidate("x", nil)
+	require.True(t, ok)
+	assert.Equal(t, "2", got.Version, "equal priorities: the highest version")
+
+	prefs, err := ParsePreferences("Package: *\nPin: release n=bookworm\nPin-Priority: 900\n")
+	require.NoError(t, err)
+
+	got, ok = c.Candidate("x", NewPolicy(prefs, PolicyOptions{}))
+	require.True(t, ok)
+	assert.Equal(t, "1", got.Version, "the pinned release wins")
+
+	prefs, err = ParsePreferences("Package: x\nPin: release n=trixie\nPin-Priority: -1\n")
+	require.NoError(t, err)
+
+	got, ok = c.Candidate("x", NewPolicy(prefs, PolicyOptions{}))
+	require.True(t, ok)
+	assert.Equal(t, "1", got.Version, "a version pinned below zero is never chosen")
+
+	_, ok = c.Candidate("absent", nil)
+	assert.False(t, ok)
+}
+
+func TestTransportFailureUnwraps(t *testing.T) {
+	t.Parallel()
+
+	inner := fmt.Errorf("boom")
+	err := error(&transportFailure{err: inner})
+
+	assert.Equal(t, "boom", err.Error())
+	require.ErrorIs(t, err, inner)
+}

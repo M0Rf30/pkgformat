@@ -18,10 +18,40 @@ github.com/M0Rf30/pkgformat/deb/apt    apt client: update, load, resolve, downlo
 | Relations | `ParseRelations` (keeps `:any`/`:native` qualifiers, `[arch]` and `<profile>` restrictions), `FormatRelations`, `Relation.AppliesTo`, `ActiveRelations`, `ArchMatches` (architecture wildcards), `DependencyNames`, `NormalizeDependency` |
 | Installed packages | `FindStatus`, `OpenStatus`, `(*StatusDB)`: `Entries`, `List`, `InstalledNames`, `InstalledProvides`; `ParseStatus`; `ReadInfoList` for `/var/lib/dpkg/info/*.list` |
 | Repository indexes | `Index` (Packages writer, plain and compressed), `ScanPackages`, `OpenIndex` (gz, bz2, xz, lz4, zst) |
-| Release | `Release`, `ParseRelease`, `SignRelease`, `Trust` (InRelease and Release.gpg verification policy) |
-| apt client | `apt.Update`, `apt.Load`, `(*apt.Cache)`: `Lookup`, `ResolveVirtual`, `ResolveDeps`, `Download`, `DownloadClosure` |
+| Release | `Release` (every field, Debian and apt-ftparchive layouts), `ParseRelease`, `SignRelease`, `Trust` (InRelease and Release.gpg verification policy) |
+| by-hash, Contents, Translations | `WriteByHash`, `PruneByHash`; `ContentsBuilder`, `ScanContents`; `TranslationBuilder`, `ScanTranslation`, `I18nIndex` (see [REPOSITORY.md](REPOSITORY.md)) |
+| Packages.diff | `ParsePDiffIndex`, `ApplyPDiffChain`, `GeneratePDiff`, `MergePDiffs`, `PDiffIndexBuilder` (see [PDIFF.md](PDIFF.md)) |
+| apt client | `apt.Update` (by-hash, pdiffs, translations, Contents, Sources; http, https, file, copy, mirror+ sources), `apt.Load`, `(*apt.Cache)`: `Lookup`, `Candidate`, `ResolveVirtual`, `ResolveDeps`, `Plan`, `Download`, `DownloadClosure` |
+| apt sources and policy | `apt.ParseSourcesList`, `ParseSources822` (every option, Signed-By forms), `apt.ParsePreferences`, `NewPolicy` (pins, phased updates, apt's priorities) |
 
 Compression of written packages: `gzip`, `xz`, `zstd` (default) or none. Index decoders also read `bzip2` and `lz4`.
+
+## The apt client
+
+```go
+srcs, err := apt.LoadSources("/etc/apt/sources.list", "/etc/apt/sources.list.d") // every sources.list and deb822 option
+n, err := apt.Update(ctx, srcs, apt.UpdateOptions{ListsDir: lists, DefaultArch: "amd64"})
+
+cache, err := apt.Load(apt.LoadOptions{ListsDir: lists, StatusFile: "/var/lib/dpkg/status", Sources: srcs})
+prefs, err := apt.LoadPreferences("/etc/apt/preferences", "/etc/apt/preferences.d")
+policy := apt.NewPolicy(prefs, apt.PolicyOptions{DefaultRelease: "stable", MachineID: id})
+
+plan, err := cache.Plan(apt.PlanRequest{Install: []string{"nginx"}}, apt.PlanOptions{Policy: policy})
+err = cache.Download(ctx, dir, names, apt.DownloadOptions{})
+```
+
+`Update` follows what apt does for a source: it verifies the Release (`Signed-By`
+as a key file, a keyring directory or an inline block; `Trusted`,
+`Allow-Insecure`, `Check-Valid-Until`, `Valid-Until-Min/Max`, `Check-Date`),
+fetches the indexes by hash when the Release offers it, patches `Packages` with
+`Packages.diff` when that is cheaper than the whole file, and reads
+`Translation-*`, `Contents-*` and `Sources` as the source's `Languages` and
+`Targets` ask. `file:`, `copy:` and `mirror+` sources work; `cdrom:` is a typed
+`ErrUnsupportedScheme`. Pins, `-t` releases and phased updates follow apt
+exactly and were checked against recorded apt 2.6, 3.0 and 3.3 output
+(`deb/apt/testdata/policy`, `deb/apt/testdata/phased`); `Plan` was checked
+against `apt-get -s` (`deb/apt/testdata/diff`); `Update` against a real
+`apt-get update` (`deb/apt/testdata/e2e-update`).
 
 ## Design
 
