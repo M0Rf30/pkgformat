@@ -1,0 +1,13 @@
+/etc/shapes.conf 644 0:0 1 regular file
+/usr/bin/tool 755 0:0 2 regular file
+/usr/bin/tool-hard 755 0:0 2 regular file
+/usr/bin/tool-sym 777 0:0 1 symbolic link
+/usr/bin/tool-fifo 640 0:0 1 fifo
+/usr/bin/tool-suid 4755 0:0 1 regular file
+/usr/share/shapes/owned 640 1234:5678 1 regular file
+/var/lib/shapes 1770 1234:5678 2 directory
+# file: usr/bin/tool-cap
+security.capability=0x0100000200200000000000000000000000000000
+
+# file: usr/share/shapes/tagged
+user.shape=0x746167676564

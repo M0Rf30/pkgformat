@@ -1,0 +1,27 @@
+%FILES%
+etc/
+etc/shapes.conf
+usr/
+usr/bin/
+usr/bin/tool
+usr/bin/tool-cap
+usr/bin/tool-fifo
+usr/bin/tool-hard
+usr/bin/tool-suid
+usr/bin/tool-sym
+usr/share/
+usr/share/a b/
+usr/share/a b/c=d
+usr/share/shapes/
+usr/share/shapes/chmodded
+usr/share/shapes/chowned
+usr/share/shapes/gone
+usr/share/shapes/owned
+usr/share/shapes/tagged
+var/
+var/lib/
+var/lib/shapes/
+
+%BACKUP%
+etc/shapes.conf	f968f33f844c98de1d3b4fe70f2e1a0f
+
