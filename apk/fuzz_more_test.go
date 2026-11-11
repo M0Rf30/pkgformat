@@ -138,7 +138,7 @@ func FuzzParsePublicKeyPEM(f *testing.F) {
 	})
 }
 
-func FuzzResolveDeps(f *testing.F) {
+func FuzzSolve(f *testing.F) {
 	f.Add(RenderIndex(samplePackages()), "hello")
 	f.Add([]byte("P:a\nV:1\nA:noarch\nD:b c>=1 !d\np:x=1\n\nP:b\nV:1\nA:noarch\nD:a\n"), "a")
 
@@ -156,9 +156,9 @@ func FuzzResolveDeps(f *testing.F) {
 			seeds = append(seeds, pkgs[i].Name)
 		}
 
-		res, err := idx.ResolveDeps(seeds)
+		res, err := idx.Solve(SolveRequest{World: seeds})
 		if err != nil {
-			if !errors.Is(err, ErrPackageNotFound) {
+			if !errors.Is(err, ErrUnsatisfiable) && !errors.Is(err, ErrSolveLimit) {
 				t.Fatalf("untyped error: %v", err)
 			}
 

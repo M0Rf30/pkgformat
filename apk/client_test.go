@@ -83,7 +83,7 @@ func newRepo(t *testing.T, signer *Signer) *repoFixture {
 		fx.set("/main/x86_64/"+name+"-"+version+".apk", buf.Bytes())
 	}
 
-	add("app", "1.0-r0", "x86_64", []string{"libfoo>=1.0", "so:libbar.so.1", "!conflict", "/bin/sh"}, nil)
+	add("app", "1.0-r0", "x86_64", []string{"libfoo>=1.0", "so:libbar.so.1", "!conflict"}, nil)
 	add("libfoo", "1.1-r0", "x86_64", nil, nil)
 	add("libbar", "2.0-r0", "x86_64", nil, []string{"so:libbar.so.1=2"})
 	add("docs", "1.0-r0", "noarch", nil, nil)
@@ -147,7 +147,7 @@ func TestClient_updateAndDownload(t *testing.T) {
 		t.Fatalf("cache copy: %v", err)
 	}
 
-	res, err := up.ResolveDeps([]string{"app"})
+	res, err := up.Solve(SolveRequest{World: []string{"app"}})
 	if err != nil {
 		t.Fatal(err)
 	}

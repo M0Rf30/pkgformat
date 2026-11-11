@@ -1,0 +1,5 @@
+libfoo 3.0-r0 | D=libbar>=2
+edge-tool 1.0-r0 | D=libfoo
+app 3.0-r0 | D=libfoo>=3
+tool 2.0-r0
+edge-only 1-r0 | D=libbar

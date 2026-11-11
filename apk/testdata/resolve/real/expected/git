@@ -1,0 +1,12 @@
+install brotli-libs-1.2.1-r0
+install c-ares-1.34.9-r0
+install git-2.54.1-r0
+install git-init-template-2.54.1-r0
+install libcurl-8.23.0-r0
+install libexpat-2.10.0-r0
+install libidn2-2.3.8-r0
+install libpsl-0.21.5-r3
+install libunistring-1.4.2-r0
+install nghttp2-libs-1.70.0-r0
+install pcre2-10.49-r0
+install zstd-libs-1.5.7-r2

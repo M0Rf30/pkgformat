@@ -1,0 +1,6 @@
+install libncursesw-6.6_p20260516-r0
+install ncurses-terminfo-base-6.6_p20260516-r0
+install pixman-0.46.4-r0
+install vim-9.2.1310-r0
+install vim-common-9.2.1310-r0
+install xxd-9.2.1310-r0

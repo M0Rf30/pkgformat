@@ -1,0 +1,56 @@
+# name version | D=depends | p=provides | i=install_if | k=provider_priority
+app 1.0-r0 | D=libfoo
+app 2.0-r0 | D=libfoo>=1.2 so:libbar.so.1 !oldapp
+libfoo 1.0-r0
+libfoo 1.2-r0
+libfoo 1.5-r0 | D=libbar
+libfoo 2.0-r0 | D=libbar>=2 | p=libfoo-compat=2
+libbar 1.0-r0 | p=so:libbar.so.1=1 cmd:bar
+libbar 2.0-r0 | p=so:libbar.so.1=2 cmd:bar
+oldapp 1.0-r0 | D=libfoo<1.2
+editor-a 1-r0 | p=editor
+editor-b 1-r0 | p=editor | k=10
+editor-c 2-r0 | p=editor=3 | k=1
+needs-editor 1-r0 | D=editor
+needs-editor3 1-r0 | D=editor>=3
+needs-editor-a 1-r0 | D=editor-a editor
+vp-a 1-r0 | p=cmd:virt
+vp-b 1-r0 | p=cmd:virt
+needs-virt 1-r0 | D=cmd:virt
+conflict-a 1-r0 | D=!conflict-b
+conflict-b 1-r0
+conflict-c 1-r0 | p=cmd:cc
+conflict-d 1-r0 | p=cmd:cc | D=!conflict-c
+tool 1.0-r0
+tool 1.1_rc1-r0
+tool 1.0_p1-r0
+tool 0.9-r3
+cyc-a 1-r0 | D=cyc-b
+cyc-b 1-r0 | D=cyc-a
+fuzzy-user 1-r0 | D=libfoo~1.2
+lt-user 1-r0 | D=libfoo<2
+eq-user 1-r0 | D=libfoo=1.2-r0
+bt-lib 1-r0
+bt-lib 2-r0
+bt-c 1-r0 | D=bt-lib bt-e
+bt-e 1-r0 | D=bt-lib<2
+docs-base 1-r0
+app-doc 1-r0 | i=app docs-base
+app-extra 1-r0 | i=app
+base-pkg 1-r0 | p=cmd:base=1 | k=5
+shell-a 1-r0 | p=cmd:sh | k=20
+shell-b 1-r0 | p=cmd:sh | k=10
+needs-sh 1-r0 | D=cmd:sh
+multi 1-r0 | D=libfoo>=1.0 libfoo<1.5
+chain-a 1-r0 | D=chain-b
+chain-b 1-r0 | D=chain-c
+chain-c 1-r0 | D=chain-d>=2
+chain-d 1-r0
+dev-a 1-r0 | p=so:libz.so.1=1 | k=0
+dev-b 2-r0 | p=so:libz.so.1=1 | k=0
+uses-z 1-r0 | D=so:libz.so.1
+repl-a 1-r0 | p=svc=1
+repl-b 2-r0 | p=svc=2
+needs-svc 1-r0 | D=svc>=2
+conflict-ver 1-r0 | D=!libfoo>=2
+needs-foo2 1-r0 | D=libfoo>=2

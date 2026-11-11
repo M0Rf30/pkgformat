@@ -1,0 +1,6 @@
+install iputils-20250605-r2
+install iputils-arping-20250605-r2
+install iputils-clockdiff-20250605-r2
+install iputils-ping-20250605-r2
+install iputils-tracepath-20250605-r2
+install libcap2-2.78-r0
