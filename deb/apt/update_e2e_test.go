@@ -177,6 +177,15 @@ func (r *e2eRepo) publish() {
 	require.NoError(t, os.WriteFile(filepath.Join(r.distDir(), "Release"), signed.Release, 0o644))
 	require.NoError(t, os.WriteFile(filepath.Join(r.distDir(), "Release.gpg"), signed.ReleaseGPG, 0o644))
 	require.NoError(t, os.WriteFile(filepath.Join(r.distDir(), "InRelease"), signed.InRelease, 0o644))
+
+	// apt asks with If-Modified-Since and the server answers 304 for a file
+	// not newer by a whole second: give every generation its own minute, so a
+	// fast machine cannot publish two generations within one second.
+	stamp := time.Now().Add(-time.Hour).Add(time.Duration(r.step) * time.Minute)
+
+	for _, name := range []string{"Release", "Release.gpg", "InRelease"} {
+		require.NoError(t, os.Chtimes(filepath.Join(r.distDir(), name), stamp, stamp))
+	}
 }
 
 // accessLog serves a directory and records the request paths.
