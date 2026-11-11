@@ -69,6 +69,34 @@ type CompressedMetadata struct {
 	OpenSHA256 string
 	// OpenSize is the size of the uncompressed document.
 	OpenSize int64
+	// HeaderSHA256 and HeaderSize are the checksum and length of the header
+	// of a zchunk file (the header-checksum and header-size of the data
+	// entry); empty and zero for any other compression.
+	HeaderSHA256 string
+	HeaderSize   int64
+}
+
+// Entry returns the repomd.xml data entry of the document of the given type
+// (see [RepomdData.Type]) stored as repodata/<name>; timestamp is the Unix
+// time to record.
+func (c *CompressedMetadata) Entry(typ, name string, timestamp int64) RepomdData {
+	e := RepomdData{
+		Type:             typ,
+		Location:         "repodata/" + name,
+		Checksum:         c.SHA256,
+		ChecksumType:     "sha256",
+		OpenChecksum:     c.OpenSHA256,
+		OpenChecksumType: "sha256",
+		Timestamp:        timestamp,
+		Size:             c.Size,
+		OpenSize:         c.OpenSize,
+	}
+
+	if c.HeaderSHA256 != "" {
+		e.HeaderChecksum, e.HeaderChecksumType, e.HeaderSize = c.HeaderSHA256, "sha256", c.HeaderSize
+	}
+
+	return e
 }
 
 // gzipLevel trades a little size for a lot of CPU: on real primary, filelists

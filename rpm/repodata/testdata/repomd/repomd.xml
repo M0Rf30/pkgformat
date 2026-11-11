@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repomd xmlns="http://linux.duke.edu/metadata/repo" xmlns:rpm="http://linux.duke.edu/metadata/rpm">
+  <revision>1700000000</revision>
+  <tags>
+    <content>c1</content>
+    <repo>r1</repo>
+    <distro cpeid="cpe:/o:fedoraproject:fedora:17">Fedora 17</distro>
+  </tags>
+  <data type="primary">
+    <checksum type="sha256">c8f29a5c6eafd55b21fa88596cfeffb2d7d675bad08d2a660d0a1d6ba79a5d7f</checksum>
+    <open-checksum type="sha256">4ccaf11ef3d5c501de3382b3ce154e995bbe4dee3423570199e10938ba17f3e1</open-checksum>
+    <location href="repodata/primary.xml.zst"/>
+    <timestamp>1700000000</timestamp>
+    <size>700</size>
+    <open-size>1320</open-size>
+  </data>
+  <data type="filelists">
+    <checksum type="sha256">f489109343be8e1722a2ca2bf6f257453d43788c9469edb05a42fa9b21d972c5</checksum>
+    <open-checksum type="sha256">99c14b8642bde9155ae9d0dc84b78306ff71bc73fc432a19b5f6893db64fb2f2</open-checksum>
+    <location href="repodata/filelists.xml.zst"/>
+    <timestamp>1700000000</timestamp>
+    <size>263</size>
+    <open-size>336</open-size>
+  </data>
+  <data type="other">
+    <checksum type="sha256">eea327dd52fc4cb5156e324e02565a716b4bd4f4c98cbbe85e61abfd007545c6</checksum>
+    <open-checksum type="sha256">d697309d9db834eec118aae7116af714644b989b2a25f2a20a7cb3a9f6b8f997</open-checksum>
+    <location href="repodata/other.xml.zst"/>
+    <timestamp>1700000000</timestamp>
+    <size>237</size>
+    <open-size>290</open-size>
+  </data>
+  <data type="primary_db">
+    <checksum type="sha256">3e2653f63e6ed94e6f33eb66ee7753d6c63f7423ae4710a462a0068bbe58e4a4</checksum>
+    <open-checksum type="sha256">d28756093121508c817145d515e3d02d807a7f4be0d84980717d9b340689d31a</open-checksum>
+    <location href="repodata/primary.sqlite.zst"/>
+    <timestamp>1700000000</timestamp>
+    <size>1664</size>
+    <open-size>106496</open-size>
+    <database_version>10</database_version>
+  </data>
+  <data type="filelists_db">
+    <checksum type="sha256">31e93f688df70b1488d39bed3253fe522e21ddeed2cd477b2a5b9065a59d63ad</checksum>
+    <open-checksum type="sha256">7b8d2dafc29c9db48574e589e6993a09eeaf4120427c0f9074f29123c8de2e69</open-checksum>
+    <location href="repodata/filelists.sqlite.zst"/>
+    <timestamp>1700000000</timestamp>
+    <size>691</size>
+    <open-size>28672</open-size>
+    <database_version>10</database_version>
+  </data>
+  <data type="other_db">
+    <checksum type="sha256">45b74f0b366c45288db909e4f499cf00f45985118cfefb2dfc07c6495d0feb45</checksum>
+    <open-checksum type="sha256">1b4993a1cf824eddb17763b4f6b00854e77154d6a08ad520afb7dacebf9d1dc9</open-checksum>
+    <location href="repodata/other.sqlite.zst"/>
+    <timestamp>1700000000</timestamp>
+    <size>598</size>
+    <open-size>24576</open-size>
+    <database_version>10</database_version>
+  </data>
+  <data type="primary_zck">
+    <checksum type="sha256">cc92ebe03bac5f6b196a1f2d5aebc9033387a8bd37cb5244be3aff5a8558a6aa</checksum>
+    <open-checksum type="sha256">4ccaf11ef3d5c501de3382b3ce154e995bbe4dee3423570199e10938ba17f3e1</open-checksum>
+    <header-checksum type="sha256">2112b0ab43c61c8f108f25b87e0a4d55e6b18fac1eedda8e6594e7c69d8345e6</header-checksum>
+    <location href="repodata/primary.xml.zck"/>
+    <timestamp>1794364998</timestamp>
+    <size>871</size>
+    <open-size>1320</open-size>
+    <header-size>134</header-size>
+  </data>
+  <data type="filelists_zck">
+    <checksum type="sha256">10d9a80c8a170537f15fd310d98b4a494e78223ffd14bd9af7d0cbda0adbe529</checksum>
+    <open-checksum type="sha256">99c14b8642bde9155ae9d0dc84b78306ff71bc73fc432a19b5f6893db64fb2f2</open-checksum>
+    <header-checksum type="sha256">b48e8818c51a2e3596594804b8605295b95976c073cf5971bb5eb69ccbbb1ce5</header-checksum>
+    <location href="repodata/filelists.xml.zck"/>
+    <timestamp>1794364998</timestamp>
+    <size>423</size>
+    <open-size>336</open-size>
+    <header-size>133</header-size>
+  </data>
+  <data type="other_zck">
+    <checksum type="sha256">d1ddaf77c30210c513a04a17a6ed836a383eaf9da31d928152735653e1beb29d</checksum>
+    <open-checksum type="sha256">d697309d9db834eec118aae7116af714644b989b2a25f2a20a7cb3a9f6b8f997</open-checksum>
+    <header-checksum type="sha256">221ae04cf11b2249996e07de9e29c48dcf9424668d58756ff8eeb3ba882835f0</header-checksum>
+    <location href="repodata/other.xml.zck"/>
+    <timestamp>1794364998</timestamp>
+    <size>397</size>
+    <open-size>290</open-size>
+    <header-size>133</header-size>
+  </data>
+</repomd>
