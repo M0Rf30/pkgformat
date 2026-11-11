@@ -29,6 +29,55 @@ type scenario struct {
 	target string
 }
 
+// materializeScenario copies the preferences of a scenario to a temporary
+// directory, giving the files whose committed name ends in ".DOT" the name
+// with a trailing dot instead: a path like "preferences.d/trailing." cannot be
+// part of a module zip, so the scenarios commit it under another name.
+func materializeScenario(t *testing.T, dir string) string {
+	t.Helper()
+
+	out := t.TempDir()
+
+	copyTree := func(rel string) {
+		src := filepath.Join(dir, rel)
+
+		info, err := os.Stat(src)
+		if err != nil {
+			return
+		}
+
+		if !info.IsDir() {
+			data, err := os.ReadFile(src)
+			require.NoError(t, err)
+			require.NoError(t, os.WriteFile(filepath.Join(out, rel), data, 0o600))
+
+			return
+		}
+
+		require.NoError(t, os.MkdirAll(filepath.Join(out, rel), 0o750))
+
+		files, err := os.ReadDir(src)
+		require.NoError(t, err)
+
+		for _, f := range files {
+			data, err := os.ReadFile(filepath.Join(src, f.Name()))
+			require.NoError(t, err)
+
+			name := f.Name()
+			if base, ok := strings.CutSuffix(name, ".DOT"); ok {
+				name = base + "."
+			}
+
+			require.NoError(t, os.WriteFile(filepath.Join(out, rel, name), data, 0o600))
+		}
+	}
+
+	copyTree("preferences")
+	copyTree("preferences.d")
+
+	return out
+}
+
 func listScenarios(t *testing.T) []scenario {
 	t.Helper()
 
@@ -39,7 +88,7 @@ func listScenarios(t *testing.T) []scenario {
 
 	for _, e := range entries {
 		dir := policyDir("scenarios", e.Name())
-		s := scenario{name: e.Name(), dir: dir}
+		s := scenario{name: e.Name(), dir: materializeScenario(t, dir)}
 
 		data, err := os.ReadFile(filepath.Join(dir, "scenario"))
 		require.NoError(t, err)
