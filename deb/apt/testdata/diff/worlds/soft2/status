@@ -1,0 +1,214 @@
+Package: p04
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: oldlibs
+Recommends: p01
+Suggests: p45, p03 (>= 2.0)
+Description: p04 test package
+
+Package: p06
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: standard
+Section: utils
+Depends: p41 (>= 2.0) | p01
+Recommends: p03
+Suggests: p02
+Breaks: p05
+Description: p06 test package
+
+Package: p07
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: oldlibs
+Depends: virt3 | p02, p04 (>= 2.0) | p38
+Suggests: p27 (>= 1.0)
+Description: p07 test package
+
+Package: p08
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: standard
+Section: utils
+Recommends: p02, p00
+Suggests: p04, p06
+Conflicts: p01
+Description: p08 test package
+
+Package: p09
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: standard
+Section: net
+Recommends: p02 | p03
+Description: p09 test package
+
+Package: p13
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: admin
+Depends: p08
+Recommends: p01 (>= 1.0), p03
+Description: p13 test package
+
+Package: p19
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: libs
+Recommends: p18
+Suggests: p05
+Description: p19 test package
+
+Package: p21
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: standard
+Section: metapackages
+Recommends: p00 | p10
+Suggests: p16
+Provides: virt1
+Description: p21 test package
+
+Package: p23
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: extra
+Section: oldlibs
+Recommends: p17
+Suggests: p08
+Description: p23 test package
+
+Package: p25
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: libs
+Recommends: p11 (>= 1.0)
+Suggests: p03
+Provides: virt1
+Description: p25 test package
+
+Package: p28
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: standard
+Section: libs
+Depends: virt3
+Recommends: p15 | p44, p04 (<< 2.0)
+Suggests: p08 (>= 2.0)
+Description: p28 test package
+
+Package: p30
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: admin
+Provides: virt3
+Description: p30 test package
+
+Package: p35
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: metapackages
+Recommends: p04 (>= 2.0), p17
+Suggests: p18 (>= 2.0)
+Conflicts: p24
+Description: p35 test package
+
+Package: p36
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: required
+Section: oldlibs
+Depends: p43, p13
+Recommends: p25 (>= 1.0), p26 (>= 2.0) | p04
+Suggests: p30, p21 | p10
+Description: p36 test package
+
+Package: p39
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: utils
+Suggests: p16, p40 (>= 1.0)
+Description: p39 test package
+
+Package: p40
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: utils
+Recommends: p15
+Description: p40 test package
+
+Package: p41
+Status: install ok installed
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: metapackages
+Recommends: p09
+Suggests: p35
+Description: p41 test package
+
+Package: p43
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: important
+Section: oldlibs
+Suggests: p02 (>= 1.0)
+Description: p43 test package
+
+Package: p44
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Priority: optional
+Section: metapackages
+Depends: p09 (>= 2.0)
+Recommends: p39 (>= 1.0), p28
+Suggests: p23, p21
+Provides: virt1
+Description: p44 test package
+

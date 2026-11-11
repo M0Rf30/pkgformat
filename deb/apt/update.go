@@ -1,9 +1,8 @@
 package apt
 
 import (
+	"bytes"
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"io"
 	"log/slog"
@@ -13,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/M0Rf30/pkgformat/download"
 	"github.com/M0Rf30/pkgformat/httpclient"
 )
 
@@ -288,6 +288,16 @@ func (u *updater) withHTTPSFallback(rawURL string, fn func(target string) error)
 // is the warm cache check; the file is hashed as a stream, so a large index is
 // never held in memory. Any failure is a miss.
 func fileMatches(dest string, size int64, sha256Hex string) bool {
+	return fileMatchesWith(dest, size, indexDigest{alg: "sha256", hex: sha256Hex})
+}
+
+// fileMatchesWith is fileMatches for any digest of indexDigest.
+func fileMatchesWith(dest string, size int64, d indexDigest) bool {
+	sum, err := download.ParseChecksum(d.alg, d.hex)
+	if err != nil {
+		return false
+	}
+
 	fi, err := os.Stat(dest)
 	if err != nil || fi.Size() != size {
 		return false
@@ -300,12 +310,12 @@ func fileMatches(dest string, size int64, sha256Hex string) bool {
 
 	defer func() { _ = f.Close() }()
 
-	h := sha256.New()
+	h := sum.New()
 	if _, err := io.Copy(h, f); err != nil {
 		return false
 	}
 
-	return strings.EqualFold(hex.EncodeToString(h.Sum(nil)), sha256Hex)
+	return bytes.Equal(h.Sum(nil), sum.Sum)
 }
 
 // listPath is the path of the list file of relPath under the dists directory

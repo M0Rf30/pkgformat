@@ -1,0 +1,52 @@
+Package: h1
+Status: hold ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h1 test package
+
+Package: h2
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h1
+Description: h2 test package
+
+Package: h3
+Status: hold ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h3 test package
+
+Package: h4
+Status: hold ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h4 test package
+
+Package: h5
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h5 test package
+
+Package: h6
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h4
+Description: h6 test package
+
+Package: user-of-h1
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h1
+Description: user-of-h1 test package
+

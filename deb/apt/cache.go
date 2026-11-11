@@ -28,6 +28,10 @@ type PackageInfo struct {
 	// Priority is the Priority field ("required", "optional", ...). It orders
 	// the candidates of a virtual package.
 	Priority string
+	// Section is the Section field ("admin", "metapackages", "oldlibs"). The
+	// auto-remover of [Cache.Plan] reads it for the packages of the sections
+	// apt treats specially.
+	Section string
 	// Installed is true when the dpkg status database reports this version as
 	// installed (see [deb.Status.Installed]).
 	Installed bool
@@ -50,6 +54,22 @@ type PackageInfo struct {
 	Depends []deb.Alternatives
 	// PreDepends is the same for Pre-Depends. Resolution treats both alike.
 	PreDepends []deb.Alternatives
+	// Recommends is the Recommends field. [Cache.Plan] installs these with a
+	// package when [PlanOptions.InstallRecommends] says so, and keeps them
+	// from being auto-removed.
+	Recommends []deb.Alternatives
+	// Suggests is the same for Suggests, installed when
+	// [PlanOptions.InstallSuggests] says so.
+	Suggests []deb.Alternatives
+	// Held is true when the dpkg status database holds the installed version
+	// ("Status: hold ok installed"): [Cache.Plan] neither upgrades nor removes
+	// it, whatever [PlanOptions.Held] says.
+	Held bool
+	// AutoInstalled is true when the extended states file of
+	// [LoadOptions.ExtendedStatesFile] marks the installed version as
+	// installed to satisfy a dependency ("Auto-Installed: 1"), which makes it
+	// a candidate for [PlanRequest.AutoRemove].
+	AutoInstalled bool
 	// Conflicts is the Conflicts field.
 	Conflicts []deb.Relation
 	// Breaks is the Breaks field.
@@ -165,6 +185,12 @@ type Cache struct {
 	// installed maps a slot key to its installed version.
 	installed map[string]*pkg
 	seq       int
+	// gen counts the changes of the version set; the reverse dependency
+	// index is valid for one value of it.
+	gen int
+
+	revMu sync.Mutex
+	rev   *revIndex
 }
 
 // NewCache returns an empty cache. hostArch is the architecture packages are
@@ -224,7 +250,7 @@ func (c *Cache) insert(info *PackageInfo, merge bool) {
 	if i := slices.IndexFunc(versions, func(e *pkg) bool { return e.Version == info.Version }); i >= 0 {
 		existing := versions[i]
 
-		c.unindexProvides(existing)
+		before := slices.Clone(existing.Provides)
 
 		if merge {
 			mergeVersion(&existing.PackageInfo, info)
@@ -232,12 +258,23 @@ func (c *Cache) insert(info *PackageInfo, merge bool) {
 			existing.PackageInfo = *info
 		}
 
+		// A version read again keeps its place among the providers, as in
+		// apt's cache; only a changed Provides moves it.
+		if !slices.EqualFunc(before, existing.Provides, func(a, b deb.Relation) bool { return a.String() == b.String() }) {
+			after := existing.Provides
+			existing.Provides = before
+			c.unindexProvides(existing)
+			existing.Provides = after
+		}
+
+		c.gen++
 		c.indexVersion(existing)
 
 		return
 	}
 
 	c.seq++
+	c.gen++
 	p := &pkg{PackageInfo: *info, seq: c.seq, slot: key}
 
 	pos, _ := slices.BinarySearchFunc(versions, p, func(e, target *pkg) int {
@@ -290,6 +327,8 @@ func (c *Cache) unindexProvides(p *pkg) {
 func mergeVersion(existing, info *PackageInfo) {
 	existing.Essential = existing.Essential || info.Essential
 	existing.Installed = existing.Installed || info.Installed
+	existing.Held = existing.Held || info.Held
+	existing.AutoInstalled = existing.AutoInstalled || info.AutoInstalled
 
 	if info.MultiArch != "" {
 		existing.MultiArch = info.MultiArch
@@ -308,13 +347,18 @@ func mergeVersion(existing, info *PackageInfo) {
 	}
 
 	if !info.HasCandidate {
-		if !existing.HasCandidate && len(existing.Depends)+len(existing.PreDepends)+len(existing.Conflicts)+len(existing.Breaks) == 0 {
+		if !existing.HasCandidate && len(existing.Depends)+len(existing.PreDepends)+len(existing.Conflicts)+len(existing.Breaks)+len(existing.Recommends)+len(existing.Suggests) == 0 {
 			existing.Depends, existing.PreDepends = info.Depends, info.PreDepends
+			existing.Recommends, existing.Suggests = info.Recommends, info.Suggests
 			existing.Conflicts, existing.Breaks = info.Conflicts, info.Breaks
 		}
 
 		if existing.Priority == "" {
 			existing.Priority = info.Priority
+		}
+
+		if existing.Section == "" {
+			existing.Section = info.Section
 		}
 
 		return
@@ -324,10 +368,15 @@ func mergeVersion(existing, info *PackageInfo) {
 	existing.SourceName, existing.SourceVersion = info.SourceName, info.SourceVersion
 	existing.PhasedUpdatePercentage = info.PhasedUpdatePercentage
 	existing.Depends, existing.PreDepends = info.Depends, info.PreDepends
+	existing.Recommends, existing.Suggests = info.Recommends, info.Suggests
 	existing.Conflicts, existing.Breaks = info.Conflicts, info.Breaks
 
 	if info.Priority != "" {
 		existing.Priority = info.Priority
+	}
+
+	if info.Section != "" {
+		existing.Section = info.Section
 	}
 
 	if info.Filename != "" {

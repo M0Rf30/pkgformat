@@ -1,0 +1,66 @@
+Package: held-inst
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: held-inst test package
+
+Package: inst-a
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: ia-rec
+Description: inst-a test package
+
+Package: upr
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: upr test package
+
+Package: upr2
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: oldrec
+Description: upr2 test package
+
+Package: upr3
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: sat
+Description: upr3 test package
+
+Package: sat
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: sat test package
+
+Package: up-susp
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: up-susp test package
+
+Package: ir1
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: ir1 test package
+
+Package: hasrec
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: hr1
+Description: hasrec test package

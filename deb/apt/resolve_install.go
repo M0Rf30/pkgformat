@@ -3,6 +3,8 @@ package apt
 import (
 	"slices"
 	"sort"
+
+	"github.com/M0Rf30/pkgformat/deb"
 )
 
 // This file continues resolve_engine.go with MarkInstall itself and the steps
@@ -192,7 +194,7 @@ func (e *engine) revDeps(name string) []revEntry {
 
 		for _, k := range keys {
 			p := e.c.installed[k]
-			for _, g := range e.depsOf(p) {
+			for _, g := range e.importantOf(p) {
 				if g.negative() {
 					continue
 				}
@@ -353,14 +355,20 @@ func (e *engine) upgradeOrRemoveConflicts(pv *pkg, depth int, w *installWork, pr
 
 // installDependencies is apt's MarkInstall_InstallDependencies: install the
 // best candidate of every dependency group that is not met.
-func (e *engine) installDependencies(pv *pkg, depth int, w *installWork, propagate, fromUser bool) bool {
+func (e *engine) installDependencies(pv *pkg, depth int, w *installWork, moved *[]*pstate, propagate, fromUser bool) bool {
 	failed := false
 
 	saved := e.ctx
 	defer func() { e.ctx = saved }()
 
+	// The state of the package being installed, if it is installed already.
+	cur := e.state(pv.slot)
+	if cur.cur == nil {
+		cur = nil
+	}
+
 	for _, g := range w.toInstall {
-		e.ctx = Reason{Kind: ReasonDependency, Cause: label(pv), Relation: g.alts.String()}
+		e.ctx = Reason{Kind: g.reasonKind(), Cause: label(pv), Relation: g.alts.String()}
 
 		found := false
 
@@ -377,7 +385,12 @@ func (e *engine) installDependencies(pv *pkg, depth int, w *installWork, propaga
 		}
 
 		if found {
-			// Propagate the protection to the one package that meets it.
+			// Propagate the protection to the one package that meets it; a
+			// Recommends or Suggests has nothing to protect.
+			if !g.critical() {
+				continue
+			}
+
 			sols := e.solutions(g, selBoth, false)
 			if len(sols) != 1 {
 				continue
@@ -397,6 +410,13 @@ func (e *engine) installDependencies(pv *pkg, depth int, w *installWork, propaga
 			continue
 		}
 
+		// A Recommends or Suggests of a package that is installed already is
+		// followed only when it is new, or was met before: one the
+		// administrator left unmet stays so.
+		if cur != nil && !g.critical() && !e.followsOldSoft(cur, g) {
+			continue
+		}
+
 		sols := e.solutions(g, selCandidate, true)
 
 		for _, v := range sols {
@@ -405,7 +425,7 @@ func (e *engine) installDependencies(pv *pkg, depth int, w *installWork, propaga
 				continue
 			}
 
-			if propagate && len(sols) == 1 {
+			if propagate && g.critical() && len(sols) == 1 {
 				if !e.markInstall(ip, false, depth+1, false) {
 					continue
 				}
@@ -417,12 +437,16 @@ func (e *engine) installDependencies(pv *pkg, depth int, w *installWork, propaga
 				continue
 			}
 
+			if moved != nil && ip.cur == nil {
+				*moved = append(*moved, ip)
+			}
+
 			found = true
 
 			break
 		}
 
-		if !found {
+		if !found && g.critical() {
 			failed = true
 
 			if !propagate && !fromUser {
@@ -432,6 +456,34 @@ func (e *engine) installDependencies(pv *pkg, depth int, w *installWork, propaga
 	}
 
 	return !failed
+}
+
+// followsOldSoft decides, for a Recommends or Suggests of the new version of
+// an installed package, whether installing follows it (apt's check for new and
+// previously satisfied important dependencies): it does when the installed
+// version had no important dependency on the package, or had one that was met.
+func (e *engine) followsOldSoft(cur *pstate, g *depGroup) bool {
+	target := g.alts[0].Name
+
+	isNew := true
+
+	for _, old := range e.softOf(cur.cur) {
+		if !e.isImportant(&old) {
+			continue
+		}
+
+		if !slices.ContainsFunc(old.alts, func(r deb.Relation) bool { return r.Name == target }) {
+			continue
+		}
+
+		isNew = false
+
+		if e.groupOK(&old, whenNow) {
+			return true
+		}
+	}
+
+	return isNew
 }
 
 // markInstall is apt's MarkInstall: select the candidate of a package and, with
@@ -453,7 +505,7 @@ func (e *engine) markInstall(s *pstate, autoInst bool, depth int, fromUser bool)
 		return false
 	}
 
-	if !s.protect && !e.instBroken(s) {
+	if !s.protect && !e.instPolicyBroken(s) {
 		if s.cand == s.cur {
 			if s.inst == nil {
 				return e.markKeep(s, fromUser, depth+1)
@@ -469,7 +521,7 @@ func (e *engine) markInstall(s *pstate, autoInst bool, depth int, fromUser bool)
 		return false
 	}
 
-	if fromUser && !e.stateChange(s, fromUser) {
+	if fromUser && !e.stateChange(s, autoInst, fromUser) {
 		return false
 	}
 
@@ -494,7 +546,7 @@ func (e *engine) markInstall(s *pstate, autoInst bool, depth int, fromUser bool)
 		e.collectReverseDepends(s, pv, &w)
 	}
 
-	if !fromUser && !e.stateChange(s, fromUser) {
+	if !fromUser && !e.stateChange(s, autoInst, fromUser) {
 		return false
 	}
 
@@ -523,7 +575,14 @@ func (e *engine) markInstall(s *pstate, autoInst bool, depth int, fromUser bool)
 		hasFailed = true
 	}
 
-	if !e.installDependencies(pv, depth, &w, propagate, fromUser) {
+	var moved []*pstate
+
+	var movePtr *[]*pstate
+	if s.inst != nil && e.movesAutoBit(s, s.inst) {
+		movePtr = &moved
+	}
+
+	if !e.installDependencies(pv, depth, &w, movePtr, propagate, fromUser) {
 		if failEarly {
 			e.discardInstall(s)
 
@@ -547,6 +606,14 @@ func (e *engine) markInstall(s *pstate, autoInst bool, depth int, fromUser bool)
 			}
 
 			hasFailed = true
+		}
+	}
+
+	if movePtr != nil {
+		e.markAuto(s, true)
+
+		for _, m := range moved {
+			e.markAuto(m, false)
 		}
 	}
 

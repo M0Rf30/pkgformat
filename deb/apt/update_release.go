@@ -178,6 +178,12 @@ func (u *updater) fetchRelease(ctx context.Context, src *Source, bases []string)
 			return nil, err
 		}
 
+		if !skip && signed && strings.TrimSpace(src.SignedBy) == "" {
+			if err := enforceReleaseSignedBy(rel, parts, trust); err != nil {
+				return nil, err
+			}
+		}
+
 		if err := u.storeRelease(src, parts, signed); err != nil {
 			return nil, err
 		}
@@ -189,6 +195,70 @@ func (u *updater) fetchRelease(ctx context.Context, src *Source, bases []string)
 	}
 
 	return nil, lastErr
+}
+
+// ErrReleaseSignedBy is returned when the Signed-By field of a Release does not
+// allow the key that signed it, or names keys the trusted keyrings lack.
+var ErrReleaseSignedBy = errors.New("apt: release signed by a key its Signed-By field does not allow")
+
+// enforceReleaseSignedBy applies the Signed-By field of a verified Release, as
+// apt 2.3 and later do for a source without a Signed-By option of its own:
+// the signature must verify against the trusted keys with the listed
+// fingerprints only (a trailing "!" excludes their subkeys). The field takes
+// fingerprints only; a path or an inline key in it is an ErrInvalidSignedBy.
+// A Release whose signature was accepted without verification (AllowUnverified,
+// Allow-Insecure) is not restricted.
+func enforceReleaseSignedBy(rel *deb.Release, parts []releasePart, trust deb.Trust) error {
+	if strings.TrimSpace(rel.SignedBy) == "" || trust.Keyring.Len() == 0 {
+		return nil
+	}
+
+	spec, err := parseSignedBy(rel.SignedBy)
+	if err != nil {
+		return fmt.Errorf("%w: Release Signed-By: %w", ErrReleaseSignedBy, err)
+	}
+
+	if len(spec.inline) > 0 || len(spec.paths) > 0 || len(spec.keys) == 0 {
+		return fmt.Errorf("%w: %w: Release Signed-By takes fingerprints only", ErrReleaseSignedBy, ErrInvalidSignedBy)
+	}
+
+	restricted, err := selectKeys(trust.Keyring, spec.keys)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrReleaseSignedBy, err)
+	}
+
+	full := trust
+	full.AllowUnverified = false
+
+	if err := verifyParts(full, parts); err != nil {
+		return nil //nolint:nilerr // accepted without verification: nothing to restrict
+	}
+
+	restrictedTrust := full
+	restrictedTrust.Keyring = restricted
+
+	if err := verifyParts(restrictedTrust, parts); err != nil {
+		return fmt.Errorf("%w: %w", ErrReleaseSignedBy, err)
+	}
+
+	return nil
+}
+
+// verifyParts verifies the stored form of a Release under trust.
+func verifyParts(trust deb.Trust, parts []releasePart) error {
+	if parts[0].name == "InRelease" {
+		_, err := trust.VerifyInRelease(parts[0].data)
+
+		return err
+	}
+
+	if len(parts) < 2 {
+		return deb.ErrUnsigned
+	}
+
+	_, err := trust.VerifyReleaseGPG(parts[0].data, parts[1].data, nil)
+
+	return err
 }
 
 // transportFailure marks an error of fetching, which another mirror may not

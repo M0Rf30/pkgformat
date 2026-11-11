@@ -44,6 +44,13 @@
 // error; a missing trust anchor, an unknown signer or an unsigned repository
 // is accepted only with Trusted, Allow-Insecure or UpdateOptions.AllowUnverified.
 //
+// Without a Signed-By option on the source, the Signed-By field of the Release
+// itself limits the keys that may have signed it to the listed fingerprints
+// (ErrReleaseSignedBy otherwise), as in apt 2.3 and later. Indexes are checked
+// by their SHA-256 (or SHA-512) digest; a Release that lists only MD5 or SHA-1
+// digests gives ErrWeakDigest, unless the source sets Allow-Weak, which makes
+// Update verify by SHA-1 or MD5.
+//
 // # Reading
 //
 // Load builds a Cache from a lists directory, and optionally a dpkg status
@@ -87,9 +94,20 @@
 // or Breaks an installed one removes or upgrades it, and what a change leaves
 // broken is repaired the way apt's problem resolver repairs it. PlanRequest
 // selects install and remove requests and the upgrade mode (upgrade,
-// upgrade with new packages, dist-upgrade); PlanOptions carries the Policy and
-// the held packages. The plans are checked against recorded apt-get -s output.
-// Use ResolveDeps instead when nothing installed may be removed.
+// upgrade with new packages, dist-upgrade, autoremove); PlanOptions carries the
+// Policy, Install-Recommends and Install-Suggests, the AutoRemove options and
+// extra held packages. Recommends and Suggests of what is installed are
+// followed as apt does, the automatic-installation marks of
+// /var/lib/apt/extended_states (LoadOptions.ExtendedStatesFile) and the dpkg
+// holds of the status file are read by Load, and a plan lists the packages it
+// leaves manually or automatically installed. The steps are put in the order
+// apt-get -s prints, by a port of apt's Pre-Depends and Depends ordering; a
+// system apt cannot configure (two packages that Pre-Depend on each other)
+// fails with an *OrderError that names the cycle. The plans are checked
+// against recorded apt-get -s output (apt 3.0.4): see testdata/diff/README.md
+// for the scenarios and for what is not modelled (the fallback to apt's second
+// solver, the versioned-kernel protection of autoremove, purge as distinct
+// from remove). Use ResolveDeps instead when nothing installed may be removed.
 //
 // # Downloading
 //

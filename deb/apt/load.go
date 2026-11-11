@@ -26,6 +26,12 @@ type LoadOptions struct {
 	// StatusFile is the dpkg status database to overlay, to set Installed. Empty
 	// skips it.
 	StatusFile string
+	// ExtendedStatesFile is apt's extended states file
+	// (/var/lib/apt/extended_states), whose "Auto-Installed: 1" paragraphs set
+	// [PackageInfo.AutoInstalled] on the installed versions. It is read after
+	// the status database, so it needs StatusFile to mark anything. Empty skips
+	// it, and a file that does not exist marks nothing.
+	ExtendedStatesFile string
 	// Sources resolve the BaseURL of every index: an index file named after a
 	// source's host and path takes that source's URL.
 	Sources []Source
@@ -42,6 +48,11 @@ type LoadOptions struct {
 //
 // Every version of a package that an index carries is kept. A stanza without
 // Version, or whose relation fields do not parse, is skipped.
+//
+// An installed package whose Status is "hold ok installed" has
+// [PackageInfo.Held] set, and one that opts.ExtendedStatesFile marks
+// Auto-Installed has [PackageInfo.AutoInstalled] set; [Cache.Plan] honours
+// both.
 //
 // Like apt itself, Load tolerates what it cannot read: a missing directory,
 // an unreadable or corrupt index. The returned Cache is never nil and holds
@@ -61,6 +72,12 @@ func Load(opts LoadOptions) (*Cache, error) {
 
 	if opts.StatusFile != "" {
 		if err := c.parseStatus(opts.StatusFile, opts.Logger); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	if opts.ExtendedStatesFile != "" {
+		if err := c.loadExtendedStates(opts.ExtendedStatesFile); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -342,6 +359,7 @@ func (c *Cache) parseStatus(path string, logger *slog.Logger) error {
 		// The index-only fields of a status stanza are not meaningful.
 		info.Filename, info.SHA256, info.Size = "", "", 0
 		info.Installed = true
+		info.Held = entry.Status.Want == deb.WantHold
 
 		c.mu.Lock()
 		c.insert(info, true)
@@ -368,6 +386,7 @@ func packageInfoOf(cf *deb.ControlFile, baseURL string) (*PackageInfo, error) {
 		Essential:    strings.EqualFold(cf.Get("Essential"), "yes"),
 		MultiArch:    cf.Get("Multi-Arch"),
 		Priority:     cf.Get("Priority"),
+		Section:      cf.Get("Section"),
 		Filename:     cf.Get("Filename"),
 		SHA256:       cf.Get("SHA256"),
 		BaseURL:      baseURL,
@@ -395,6 +414,16 @@ func packageInfoOf(cf *deb.ControlFile, baseURL string) (*PackageInfo, error) {
 
 	if info.PreDepends, err = parseGroups(cf, "Pre-Depends"); err != nil {
 		return nil, err
+	}
+
+	// A malformed Recommends or Suggests does not make the version unusable:
+	// the weak relations are dropped and the rest of the stanza is kept.
+	if info.Recommends, err = parseGroups(cf, "Recommends"); err != nil {
+		info.Recommends = nil
+	}
+
+	if info.Suggests, err = parseGroups(cf, "Suggests"); err != nil {
+		info.Suggests = nil
 	}
 
 	if info.Conflicts, err = parseFlat(cf, "Conflicts"); err != nil {

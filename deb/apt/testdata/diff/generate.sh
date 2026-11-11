@@ -56,8 +56,10 @@ if [ -z "${SKIP_ARCHIVE:-}" ]; then
 		-lists "$work/lists" -status "$work/installed/status" -targets "$work/roots.txt" -out "$here/lists")
 
 	cp "$work/status" "$here/status"
+	cp "$work/extended_states" "$here/extended_states"
 	cp "$work/expected.tsv" "$here/expected.tsv"
 	cp "$work/installed/status" "$here/installed/status"
+	cp "$work/installed/extended_states" "$here/installed/extended_states"
 	cp "$work/installed/expected.tsv" "$here/installed/expected.tsv"
 	cp "$work/MANIFEST" "$here/MANIFEST"
 	echo "image-reference: $image" >>"$here/MANIFEST"

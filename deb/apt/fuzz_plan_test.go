@@ -45,3 +45,26 @@ func FuzzPlan(f *testing.F) {
 		}
 	})
 }
+
+// FuzzParseExtendedStates reads arbitrary extended states files: no input may
+// panic, and every mark returned must name a package.
+func FuzzParseExtendedStates(f *testing.F) {
+	f.Add([]byte("Package: a\nArchitecture: amd64\nAuto-Installed: 1\n\nPackage: b\nAuto-Installed: 0\n"))
+	f.Add([]byte("Package: \nAuto-Installed: 1\n"))
+	f.Add([]byte("Auto-Installed: 1\n\n\n\nPackage: x\nAuto-Installed: 1"))
+	f.Add([]byte("Package: a\r\nAuto-Installed: 1\r\n"))
+	f.Add([]byte{0, 0xff, '\n', '\n'})
+
+	f.Fuzz(func(t *testing.T, data []byte) {
+		marks, err := ParseExtendedStates(data)
+		if err != nil {
+			return
+		}
+
+		for _, m := range marks {
+			if m.Package == "" {
+				t.Fatalf("mark without a package in %q", data)
+			}
+		}
+	})
+}

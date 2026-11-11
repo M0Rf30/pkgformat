@@ -1,0 +1,328 @@
+Package: rec-main
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: rd1
+Recommends: rr1, rr2 | rr3, rbad, rmiss, rver (>= 2)
+Suggests: rs1
+Description: rec-main test package
+
+Package: rd1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rd1 test package
+
+Package: rr1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: rr1dep
+Recommends: rr1r
+Description: rr1 test package
+
+Package: rr1dep
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rr1dep test package
+
+Package: rr1r
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rr1r test package
+
+Package: rr2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rr2 test package
+
+Package: rr3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rr3 test package
+
+Package: rbad
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: does-not-exist
+Description: rbad test package
+
+Package: rver
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rver test package
+
+Package: rs1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: rs1dep
+Recommends: rs1rec
+Description: rs1 test package
+
+Package: rs1dep
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rs1dep test package
+
+Package: rs1rec
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: rs1rec test package
+
+Package: rc-main
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: rcx
+Description: rc-main test package
+
+Package: rcx
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: held-inst
+Description: rcx test package
+
+Package: conf-a
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: conf-c
+Description: conf-a test package
+
+Package: conf-b
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: conf-b test package
+
+Package: conf-c
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: conf-b
+Description: conf-c test package
+
+Package: vrec-main
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: vmail
+Description: vrec-main test package
+
+Package: vp1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vmail
+Priority: optional
+Description: vp1 test package
+
+Package: vp2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: vmail
+Priority: important
+Description: vp2 test package
+
+Package: cyc-a
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: cyc-b
+Description: cyc-a test package
+
+Package: cyc-b
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: cyc-a
+Description: cyc-b test package
+
+Package: chain-a
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: chain-b
+Description: chain-a test package
+
+Package: chain-b
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: chain-c
+Description: chain-b test package
+
+Package: chain-c
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: chain-d
+Description: chain-c test package
+
+Package: chain-d
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: chain-d test package
+
+Package: dep-main
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: dm-dep
+Description: dep-main test package
+
+Package: dm-dep
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: dm-rec
+Description: dm-dep test package
+
+Package: dm-rec
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: dm-rec test package
+
+Package: orrec
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: o1 | o2
+Description: orrec test package
+
+Package: o1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: o1-missing
+Description: o1 test package
+
+Package: o2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: o2 test package
+
+Package: rec2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: ir1 (>= 2.0)
+Description: rec2 test package
+
+Package: tied-a
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: tied-b
+Description: tied-a test package
+
+Package: tied-b
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: tied-c
+Description: tied-b test package
+
+Package: tied-c
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: tied-b2
+Description: tied-c test package
+
+Package: tied-b2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: tied-b2 test package
+
+Package: inst-a
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: ia-rec
+Description: inst-a test package
+
+Package: ia-rec
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: ia-rec test package
+
+Package: upr
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: newrec
+Description: upr test package
+
+Package: newrec
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: newrec test package
+
+Package: upr2
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: oldrec
+Description: upr2 test package
+
+Package: oldrec
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: oldrec test package
+
+Package: upr3
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Recommends: sat (>= 2.0)
+Description: upr3 test package
+
+Package: sat
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: sat test package
+
+Package: up-susp
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Suggests: newsug
+Description: up-susp test package
+
+Package: newsug
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: newsug test package
+
+Package: ir1
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: ir1 test package
+
+Package: hr1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: hr1 test package

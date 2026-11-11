@@ -1,6 +1,10 @@
 package apt
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -329,6 +333,41 @@ func preferencesError(stderr string) error {
 	return nil
 }
 
+// loadRecordedResults reads a results archive of generate.sh into a map from
+// the member name to its text.
+func loadRecordedResults(t *testing.T, path string) map[string]string {
+	t.Helper()
+
+	f, err := os.Open(path)
+	require.NoError(t, err)
+
+	defer func() { _ = f.Close() }()
+
+	zr, err := gzip.NewReader(f)
+	require.NoError(t, err)
+
+	out := map[string]string{}
+	tr := tar.NewReader(zr)
+
+	for {
+		hdr, err := tr.Next()
+		if errors.Is(err, io.EOF) {
+			return out
+		}
+
+		require.NoError(t, err)
+
+		if hdr.Typeflag != tar.TypeReg {
+			continue
+		}
+
+		data, err := io.ReadAll(tr)
+		require.NoError(t, err)
+
+		out[hdr.Name] = string(data)
+	}
+}
+
 func TestPolicyMatchesAptScenarios(t *testing.T) {
 	t.Parallel()
 
@@ -338,22 +377,18 @@ func TestPolicyMatchesAptScenarios(t *testing.T) {
 		t.Run(image, func(t *testing.T) {
 			t.Parallel()
 
-			base := policyDir("results", image)
-
-			manifest, err := os.ReadFile(filepath.Join(base, "MANIFEST"))
-			require.NoError(t, err)
-			assert.Contains(t, string(manifest), "apt ")
+			recorded := loadRecordedResults(t, policyDir("results", image+".tar.gz"))
+			assert.Contains(t, recorded["MANIFEST"], "apt ")
 
 			var totalFiles, totalVersions, totalInstalls int
 
 			for _, s := range scenarios {
 				t.Run(s.name, func(t *testing.T) {
-					res := filepath.Join(base, "scenarios", s.name)
 					read := func(name string) string {
-						data, err := os.ReadFile(filepath.Join(res, name))
-						require.NoError(t, err, s.name)
+						data, ok := recorded["scenarios/"+s.name+"/"+name]
+						require.True(t, ok, "%s: no recorded %s", s.name, name)
 
-						return string(data)
+						return data
 					}
 
 					prefs, prefErr := LoadPreferences(filepath.Join(s.dir, "preferences"), filepath.Join(s.dir, "preferences.d"))

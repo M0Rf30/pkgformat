@@ -1,0 +1,50 @@
+# id	apt-get arguments
+x01	install p39 --install-suggests
+x02	install p24 --install-suggests
+x03	install p37 --install-suggests
+x04	install p01 --install-suggests
+x05	install p12
+x06	install p03 --install-recommends --install-suggests
+x07	remove p19
+x08	autoremove -oAPT::AutoRemove::SuggestsImportant=false
+x09	autoremove -oAPT::AutoRemove::RecommendsImportant=false
+x10	install p32 --auto-remove --install-suggests
+x11	install p30 --install-recommends
+x12	autoremove
+x13	remove p29 --auto-remove
+x14	install p01 --install-recommends --install-suggests
+x15	remove p37
+x16	install p32 --install-recommends --install-suggests
+x17	autoremove
+x18	install p39 --auto-remove --install-recommends --install-suggests
+x19	install p33 --install-suggests
+x20	remove p02
+x21	autoremove -oAPT::AutoRemove::RecommendsImportant=false
+x22	remove p01 --auto-remove
+x23	install p25 --install-recommends --install-suggests
+x24	remove p02
+x25	install p43 --install-suggests
+x26	install p36 p17 --install-recommends
+x27	dist-upgrade --install-recommends --install-suggests
+x28	remove p37
+x29	install p14
+x30	upgrade --install-recommends
+x31	install p09 --install-recommends --install-suggests
+x32	install p44 --install-recommends --install-suggests
+x33	remove p13 --auto-remove
+x34	install p13 p00 --install-recommends
+x35	remove p37
+x36	install p03 p21 --install-recommends
+x37	install p28 p40 --install-suggests
+x38	install p21
+x39	install p44 --auto-remove --install-recommends --install-suggests
+x40	remove p37 --auto-remove
+x41	remove p03 --auto-remove
+x42	install p37 --install-recommends --install-suggests
+x43	remove p02 --auto-remove
+x44	install p00 --install-suggests
+x45	install p35 --auto-remove
+x46	install p02 --install-recommends
+x47	autoremove -oAPT::AutoRemove::SuggestsImportant=false
+x48	install p14 --install-recommends
+

@@ -1,0 +1,23 @@
+# id	apt-get arguments
+# The hold is the dpkg status of h1, h3 and h4 ("hold ok installed"), not a
+# selection set by dpkg --set-selections.
+h01	upgrade
+h02	upgrade --with-new-pkgs
+h03	dist-upgrade
+h04	install h3
+h05	install h2
+h06	remove h1
+h07	install h1
+h08	install h7
+h09	install h8
+h10	install h6
+h11	autoremove
+h12	remove h6 --auto-remove
+h13	remove h2 user-of-h1 --auto-remove
+h14	remove h4
+h15	install h5
+h16	remove h5
+h17	install h3 h1
+h18	install h3 -f
+h19	install h5 h1
+h20	purge h6 --auto-remove

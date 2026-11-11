@@ -1,0 +1,50 @@
+# id	apt-get arguments
+x01	install p36 p32 --install-recommends
+x02	install p42 p08
+x03	install p36 --install-recommends
+x04	install p24 --install-recommends
+x05	install p03 --install-recommends --install-suggests
+x06	install p12 --install-recommends --install-suggests
+x07	remove p09
+x08	install p26 p01 --install-suggests
+x09	autoremove
+x10	install p10 --install-recommends
+x11	install p39 --install-recommends --install-suggests
+x12	install p16 --install-suggests
+x13	autoremove -oAPT::AutoRemove::SuggestsImportant=false
+x14	install p05 --install-suggests
+x15	install p00 p23 --install-suggests
+x16	install p15
+x17	autoremove -oAPT::AutoRemove::SuggestsImportant=false
+x18	autoremove
+x19	install p30
+x20	install p05 --install-recommends --install-suggests
+x21	install p40 --install-recommends
+x22	install p22
+x23	remove p20 --auto-remove
+x24	install p11 --install-recommends
+x25	install p22 --install-suggests
+x26	install p17 --install-suggests
+x27	upgrade --with-new-pkgs
+x28	autoremove -oAPT::AutoRemove::SuggestsImportant=false
+x29	dist-upgrade --install-suggests
+x30	install p19 p33 --install-recommends --install-suggests
+x31	install p09 --install-recommends
+x32	remove p29
+x33	install p22 --auto-remove --install-suggests
+x34	install p28
+x35	remove p05
+x36	install p28 --install-suggests
+x37	install p23 --install-recommends --install-suggests
+x38	install p45
+x39	remove p12
+x40	install p37 p43 --install-recommends --install-suggests
+x41	remove p36
+x42	upgrade --with-new-pkgs --install-recommends --install-suggests
+x43	install p12 --install-recommends --install-suggests
+x44	dist-upgrade --install-recommends
+x45	install p06 --install-suggests
+x46	install p34 --install-recommends
+x47	install p29 --install-suggests
+x48	remove p01 --auto-remove
+

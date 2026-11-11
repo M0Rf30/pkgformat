@@ -1,0 +1,125 @@
+Package: ja
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: ja test package
+
+Package: jb
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: jb test package
+
+Package: ma
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: mb
+Description: ma test package
+
+Package: mb
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: mb test package
+
+Package: na
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: na test package
+
+Package: nb
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: na
+Description: nb test package
+
+Package: pq
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pq test package
+
+Package: pr
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pr test package
+
+Package: old1
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: old1 test package
+
+Package: ka
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: ka test package
+
+Package: es1
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Essential: yes
+Description: es1 test package
+
+Package: sa
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: sa test package
+
+Package: ua
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: ua test package
+
+Package: ub
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ua
+Description: ub test package
+
+Package: uc
+Status: install ok installed
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ub
+Description: uc test package
+
+Package: zb
+Version: 1.0
+Status: install ok installed
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: zb test package
+
+Package: zp
+Version: 1.0
+Status: install ok installed
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: zb
+Description: zp test package
+

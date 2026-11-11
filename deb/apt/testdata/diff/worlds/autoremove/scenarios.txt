@@ -1,0 +1,41 @@
+# id	apt-get arguments
+a01	autoremove
+a02	autoremove -oAPT::AutoRemove::RecommendsImportant=false
+a03	autoremove -oAPT::AutoRemove::SuggestsImportant=false
+a04	autoremove -oAPT::AutoRemove::RecommendsImportant=false -oAPT::AutoRemove::SuggestsImportant=false
+a05	install lone
+a06	install m1
+a07	install a1
+a08	remove m1 --auto-remove
+a09	remove m1
+a10	remove meta
+a11	remove meta --auto-remove
+a12	remove m2 --auto-remove
+a13	remove m3 --auto-remove
+a14	install ol
+a15	upgrade
+a16	remove m5 --auto-remove
+a17	remove m4 --auto-remove
+a18	purge m1 --auto-remove
+a19	autopurge
+a20	install m8
+a21	install m8 --auto-remove
+a22	dist-upgrade
+a23	install up1
+a24	install up1 --auto-remove
+a25	install x1
+a26	install x1 --auto-remove
+a27	install m9
+a28	install m9 --auto-remove
+a29	install a2 m9
+a30	remove m6 --auto-remove
+a31	remove ess
+a32	remove allauto
+a33	install manual-lonely
+a34	remove manual-lonely --auto-remove
+a35	remove lone
+a36	remove a1 --auto-remove
+a37	remove m2 m3 --auto-remove -oAPT::AutoRemove::RecommendsImportant=false
+a38	upgrade --with-new-pkgs --auto-remove
+a39	dist-upgrade --auto-remove
+a40	install olnew

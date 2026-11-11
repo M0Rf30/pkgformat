@@ -275,25 +275,6 @@ func TestUpdateUnlistedComponentIsSkipped(t *testing.T) {
 	assert.Zero(t, n)
 }
 
-func TestUpdateWeakDigestOnlyIsNotUsable(t *testing.T) {
-	t.Parallel()
-
-	f := newFixture(t)
-	f.addPackage("main", "alpha", "1.0")
-	f.mutate = func(r *deb.Release) {
-		for p, fi := range r.Files {
-			fi.SHA256, fi.SHA512 = "", ""
-			r.Files[p] = fi
-		}
-	}
-	f.publish()
-
-	n, err := Update(context.Background(), []Source{f.source()}, f.opts())
-	require.NoError(t, err, "an index that cannot be verified counts as not listed")
-	assert.Zero(t, n)
-	assert.Zero(t, f.repo.count(f.distPath(f.indexRel("main", ".xz"))))
-}
-
 func TestUpdateInvalidReleaseEntries(t *testing.T) {
 	t.Parallel()
 

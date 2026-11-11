@@ -37,8 +37,10 @@ Hand-written inputs (all fictional hosts, no real repository data):
   answer (`invalid` for an expression `regcomp` rejects, which matches
   nothing).
 
-Recorded by `generate.sh` into `results/<label>/` (labels `bookworm`, `trixie`,
-`unstable`), with a `MANIFEST` naming the image and apt version, and per scenario:
+Recorded by `generate.sh` into `results/<label>.tar.gz` (labels `bookworm`,
+`trixie`, `unstable`; one reproducible archive each, `tar xzf` shows the files),
+holding a `MANIFEST` naming the image and apt version, and per scenario
+`scenarios/<name>/`:
 
 - `files`: the "Package files:" part of `apt-cache policy` (priority of every
   index and of the status file);

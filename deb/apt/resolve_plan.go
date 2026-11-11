@@ -3,6 +3,7 @@ package apt
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"slices"
 	"sort"
 	"strings"
@@ -66,6 +67,14 @@ type PlanRequest struct {
 	// fail, and one with packages fail unless the packages themselves repair
 	// every problem.
 	FixBroken bool
+	// AutoRemove is "apt-get autoremove" and "--auto-remove": after the rest
+	// of the request, remove the installed packages that were installed
+	// automatically (see [PackageInfo.AutoInstalled]) and that nothing
+	// installed needs any more. Without it such packages are only listed in
+	// [Plan.AutoRemovable]. "apt-get purge" and "autopurge" differ from the
+	// removal only in what dpkg does with configuration files, so they plan
+	// the same changes.
+	AutoRemove bool
 }
 
 // PlanOptions configures [Cache.Plan].
@@ -79,10 +88,42 @@ type PlanOptions struct {
 	// Held lists packages dpkg holds ("hold" in the status database): they
 	// are neither upgraded nor removed by the resolver. A name without an
 	// architecture holds every architecture of the package.
+	//
+	// Packages that the status database holds ([PackageInfo.Held]) are held
+	// as well; Held adds to them, for a caller that keeps its holds elsewhere.
 	Held []string
+	// InstallRecommends is APT::Install-Recommends: install the Recommends of
+	// every package the plan installs or upgrades, when they can be met
+	// without removing anything; one that cannot is skipped. Nil is apt's
+	// default for "apt-get install", true.
+	InstallRecommends *bool
+	// InstallSuggests is APT::Install-Suggests, the same for Suggests. Nil is
+	// apt's default, false.
+	InstallSuggests *bool
+	// AutoRemoveRecommendsImportant is APT::AutoRemove::RecommendsImportant:
+	// a package an installed package Recommends counts as needed by it, so
+	// [PlanRequest.AutoRemove] keeps it. Nil is apt's default, true.
+	AutoRemoveRecommendsImportant *bool
+	// AutoRemoveSuggestsImportant is APT::AutoRemove::SuggestsImportant, the
+	// same for Suggests. Nil is apt's default, true.
+	AutoRemoveSuggestsImportant *bool
+	// NeverAutoRemove lists regular expressions (APT::NeverAutoRemove) of
+	// package names that auto-removal keeps. Nil selects
+	// [DefaultNeverAutoRemove]; an empty non-nil slice keeps nothing.
+	NeverAutoRemove []string
 	// MaxSteps bounds the work of a plan, so a hostile index cannot make it
 	// run for ever. Zero selects DefaultPlanSteps.
 	MaxSteps int
+}
+
+// DefaultNeverAutoRemove is apt's APT::NeverAutoRemove of a stock install
+// (/etc/apt/apt.conf.d/01autoremove): firmware and the kernel image
+// packages, which auto-removal keeps even when nothing needs them.
+var DefaultNeverAutoRemove = []string{
+	"^firmware-linux.*",
+	"^linux-firmware$",
+	"^linux-image-[a-z0-9]*$",
+	"^linux-image-[a-z0-9]*-[a-z0-9]*$",
 }
 
 // DefaultPlanSteps is the work budget of a plan when PlanOptions.MaxSteps
@@ -98,6 +139,16 @@ const (
 	ReasonRequested ReasonKind = iota + 1
 	// ReasonDependency: a new package that a dependency of Cause needs.
 	ReasonDependency
+	// ReasonRecommends: a new package that a Recommends of Cause brings, with
+	// [PlanOptions.InstallRecommends].
+	ReasonRecommends
+	// ReasonSuggests: a new package that a Suggests of Cause brings, with
+	// [PlanOptions.InstallSuggests].
+	ReasonSuggests
+	// ReasonAutoRemove: removed because it was installed to satisfy a
+	// dependency and nothing that is installed needs it any more
+	// ([PlanRequest.AutoRemove]).
+	ReasonAutoRemove
 	// ReasonUpgradeDependency: an installed package upgraded because the new
 	// version of Cause needs it, or no longer fits with it.
 	ReasonUpgradeDependency
@@ -122,6 +173,12 @@ func (k ReasonKind) String() string {
 		return "requested"
 	case ReasonDependency:
 		return "dependency"
+	case ReasonRecommends:
+		return "recommends"
+	case ReasonSuggests:
+		return "suggests"
+	case ReasonAutoRemove:
+		return "auto-remove"
 	case ReasonUpgradeDependency:
 		return "upgrade-dependency"
 	case ReasonSameSource:
@@ -211,6 +268,10 @@ type Change struct {
 	From *PackageInfo
 	// Reason says why.
 	Reason Reason
+	// Auto is true for an install or upgrade that leaves the package marked
+	// as automatically installed: a dependency, not a request. A caller that
+	// writes apt's extended states file records these.
+	Auto bool
 }
 
 // Plan is what [Cache.Plan] decides: the changes that bring the installed
@@ -219,8 +280,9 @@ type Change struct {
 //
 // Install lists the packages new to the system, Upgrade and Downgrade the
 // installed packages that change version, Remove the installed packages that
-// go. Each list is ordered so that a package comes after the packages it
-// depends on that are in the plan; removals come first in Changes. Held lists
+// go. Changes lists them in the order apt carries the steps out, which each
+// of the other lists keeps: the order of the "Inst" and "Remv" lines of
+// "apt-get -s" (see the Planning section of the package documentation). Held lists
 // the installed packages that have a newer candidate the plan did not take
 // (the "kept back" of apt). Unresolved lists the names of the request that no
 // index knows.
@@ -238,10 +300,21 @@ type Plan struct {
 	// Held is the installed packages kept at their version though a newer
 	// candidate exists.
 	Held []*PackageInfo
+	// Manual is the installed packages that were automatically installed and
+	// that the request names without the plan changing them: they become
+	// manually installed ("set to manually installed" of apt-get), so a later
+	// auto-removal keeps them. A named package the plan installs or upgrades
+	// is manually installed too; [Change.Auto] reports it.
+	Manual []*PackageInfo
+	// AutoRemovable is the installed packages that were installed
+	// automatically and that nothing needs any more, though the plan does
+	// not remove them (apt-get's "no longer required" list). With
+	// [PlanRequest.AutoRemove] they are in Remove instead.
+	AutoRemovable []*PackageInfo
 	// Unresolved is the requested names no package matched.
 	Unresolved []string
-	// Changes lists every change with its reason: removals first, then the
-	// installs, upgrades and downgrades in dependency order.
+	// Changes lists every change with its reason, in the order apt unpacks
+	// and removes the packages.
 	Changes []Change
 }
 
@@ -333,17 +406,45 @@ func (e *VirtualPackageError) Is(target error) bool { return target == ErrVirtua
 // removes anything and may pick any version that fits; use that to extract a
 // toolchain, and Plan to predict what a package manager would do.
 //
-// What is not modelled: Recommends and Suggests (a plan is always the one of
-// "--no-install-recommends"), the automatic-installation marks of
-// /var/lib/apt/extended_states (every installed package counts as installed
-// by hand), and the fallback to apt's second solver when the first one
-// fails. Where apt's choice rests on the order of its internal hash tables
-// (a tie between packages of equal score) the plan takes the order of the
-// package names.
+// Recommends of the packages being installed are installed too when they can
+// be, and skipped silently when not, as apt does with Install-Recommends
+// ([PlanOptions.InstallRecommends], on by default); Suggests only with
+// [PlanOptions.InstallSuggests]. Nothing is removed to satisfy a soft
+// dependency, except that a recommended package that conflicts with an
+// installed one removes it, as in apt. The automatic-installation marks of
+// /var/lib/apt/extended_states ([LoadOptions.ExtendedStatesFile]) and the
+// dpkg holds of the status file are read by [Load]; new dependencies are
+// marked automatic in the result ([Change.Auto], [Plan.Manual]), and
+// [PlanRequest.AutoRemove], like "remove" with --auto-remove, removes the
+// automatically installed packages nothing manual needs any more
+// ([Plan.AutoRemovable] lists them). [PlanOptions.Held] adds holds the
+// status database does not carry; an explicit request for a held package
+// overrides its hold, as it does in apt.
 //
-// An error is a [*PlanError] when the resolver fails, a
-// [*VirtualPackageError] for an ambiguous request, ErrResolveLimit when the
-// work budget runs out, or a parse error of a request (it wraps
+// Once the resolver has decided, the plan is ordered the way apt orders it:
+// unpack and configure steps are replayed with a port of apt's ordering of
+// Pre-Depends and Depends (pkgOrderList and pkgPackageManager), so
+// [Plan.Changes] come in the order "apt-get -s" prints them (removals first)
+// and a system apt cannot configure fails as it does: an [*OrderError] that
+// wraps [ErrOrderLoop], [ErrOrderRemoval] or [ErrOrderSimulation] and names
+// the cycle.
+//
+// What is not modelled: the fallback to apt's second solver when the first
+// one fails (such a request fails here), the versioned-kernel protection of
+// autoremove (APT::VersionedKernelPackages and the protected kernels, which
+// depend on the running system), purge as distinct from remove (the state of
+// configuration files is not known), the Important and Protected package
+// flags beyond Essential, implicit Breaks and reinstalls. Where apt's choice
+// rests on the order of its internal hash tables (a tie between packages of
+// equal score) the plan takes the order of the package names; the order of
+// reverse dependencies follows apt's package table as far as the loaded
+// indexes tell, so it may differ for versions that only a larger archive
+// holds.
+//
+// An error is a [*PlanError] when the resolver fails, an [*OrderError] when
+// the steps cannot be ordered, a [*VirtualPackageError] for an ambiguous
+// request, a [*PlanOptionError] for an invalid option, ErrResolveLimit when
+// the work budget runs out, or a parse error of a request (it wraps
 // [deb.ErrInvalidControlFormat]).
 func (c *Cache) Plan(req PlanRequest, opts PlanOptions) (*Plan, error) {
 	var pol candidatePolicy
@@ -359,12 +460,12 @@ func (c *Cache) plan(req PlanRequest, opts PlanOptions, pol candidatePolicy) (*P
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	steps := opts.MaxSteps
-	if steps <= 0 {
-		steps = DefaultPlanSteps
+	cfg, err := opts.engineConfig()
+	if err != nil {
+		return nil, err
 	}
 
-	e := newEngine(c, pol, opts.Held, steps)
+	e := newEngine(c, pol, cfg)
 	r := newResolver(e)
 
 	plan := &Plan{}
@@ -377,9 +478,81 @@ func (c *Cache) plan(req PlanRequest, opts PlanOptions, pol candidatePolicy) (*P
 		return nil, ErrResolveLimit
 	}
 
+	if err := e.checkOrder(); err != nil {
+		return nil, err
+	}
+
 	e.collect(plan)
 
 	return plan, nil
+}
+
+// ErrPlanOption is matched by a [*PlanOptionError]: a [PlanOptions] value
+// that cannot be used.
+var ErrPlanOption = errors.New("apt: invalid plan option")
+
+// PlanOptionError reports a [PlanOptions] value that cannot be used, such as a
+// NeverAutoRemove entry that is not a regular expression. It matches
+// [ErrPlanOption].
+type PlanOptionError struct {
+	// Option is the name of the field.
+	Option string
+	// Value is the offending value.
+	Value string
+	// Err is the cause.
+	Err error
+}
+
+// Error names the option, the value and the cause.
+func (e *PlanOptionError) Error() string {
+	return fmt.Sprintf("apt: invalid plan option %s %q: %v", e.Option, e.Value, e.Err)
+}
+
+// Is matches ErrPlanOption.
+func (e *PlanOptionError) Is(target error) bool { return target == ErrPlanOption }
+
+// Unwrap exposes the cause.
+func (e *PlanOptionError) Unwrap() error { return e.Err }
+
+// orDefault is the value of an optional switch.
+func orDefault(v *bool, def bool) bool {
+	if v == nil {
+		return def
+	}
+
+	return *v
+}
+
+// engineConfig resolves the options to the values the engine reads.
+func (o PlanOptions) engineConfig() (engineConfig, error) {
+	cfg := engineConfig{
+		held:             o.Held,
+		maxSteps:         o.MaxSteps,
+		recommends:       orDefault(o.InstallRecommends, true),
+		suggests:         orDefault(o.InstallSuggests, false),
+		followRecommends: orDefault(o.AutoRemoveRecommendsImportant, true),
+		followSuggests:   orDefault(o.AutoRemoveSuggestsImportant, true),
+	}
+
+	if cfg.maxSteps <= 0 {
+		cfg.maxSteps = DefaultPlanSteps
+	}
+
+	patterns := o.NeverAutoRemove
+	if patterns == nil {
+		patterns = DefaultNeverAutoRemove
+	}
+
+	for _, p := range patterns {
+		re, err := regexp.Compile(p)
+		if err != nil {
+			return engineConfig{}, &PlanOptionError{Option: "NeverAutoRemove", Value: p, Err: err}
+		}
+
+		cfg.neverRemove = append(cfg.neverRemove, re)
+	}
+
+	return cfg, nil
 }
 
 // apply runs the request on the engine: removals, installs, then the upgrade
@@ -405,7 +578,10 @@ func (e *engine) apply(r *resolver, req PlanRequest, plan *Plan) error {
 		}
 	}
 
-	var later []*pstate
+	var (
+		later  []*pstate
+		manual []*PackageInfo
+	)
 
 	for _, name := range req.Remove {
 		name = strings.TrimSpace(name)
@@ -422,6 +598,7 @@ func (e *engine) apply(r *resolver, req PlanRequest, plan *Plan) error {
 
 		for _, key := range keys {
 			s := e.state(key)
+			e.refreshMarks()
 			r.clear(s)
 			r.protect(s)
 			r.markRemove(s)
@@ -450,9 +627,18 @@ func (e *engine) apply(r *resolver, req PlanRequest, plan *Plan) error {
 			continue
 		}
 
+		e.refreshMarks()
 		r.clear(s)
 		r.protect(s)
 		e.markInstall(s, false, 0, true)
+
+		// A package the request names that stays as it is becomes
+		// manually installed (apt's TryToInstall).
+		if s.mode != modeInstall && s.cur != nil && s.auto {
+			e.markAuto(s, false)
+
+			manual = append(manual, &s.cur.PackageInfo)
+		}
 
 		if !brokenFix && !slices.Contains(later, s) {
 			later = append(later, s)
@@ -473,6 +659,7 @@ func (e *engine) apply(r *resolver, req PlanRequest, plan *Plan) error {
 	e.ctx = Reason{}
 
 	for _, s := range later {
+		e.refreshMarks()
 		e.markInstall(s, true, 0, true)
 	}
 
@@ -501,7 +688,13 @@ func (e *engine) apply(r *resolver, req PlanRequest, plan *Plan) error {
 		return ErrResolveLimit
 	}
 
-	return rerr
+	if rerr != nil {
+		return rerr
+	}
+
+	plan.Manual = manual
+
+	return e.autoRemove(req.AutoRemove, plan)
 }
 
 // fixBroken is apt's pkgFixBroken followed by pkgMinimizeUpgrade: upgrade
@@ -524,10 +717,6 @@ func (e *engine) fixBroken() error {
 
 	if e.exceeded {
 		return ErrResolveLimit
-	}
-
-	if e.brokenCount() != 0 {
-		return e.planError()
 	}
 
 	e.minimizeUpgrade()
@@ -751,33 +940,22 @@ func (e *engine) brokenCause(g *depGroup) error {
 	return ce
 }
 
-// collect turns the final state into the lists of the plan.
+// collect turns the final state into the lists of the plan, in the order the
+// unpack and remove steps run (see [Plan]).
 func (e *engine) collect(plan *Plan) {
-	var (
-		removed []*pstate
-		changed []*pstate
-	)
-
-	for _, k := range e.keys() {
+	for _, k := range e.unpackSeq {
 		s := e.state(k)
 
-		switch {
-		case s.mode == modeDelete && s.cur != nil:
-			removed = append(removed, s)
-		case s.mode == modeInstall && s.inst != nil && s.inst != s.cur:
-			changed = append(changed, s)
+		if s.mode == modeDelete && s.cur != nil {
+			plan.Changes = append(plan.Changes, Change{
+				Kind: ChangeRemove, Package: &s.cur.PackageInfo, Reason: s.why,
+			})
+			plan.Remove = append(plan.Remove, &s.cur.PackageInfo)
+
+			continue
 		}
-	}
 
-	for _, s := range removed {
-		plan.Changes = append(plan.Changes, Change{
-			Kind: ChangeRemove, Package: &s.cur.PackageInfo, Reason: s.why,
-		})
-		plan.Remove = append(plan.Remove, &s.cur.PackageInfo)
-	}
-
-	for _, s := range e.installOrder(changed) {
-		ch := Change{Package: &s.inst.PackageInfo, Reason: s.why}
+		ch := Change{Package: &s.inst.PackageInfo, Reason: s.why, Auto: s.auto}
 
 		switch {
 		case s.cur == nil:
@@ -801,63 +979,4 @@ func (e *engine) collect(plan *Plan) {
 			plan.Held = append(plan.Held, &s.cur.PackageInfo)
 		}
 	}
-}
-
-// installOrder sorts the changed packages so that a package follows the
-// changed packages it depends on: a depth-first walk over the Pre-Depends and
-// Depends of the version to install, the first alternative the plan meets
-// first, visiting packages in name order.
-func (e *engine) installOrder(changed []*pstate) []*pstate {
-	inSet := make(map[string]*pstate, len(changed))
-	for _, s := range changed {
-		inSet[s.key] = s
-	}
-
-	var (
-		out  []*pstate
-		seen = make(map[string]bool, len(changed))
-		walk func(s *pstate)
-	)
-
-	walk = func(s *pstate) {
-		if seen[s.key] {
-			return
-		}
-
-		seen[s.key] = true
-
-		for _, g := range e.depsOf(s.inst) {
-			if g.negative() {
-				continue
-			}
-
-			for i := range g.alts {
-				if dep := e.changedMatch(inSet, &g, i); dep != nil {
-					walk(dep)
-
-					break
-				}
-			}
-		}
-
-		out = append(out, s)
-	}
-
-	for _, s := range changed {
-		walk(s)
-	}
-
-	return out
-}
-
-// changedMatch finds the changed package that meets alternative i of a group
-// in the planned state, if any.
-func (e *engine) changedMatch(inSet map[string]*pstate, g *depGroup, i int) *pstate {
-	for _, v := range e.matches(g.owner, &g.alts[i], false, whenInstall) {
-		if s, ok := inSet[v.slot]; ok && s.inst == v && v.slot != g.owner.slot {
-			return s
-		}
-	}
-
-	return nil
 }

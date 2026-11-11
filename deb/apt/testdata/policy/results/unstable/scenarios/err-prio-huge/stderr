@@ -1,4 +1,0 @@
-E: Cannot convert 99999999999999999999 to integer: out of range
-E: /etc/apt/preferences: Value 99999999999999999999 is outside the range of valid pin priorities (-32768 to 32767)
-E: Cannot convert 99999999999999999999 to integer: out of range
-E: /etc/apt/preferences: Value 99999999999999999999 is outside the range of valid pin priorities (-32768 to 32767)

@@ -1,0 +1,49 @@
+Package: p00
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p01
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p02
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p03
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p04
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p09
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p13
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p15
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p20
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p25
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p35
+Architecture: amd64
+Auto-Installed: 1
+
+Package: p40
+Architecture: amd64
+Auto-Installed: 1
+
+

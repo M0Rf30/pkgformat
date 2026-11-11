@@ -1,0 +1,59 @@
+Package: h1
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h1 test package
+
+Package: h2
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h1 (>= 2.0)
+Description: h2 test package
+
+Package: h3
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h3 test package
+
+Package: h4
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h4 test package
+
+Package: h5
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: h5 test package
+
+Package: h6
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h4 (>= 2.0)
+Description: h6 test package
+
+Package: user-of-h1
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h1 (>= 2.0)
+Description: user-of-h1 test package
+
+Package: h7
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h3 (>= 2.0)
+Description: h7 test package
+
+Package: h8
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: h1
+Description: h8 test package
+
