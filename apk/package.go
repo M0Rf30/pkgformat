@@ -54,6 +54,15 @@ type Package struct {
 	// Signed reports that the file starts with an abuild signature segment.
 	// [ParsePackage] does not verify the signature, [VerifyPackage] does.
 	Signed bool
+	// Format is the container format: [FormatV2] (gzip streams of tar) or
+	// [FormatV3] (ADB). Checksum, DataHash and Packager are v2 fields; a v3
+	// package carries Hashes instead.
+	Format Format
+	// Hashes is the v3 package identity (the 20-byte digest of its ADB
+	// block); nil for v2.
+	Hashes []byte
+	// Recommends is the v3 recommends list; v2 has no counterpart.
+	Recommends []string
 }
 
 // Limits of ParsePackage. They bound the memory and CPU an uploader controls.
@@ -94,7 +103,16 @@ func defaultPackageLimits() packageLimits {
 // is the SHA-256 of the data segment, fully decompresses the data segment
 // (verifying its gzip checksum) and refuses entries that are absolute or climb
 // out of their directory. Every error wraps [ErrInvalidPackage].
+//
+// An APKv3 package (an ADB container, as apk-tools 3 writes) is read with
+// [adb.ParsePackage] and returned in the same form, with Format set to
+// [FormatV3]; its structure is checked, not its file digests (use
+// [adb.VerifyPackage] or [adb.Extract] for those).
 func ParsePackage(r io.ReaderAt, size int64) (*Package, error) {
+	if isADB(r, size) {
+		return parseADBPackage(r, size)
+	}
+
 	return parsePackage(r, size, defaultPackageLimits())
 }
 
