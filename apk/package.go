@@ -33,9 +33,16 @@ type Package struct {
 	BuildTime, InstalledSize int64
 	Depends, Provides        []string
 	// Replaces is the PKGINFO replaces list. It is not an index field.
-	Replaces         []string
-	InstallIf        []string
-	ProviderPriority int
+	Replaces []string
+	// Triggers is the PKGINFO triggers list: the directory globs whose
+	// changes run the package's .trigger script. It is not an index field.
+	Triggers  []string
+	InstallIf []string
+	// ProviderPriority is the provider_priority index field (p), the
+	// preference among the providers of a virtual name. ReplacesPriority is
+	// the PKGINFO replaces_priority, which picks the owner of a file two
+	// packages both carry. Neither is negative.
+	ProviderPriority, ReplacesPriority int
 	// DataHash is the lowercase hex SHA-256 of the data segment (PKGINFO
 	// datahash); empty for index entries.
 	DataHash string

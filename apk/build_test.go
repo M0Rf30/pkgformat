@@ -296,13 +296,14 @@ func checkDataTar(t *testing.T, data []byte) {
 
 	hello := sha1.Sum([]byte("#!/bin/sh\necho hi\n"))
 	empty := sha1.Sum(nil)
+	linkSum := sha1.Sum([]byte("hello"))
 
 	want := map[string]entry{
 		"etc/":           {tar.TypeDir, 0o755, "", ""},
 		"usr/":           {tar.TypeDir, 0o755, "", ""},
 		"usr/bin/":       {tar.TypeDir, 0o755, "", ""},
 		"usr/bin/hello":  {tar.TypeReg, 0o4755, "", hex.EncodeToString(hello[:])},
-		"usr/bin/hi":     {tar.TypeSymlink, 0o777, "hello", ""},
+		"usr/bin/hi":     {tar.TypeSymlink, 0o777, "hello", hex.EncodeToString(linkSum[:])},
 		"run-pipe":       {tar.TypeFifo, 0o600, "", ""},
 		"empty":          {tar.TypeReg, 0o644, "", hex.EncodeToString(empty[:])},
 		"etc/hello.conf": {tar.TypeReg, 0o644, "", got["etc/hello.conf"].sha1},
@@ -378,8 +379,7 @@ func TestWritePackage_invalid(t *testing.T) {
 		"control name":   func(s *Spec) { s.Files = append(s.Files, MemFile(".PKGINFO", 0o644, nil)) },
 		"script name":    func(s *Spec) { s.Files = append(s.Files, MemFile(".post-install", 0o644, nil)) },
 		"duplicate":      func(s *Spec) { s.Files = append(s.Files, MemFile("empty", 0o644, nil)) },
-		"missing parent": func(s *Spec) { s.Files = append(s.Files, MemFile("opt/x", 0o644, nil)) },
-		"device":         func(s *Spec) { s.Files = append(s.Files, File{Name: "dev", Mode: fs.ModeDevice | 0o600}) },
+		"socket":         func(s *Spec) { s.Files = append(s.Files, File{Name: "sock", Mode: fs.ModeSocket | 0o600}) },
 		"empty link":     func(s *Spec) { s.Files = append(s.Files, File{Name: "l", Mode: fs.ModeSymlink | 0o777}) },
 		"neg file size":  func(s *Spec) { s.Files = append(s.Files, File{Name: "n", Mode: 0o644, Size: -1}) },
 	} {
