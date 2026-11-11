@@ -168,25 +168,6 @@ func TestLibxmlEscaping(t *testing.T) {
 	}
 }
 
-func firstDiff(a, b []byte) int {
-	n := min(len(a), len(b))
-	for i := range n {
-		if a[i] != b[i] {
-			return i
-		}
-	}
-
-	return n
-}
-
-func excerpt(a, b []byte) string {
-	i := firstDiff(a, b)
-	lo := max(0, i-60)
-	hi := min(len(a), i+60)
-
-	return string(a[lo:hi])
-}
-
 // failAfter fails every Write once n bytes have been accepted.
 type failAfter struct {
 	n   int

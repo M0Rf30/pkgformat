@@ -257,7 +257,7 @@ func ParseRepomd(r io.Reader) (*Repomd, error) {
 	out.Content, out.Repo = doc.Tags.Content, doc.Tags.Repo
 
 	for _, d := range doc.Tags.Distro {
-		out.Distro = append(out.Distro, DistroTag{CPEID: d.CPEID, Name: d.Name})
+		out.Distro = append(out.Distro, DistroTag(d))
 	}
 
 	for _, d := range doc.Data {
