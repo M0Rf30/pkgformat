@@ -13,7 +13,7 @@ reproduces all of it (podman, network for the archive part):
 | --- | --- |
 | `lists/`, `status`, `targets.txt`, `expected.tsv` | trimmed real archive indexes, the container's dpkg status, and what `apt-get install -s --no-install-recommends` planned for each target (`ResolveDeps` and `Plan` are both compared) |
 | `installed/` | the same archive with `preinstall.txt` installed (an MTA, sudo, mailx): `scenarios.txt` lines run `remove`, `upgrade`, `dist-upgrade` and installs that must remove or upgrade installed packages |
-| `worlds/<name>/` | synthetic universes: `Packages` (the index), `status` (installed packages), `scenarios.txt`, optional `holds` (one package per line, `dpkg --set-selections`) and `preferences` (`/etc/apt/preferences`), and the recorded `expected.tsv` |
+| `worlds/<name>/` | synthetic universes: `Packages` (the index), `status` (installed packages), `scenarios.txt`, optional `holds` (one package per line, `dpkg --set-selections`), `extended_states` and `preferences` (`/etc/apt/preferences`), and the recorded `expected.tsv` |
 | `record.sh`, `container.sh`, `container-worlds.sh` | the in-container recorders |
 
 Worlds: `conflicts` (Conflicts, Breaks, versioned and virtual conflicts,
@@ -22,7 +22,8 @@ Replaces, alternatives, providers, dependency upgrades), `upgrades`
 `pins` (a preferences file: never, below-default and above-1000 pins), `scoring` (the problem resolver's choices between
 removing, keeping and upgrading, Pre-Depends, versioned providers) and
 `broken` (systems whose installed packages have unmet dependencies, with and
-without `-f`).
+without `-f`), `recommends`, `autoremove`, `statushold`, `ordering` and the
+generated `soft1`..`soft6`.
 
 ## expected.tsv
 
@@ -71,20 +72,30 @@ A scenario that cannot match is listed in `aptDivergences` with the reason.
 
 ## Documented divergences from apt
 
-Only apt-scoring-only or out-of-scope ones; each is also in
-`aptDivergences` or in the godoc of `Plan`:
+Only apt-internal quirks or out-of-scope ones; each is also in
+`aptDivergences` (the two `soft6` scenarios), recorded as `Solver3`, or in the
+godoc of `Plan`:
 
-* `scoring/s13`: two packages Pre-Depend on each other. apt's resolver accepts
-  the plan and the simulation fails afterwards ordering the unpack and
-  configure steps ("Couldn't configure ..., probably a dependency cycle"). Plan
-  stops at what the resolver decides and does not order configuration.
+* Scenarios in which apt falls back to its 3.0 solver after the internal one
+  fails (its output starts with `Solving dependencies...`, or `Calculating
+  upgrade...` appears twice) are recorded as `Solver3` and skipped: ten of the
+  generated ones (`soft1` x18 and x25; `soft2` x04, x18, x39; `soft5` x03,
+  x20, x24, x42, x43). Plan models the internal solver only and fails on
+  those requests.
+* `soft6/x02` and `soft6/x26`: apt prints `Internal Inconsistency in
+  pkgDepCache: BrokenCount 2 vs 1` and its answer depends on the corrupted
+  count; not reproducible (`brokenCountQuirk`).
 * Ties between packages of equal score are broken by package name; apt uses the
   order of its package table. No recorded scenario depends on it.
-* Recommends, Suggests and `extended_states` auto-installed marks are not
-  modelled: a plan is the one of `--no-install-recommends` with every package
-  installed by hand (so nothing is garbage).
-* Scenarios in which apt falls back to its 3.0 solver are recorded as
-  `Solver3` and skipped.
+* Not modelled: the versioned-kernel protection of autoremove
+  (`APT::VersionedKernelPackages`: when every provider of a dependency is a
+  versioned kernel package apt keeps only the protected kernels, a set read
+  from the running system); purge as distinct from remove (`Purg` rows are read
+  as `Remv`, configuration-file state is unknown); the Important and Protected
+  flags beyond Essential; implicit Breaks and reinstalls.
+
+`scoring/s13` (two packages Pre-Depend on each other) used to be a divergence;
+Plan now orders configuration like apt and fails the same way (see below).
 
 ## Soft dependencies, automatic marks and generated worlds
 
@@ -100,14 +111,33 @@ Recorded with apt 3.0.4 (the `debian:stable-slim` image) by `SKIP_ARCHIVE=1 ./ge
   `extended_states` file. The rows `Manu` ("set to manually installed") and
   `Auto` ("no longer required") carry those lists; `Purg` rows are read as
   `Remv`.
-- `worlds/soft1` to `worlds/soft6` (48 scenarios each) come from
+- `worlds/statushold` (20 scenarios): `Status: hold ok installed` in the dpkg
+  status file (with an `extended_states` file), so Plan honours holds without
+  `PlanOptions.Held`: held packages stay out of upgrades and dependency
+  repairs, and an explicit `install` of a held package overrides the hold, as
+  in apt.
+- `worlds/ordering` (54 scenarios): Pre-Depends and Depends chains, loops,
+  Pre-Depends cycles, removals interleaved with installs, providers swapped
+  for a package they conflict with, and upgrades. `scoring/s13` (two
+  packages that Pre-Depend on each other) is one: apt fails with `Couldn't
+  configure pre1:amd64, probably a dependency cycle`, and Plan returns an
+  `*OrderError` (`ErrOrderLoop`, cycle `pre1 -> pre2 -> pre1`).
+- `worlds/soft1` to `worlds/soft6` (49 scenarios each) come from
   `softgen` (`go run ./deb/apt/testdata/diff/softgen -seed N -out DIR`), a
   seeded random universe with a consistent installed system, automatic marks
-  and a hold. Twelve of their scenarios are not matched yet and are listed in
-  `randomWorldDivergences` of `diff_plan_test.go`; they also fail without any
-  Recommends or Suggests in the world, so they are resolver cascades, not
-  soft-dependency logic.
+  and a hold. Ten are recorded `Solver3` and skipped, two are in
+  `aptDivergences`; see above.
 
-Not modelled: the versioned-kernel protection of autoremove, purge as distinct
-from remove, and the ordering of configuration (`scoring/s13` stays in
-`aptDivergences`).
+## Order check
+
+The unsorted `Inst`, `Upgr`, `Down` and `Remv` rows of a scenario are compared
+with apt's, in order. `Plan` gets that order by replaying apt's own steps:
+`resolve_order.go` ports `pkgOrderList`, `pkgPackageManager` (SmartUnPack,
+SmartConfigure, early removal, Multi-Arch: same lockstep) and the
+`pkgSimulate` replay. The order of the reverse dependencies, which apt takes
+from the order in which its cache generator created the dependency records,
+is rebuilt over every version of every loaded index (`resolve_revdeps.go`); the
+remaining approximation is that the rank of a version string only covers the
+loaded indexes, not the whole archive.
+
+Not modelled: see the divergences above.

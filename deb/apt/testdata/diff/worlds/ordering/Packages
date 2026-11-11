@@ -1,0 +1,417 @@
+Package: pa
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: pb
+Description: pa test package
+
+Package: pb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: pa
+Description: pb test package
+
+Package: pc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: pd
+Description: pc test package
+
+Package: pd
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: pe
+Description: pd test package
+
+Package: pe
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: pe test package
+
+Package: da
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: db
+Description: da test package
+
+Package: db
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: da
+Description: db test package
+
+Package: ea
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: eb
+Description: ea test package
+
+Package: eb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ea
+Description: eb test package
+
+Package: fa
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: fb
+Description: fa test package
+
+Package: fb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: fa
+Description: fb test package
+
+Package: ga
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: gb | gc
+Description: ga test package
+
+Package: gb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ga
+Description: gb test package
+
+Package: gc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: gc test package
+
+Package: ha
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: virtx
+Description: ha test package
+
+Package: hb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ha
+Provides: virtx
+Description: hb test package
+
+Package: ia
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ib
+Description: ia test package
+
+Package: ib
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ic
+Description: ib test package
+
+Package: ic
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ia
+Description: ic test package
+
+Package: ja
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: jb (>= 2.0)
+Description: ja test package
+
+Package: jb
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ja (>= 2.0)
+Description: jb test package
+
+Package: ma
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: mb (>= 2.0)
+Description: ma test package
+
+Package: mb
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: mb test package
+
+Package: na
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: nb (>= 2.0)
+Description: na test package
+
+Package: nb
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: na (>= 2.0)
+Description: nb test package
+
+Package: pq
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Breaks: pr (<< 2.0)
+Description: pq test package
+
+Package: pr
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: pq (>= 2.0)
+Description: pr test package
+
+Package: new1
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: old1
+Replaces: old1
+Description: new1 test package
+
+Package: new2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: new3
+Conflicts: old1
+Description: new2 test package
+
+Package: new3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: old1
+Description: new3 test package
+
+Package: kb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: kc
+Conflicts: ka
+Description: kb test package
+
+Package: kc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: kb
+Description: kc test package
+
+Package: es1
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Essential: yes
+Pre-Depends: es2
+Description: es1 test package
+
+Package: es2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: es1 (>= 2.0)
+Description: es2 test package
+
+Package: qa
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: qb, qc
+Description: qa test package
+
+Package: qb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: qd
+Description: qb test package
+
+Package: qc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: qd
+Description: qc test package
+
+Package: qd
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: qd test package
+
+Package: ra
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: rb
+Description: ra test package
+
+Package: rb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: rc
+Description: rb test package
+
+Package: rc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: rb
+Description: rc test package
+
+Package: sa
+Version: 2.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: sa test package
+
+Package: sb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: sa (>= 2.0)
+Description: sb test package
+
+Package: ta
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: tb | tc
+Description: ta test package
+
+Package: tb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: ta
+Description: tb test package
+
+Package: tc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: td
+Description: tc test package
+
+Package: td
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ta
+Description: td test package
+
+Package: va
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: va2
+Description: va test package
+
+Package: va2
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: va3
+Description: va2 test package
+
+Package: va3
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: va
+Description: va3 test package
+
+Package: za
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: zb
+Conflicts: zb
+Replaces: zb
+Description: za test package
+
+Package: zq
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: zb
+Description: zq test package
+
+Package: zc
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: zb
+Description: zc test package
+
+Package: zd
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: ze
+Description: zd test package
+
+Package: ze
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Conflicts: zb
+Description: ze test package
+
+Package: zf
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Provides: zb
+Conflicts: zb
+Replaces: zb
+Depends: zg
+Description: zf test package
+
+Package: zg
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Pre-Depends: zf
+Description: zg test package
+
+Package: zb
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Description: zb test package
+
+Package: zp
+Version: 1.0
+Architecture: amd64
+Maintainer: Test <test@example.org>
+Depends: zb
+Description: zp test package
+

@@ -35,7 +35,12 @@ record_plan() {
 		if [ "$status" -ne 0 ]; then
 			printf '%s\tFail\t-\t-\n' "$id"
 		else
-			if grep -q 'Result calculated by the 3.0 solver' <<<"$result"; then
+			# The second solver prints a progress line of its own and
+			# apt-get -s hides the "Result calculated" notice: an install
+			# shows "Solving dependencies..." only for the second solver,
+			# an upgrade shows "Calculating upgrade..." once per solver.
+			if grep -q '^Solving dependencies\.\.\.' <<<"$result" ||
+				[ "$(grep -c '^Calculating upgrade\.\.\.' <<<"$result")" -gt 1 ]; then
 				printf '%s\tSolver3\t-\t-\n' "$id"
 			fi
 			echo "$result" | awk -v id="$id" '

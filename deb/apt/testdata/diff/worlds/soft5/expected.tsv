@@ -2,6 +2,7 @@ x01	Auto	p21	-
 x01	Remv	p38	2.0
 x01	Upgr	p39	2.0
 x02	None	-	-
+x03	Solver3	-	-
 x03	Auto	p39	-
 x03	Remv	p29	2.0
 x03	Remv	p24	1.0
@@ -35,6 +36,7 @@ x18	Remv	p38	2.0
 x18	Upgr	p39	2.0
 x18	Remv	p21	2.0
 x19	Fail	-	-
+x20	Solver3	-	-
 x20	Remv	p29	2.0
 x20	Remv	p24	1.0
 x20	Remv	p13	1.0
@@ -54,6 +56,7 @@ x22	Remv	p05	1.0
 x22	Remv	p01	1.0
 x22	Remv	p21	2.0
 x23	Fail	-	-
+x24	Solver3	-	-
 x24	Remv	p29	2.0
 x24	Remv	p24	1.0
 x24	Remv	p13	1.0
@@ -117,6 +120,7 @@ x41	Remv	p38	2.0
 x41	Remv	p06	1.0
 x41	Remv	p03	2.0
 x41	Remv	p13	1.0
+x42	Solver3	-	-
 x42	Remv	p29	2.0
 x42	Remv	p24	1.0
 x42	Remv	p32	2.0
@@ -131,6 +135,7 @@ x42	Remv	p01	1.0
 x42	Remv	p00	1.0
 x42	Inst	p26	2.0
 x42	Upgr	p37	2.0
+x43	Solver3	-	-
 x43	Remv	p29	2.0
 x43	Remv	p24	1.0
 x43	Remv	p13	1.0

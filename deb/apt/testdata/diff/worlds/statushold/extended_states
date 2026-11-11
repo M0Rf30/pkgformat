@@ -1,0 +1,11 @@
+Package: h1
+Architecture: amd64
+Auto-Installed: 1
+
+Package: h4
+Architecture: amd64
+Auto-Installed: 1
+
+Package: h5
+Architecture: amd64
+Auto-Installed: 1

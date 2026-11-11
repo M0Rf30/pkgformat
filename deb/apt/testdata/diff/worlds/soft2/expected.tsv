@@ -1,6 +1,7 @@
 x01	Remv	p44	1.0
 x02	Remv	p25	1.0
 x03	None	-	-
+x04	Solver3	-	-
 x04	Auto	p43	-
 x04	Remv	p36	1.0
 x04	Remv	p13	1.0
@@ -33,6 +34,7 @@ x14	None	-	-
 x15	None	-	-
 x16	Inst	p34	1.0
 x17	Fail	-	-
+x18	Solver3	-	-
 x18	Auto	p41	-
 x18	Remv	p06	2.0
 x18	Inst	p45	2.0
@@ -81,6 +83,7 @@ x35	None	-	-
 x36	Fail	-	-
 x37	Fail	-	-
 x38	Manu	p09	-
+x39	Solver3	-	-
 x39	Auto	p43	-
 x39	Remv	p36	1.0
 x39	Remv	p13	1.0

@@ -142,8 +142,11 @@ type engine struct {
 	active  map[string]struct{}
 	order   []string
 	every   []string
-	revCur  map[string][]revEntry
-	bySrc   map[string][]*pkg
+	// unpackSeq lists the slots the plan unpacks or removes, in the order
+	// apt carries the steps out (set by checkOrder).
+	unpackSeq []string
+	revCur    map[string][]revEntry
+	bySrc     map[string][]*pkg
 
 	steps    int
 	maxSteps int
@@ -289,13 +292,7 @@ func (e *engine) ver(key string, w when) *pkg {
 }
 
 // ownerArch is the architecture a dependency of p is read for.
-func (e *engine) ownerArch(p *pkg) string {
-	if p.Architecture == "" || p.Architecture == archAll {
-		return e.native
-	}
-
-	return p.Architecture
-}
+func (e *engine) ownerArch(p *pkg) string { return ownerArchOf(p, e.native) }
 
 // depsOf lists the dependency groups of a version the solver reads, in the
 // order apt stores them: Pre-Depends, Depends, Conflicts, Breaks.
@@ -467,7 +464,24 @@ func (e *engine) allTargets(g *depGroup, i int) []*pkg {
 
 	var out []*pkg
 
+	if rel.Arch == "any" && !neg {
+		// name:any is met by the package in every architecture that allows it.
+		e.c.eachSlot(rel.Name, func(key string) bool {
+			for _, v := range e.c.slots[key] {
+				if e.relMatch(g.owner, rel, false, v) {
+					out = append(out, v)
+				}
+			}
+
+			return true
+		})
+	}
+
 	for _, v := range e.c.slots[e.targetSlot(rel, e.ownerArch(g.owner))] {
+		if slices.Contains(out, v) {
+			continue
+		}
+
 		if neg && v.Name == g.owner.Name && (v.slot == g.owner.slot || strings.EqualFold(g.owner.MultiArch, "same")) {
 			continue
 		}
@@ -646,25 +660,30 @@ func enumPriority(p *pkg) int {
 
 // targetSlot is the slot a relation of a version of architecture arch names.
 func (e *engine) targetSlot(rel *deb.Relation, ownerArch string) string {
+	return e.c.relTarget(rel, ownerArch)
+}
+
+// relTarget is targetSlot without an engine.
+func (c *Cache) relTarget(rel *deb.Relation, ownerArch string) string {
 	if rel.Arch != "" && rel.Arch != "any" && rel.Arch != "native" {
 		ownerArch = rel.Arch
 	}
 
 	if rel.Arch == "native" {
-		ownerArch = e.native
+		ownerArch = c.hostArch
 	}
 
-	if k := entryKey(rel.Name, ownerArch); e.c.slots[k] != nil {
+	if k := entryKey(rel.Name, ownerArch); c.slots[k] != nil {
 		return k
 	}
 
-	if e.c.slots[rel.Name] != nil {
+	if c.slots[rel.Name] != nil {
 		return rel.Name
 	}
 
 	var first string
 
-	e.c.eachSlot(rel.Name, func(key string) bool {
+	c.eachSlot(rel.Name, func(key string) bool {
 		first = key
 
 		return false

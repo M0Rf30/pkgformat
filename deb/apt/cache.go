@@ -185,6 +185,12 @@ type Cache struct {
 	// installed maps a slot key to its installed version.
 	installed map[string]*pkg
 	seq       int
+	// gen counts the changes of the version set; the reverse dependency
+	// index is valid for one value of it.
+	gen int
+
+	revMu sync.Mutex
+	rev   *revIndex
 }
 
 // NewCache returns an empty cache. hostArch is the architecture packages are
@@ -261,12 +267,14 @@ func (c *Cache) insert(info *PackageInfo, merge bool) {
 			existing.Provides = after
 		}
 
+		c.gen++
 		c.indexVersion(existing)
 
 		return
 	}
 
 	c.seq++
+	c.gen++
 	p := &pkg{PackageInfo: *info, seq: c.seq, slot: key}
 
 	pos, _ := slices.BinarySearchFunc(versions, p, func(e, target *pkg) int {

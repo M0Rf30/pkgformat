@@ -28,33 +28,20 @@ import (
 // that cannot is listed in aptDivergences with the reason, never left to
 // fail.
 var aptDivergences = map[string]string{
-	"scoring/s13": "two packages Pre-Depend on each other: apt's resolver accepts the " +
-		"plan and its simulation then fails ordering the unpack and configure steps " +
-		"(immediate configuration); Plan stops at what the resolver decides and does " +
-		"not order configuration, so it plans both",
+	"soft6/x02": brokenCountQuirk,
+	"soft6/x26": brokenCountQuirk,
 }
 
-// randomWorldDivergences are the scenarios of the generated soft1..soft6
-// worlds (testdata/diff/softgen) on which Plan and apt part. All of them
-// are large cascades (a dozen removals or a conflict chain) that the problem
-// resolver settles differently: Plan fails or plans a different set. They
-// were found by the generated worlds, are present without any Recommends or
-// Suggests in the world (the same scenarios fail with those fields stripped),
-// and are not yet traced to a cause. The first hypothesis is the order in
-// which the resolver investigates packages (apt considered a provider that
-// Plan does not first). Each is skipped, with this reason, until fixed.
-var randomWorldDivergences = []string{
-	"soft1/x18", "soft1/x25",
-	"soft2/x04", "soft2/x18", "soft2/x39",
-	"soft5/x03", "soft5/x20", "soft5/x24", "soft5/x42", "soft5/x43",
-	"soft6/x02", "soft6/x26",
-}
-
-func init() {
-	for _, id := range randomWorldDivergences {
-		aptDivergences[id] = "generated world, resolver cascade not matched: see randomWorldDivergences"
-	}
-}
+// brokenCountQuirk is the reason of the two generated scenarios on which apt
+// itself ends in an inconsistent state. In soft6 p28 1.0 (installed) is the
+// only provider of virt4, which the installed p17 depends on, and p28 2.0
+// does not provide it. apt upgrades p28 anyway (its final plan lists p17 as
+// broken by the unpack, "Inst p28 ... [p17:amd64 ]") and warns "Internal
+// Inconsistency in pkgDepCache: BrokenCount 2 vs 1 (keep start)": the
+// incremental broken counter drifted while ResolveByKeep ran, so it believed
+// the cache consistent. Plan keeps p28, the consistent outcome.
+const brokenCountQuirk = "apt reports an Internal Inconsistency in pkgDepCache and upgrades a " +
+	"package whose new version breaks an installed dependent; Plan keeps it back"
 
 // aptRow is one line of an expected.tsv.
 type aptRow struct{ kind, name, version string }
@@ -256,6 +243,8 @@ func checkScenarios(t *testing.T, c *Cache, opts PlanOptions, scenarios, expecte
 			plan, err := c.Plan(req, ropts)
 
 			got := planRows(req, plan, err)
+			assert.Equal(t, rowsText(changeRows(rows)), rowsText(changeRows(got)),
+				"order of the unpack and remove steps for %q", args[id])
 			sortRows(got)
 			sortRows(rows)
 
@@ -269,6 +258,21 @@ func checkScenarios(t *testing.T, c *Cache, opts PlanOptions, scenarios, expecte
 	}
 
 	return matched
+}
+
+// changeRows keeps the rows that are steps apt carries out (Inst, Upgr, Down,
+// Remv) in their order.
+func changeRows(rows []aptRow) []aptRow {
+	var out []aptRow
+
+	for _, r := range rows {
+		switch r.kind {
+		case "Inst", "Upgr", "Down", "Remv":
+			out = append(out, r)
+		}
+	}
+
+	return out
 }
 
 func rowsText(rows []aptRow) string {

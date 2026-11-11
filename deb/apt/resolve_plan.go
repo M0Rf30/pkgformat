@@ -280,8 +280,9 @@ type Change struct {
 //
 // Install lists the packages new to the system, Upgrade and Downgrade the
 // installed packages that change version, Remove the installed packages that
-// go. Each list is ordered so that a package comes after the packages it
-// depends on that are in the plan; removals come first in Changes. Held lists
+// go. Changes lists them in the order apt carries the steps out, which each
+// of the other lists keeps: the order of the "Inst" and "Remv" lines of
+// "apt-get -s" (see the Planning section of the package documentation). Held lists
 // the installed packages that have a newer candidate the plan did not take
 // (the "kept back" of apt). Unresolved lists the names of the request that no
 // index knows.
@@ -312,8 +313,8 @@ type Plan struct {
 	AutoRemovable []*PackageInfo
 	// Unresolved is the requested names no package matched.
 	Unresolved []string
-	// Changes lists every change with its reason: removals first, then the
-	// installs, upgrades and downgrades in dependency order.
+	// Changes lists every change with its reason, in the order apt unpacks
+	// and removes the packages.
 	Changes []Change
 }
 
@@ -405,17 +406,45 @@ func (e *VirtualPackageError) Is(target error) bool { return target == ErrVirtua
 // removes anything and may pick any version that fits; use that to extract a
 // toolchain, and Plan to predict what a package manager would do.
 //
-// What is not modelled: Recommends and Suggests (a plan is always the one of
-// "--no-install-recommends"), the automatic-installation marks of
-// /var/lib/apt/extended_states (every installed package counts as installed
-// by hand), and the fallback to apt's second solver when the first one
-// fails. Where apt's choice rests on the order of its internal hash tables
-// (a tie between packages of equal score) the plan takes the order of the
-// package names.
+// Recommends of the packages being installed are installed too when they can
+// be, and skipped silently when not, as apt does with Install-Recommends
+// ([PlanOptions.InstallRecommends], on by default); Suggests only with
+// [PlanOptions.InstallSuggests]. Nothing is removed to satisfy a soft
+// dependency, except that a recommended package that conflicts with an
+// installed one removes it, as in apt. The automatic-installation marks of
+// /var/lib/apt/extended_states ([LoadOptions.ExtendedStatesFile]) and the
+// dpkg holds of the status file are read by [Load]; new dependencies are
+// marked automatic in the result ([Change.Auto], [Plan.Manual]), and
+// [PlanRequest.AutoRemove], like "remove" with --auto-remove, removes the
+// automatically installed packages nothing manual needs any more
+// ([Plan.AutoRemovable] lists them). [PlanOptions.Held] adds holds the
+// status database does not carry; an explicit request for a held package
+// overrides its hold, as it does in apt.
 //
-// An error is a [*PlanError] when the resolver fails, a
-// [*VirtualPackageError] for an ambiguous request, ErrResolveLimit when the
-// work budget runs out, or a parse error of a request (it wraps
+// Once the resolver has decided, the plan is ordered the way apt orders it:
+// unpack and configure steps are replayed with a port of apt's ordering of
+// Pre-Depends and Depends (pkgOrderList and pkgPackageManager), so
+// [Plan.Changes] come in the order "apt-get -s" prints them (removals first)
+// and a system apt cannot configure fails as it does: an [*OrderError] that
+// wraps [ErrOrderLoop], [ErrOrderRemoval] or [ErrOrderSimulation] and names
+// the cycle.
+//
+// What is not modelled: the fallback to apt's second solver when the first
+// one fails (such a request fails here), the versioned-kernel protection of
+// autoremove (APT::VersionedKernelPackages and the protected kernels, which
+// depend on the running system), purge as distinct from remove (the state of
+// configuration files is not known), the Important and Protected package
+// flags beyond Essential, implicit Breaks and reinstalls. Where apt's choice
+// rests on the order of its internal hash tables (a tie between packages of
+// equal score) the plan takes the order of the package names; the order of
+// reverse dependencies follows apt's package table as far as the loaded
+// indexes tell, so it may differ for versions that only a larger archive
+// holds.
+//
+// An error is a [*PlanError] when the resolver fails, an [*OrderError] when
+// the steps cannot be ordered, a [*VirtualPackageError] for an ambiguous
+// request, a [*PlanOptionError] for an invalid option, ErrResolveLimit when
+// the work budget runs out, or a parse error of a request (it wraps
 // [deb.ErrInvalidControlFormat]).
 func (c *Cache) Plan(req PlanRequest, opts PlanOptions) (*Plan, error) {
 	var pol candidatePolicy
@@ -447,6 +476,10 @@ func (c *Cache) plan(req PlanRequest, opts PlanOptions, pol candidatePolicy) (*P
 
 	if e.exceeded {
 		return nil, ErrResolveLimit
+	}
+
+	if err := e.checkOrder(); err != nil {
+		return nil, err
 	}
 
 	e.collect(plan)
@@ -686,10 +719,6 @@ func (e *engine) fixBroken() error {
 		return ErrResolveLimit
 	}
 
-	if e.brokenCount() != 0 {
-		return e.planError()
-	}
-
 	e.minimizeUpgrade()
 
 	return nil
@@ -911,32 +940,21 @@ func (e *engine) brokenCause(g *depGroup) error {
 	return ce
 }
 
-// collect turns the final state into the lists of the plan.
+// collect turns the final state into the lists of the plan, in the order the
+// unpack and remove steps run (see [Plan]).
 func (e *engine) collect(plan *Plan) {
-	var (
-		removed []*pstate
-		changed []*pstate
-	)
-
-	for _, k := range e.keys() {
+	for _, k := range e.unpackSeq {
 		s := e.state(k)
 
-		switch {
-		case s.mode == modeDelete && s.cur != nil:
-			removed = append(removed, s)
-		case s.mode == modeInstall && s.inst != nil && s.inst != s.cur:
-			changed = append(changed, s)
+		if s.mode == modeDelete && s.cur != nil {
+			plan.Changes = append(plan.Changes, Change{
+				Kind: ChangeRemove, Package: &s.cur.PackageInfo, Reason: s.why,
+			})
+			plan.Remove = append(plan.Remove, &s.cur.PackageInfo)
+
+			continue
 		}
-	}
 
-	for _, s := range removed {
-		plan.Changes = append(plan.Changes, Change{
-			Kind: ChangeRemove, Package: &s.cur.PackageInfo, Reason: s.why,
-		})
-		plan.Remove = append(plan.Remove, &s.cur.PackageInfo)
-	}
-
-	for _, s := range e.installOrder(changed) {
 		ch := Change{Package: &s.inst.PackageInfo, Reason: s.why, Auto: s.auto}
 
 		switch {
@@ -961,63 +979,4 @@ func (e *engine) collect(plan *Plan) {
 			plan.Held = append(plan.Held, &s.cur.PackageInfo)
 		}
 	}
-}
-
-// installOrder sorts the changed packages so that a package follows the
-// changed packages it depends on: a depth-first walk over the Pre-Depends and
-// Depends of the version to install, the first alternative the plan meets
-// first, visiting packages in name order.
-func (e *engine) installOrder(changed []*pstate) []*pstate {
-	inSet := make(map[string]*pstate, len(changed))
-	for _, s := range changed {
-		inSet[s.key] = s
-	}
-
-	var (
-		out  []*pstate
-		seen = make(map[string]bool, len(changed))
-		walk func(s *pstate)
-	)
-
-	walk = func(s *pstate) {
-		if seen[s.key] {
-			return
-		}
-
-		seen[s.key] = true
-
-		for _, g := range e.depsOf(s.inst) {
-			if g.negative() {
-				continue
-			}
-
-			for i := range g.alts {
-				if dep := e.changedMatch(inSet, &g, i); dep != nil {
-					walk(dep)
-
-					break
-				}
-			}
-		}
-
-		out = append(out, s)
-	}
-
-	for _, s := range changed {
-		walk(s)
-	}
-
-	return out
-}
-
-// changedMatch finds the changed package that meets alternative i of a group
-// in the planned state, if any.
-func (e *engine) changedMatch(inSet map[string]*pstate, g *depGroup, i int) *pstate {
-	for _, v := range e.matches(g.owner, &g.alts[i], false, whenInstall) {
-		if s, ok := inSet[v.slot]; ok && s.inst == v && v.slot != g.owner.slot {
-			return s
-		}
-	}
-
-	return nil
 }

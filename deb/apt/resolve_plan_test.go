@@ -132,7 +132,7 @@ func TestPlanConflictRemoves(t *testing.T) {
 			index:  stanza("a", "2", "Conflicts: b"),
 			status: installedStanza("b", "1") + installedStanza("c", "1", "Depends: b"),
 			req:    PlanRequest{Install: []string{"a"}},
-			want:   []string{"remove b=1", "remove c=1", "install a=2"},
+			want:   []string{"remove c=1", "remove b=1", "install a=2"},
 		},
 		{
 			name:   "conflict with a provider",
@@ -158,7 +158,7 @@ func TestPlanBreaksUpgrades(t *testing.T) {
 			index:  stanza("a", "2", "Breaks: b (<< 2)") + stanza("b", "2"),
 			status: installedStanza("b", "1"),
 			req:    PlanRequest{Install: []string{"a"}},
-			want:   []string{"install a=2", "upgrade b=2"},
+			want:   []string{"upgrade b=2", "install a=2"},
 		},
 		{
 			name:   "breaks removes when no fixing version",

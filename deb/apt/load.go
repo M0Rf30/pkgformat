@@ -49,6 +49,11 @@ type LoadOptions struct {
 // Every version of a package that an index carries is kept. A stanza without
 // Version, or whose relation fields do not parse, is skipped.
 //
+// An installed package whose Status is "hold ok installed" has
+// [PackageInfo.Held] set, and one that opts.ExtendedStatesFile marks
+// Auto-Installed has [PackageInfo.AutoInstalled] set; [Cache.Plan] honours
+// both.
+//
 // Like apt itself, Load tolerates what it cannot read: a missing directory,
 // an unreadable or corrupt index. The returned Cache is never nil and holds
 // everything that did load; the error, when not nil, joins one error per file

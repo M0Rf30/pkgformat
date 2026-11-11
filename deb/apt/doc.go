@@ -94,9 +94,20 @@
 // or Breaks an installed one removes or upgrades it, and what a change leaves
 // broken is repaired the way apt's problem resolver repairs it. PlanRequest
 // selects install and remove requests and the upgrade mode (upgrade,
-// upgrade with new packages, dist-upgrade); PlanOptions carries the Policy and
-// the held packages. The plans are checked against recorded apt-get -s output.
-// Use ResolveDeps instead when nothing installed may be removed.
+// upgrade with new packages, dist-upgrade, autoremove); PlanOptions carries the
+// Policy, Install-Recommends and Install-Suggests, the AutoRemove options and
+// extra held packages. Recommends and Suggests of what is installed are
+// followed as apt does, the automatic-installation marks of
+// /var/lib/apt/extended_states (LoadOptions.ExtendedStatesFile) and the dpkg
+// holds of the status file are read by Load, and a plan lists the packages it
+// leaves manually or automatically installed. The steps are put in the order
+// apt-get -s prints, by a port of apt's Pre-Depends and Depends ordering; a
+// system apt cannot configure (two packages that Pre-Depend on each other)
+// fails with an *OrderError that names the cycle. The plans are checked
+// against recorded apt-get -s output (apt 3.0.4): see testdata/diff/README.md
+// for the scenarios and for what is not modelled (the fallback to apt's second
+// solver, the versioned-kernel protection of autoremove, purge as distinct
+// from remove). Use ResolveDeps instead when nothing installed may be removed.
 //
 // # Downloading
 //

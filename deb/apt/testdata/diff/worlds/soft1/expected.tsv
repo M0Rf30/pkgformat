@@ -32,6 +32,7 @@ x17	Upgr	p04	2.0
 x17	Inst	p12	1.0
 x17	Inst	p27	1.0
 x17	Inst	p28	1.0
+x18	Solver3	-	-
 x18	Remv	p09	2.0
 x18	Inst	p22	2.0
 x18	Inst	p10	1.0
@@ -43,6 +44,7 @@ x21	Inst	p21	2.0
 x22	Manu	p35	-
 x23	Remv	p37	1.0
 x24	Manu	p40	-
+x25	Solver3	-	-
 x25	Kept	p00	-
 x25	Kept	p25	-
 x25	Kept	p45	-

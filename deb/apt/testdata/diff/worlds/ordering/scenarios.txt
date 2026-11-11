@@ -1,0 +1,55 @@
+# id	apt-get arguments
+o01	install pa
+o02	install pb
+o03	install pa pb
+o04	install pc
+o05	install da
+o06	install ea
+o07	install eb
+o08	install fa
+o09	install fb
+o10	install ga
+o11	install gb
+o12	install ha
+o13	install hb
+o14	install ia
+o15	upgrade --with-new-pkgs
+o16	dist-upgrade
+o17	install ja
+o18	install jb
+o19	install ma
+o20	install na
+o21	install pq
+o22	install pr
+o23	install new1
+o24	install new2
+o25	install kb
+o26	install es1
+o27	install es2
+o28	install qa
+o29	install ra
+o30	install rb
+o31	install sb
+o32	install ta
+o33	install tb
+o34	remove ua
+o35	remove ub
+o36	remove uc
+o37	install va
+o38	install pc da
+o39	install pc pa
+o40	upgrade
+o41	install ja jb
+o42	install pq pr
+o43	install na nb
+o44	install sa sb
+o45	install hb ha
+o46	install gc ga
+o47	install za
+o48	install za zq
+o49	install zc za
+o50	install zd
+o51	install zf
+o52	install za zp
+o53	remove zb
+o54	install zq zd
