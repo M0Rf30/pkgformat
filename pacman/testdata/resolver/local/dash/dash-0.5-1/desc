@@ -1,0 +1,36 @@
+%NAME%
+dash
+
+%VERSION%
+0.5-1
+
+%BASE%
+dash
+
+%DESC%
+resolver test package
+
+%URL%
+
+
+%ARCH%
+any
+
+%BUILDDATE%
+1700000000
+
+%INSTALLDATE%
+1794366759
+
+%PACKAGER%
+pkgformat tests <tests@example.invalid>
+
+%VALIDATION%
+sha256
+
+%PROVIDES%
+sh
+
+%XDATA%
+pkgtype=pkg
+

@@ -1,0 +1,3 @@
+status ok
+pkg core dash 0.5-1
+final dash 0.5-1

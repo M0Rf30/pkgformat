@@ -1,0 +1,2 @@
+error: config file invalid/usage_lowercase.conf, line 3: 'Usage' option 'sync' not recognized
+error parsing 'invalid/usage_lowercase.conf'

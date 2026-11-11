@@ -1,0 +1,2 @@
+error: config file invalid/siglevel_no_value.conf, line 3: directive 'SigLevel' needs a value
+error parsing 'invalid/siglevel_no_value.conf'

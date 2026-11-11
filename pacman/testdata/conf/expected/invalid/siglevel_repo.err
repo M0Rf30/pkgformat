@@ -1,0 +1,2 @@
+error: config file invalid/siglevel_repo.conf, line 3: invalid value for 'SigLevel' : 'PackageSometimes'
+error parsing 'invalid/siglevel_repo.conf'

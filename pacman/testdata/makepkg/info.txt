@@ -1,0 +1,2 @@
+makepkg (pacman) 7.1.0
+bsdtar 3.8.11 - libarchive 3.8.11 zlib/1.4 liblzma/5.8.4 bz2lib/1.0.8 liblz4/1.11.1 libzstd/1.5.7 libxml2/2.15.4 openssl/4.1.0 libb2/bundled libacl/2.4.0 

@@ -128,8 +128,11 @@ func FuzzParseConfig(f *testing.F) {
 	f.Add("")
 
 	f.Fuzz(func(t *testing.T, in string) {
-		cfg, err := ParseConfig(strings.NewReader(in), func(inc string) ([]string, error) {
-			return []string{inc}, nil
+		cfg, err := ParseConfig(strings.NewReader(in), ParseOptions{
+			Include: func(inc string) ([]IncludeFile, error) {
+				return []IncludeFile{IncludeText(inc, in), IncludeText(inc, "Server = "+inc+"\n")}, nil
+			},
+			MaxIncludeFiles: 50,
 		})
 		if err == nil {
 			for _, r := range cfg.Repos {
@@ -137,7 +140,13 @@ func FuzzParseConfig(f *testing.F) {
 					t.Fatalf("bad repository name %q", r.Name)
 				}
 			}
+
+			if cfg.ParallelDownloads < 1 || len(cfg.CacheDirs) == 0 || cfg.RootDir == "" {
+				t.Fatalf("defaults missing: %+v", cfg)
+			}
 		}
+
+		_, _ = ParseSigLevel(in)
 
 		servers, err := ParseMirrorlist(strings.NewReader(in))
 		if err == nil {

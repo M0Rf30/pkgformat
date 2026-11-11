@@ -1,0 +1,5 @@
+## Fixture mirrorlist
+Server = https://mirror1.example/$repo/os/$arch
+#Server = https://disabled.example/$repo/os/$arch
+
+Server = https://mirror2.example/$repo/os/$arch

@@ -1,0 +1,7 @@
+status ok
+pkg core glibc 2.40-1
+pkg extra gtool-a 1-1
+pkg extra gtool-b 1-1
+final glibc 2.40-1
+final gtool-a 1-1
+final gtool-b 1-1

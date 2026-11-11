@@ -1,0 +1,5 @@
+status ok
+pkg core epoch-lib 1:1.0-1
+pkg core needs-epoch 1-1
+final epoch-lib 1:1.0-1
+final needs-epoch 1-1

@@ -1,0 +1,2 @@
+error: config file invalid/parallel_huge.conf, line 2: value for 'ParallelDownloads' is too large : '99999999999'
+error parsing 'invalid/parallel_huge.conf'

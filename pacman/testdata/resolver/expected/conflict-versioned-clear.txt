@@ -1,0 +1,4 @@
+status ok
+pkg core new-vc 1-1
+final new-vc 1-1
+final vlib 2.0-1

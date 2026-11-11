@@ -1,0 +1,2 @@
+error: config parsing exceeded max recursion depth of 10.
+error parsing 'invalid/include_loop.conf'

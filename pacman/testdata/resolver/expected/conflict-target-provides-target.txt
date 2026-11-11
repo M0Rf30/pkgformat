@@ -1,0 +1,4 @@
+status ok
+pkg core gitver 1-1
+pkg extra thing 1-1
+final gitver 1-1

@@ -1,0 +1,48 @@
+[options]
+RootDir = /
+DBPath = /var/lib/pacman/
+CacheDir = /var/cache/pacman/pkg/
+HookDir = /etc/pacman.d/hooks/
+GPGDir = /etc/pacman.d/gnupg/
+LogFile = /var/log/pacman.log
+ParallelDownloads = 1
+CleanMethod = KeepInstalled
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+[none]
+Usage = All
+Server = https://mirror.example/none
+[all]
+Usage = All
+Server = https://mirror.example/all
+[empty]
+Usage = All
+Server = https://mirror.example/empty
+[sync]
+Usage = Sync
+Server = https://mirror.example/sync
+[search]
+Usage = Search
+Server = https://mirror.example/search
+[install]
+Usage = Install
+Server = https://mirror.example/install
+[upgrade]
+Usage = Upgrade
+Server = https://mirror.example/upgrade
+[pair]
+Usage = Install
+Usage = Upgrade
+Server = https://mirror.example/pair
+[separate]
+Usage = Sync
+Usage = Upgrade
+Server = https://mirror.example/separate
+[allplus]
+Usage = All
+Server = https://mirror.example/allplus
+[reversed]
+Usage = All
+Server = https://mirror.example/reversed

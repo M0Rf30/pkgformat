@@ -1,0 +1,4 @@
+status error
+error unresolvable package conflicts detected
+error failed to prepare transaction (conflicting dependencies)
+info conf-a-1-1 and conf-b-1-1 are in conflict

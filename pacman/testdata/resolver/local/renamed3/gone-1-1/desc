@@ -1,0 +1,33 @@
+%NAME%
+gone
+
+%VERSION%
+1-1
+
+%BASE%
+gone
+
+%DESC%
+resolver test package
+
+%URL%
+
+
+%ARCH%
+any
+
+%BUILDDATE%
+1700000000
+
+%INSTALLDATE%
+1794366759
+
+%PACKAGER%
+pkgformat tests <tests@example.invalid>
+
+%VALIDATION%
+sha256
+
+%XDATA%
+pkgtype=pkg
+

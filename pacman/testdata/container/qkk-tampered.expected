@@ -1,0 +1,17 @@
+warning: database file for 'core' does not exist (use '-Sy' to download)
+warning: database file for 'extra' does not exist (use '-Sy' to download)
+warning: shapes: /usr/bin/tool (Modification time mismatch)
+warning: shapes: /usr/bin/tool (Size mismatch)
+warning: shapes: /usr/bin/tool (SHA256 checksum mismatch)
+warning: file type not recognized: /usr/bin/tool-fifo
+warning: shapes: /usr/bin/tool-hard (Modification time mismatch)
+warning: shapes: /usr/bin/tool-hard (Size mismatch)
+warning: shapes: /usr/bin/tool-hard (SHA256 checksum mismatch)
+warning: shapes: /usr/share/shapes/chmodded (Permissions mismatch)
+warning: shapes: /usr/share/shapes/chowned (UID mismatch)
+warning: shapes: /usr/share/shapes/chowned (GID mismatch)
+warning: shapes: /usr/share/shapes/gone (No such file or directory)
+backup file: shapes: /etc/shapes.conf (Modification time mismatch)
+backup file: shapes: /etc/shapes.conf (Size mismatch)
+backup file: shapes: /etc/shapes.conf (SHA256 checksum mismatch)
+shapes: 22 total files, 5 altered files

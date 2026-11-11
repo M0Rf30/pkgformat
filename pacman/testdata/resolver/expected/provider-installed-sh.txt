@@ -1,0 +1,4 @@
+status ok
+pkg core needs-sh 1-1
+final dash 0.5-1
+final needs-sh 1-1

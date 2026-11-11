@@ -1,0 +1,2 @@
+error: config file invalid/siglevel_prefix_only.conf, line 3: invalid value for 'SigLevel' : 'Package'
+error parsing 'invalid/siglevel_prefix_only.conf'

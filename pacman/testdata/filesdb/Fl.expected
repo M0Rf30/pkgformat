@@ -1,0 +1,14 @@
+tree-shapes etc/
+tree-shapes etc/shapes.conf
+tree-shapes usr/
+tree-shapes usr/bin/
+tree-shapes usr/bin/shape
+tree-shapes usr/bin/shape-fifo
+tree-shapes usr/bin/shape-hard
+tree-shapes usr/bin/shape-suid
+tree-shapes usr/bin/shape-sym
+tree-shapes usr/share/
+tree-shapes usr/share/a b/
+tree-shapes usr/share/a b/c=d
+tree-shapes usr/share/owned
+tree-shapes usr/share/tagged

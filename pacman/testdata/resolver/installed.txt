@@ -1,0 +1,18 @@
+# set|repos used to seed it|packages installed explicitly (their dependencies come along)
+empty|core|
+glibc-old|old|glibc
+glibc-new|core|glibc
+dash|core|dash
+mta-one|core|mta-one
+virtholder|core|holder-virt
+vlib1|old|vlib
+vlib2|core|vlib
+stale|old|glibc util coreutils bash dup gtool-a gtool-b
+renamed|old|oldname uses-old
+renamed2|old|gone
+vreplace|old|va vb
+libuser|old|lib-user
+inst-prov|extra|inst-prov
+aold|extra|a-old
+renamed3|old|gone uses-gone
+newdep|old|nd

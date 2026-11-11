@@ -1,0 +1,17 @@
+[options]
+RootDir = /
+DBPath = /var/lib/pacman/
+CacheDir = /var/cache/pacman/pkg/
+HookDir = /etc/pacman.d/hooks/
+GPGDir = /etc/pacman.d/gnupg/
+LogFile = /var/log/pacman.log
+Architecture = x86_64
+ParallelDownloads = 1
+CleanMethod = KeepInstalled
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+[core]
+Usage = All
+Server = https://leaf.example/core/x86_64

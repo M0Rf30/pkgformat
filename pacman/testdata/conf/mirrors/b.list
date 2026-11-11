@@ -1,0 +1,2 @@
+Server = https://b.example/$repo/os/$arch
+Include = mirrors/nested/leaf.list

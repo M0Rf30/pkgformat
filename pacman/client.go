@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"sync"
 
 	"golang.org/x/sync/errgroup"
@@ -87,7 +88,11 @@ type ClientOptions struct {
 	// Keyring holds the public keys signatures are checked against.
 	Keyring *gpg.Keyring
 	// DBSignatures and PackageSignatures set the verification of databases
-	// and of packages. Anything but VerifyNone needs Keyring.
+	// and of packages of the repositories that carry no SigLevel of their own
+	// (Repo.SigLevel zero); a repository's SigLevel overrides them, per kind:
+	// its Database part governs the database, its Package part the packages.
+	// Anything but VerifyNone needs Keyring; so does a repository whose
+	// SigLevel is not Never, which fails with ErrNoKeyring when used.
 	DBSignatures      VerifyMode
 	PackageSignatures VerifyMode
 	// MaxDBBytes bounds a database; zero selects DefaultMaxDBBytes.
@@ -170,6 +175,31 @@ func (c *Client) base(server string, repo *Repo) string {
 	return ExpandServer(server, repo.Name, c.opts.Arch)
 }
 
+// dbMode is the verification of the database of repo: the Database part of its
+// SigLevel, else the client's default.
+func (c *Client) dbMode(repo *Repo) VerifyMode {
+	if repo.SigLevel.Database.Check != SigCheckUnset {
+		return repo.SigLevel.Database.VerifyMode()
+	}
+
+	return c.opts.DBSignatures
+}
+
+// packageMode is the verification of the packages of repo: the Package part of
+// its SigLevel, else the client's default.
+func (c *Client) packageMode(repo *Repo) VerifyMode {
+	return c.policyMode(repo.SigLevel.Package)
+}
+
+// policyMode maps a policy onto a mode, an unset one onto the client's default.
+func (c *Client) policyMode(p SigPolicy) VerifyMode {
+	if p.Check != SigCheckUnset {
+		return p.VerifyMode()
+	}
+
+	return c.opts.PackageSignatures
+}
+
 func (c *Client) debug(msg string, args ...any) {
 	if c.opts.Logger != nil {
 		c.opts.Logger.Debug(msg, args...)
@@ -177,7 +207,9 @@ func (c *Client) debug(msg string, args ...any) {
 }
 
 // FetchDB downloads the database of repo from the first server that serves it
-// (and, per the verification mode, a valid signature for it).
+// (and, per the database part of the repository's SigLevel, a valid signature
+// for it). CacheServers are not used for databases, and the repository's Usage
+// is not consulted: naming a repository is asking for it explicitly.
 func (c *Client) FetchDB(ctx context.Context, repo Repo) (*DBFile, error) {
 	if !ValidRepoName(repo.Name) {
 		return nil, fmt.Errorf("%w: %q", ErrInvalidRepoName, repo.Name)
@@ -189,12 +221,17 @@ func (c *Client) FetchDB(ctx context.Context, repo Repo) (*DBFile, error) {
 
 	var errs []error
 
+	mode := c.dbMode(&repo)
+	if mode != VerifyNone && c.opts.Keyring.Len() == 0 {
+		return nil, fmt.Errorf("%w: database of %s", ErrNoKeyring, repo.Name)
+	}
+
 	for _, server := range repo.Servers {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
 
-		db, err := c.fetchDBFrom(ctx, c.base(server, &repo)+"/"+repo.Name+".db", repo.Name)
+		db, err := c.fetchDBFrom(ctx, c.base(server, &repo)+"/"+repo.Name+".db", repo.Name, mode)
 		if err == nil {
 			return db, nil
 		}
@@ -207,7 +244,7 @@ func (c *Client) FetchDB(ctx context.Context, repo Repo) (*DBFile, error) {
 	return nil, fmt.Errorf("%w for %q: %w", ErrAllServersFailed, repo.Name, errors.Join(errs...))
 }
 
-func (c *Client) fetchDBFrom(ctx context.Context, url, repo string) (*DBFile, error) {
+func (c *Client) fetchDBFrom(ctx context.Context, url, repo string, mode VerifyMode) (*DBFile, error) {
 	data, err := c.http.FetchBytes(ctx, url, c.opts.MaxDBBytes)
 	if err != nil {
 		return nil, fmt.Errorf("fetching %s: %w", url, err)
@@ -220,14 +257,14 @@ func (c *Client) fetchDBFrom(ctx context.Context, url, repo string) (*DBFile, er
 	switch {
 	case err == nil:
 		db.Sig = sig
-	case c.opts.DBSignatures == VerifyNone || isAbsent(err):
+	case mode == VerifyNone || isAbsent(err):
 		// No signature, or none usable and none demanded.
 	default:
 		return nil, fmt.Errorf("fetching %s.sig: %w", url, err)
 	}
 
-	if c.opts.DBSignatures != VerifyNone {
-		v, err := c.verify(bytes.NewReader(data), db.Sig, c.opts.DBSignatures)
+	if mode != VerifyNone {
+		v, err := c.verify(bytes.NewReader(data), db.Sig, mode)
 		if err != nil {
 			return nil, fmt.Errorf("verifying %s: %w", url, err)
 		}
@@ -306,10 +343,15 @@ func (c *Client) SyncDB(ctx context.Context, repo Repo, dir string) (*DBFile, er
 }
 
 // Sync refreshes the databases of repos into dir, up to DefaultSyncConcurrency
-// at a time. A repository that fails does not stop the others: it returns how
-// many succeeded and the joined failures (each wrapping its repository name's
-// ErrAllServersFailed or the cause).
+// at a time, as pacman -Sy does: a repository whose Usage does not allow
+// UsageSync is skipped (neither counted nor an error). To refresh one
+// regardless of its Usage, as pacman does for a repository named explicitly,
+// call SyncDB. A repository that fails does not stop the others: it returns
+// how many succeeded and the joined failures (each wrapping its repository
+// name's ErrAllServersFailed or the cause).
 func (c *Client) Sync(ctx context.Context, repos []Repo, dir string) (int, error) {
+	repos = slices.DeleteFunc(slices.Clone(repos), func(r Repo) bool { return !r.Usage.Allows(UsageSync) })
+
 	var (
 		mu        sync.Mutex
 		succeeded int
@@ -345,9 +387,12 @@ func (c *Client) Sync(ctx context.Context, repos []Repo, dir string) (int, error
 // repo into dir and returns its path. The file is checked against the size and
 // SHA-256 (or, failing that, MD5) of the entry and, per the verification
 // mode, against its signature: the one the entry carries, else "<file>.sig"
-// from the server. A package already in dir that passes the checks is reused.
-// Servers are tried in order; a package that fails a check is discarded and the
-// next server is tried.
+// from the server. The verification follows the package part of the
+// repository's SigLevel (ClientOptions.PackageSignatures when it has none). A
+// package already in dir that passes the checks is reused. The CacheServers of
+// the repository are tried first, then its Servers, in order; a package that
+// fails a check is discarded and the next server is tried. A cache server that
+// does not have the package is skipped like any other server.
 func (c *Client) DownloadPackage(ctx context.Context, repo Repo, entry *DBEntry, dir string) (string, error) {
 	if !ValidFileName(entry.Filename) {
 		return "", fmt.Errorf("%w: file name %q", ErrInvalidField, entry.Filename)
@@ -357,7 +402,7 @@ func (c *Client) DownloadPackage(ctx context.Context, repo Repo, entry *DBEntry,
 		return "", fmt.Errorf("%w: %q", ErrInvalidRepoName, repo.Name)
 	}
 
-	if len(repo.Servers) == 0 {
+	if len(repo.Servers) == 0 && len(repo.CacheServers) == 0 {
 		return "", fmt.Errorf("%w: %s", ErrNoServers, repo.Name)
 	}
 
@@ -366,10 +411,15 @@ func (c *Client) DownloadPackage(ctx context.Context, repo Repo, entry *DBEntry,
 		return "", err
 	}
 
+	mode := c.packageMode(&repo)
+	if mode != VerifyNone && c.opts.Keyring.Len() == 0 {
+		return "", fmt.Errorf("%w: package %s", ErrNoKeyring, entry.Filename)
+	}
+
 	dest := filepath.Join(dir, entry.Filename)
 
 	if _, statErr := os.Stat(dest); statErr == nil {
-		if cerr := c.checkPackage(ctx, "", dest, entry, sum, true); cerr == nil {
+		if cerr := c.checkPackage(ctx, "", dest, entry, sum, true, mode); cerr == nil {
 			return dest, nil
 		}
 
@@ -378,14 +428,14 @@ func (c *Client) DownloadPackage(ctx context.Context, repo Repo, entry *DBEntry,
 
 	var errs []error
 
-	for _, server := range repo.Servers {
+	for _, server := range slices.Concat(repo.CacheServers, repo.Servers) {
 		if err := ctx.Err(); err != nil {
 			return "", err
 		}
 
 		url := c.base(server, &repo) + "/" + entry.Filename
 
-		err := c.downloadFrom(ctx, url, dest, entry, sum)
+		err := c.downloadFrom(ctx, url, dest, entry, sum, mode)
 		if err == nil {
 			return dest, nil
 		}
@@ -423,7 +473,9 @@ func entryChecksum(e *DBEntry) (*checksum, error) {
 	return nil, fmt.Errorf("%w: %s", ErrNoChecksum, e.Filename)
 }
 
-func (c *Client) downloadFrom(ctx context.Context, url, dest string, entry *DBEntry, sum *checksum) error {
+func (c *Client) downloadFrom(
+	ctx context.Context, url, dest string, entry *DBEntry, sum *checksum, mode VerifyMode,
+) error {
 	limit := entry.CSize
 	if limit <= 0 {
 		limit = DefaultMaxPackageBytes
@@ -444,7 +496,7 @@ func (c *Client) downloadFrom(ctx context.Context, url, dest string, entry *DBEn
 		return fmt.Errorf("downloading %s: %w", url, err)
 	}
 
-	if err := c.checkPackage(ctx, url, dest, entry, sum, false); err != nil {
+	if err := c.checkPackage(ctx, url, dest, entry, sum, false, mode); err != nil {
 		_ = os.Remove(dest)
 
 		return err
@@ -453,15 +505,15 @@ func (c *Client) downloadFrom(ctx context.Context, url, dest string, entry *DBEn
 	return nil
 }
 
-// checkPackage verifies the file at path against the entry: its size, its
+// checkPackage verifies the package file against the entry: its size, its
 // digest when checkDigest is set (the downloader has already checked it
-// otherwise) and, per the verification mode, its signature. url is where a
-// missing signature is fetched from; empty means the file came from the cache
-// and its signature can only come from the entry.
+// otherwise) and, per mode, its signature. url is where a missing signature is
+// fetched from; empty means the file came from the cache and its signature can
+// only come from the entry.
 func (c *Client) checkPackage(
-	ctx context.Context, url, path string, entry *DBEntry, sum *checksum, checkDigest bool,
+	ctx context.Context, url, file string, entry *DBEntry, sum *checksum, checkDigest bool, mode VerifyMode,
 ) error {
-	f, err := os.Open(filepath.Clean(path))
+	f, err := os.Open(filepath.Clean(file))
 	if err != nil {
 		return err
 	}
@@ -494,7 +546,6 @@ func (c *Client) checkPackage(
 		}
 	}
 
-	mode := c.opts.PackageSignatures
 	if mode == VerifyNone {
 		return nil
 	}

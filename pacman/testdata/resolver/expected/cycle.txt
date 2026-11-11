@@ -1,0 +1,5 @@
+status ok
+pkg core cyc-a 1-1
+pkg core cyc-b 1-1
+final cyc-a 1-1
+final cyc-b 1-1

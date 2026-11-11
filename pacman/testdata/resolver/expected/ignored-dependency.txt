@@ -1,0 +1,4 @@
+status error
+info The following package cannot be upgraded due to unresolvable dependencies:
+info Do you want to skip the above package for this upgrade? [y/N] error: failed to prepare transaction (could not satisfy dependencies)
+info unable to satisfy dependency 'glibc>=2.40' required by util

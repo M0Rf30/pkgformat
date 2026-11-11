@@ -1,0 +1,4 @@
+status ok
+pkg core needs-zvirt 1-1
+final inst-prov 1-1
+final needs-zvirt 1-1

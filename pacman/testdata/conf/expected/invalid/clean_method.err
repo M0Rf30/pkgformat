@@ -1,0 +1,2 @@
+error: config file invalid/clean_method.conf, line 2: invalid value for 'CleanMethod' : 'KeepEverything'
+error parsing 'invalid/clean_method.conf'

@@ -1,0 +1,34 @@
+[options]
+RootDir = /
+DBPath = /var/lib/pacman/
+CacheDir = /a
+CacheDir = b
+CacheDir = /c
+HookDir = /h1
+HookDir = /h2
+GPGDir = /etc/pacman.d/gnupg/
+LogFile = /l1
+DownloadUser = a
+HoldPkg = a
+HoldPkg = b
+IgnoreGroup = g1
+IgnoreGroup = g2
+NoUpgrade = x
+NoUpgrade = y
+Architecture = x86_64
+Architecture = x86_64
+Architecture = x86_64_v3
+XferCommand = second   command   %u
+Color
+ParallelDownloads = 3
+CleanMethod = KeepInstalled
+CleanMethod = KeepCurrent
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+[core]
+Usage = Sync
+Usage = Search
+CacheServer = c d
+Server = https://a.example/core with spaces

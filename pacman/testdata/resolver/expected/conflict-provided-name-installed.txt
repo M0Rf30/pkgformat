@@ -1,0 +1,4 @@
+status error
+info a-new-1-1 and a-old-1-1 are in conflict. Remove a-old? [y/N] error: unresolvable package conflicts detected
+error failed to prepare transaction (conflicting dependencies)
+info a-new-1-1 and a-old-1-1 are in conflict

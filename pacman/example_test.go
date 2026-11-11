@@ -69,7 +69,7 @@ func Example() {
 	fmt.Println(best.Repo, best.Version, err, pacman.Vercmp("1.0-1", "1.0.1-1"))
 
 	// A pacman.conf yields repositories whose server URLs expand per arch.
-	cfg, _ := pacman.ParseConfig(strings.NewReader("[core]\nServer = https://mirror.example/$repo/os/$arch\n"), nil)
+	cfg, _ := pacman.ParseConfig(strings.NewReader("[core]\nServer = https://mirror.example/$repo/os/$arch\n"), pacman.ParseOptions{})
 	fmt.Println(pacman.ExpandServer(cfg.Repos[0].Servers[0], "core", "x86_64"))
 
 	// Output:

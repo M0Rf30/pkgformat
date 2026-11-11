@@ -1,0 +1,5 @@
+status ok
+pkg core needs-mail 1-1
+pkg extra mail 1-1
+final mail 1-1
+final needs-mail 1-1

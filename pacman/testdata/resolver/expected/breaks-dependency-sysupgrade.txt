@@ -1,0 +1,4 @@
+status error
+info Starting full system upgrade...
+error failed to prepare transaction (could not satisfy dependencies)
+info installing libold (2-1) breaks dependency 'libold=1-1' required by lib-user

@@ -1,0 +1,2 @@
+error: config file invalid/parallel_text.conf, line 2: invalid value for 'ParallelDownloads' : 'lots'
+error parsing 'invalid/parallel_text.conf'

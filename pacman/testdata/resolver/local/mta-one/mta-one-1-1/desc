@@ -1,0 +1,36 @@
+%NAME%
+mta-one
+
+%VERSION%
+1-1
+
+%BASE%
+mta-one
+
+%DESC%
+resolver test package
+
+%URL%
+
+
+%ARCH%
+any
+
+%BUILDDATE%
+1700000000
+
+%INSTALLDATE%
+1794366759
+
+%PACKAGER%
+pkgformat tests <tests@example.invalid>
+
+%VALIDATION%
+sha256
+
+%PROVIDES%
+smtp
+
+%XDATA%
+pkgtype=pkg
+

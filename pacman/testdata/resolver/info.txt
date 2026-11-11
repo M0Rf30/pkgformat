@@ -1,0 +1,3 @@
+Pacman v7.1.0
+Pacman v7.1.0
+PRETTY_NAME="Arch Linux"

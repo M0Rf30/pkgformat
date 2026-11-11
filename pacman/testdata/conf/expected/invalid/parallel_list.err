@@ -1,0 +1,2 @@
+error: config file invalid/parallel_list.conf, line 2: invalid value for 'ParallelDownloads' : '5 6'
+error parsing 'invalid/parallel_list.conf'

@@ -1,0 +1,80 @@
+[options]
+RootDir = /usr
+DBPath = /usr/lib
+CacheDir = /var/cache/pacman/pkg/
+CacheDir = /var/cache/pacman/extra
+CacheDir = /srv/pkgcache/
+HookDir = /etc/pacman.d/hooks/
+HookDir = /usr/share/hooks
+GPGDir = /usr/bin
+LogFile = /var/log/fixture.log
+DownloadUser = alpm
+HoldPkg = pacman
+HoldPkg = glibc
+HoldPkg = linux*
+HoldPkg = included-held
+IgnorePkg = firefox
+IgnorePkg = lib32-*
+IgnorePkg = [gh]cc
+IgnorePkg = included-ignored
+IgnoreGroup = gnome
+IgnoreGroup = kde-*
+NoUpgrade = etc/passwd
+NoUpgrade = etc/fstab
+NoUpgrade = !etc/exceptions
+NoExtract = usr/share/doc/*
+NoExtract = usr/share/man/*
+Architecture = x86_64
+Architecture = x86_64_v3
+XferCommand = /usr/bin/curl -L -C - -f -o %o %u
+UseSyslog
+Color
+CheckSpace
+VerbosePkgLists
+DisableDownloadTimeout
+ILoveCandy
+NoProgressBar
+DisableSandboxFilesystem
+DisableSandboxSyscalls
+ParallelDownloads = 5
+CleanMethod = KeepInstalled
+CleanMethod = KeepCurrent
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseOptional
+SigLevel = DatabaseTrustedOnly
+LocalFileSigLevel = PackageOptional
+LocalFileSigLevel = PackageTrustedOnly
+RemoteFileSigLevel = PackageRequired
+RemoteFileSigLevel = PackageTrustAll
+[custom]
+Usage = Install
+Server = file:///srv/custom/custom/x86_64
+[core]
+Usage = All
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+Server = https://direct.example/core/os/x86_64/
+Server = https://mirror1.example/core/os/x86_64
+Server = https://mirror2.example/core/os/x86_64
+[extra]
+Usage = Sync
+Usage = Search
+SigLevel = PackageOptional
+SigLevel = PackageTrustAll
+SigLevel = DatabaseOptional
+SigLevel = DatabaseTrustAll
+Server = https://a.example/extra/os/x86_64
+Server = https://b.example/extra/os/x86_64
+Server = https://leaf.example/extra/os/x86_64
+[multilib]
+Usage = Install
+Usage = Upgrade
+SigLevel = PackageRequired
+SigLevel = PackageTrustAll
+SigLevel = DatabaseNever
+CacheServer = https://cache1.example/multilib/os/x86_64
+CacheServer = https://cache2.example/multilib/os/x86_64/
+Server = https://multilib.example/multilib/os/x86_64

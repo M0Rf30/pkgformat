@@ -1,0 +1,3 @@
+status ok
+pkg core glibc 2.40-1
+final glibc 2.40-1
