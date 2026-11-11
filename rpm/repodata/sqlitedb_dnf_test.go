@@ -12,9 +12,9 @@ import (
 // sqliteDNFImage is a Fedora image with dnf5; the test skips when it is not present.
 const sqliteDNFImage = "localhost/s3tools:latest"
 
-// dnfScript serves /repo over HTTP, points dnf5 at it, lists the packages, and
+// sqliteDNFScript serves /repo over HTTP, points dnf5 at it, lists the packages, and
 // prints the requests the server saw after a marker line.
-const dnfScript = `
+const sqliteDNFScript = `
 cd /repo && (python3 -m http.server 8000 >/tmp/http.log 2>&1 &)
 sleep 1
 cat > /etc/yum.repos.d/t.repo <<R
@@ -32,7 +32,7 @@ grep -o 'GET [^ ]*' /tmp/http.log
 func runDnf(t *testing.T, repo string) (output string, requests []string) {
 	t.Helper()
 
-	cmd := exec.Command("podman", "run", "--rm", "-v", repo+":/repo:ro,Z", sqliteDNFImage, "sh", "-c", dnfScript)
+	cmd := exec.Command("podman", "run", "--rm", "-v", repo+":/repo:ro,Z", sqliteDNFImage, "sh", "-c", sqliteDNFScript)
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
