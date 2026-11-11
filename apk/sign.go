@@ -109,11 +109,14 @@ var (
 )
 
 // Signer signs packages and indexes with an RSA key under the name apk looks
-// the public key up by: the file name in its keys directory.
+// the public key up by: the file name in its keys directory. The private key
+// can live outside the process: any [crypto.Signer] whose public key is RSA
+// works, such as a key held by an HSM or a cloud KMS.
 type Signer struct {
 	name string
 	alg  SigAlgorithm
-	key  *rsa.PrivateKey
+	key  crypto.Signer
+	pub  *rsa.PublicKey
 	spki []byte
 }
 
@@ -136,9 +139,12 @@ func validKeyName(s string) bool {
 
 // NewSigner returns a Signer for key that writes signatures of type alg.
 // keyName must match ^[A-Za-z0-9._@+-]+\.rsa\.pub$ and keep the entry name
-// (the type's prefix and keyName) within 100 bytes, and the key must be a
-// valid RSA key of 2048 to 16384 bits. A zero alg is [ErrNoAlgorithm].
-func NewSigner(keyName string, key *rsa.PrivateKey, alg SigAlgorithm) (*Signer, error) {
+// (the type's prefix and keyName) within 100 bytes. key is an *rsa.PrivateKey
+// or any other [crypto.Signer] with an RSA public key of 2048 to 16384 bits;
+// it is asked for PKCS#1 v1.5 signatures over the SHA-1 or SHA-256 digest
+// (crypto.SHA1 or crypto.SHA256 as the signer options), so a hardware or KMS
+// signer must support that scheme. A zero alg is [ErrNoAlgorithm].
+func NewSigner(keyName string, key crypto.Signer, alg SigAlgorithm) (*Signer, error) {
 	if !alg.valid() {
 		return nil, ErrNoAlgorithm
 	}
@@ -148,16 +154,43 @@ func NewSigner(keyName string, key *rsa.PrivateKey, alg SigAlgorithm) (*Signer, 
 			errKey, short(keyName), keyNameSuffix, maxEntryName, alg.prefix())
 	}
 
-	if err := checkPrivateKey(key); err != nil {
+	pub, err := checkSigner(key)
+	if err != nil {
 		return nil, err
 	}
 
-	spki, err := x509.MarshalPKIXPublicKey(&key.PublicKey)
+	spki, err := x509.MarshalPKIXPublicKey(pub)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", errKey, err)
 	}
 
-	return &Signer{name: keyName, alg: alg, key: key, spki: spki}, nil
+	return &Signer{name: keyName, alg: alg, key: key, pub: pub, spki: spki}, nil
+}
+
+// checkSigner validates the key of a Signer and returns its public half.
+func checkSigner(key crypto.Signer) (*rsa.PublicKey, error) {
+	if key == nil {
+		return nil, fmt.Errorf("%w: no key", errKey)
+	}
+
+	if priv, ok := key.(*rsa.PrivateKey); ok {
+		if err := checkPrivateKey(priv); err != nil {
+			return nil, err
+		}
+
+		return &priv.PublicKey, nil
+	}
+
+	pub, ok := key.Public().(*rsa.PublicKey)
+	if !ok || pub == nil || pub.N == nil {
+		return nil, fmt.Errorf("%w: the signer's public key is %T", errNotRSA, key.Public())
+	}
+
+	if bits := pub.N.BitLen(); bits < minKeyBits || bits > maxKeyBits {
+		return nil, fmt.Errorf("%w: %d bits, want %d to %d", errKey, bits, minKeyBits, maxKeyBits)
+	}
+
+	return pub, nil
 }
 
 func checkPrivateKey(key *rsa.PrivateKey) error {
@@ -187,7 +220,7 @@ func (s *Signer) Algorithm() SigAlgorithm { return s.alg }
 func (s *Signer) EntryName() string { return s.alg.prefix() + s.name }
 
 // PublicKey returns the public half of the signing key.
-func (s *Signer) PublicKey() *rsa.PublicKey { return &s.key.PublicKey }
+func (s *Signer) PublicKey() *rsa.PublicKey { return s.pub }
 
 // PublicKeyPEM returns the public key as a "PUBLIC KEY" (SubjectPublicKeyInfo)
 // PEM block: what apk keeps in its keys directory.
@@ -207,7 +240,22 @@ func (s *Signer) PublicKeyPEM() ([]byte, error) {
 func (s *Signer) Sign(data []byte) ([]byte, error) {
 	h, sum := s.alg.digest(data)
 
-	return rsa.SignPKCS1v15(rand.Reader, s.key, h, sum)
+	sig, err := s.key.Sign(rand.Reader, sum, h)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrSign, err)
+	}
+
+	if len(sig) > maxSignatureLen {
+		return nil, fmt.Errorf("%w: the signer returned %d bytes", ErrSign, len(sig))
+	}
+
+	// A remote signer is not trusted to have signed what it was given: the
+	// result must verify under the key it advertises.
+	if err := rsa.VerifyPKCS1v15(s.pub, h, sum, sig); err != nil {
+		return nil, fmt.Errorf("%w: the signature does not verify under the signer's public key", ErrSign)
+	}
+
+	return sig, nil
 }
 
 // Fingerprint returns the hex SHA-256 of the DER SubjectPublicKeyInfo.
@@ -240,6 +288,58 @@ func MarshalPrivateKeyPEM(k *rsa.PrivateKey) []byte {
 	}
 
 	return pem.EncodeToMemory(&pem.Block{Type: pemPKCS8, Bytes: der})
+}
+
+// MarshalPrivateKeyPKCS1PEM encodes k as a PKCS#1 "RSA PRIVATE KEY" PEM block,
+// the format abuild-keygen writes. It returns nil for a nil key.
+func MarshalPrivateKeyPKCS1PEM(k *rsa.PrivateKey) []byte {
+	if k == nil || k.N == nil {
+		return nil
+	}
+
+	return pem.EncodeToMemory(&pem.Block{Type: pemPKCS1, Bytes: x509.MarshalPKCS1PrivateKey(k)})
+}
+
+// MarshalPublicKeyPEM encodes pub as a "PUBLIC KEY" (SubjectPublicKeyInfo)
+// PEM block, what apk keeps in its keys directory. It returns nil for a key
+// that cannot be encoded.
+func MarshalPublicKeyPEM(pub *rsa.PublicKey) []byte {
+	if pub == nil || pub.N == nil {
+		return nil
+	}
+
+	der, err := x509.MarshalPKIXPublicKey(pub)
+	if err != nil {
+		return nil
+	}
+
+	return pem.EncodeToMemory(&pem.Block{Type: pemPublic, Bytes: der})
+}
+
+// PublicKeyName returns the file name for pub in a keys directory, in the
+// form abuild-keygen gives them: "<owner>-<8 hex digits>.rsa.pub". The digits
+// are the first four bytes of the SHA-256 of the DER public key, so the same
+// key always gets the same name. owner is typically an e-mail address. The
+// result is only returned when it is a valid key name that fits an entry name
+// of either signature type.
+func PublicKeyName(owner string, pub *rsa.PublicKey) (string, error) {
+	if pub == nil || pub.N == nil {
+		return "", fmt.Errorf("%w: no key", errKey)
+	}
+
+	der, err := x509.MarshalPKIXPublicKey(pub)
+	if err != nil {
+		return "", fmt.Errorf("%w: %w", errKey, err)
+	}
+
+	sum := sha256.Sum256(der)
+	name := owner + "-" + hex.EncodeToString(sum[:4]) + keyNameSuffix
+
+	if !validKeyName(name) || len(sigRSA256Prefix)+len(name) > maxEntryName {
+		return "", fmt.Errorf("%w: owner %q does not make a valid key name", errKey, short(owner))
+	}
+
+	return name, nil
 }
 
 // ParsePrivateKeyPEM decodes the first PEM block of data as an unencrypted
@@ -508,6 +608,10 @@ var (
 	ErrUntrusted = errors.New("apk: no signature by a trusted key")
 	// ErrBadSignature means a signature by a trusted key does not match.
 	ErrBadSignature = errors.New("apk: signature does not verify")
+	// ErrSign wraps the failure of a [Signer] to produce a signature: the
+	// underlying [crypto.Signer] failed or returned something that is not a
+	// valid PKCS#1 v1.5 signature by its own public key.
+	ErrSign = errors.New("apk: signing failed")
 )
 
 // parseSignatureName splits ".SIGN.RSA[256].<key>" into its parts. A name
