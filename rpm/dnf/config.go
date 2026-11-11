@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -39,10 +40,19 @@ type Config struct {
 	// Obsoletes is obsoletes, true by default: a package that obsoletes
 	// another replaces it.
 	Obsoletes bool
-	// Best is best, which asks the resolution to fail rather than pick a
-	// version older than the newest. This package never picks an older one:
-	// see [Index.Resolve].
+	// Best is best, true by default: a package that is asked for is installed
+	// in its newest version, and the resolution fails when that cannot be
+	// done. With best=0 an older version is installed instead. The versions of
+	// what a package needs are always chosen with that fallback.
 	Best bool
+	// InstallOnlyPkgs is installonlypkgs: names, or capabilities provided
+	// (installonlypkg(kernel)), of packages that are never upgraded or
+	// replaced; a new version is installed next to the old ones, and the
+	// oldest are removed beyond InstallOnlyLimit.
+	InstallOnlyPkgs []string
+	// InstallOnlyLimit is installonly_limit: how many versions of such a
+	// package stay installed. Less than 2 means no limit.
+	InstallOnlyLimit int
 	// MultilibPolicy is [MultilibBest] (the default) or [MultilibAll].
 	MultilibPolicy string
 	// LocalPkgGPGCheck is localpkg_gpgcheck: [Client.VerifyLocal] checks the
@@ -62,6 +72,17 @@ func DefaultConfig() *Config {
 		Obsoletes:       true,
 		Best:            true,
 		MultilibPolicy:  MultilibBest,
+
+		InstallOnlyPkgs:  defaultInstallOnly(),
+		InstallOnlyLimit: 3,
+	}
+}
+
+// defaultInstallOnly is the installonlypkgs of dnf.
+func defaultInstallOnly() []string {
+	return []string{
+		"kernel", "kernel-PAE", "installonlypkg(kernel)", "installonlypkg(kernel-module)",
+		"installonlypkg(vm)", "multiversion(kernel)",
 	}
 }
 
@@ -118,6 +139,12 @@ func (c *Config) apply(key, val string) {
 		setBool(&c.Obsoletes, val)
 	case "best":
 		setBool(&c.Best, val)
+	case "installonlypkgs":
+		c.InstallOnlyPkgs = splitList(val)
+	case "installonly_limit":
+		if n, err := strconv.Atoi(strings.TrimSpace(val)); err == nil && n >= 0 {
+			c.InstallOnlyLimit = n
+		}
 	case "localpkg_gpgcheck":
 		setBool(&c.LocalPkgGPGCheck, val)
 	case "multilib_policy":
@@ -139,6 +166,8 @@ func (c *Config) appendList(key, val string) {
 		c.Exclude = append(c.Exclude, splitList(val)...)
 	case "includepkgs":
 		c.IncludePkgs = append(c.IncludePkgs, splitList(val)...)
+	case "installonlypkgs":
+		c.InstallOnlyPkgs = append(c.InstallOnlyPkgs, splitList(val)...)
 	case "varsdir":
 		c.VarsDirs = append(c.VarsDirs, strings.Fields(val)...)
 	default:

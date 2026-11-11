@@ -56,8 +56,10 @@ func archCompat(arch string) []string {
 		list = []string{"s390x", "s390"}
 	case "s390":
 		list = []string{"s390"}
-	case "sparc64v", "sparc64":
-		list = []string{arch, "sparc64", "sparcv9v", "sparcv9", "sparcv8", "sparc"}
+	case "sparc64v":
+		list = []string{"sparc64v", "sparc64", "sparcv9v", "sparcv9", "sparcv8", "sparc"}
+	case "sparc64":
+		list = []string{"sparc64", "sparcv9v", "sparcv9", "sparcv8", "sparc"}
 	case "ia64":
 		list = []string{"ia64"}
 	case "alpha":

@@ -35,5 +35,5 @@ rpm module, podman and network access; about 1.2 GB of scratch space).
   that package for `coreutils`. We decide `coreutils` first and take it, as it
   is the name asked for.
 - libsolv's order of decisions among alternatives in general is not reproduced,
-  nor are its backtracking and `best=`/`skip_broken`; see the package
-  documentation. The targets here were chosen so that these show only as listed.
+  nor is its backtracking beyond versions of one package, and `skip_broken` is
+  not supported; see the package documentation. The targets here were chosen so that these show only as listed.

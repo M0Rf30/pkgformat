@@ -48,16 +48,33 @@
 // as libsolv does, and it checks the result against dnf on a trimmed snapshot of
 // Fedora 43 (testdata/differential). The known differences are:
 //
-//   - It does not backtrack: a choice among alternatives that leads to a
+//   - It does not backtrack except between the versions of one package and the
+//     branches of an "or": a choice among alternatives that leads to a
 //     conflict later is not revised, where dnf may find another way.
 //   - The order in which alternatives are decided is not libsolv's, so the
 //     provider chosen for a capability with several can differ.
-//   - Weak dependencies are Recommends only, installed when
-//     [ResolveOptions.WeakDeps] or install_weak_deps ask for them; Suggests,
-//     Supplements and Enhances are not followed.
-//   - installonlypkgs (several kernels at once), best=, skip_broken and
-//     deltarpm are not supported. deltarpm= is read and ignored, as every
-//     package is downloaded whole.
+//   - Suggests and Enhances are not followed, and nothing is removed because it
+//     is no longer needed. skip_broken is not supported, and deltarpm= is read
+//     and ignored, as every package is downloaded whole.
+//   - The running kernel is not known: installonly_limit removes the oldest
+//     versions, whichever is running.
+//
+// Beyond what dnf5 does on the Fedora snapshot, testdata/scenarios replays
+// synthetic repositories against dnf5 with an installed state read from the rpm
+// database dnf wrote: repository priority and cost, upgrades of installed
+// packages and of what depends on them, obsoletes, conflicts, installonlypkgs
+// with installonly_limit, best=0 and best=1, and weak dependencies.
+//
+// Packages that are asked for are installed in their newest version, and
+// without best the next older one when that cannot be had. The version of a
+// package that only something else needs falls back to an older one that works,
+// always. installonlypkgs (the default dnf list, or the one of dnf.conf) names
+// the packages of which a new version is installed next to the old ones;
+// beyond installonly_limit the oldest are listed in [Resolution.Removed].
+// With install_weak_deps the Recommends of every package of the transaction are
+// installed, as are the packages that supplement the transaction (Supplements,
+// rich dependencies too) when something of it is new; the packages the host
+// had already do not draw in more.
 //
 // # Downloading
 //

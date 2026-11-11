@@ -69,6 +69,10 @@ type Resolution struct {
 	// Conflicts are the packages left out, or the installed packages broken,
 	// because of a conflict.
 	Conflicts []Conflict
+	// Removed are the installed packages of installonly kinds (kernels) that
+	// the transaction removes because more than installonly_limit versions
+	// would be left, the oldest first.
+	Removed []*Package
 }
 
 // Resolve is [Index.ResolveWith] with the default options.
@@ -186,7 +190,13 @@ type solver struct {
 	ctx  context.Context //nolint:containedctx // the solver lives for one call
 	ix   *Index
 	weak bool
+	best bool
 	err  error
+
+	// installOnly caches which packages are never replaced by a newer
+	// version; onlyNames are the installonlypkgs.
+	installOnly map[*Package]bool
+	onlyNames   map[string]bool
 
 	inst       []*Package
 	instProv   map[string][]provRef
@@ -240,6 +250,19 @@ func newSolver(ctx context.Context, ix *Index, opts ResolveOptions) (*solver, er
 			obs:      make(map[string][]confRef),
 			gone:     make(map[*Package]*Package),
 		},
+	}
+
+	cfg := ix.cfg
+	if cfg == nil {
+		cfg = DefaultConfig()
+	}
+
+	s.best = cfg.Best
+	s.onlyNames = make(map[string]bool, len(cfg.InstallOnlyPkgs))
+	s.installOnly = make(map[*Package]bool)
+
+	for _, n := range cfg.InstallOnlyPkgs {
+		s.onlyNames[n] = true
 	}
 
 	switch opts.WeakDeps {
@@ -314,7 +337,77 @@ func (s *solver) result() *Resolution {
 		Obsoleted:  slices.Clone(s.st.obsoleted),
 		Unresolved: slices.Clone(s.st.unresolved),
 		Conflicts:  slices.Clone(s.st.conflicts),
+		Removed:    s.removedOnly(),
 	}
+}
+
+// onlyKind reports whether p is of an installonly kind: its name or a
+// capability it provides is in installonlypkgs. Such a package is installed
+// next to its older versions instead of replacing them.
+func (s *solver) onlyKind(p *Package) bool {
+	if v, ok := s.installOnly[p]; ok {
+		return v
+	}
+
+	v := s.onlyNames[p.Name] ||
+		slices.ContainsFunc(p.Provides, func(d rpm.Dependency) bool { return s.onlyNames[d.Name] })
+	s.installOnly[p] = v
+
+	return v
+}
+
+// removedOnly returns the installed packages of installonly kinds to remove so
+// that no more than installonly_limit versions of a name stay, once the
+// transaction has added its own. Only names the transaction installs are
+// looked at, the oldest versions go first, and the packages of the
+// transaction stay.
+func (s *solver) removedOnly() []*Package {
+	limit := DefaultConfig().InstallOnlyLimit
+	if s.ix.cfg != nil {
+		limit = s.ix.cfg.InstallOnlyLimit
+	}
+
+	if limit < 2 {
+		return nil
+	}
+
+	groups := make(map[string][]*Package)
+	touched := make(map[string]bool)
+
+	for _, q := range s.inst {
+		if s.st.gone[q] == nil && s.onlyKind(q) {
+			groups[q.Name] = append(groups[q.Name], q)
+		}
+	}
+
+	for _, p := range s.st.order {
+		if s.onlyKind(p) {
+			groups[p.Name] = append(groups[p.Name], p)
+			touched[p.Name] = true
+		}
+	}
+
+	var out []*Package
+
+	for _, name := range slices.Sorted(maps.Keys(touched)) {
+		list := groups[name]
+		slices.SortStableFunc(list, func(a, b *Package) int { return a.Compare(b) })
+
+		excess := len(list) - limit
+
+		for _, q := range list {
+			if excess <= 0 {
+				break
+			}
+
+			if q.Installed() && !s.st.selected[q] {
+				out = append(out, q)
+				excess--
+			}
+		}
+	}
+
+	return out
 }
 
 // maxRounds bounds the passes that look at conditional, weak and repair work
@@ -362,11 +455,21 @@ func (s *solver) seed(spec string) {
 	if len(matches) == 0 {
 		a := parseCapability(spec)
 		if len(s.satisfiers(a)) > 0 {
+			s.replaceObsoleted(a)
+
 			return
 		}
 
 		s.wanted = append(s.wanted, a)
 		s.want(a, nil, false)
+
+		return
+	}
+
+	// With best, the newest version asked for is the one to have: when it
+	// cannot be installed, nothing is.
+	if head := matches[0]; s.best && !s.st.selected[head] && !s.isInstalledAs(head) && !s.installable(head) {
+		s.reportConflict(head)
 
 		return
 	}
@@ -391,12 +494,18 @@ func (s *solver) seed(spec string) {
 		return
 	}
 
-	s.requested[first] = true
-	s.install(first)
+	chosen := first
+	if s.best {
+		s.install(first)
+	} else {
+		chosen = s.installOrOlder(matches, first)
+	}
+
+	s.requested[chosen] = true
 
 	if s.ix.cfg != nil && s.ix.cfg.MultilibPolicy == MultilibAll {
 		for _, p := range matches {
-			if p != first && p.Name == first.Name && isMultilibArch(s.ix.arch, p.Arch) && s.installable(p) {
+			if p != chosen && p.Name == chosen.Name && isMultilibArch(s.ix.arch, p.Arch) && s.installable(p) {
 				s.requested[p] = true
 				s.install(p)
 			}
@@ -404,10 +513,82 @@ func (s *solver) seed(spec string) {
 	}
 }
 
+// replaceObsoleted installs, for a name that is asked for and already
+// installed, the package that obsoletes the installed one, as dnf does.
+func (s *solver) replaceObsoleted(a richdep.Atom) {
+	if s.ix.cfg != nil && !s.ix.cfg.Obsoletes {
+		return
+	}
+
+	var cands []*Package
+
+	for _, q := range s.instByName[a.Name] {
+		if s.st.gone[q] != nil {
+			continue
+		}
+
+		self := richdep.AtomOf(q.self())
+
+		for _, p := range s.ix.obsoleters[q.Name] {
+			if !slices.Contains(cands, p) && s.installable(p) && slices.ContainsFunc(p.Obsoletes, func(d rpm.Dependency) bool {
+				return d.Name == q.Name && richdep.AtomOf(d).Overlaps(self)
+			}) {
+				cands = append(cands, p)
+			}
+		}
+	}
+
+	if len(cands) == 0 {
+		return
+	}
+
+	for _, p := range s.bestPerName(cands) {
+		s.requested[p] = true
+		s.install(p)
+	}
+}
+
+// installOrOlder installs first, or, when that leaves a requirement unmet or
+// a conflict, the next best version of the same package that does not; when
+// none does, first is installed so that its problems are reported.
+func (s *solver) installOrOlder(cands []*Package, first *Package) *Package {
+	alts := []*Package{first}
+
+	for _, p := range cands {
+		if p != first && p.Name == first.Name && p.Arch == first.Arch && s.installable(p) {
+			alts = append(alts, p)
+		}
+	}
+
+	if len(alts) == 1 {
+		s.install(first)
+
+		return first
+	}
+
+	slices.SortStableFunc(alts[1:], s.ix.compare)
+
+	for _, p := range alts {
+		if s.try(func() { s.install(p) }) {
+			return p
+		}
+	}
+
+	s.install(first)
+
+	return first
+}
+
 // isInstalledAs reports whether an installed package is p or newer than p.
 func (s *solver) isInstalledAs(p *Package) bool {
+	only := s.onlyKind(p)
+
 	for _, q := range s.instByName[p.Name] {
-		if s.st.gone[q] == nil && sameSlot(q, p) && q.Compare(p) >= 0 {
+		if s.st.gone[q] != nil || !sameSlot(q, p) {
+			continue
+		}
+
+		if c := q.Compare(p); c == 0 || (c > 0 && !only) {
 			return true
 		}
 	}
@@ -696,7 +877,7 @@ func (s *solver) stepAtom(a richdep.Atom, r request, force bool) outcome {
 		return waiting
 	}
 
-	s.install(s.pick(cands, a))
+	s.installOrOlder(cands, s.pick(cands, a))
 
 	return acted
 }
@@ -825,6 +1006,36 @@ func (s *solver) installable(p *Package) bool {
 		return false
 	}
 
+	if s.onlyKind(p) {
+		// every version may be there, but not twice
+		for _, q := range s.st.byName[p.Name] {
+			if sameSlot(q, p) && q.Compare(p) == 0 {
+				return false
+			}
+		}
+
+		for _, q := range s.instByName[p.Name] {
+			if s.st.gone[q] == nil && sameSlot(q, p) && q.Compare(p) == 0 {
+				return false
+			}
+		}
+	} else if !s.versionFree(p) {
+		return false
+	}
+
+	if s.obsoletedByState(p) {
+		return false
+	}
+
+	other, cap := s.conflictOf(p)
+
+	return other == nil && cap == ""
+}
+
+// versionFree reports whether p fits next to the packages of its name that the
+// transaction and the host hold: only another architecture of the same version,
+// or an installed older version that p replaces, may be there.
+func (s *solver) versionFree(p *Package) bool {
 	for _, q := range s.st.byName[p.Name] {
 		if sameSlot(q, p) || q.Compare(p) != 0 {
 			return false
@@ -845,13 +1056,7 @@ func (s *solver) installable(p *Package) bool {
 		}
 	}
 
-	if s.obsoletedByState(p) {
-		return false
-	}
-
-	other, cap := s.conflictOf(p)
-
-	return other == nil && cap == ""
+	return true
 }
 
 // obsoletedByState reports whether an installed or chosen package obsoletes p.
@@ -882,9 +1087,11 @@ func (s *solver) obsoletedByState(p *Package) bool {
 func (s *solver) replacedBy(p *Package) []*Package {
 	var out []*Package
 
-	for _, q := range s.instByName[p.Name] {
-		if s.st.gone[q] == nil && sameSlot(q, p) && p.Compare(q) > 0 {
-			out = append(out, q)
+	if !s.onlyKind(p) {
+		for _, q := range s.instByName[p.Name] {
+			if s.st.gone[q] == nil && sameSlot(q, p) && p.Compare(q) > 0 {
+				out = append(out, q)
+			}
 		}
 	}
 
@@ -1191,9 +1398,61 @@ func (s *solver) runWeak() bool {
 				}
 			}
 		}
+
+		for _, q := range s.supplementers(p) {
+			before := len(s.st.order)
+
+			s.try(func() { s.install(q) })
+
+			if len(s.st.order) != before {
+				grew = true
+
+				for _, k := range s.st.order[before:] {
+					s.kept[k] = true
+				}
+			}
+		}
 	}
 
 	return grew
+}
+
+// supplementers returns the packages to install because they supplement p
+// and what the transaction and the host hold: the best of each name that is
+// not there yet, can be installed, and has a Supplements entry that holds.
+func (s *solver) supplementers(p *Package) []*Package {
+	names := []string{p.Name}
+	for _, d := range p.Provides {
+		names = append(names, d.Name)
+	}
+
+	var cands []*Package
+
+	for _, name := range names {
+		for _, q := range s.ix.supplements[name] {
+			if !slices.Contains(cands, q) && s.supplemented(q) {
+				cands = append(cands, q)
+			}
+		}
+	}
+
+	cands = s.filterInstallable(cands)
+	if len(cands) == 0 {
+		return nil
+	}
+
+	return s.bestPerName(cands)
+}
+
+// supplemented reports whether a Supplements entry of q holds.
+func (s *solver) supplemented(q *Package) bool {
+	for _, d := range q.Supplements {
+		if n, err := s.node(d); err == nil && s.eval(n) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // repairInstalled looks at the installed packages that need something the

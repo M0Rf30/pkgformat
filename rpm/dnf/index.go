@@ -168,6 +168,12 @@ type Index struct {
 	// names holds the packages by name, the preferred first.
 	names    map[string][]*Package
 	provides map[string][]provRef
+	// supplements maps a capability named by a Supplements entry, in a rich
+	// one too, to the packages that supplement it.
+	supplements map[string][]*Package
+	// obsoleters maps the name of an Obsoletes entry to the packages that
+	// have it.
+	obsoleters map[string][]*Package
 	// files maps a path of primary.xml to the packages that own it.
 	files map[string][]*Package
 	// wantFiles are the file paths some package requires, the ones a file
@@ -182,19 +188,21 @@ type Index struct {
 
 func newIndex(c *Client, cfg *Config) *Index {
 	return &Index{
-		arch:      c.opts.Arch,
-		ranks:     archRanks(c.opts.Arch),
-		cfg:       cfg,
-		client:    c,
-		installed: c.opts.Installed,
-		logger:    c.opts.Logger,
-		modules:   &repodata.ModuleIndex{},
-		names:     make(map[string][]*Package),
-		provides:  make(map[string][]provRef),
-		files:     make(map[string][]*Package),
-		wantFiles: make(map[string]struct{}),
-		scanned:   make(map[string]struct{}),
-		owners:    make(map[string][]*Package),
+		arch:        c.opts.Arch,
+		ranks:       archRanks(c.opts.Arch),
+		cfg:         cfg,
+		client:      c,
+		installed:   c.opts.Installed,
+		logger:      c.opts.Logger,
+		modules:     &repodata.ModuleIndex{},
+		names:       make(map[string][]*Package),
+		provides:    make(map[string][]provRef),
+		supplements: make(map[string][]*Package),
+		obsoleters:  make(map[string][]*Package),
+		files:       make(map[string][]*Package),
+		wantFiles:   make(map[string]struct{}),
+		scanned:     make(map[string]struct{}),
+		owners:      make(map[string][]*Package),
 	}
 }
 
@@ -255,8 +263,7 @@ func (ix *Index) rank(arch string) (int, bool) {
 // better architecture, the higher version, the lower cost, the earlier in the
 // metadata come first. It is a total order on the packages of an index.
 func (ix *Index) compare(a, b *Package) int {
-	switch {
-	case a.Priority != b.Priority:
+	if a.Priority != b.Priority {
 		return a.Priority - b.Priority
 	}
 
@@ -339,6 +346,40 @@ func (ix *Index) index(p *Package) {
 
 	for _, d := range p.Requires {
 		ix.noteFileRequires(d.Name)
+	}
+
+	ix.indexSupplements(p)
+
+	for _, d := range p.Obsoletes {
+		if d.Name != p.Name {
+			ix.obsoleters[d.Name] = append(ix.obsoleters[d.Name], p)
+		}
+	}
+}
+
+// indexSupplements records the capabilities p supplements.
+func (ix *Index) indexSupplements(p *Package) {
+	var seen []string
+
+	add := func(name string) {
+		if !slices.Contains(seen, name) {
+			seen = append(seen, name)
+			ix.supplements[name] = append(ix.supplements[name], p)
+		}
+	}
+
+	for _, d := range p.Supplements {
+		if !strings.HasPrefix(d.Name, "(") {
+			add(d.Name)
+
+			continue
+		}
+
+		if n, err := richdep.Parse(d.Name); err == nil {
+			for _, a := range richdep.Atoms(n) {
+				add(a.Name)
+			}
+		}
 	}
 }
 

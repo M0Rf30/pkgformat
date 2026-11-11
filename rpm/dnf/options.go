@@ -162,8 +162,11 @@ func (o *Options) normalize() {
 }
 
 // goArchToRPM maps GOARCH to the architecture name of RPM.
-func goArchToRPM() string {
-	switch runtime.GOARCH {
+func goArchToRPM() string { return rpmArch(runtime.GOARCH) }
+
+// rpmArch maps a GOARCH value to the architecture name of RPM.
+func rpmArch(goarch string) string {
+	switch goarch {
 	case "amd64":
 		return "x86_64"
 	case "arm64":
@@ -173,7 +176,7 @@ func goArchToRPM() string {
 	case "arm":
 		return "armv7hl"
 	default:
-		return runtime.GOARCH
+		return goarch
 	}
 }
 
