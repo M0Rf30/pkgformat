@@ -35,6 +35,8 @@ type Signer interface {
 // LocalSigner implements Signer using local GPG keys.
 type LocalSigner struct {
 	entity *openpgp.Entity
+	// external is set when the private key is behind a crypto.Signer
+	external bool
 }
 
 // NewLocalSignerFromFile creates a signer from a key file.
@@ -164,6 +166,10 @@ func (s *LocalSigner) KeyID() string {
 
 // ExportPrivateKey exports the private key in armored format.
 func (s *LocalSigner) ExportPrivateKey() ([]byte, error) {
+	if s.external {
+		return nil, ErrPrivateKeyNotExportable
+	}
+
 	var buf bytes.Buffer
 
 	w, err := armor.Encode(&buf, openpgp.PrivateKeyType, nil)

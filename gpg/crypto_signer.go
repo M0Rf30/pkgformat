@@ -18,6 +18,10 @@ import (
 // whose public key is neither RSA nor ECDSA.
 var ErrUnsupportedSigner = errors.New("gpg: crypto.Signer must hold an RSA or ECDSA key")
 
+// ErrPrivateKeyNotExportable is returned by the private key exports of a
+// signer made by [NewCryptoSigner]: its key stays behind the crypto.Signer.
+var ErrPrivateKeyNotExportable = errors.New("gpg: private key is held by an external signer")
+
 // NewCryptoSigner returns a signer whose private key stays behind signer: a
 // hardware security module, a cloud KMS, a smart card or an agent exposing
 // the standard crypto.Signer interface. RSA and ECDSA (P-256, P-384, P-521)
@@ -30,8 +34,8 @@ var ErrUnsupportedSigner = errors.New("gpg: crypto.Signer must hold an RSA or EC
 // [LocalSigner.PublicKey] exports a usable certificate.
 //
 // The result implements every method of [Signer] and the SigningKey method
-// that RPM signing needs; ExportPrivateKey fails, because there is nothing to
-// export.
+// that RPM signing needs; ExportPrivateKey and ExportUnprotectedPrivateKey
+// fail with [ErrPrivateKeyNotExportable].
 func NewCryptoSigner(signer crypto.Signer, created time.Time, name, comment, email string) (*LocalSigner, error) {
 	created = created.Truncate(time.Second)
 
@@ -83,7 +87,7 @@ func NewCryptoSigner(signer crypto.Signer, created time.Time, name, comment, ema
 		},
 	}
 
-	return &LocalSigner{entity: entity}, nil
+	return &LocalSigner{entity: entity, external: true}, nil
 }
 
 // curveOIDs are the OpenPGP object identifiers of the NIST curves (RFC 6637).

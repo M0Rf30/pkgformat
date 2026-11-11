@@ -282,6 +282,10 @@ func algorithmName(pk *packet.PublicKey) string {
 // protection, as an armored block. The caller must seal the result before it
 // is stored anywhere.
 func (s *LocalSigner) ExportUnprotectedPrivateKey() ([]byte, error) {
+	if s.external {
+		return nil, ErrPrivateKeyNotExportable
+	}
+
 	var buf bytes.Buffer
 
 	w, err := armor.Encode(&buf, openpgp.PrivateKeyType, nil)
