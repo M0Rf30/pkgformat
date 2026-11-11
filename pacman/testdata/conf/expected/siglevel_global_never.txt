@@ -1,0 +1,133 @@
+[options]
+RootDir = /
+DBPath = /var/lib/pacman/
+CacheDir = /var/cache/pacman/pkg/
+HookDir = /etc/pacman.d/hooks/
+GPGDir = /etc/pacman.d/gnupg/
+LogFile = /var/log/pacman.log
+ParallelDownloads = 1
+CleanMethod = KeepInstalled
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+LocalFileSigLevel = PackageOptional
+LocalFileSigLevel = PackageTrustedOnly
+RemoteFileSigLevel = PackageRequired
+RemoteFileSigLevel = PackageTrustedOnly
+[r0]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r0
+[r1]
+Usage = All
+SigLevel = PackageOptional
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseOptional
+SigLevel = DatabaseTrustedOnly
+Server = https://mirror.example/r1
+[r2]
+Usage = All
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+Server = https://mirror.example/r2
+[r3]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r3
+[r4]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r4
+[r5]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r5
+[r6]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r6
+[r7]
+Usage = All
+SigLevel = PackageOptional
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+Server = https://mirror.example/r7
+[r8]
+Usage = All
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseNever
+Server = https://mirror.example/r8
+[r9]
+Usage = All
+SigLevel = PackageRequired
+SigLevel = PackageTrustAll
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustAll
+Server = https://mirror.example/r9
+[r10]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r10
+[r11]
+Usage = All
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+Server = https://mirror.example/r11
+[r12]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r12
+[r13]
+Usage = All
+SigLevel = PackageNever
+SigLevel = DatabaseNever
+Server = https://mirror.example/r13
+[r14]
+Usage = All
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseRequired
+SigLevel = DatabaseTrustedOnly
+Server = https://mirror.example/r14
+[r15]
+Usage = All
+SigLevel = PackageOptional
+SigLevel = PackageTrustAll
+SigLevel = DatabaseNever
+Server = https://mirror.example/r15
+[r16]
+Usage = All
+SigLevel = PackageOptional
+SigLevel = PackageTrustAll
+SigLevel = DatabaseOptional
+SigLevel = DatabaseTrustAll
+Server = https://mirror.example/r16
+[r17]
+Usage = All
+SigLevel = PackageRequired
+SigLevel = PackageTrustedOnly
+SigLevel = DatabaseOptional
+SigLevel = DatabaseTrustedOnly
+Server = https://mirror.example/r17
+[multi]
+Usage = All
+SigLevel = PackageOptional
+SigLevel = PackageTrustAll
+SigLevel = DatabaseOptional
+SigLevel = DatabaseTrustAll
+Server = https://mirror.example/multi
+[plain]
+Usage = All
+Server = https://mirror.example/plain

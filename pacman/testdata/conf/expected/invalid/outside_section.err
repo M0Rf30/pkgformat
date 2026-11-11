@@ -1,0 +1,2 @@
+error: config file invalid/outside_section.conf, line 1: All directives must belong to a section.
+error parsing 'invalid/outside_section.conf'

@@ -1,0 +1,2 @@
+error: config file invalid/siglevel_option.conf, line 2: invalid value for 'SigLevel' : 'Sometimes'
+error parsing 'invalid/siglevel_option.conf'

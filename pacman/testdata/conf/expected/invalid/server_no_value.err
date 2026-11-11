@@ -1,0 +1,2 @@
+error: config file invalid/server_no_value.conf, line 2: directive 'Server' needs a value
+error parsing 'invalid/server_no_value.conf'

@@ -1,0 +1,13 @@
+warning: config file unknown.conf, line 3: directive 'Bogus' in section 'options' not recognized.
+warning: config file unknown.conf, line 4: directive 'NoPassiveFtp' in section 'options' not recognized.
+warning: config file unknown.conf, line 5: directive 'TotalDownload' in section 'options' not recognized.
+warning: config file unknown.conf, line 6: directive 'UseDelta' in section 'options' not recognized.
+warning: config file unknown.conf, line 7: directive 'SyncFirst' in section 'options' not recognized.
+warning: config file unknown.conf, line 8: directive 'Color' in section 'options' not recognized.
+warning: config file unknown.conf, line 9: directive 'CheckSpace # trailing comment' in section 'options' not recognized.
+warning: config file unknown.conf, line 10: directive 'ParallelDownloads' in section 'options' not recognized.
+warning: config file unknown.conf, line 11: directive 'Server' in section 'options' not recognized.
+warning: config file unknown.conf, line 16: directive 'Color' in section 'core' not recognized.
+warning: config file unknown.conf, line 17: directive 'Foo' in section 'core' not recognized.
+warning: config file unknown.conf, line 18: directive 'not a key value line' in section 'core' not recognized.
+warning: config file unknown.conf, line 19: directive 'HoldPkg' in section 'core' not recognized.

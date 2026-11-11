@@ -1,0 +1,2 @@
+error: config file invalid/clean_method_mixed.conf, line 2: invalid value for 'CleanMethod' : 'Nope'
+error parsing 'invalid/clean_method_mixed.conf'

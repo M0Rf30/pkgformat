@@ -1,0 +1,2 @@
+error: config file invalid/parallel_zero.conf, line 2: value for 'ParallelDownloads' has to be positive : '0'
+error parsing 'invalid/parallel_zero.conf'

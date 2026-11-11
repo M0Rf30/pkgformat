@@ -1,0 +1,2 @@
+error: config file invalid/siglevel_lowercase.conf, line 3: invalid value for 'SigLevel' : 'required'
+error parsing 'invalid/siglevel_lowercase.conf'

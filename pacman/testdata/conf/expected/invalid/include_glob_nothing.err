@@ -1,0 +1,2 @@
+error: config file mirrors/*.nothing could not be read: No such file or directory
+error parsing 'invalid/include_glob_nothing.conf'
