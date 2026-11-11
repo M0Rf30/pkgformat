@@ -398,6 +398,9 @@ func (p *Package) readMetadata(hdr *RpmHeader, lim PackageLimits) error {
 
 	p.FileDigestName = DigestAlgorithmName(p.FileDigestAlgorithm)
 	p.IMASignatureLength = uint32(gen.firstNumber(tag.FILESIGNATURELENGTH))
+	if p.IMASignatureLength == 0 {
+		p.IMASignatureLength = uint32(hdr.sigHeader.firstNumber(tag.SIG_FILESIGNATURELENGTH))
+	}
 	p.VeritySignatureAlgorithm = uint32(hdr.sigHeader.firstNumber(tag.SIG_VERITYSIGNATUREALGO))
 
 	if p.IsSource {
@@ -651,6 +654,11 @@ func (hdr *rpmHeader) fileExtras(files []FileEntry, sig *rpmHeader) {
 	var veritySigs []string
 	if sig != nil {
 		veritySigs, _ = sig.stringsPrefix(tag.SIG_VERITYSIGNATURES, n)
+		// rpmsign --signfiles stores them in the signature header; rpm
+		// moves them into the main header when it installs the package
+		if len(imaSigs) == 0 {
+			imaSigs, _ = sig.stringsPrefix(tag.SIG_FILESIGNATURES, n)
+		}
 	}
 
 	at := func(s []string, i int) string {

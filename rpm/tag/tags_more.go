@@ -122,6 +122,8 @@ const (
 // More signature header tags.
 const (
 	SIG_PUBKEYS             = SIG_BASE + 10 // OpenPGP public keys (unused in packages)
+	SIG_FILESIGNATURES      = SIG_BASE + 18 // IMA signatures written by rpmsign, one per file (hex)
+	SIG_FILESIGNATURELENGTH = SIG_BASE + 19 // length of the IMA signatures
 	SIG_VERITYSIGNATURES    = SIG_BASE + 20 // fs-verity signatures, one per file (base64)
 	SIG_VERITYSIGNATUREALGO = SIG_BASE + 21 // fs-verity signature algorithm
 )

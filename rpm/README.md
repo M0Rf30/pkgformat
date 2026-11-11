@@ -111,7 +111,10 @@ fmt.Println(pkg.Name, pkg.Version, len(pkg.Requires), len(pkg.Files))
 flags, SELinux contexts, IMA and fs-verity signatures (`Files[i]`), the
 sources and patches of a source package, and the build metadata (modularity
 label, dist tag, platform, cookie, policies, sysusers). The values match what
-librpm reads (`testdata/meta/golden.py`).
+librpm reads (`testdata/meta/golden.py`). `VerifyIMASignature` and
+`VerifyVeritySignature` check the per-file IMA and fs-verity signatures that
+`rpmsign --signfiles` / `--signverity` add; `FSVerityDigest` computes the
+fs-verity digest of file contents as `fsverity digest` does.
 
 Sign a package into a new file with a key from `pkgformat/gpg`:
 

@@ -1,0 +1,2 @@
+verity-v4.rpm sha256:4cc9059d03fc2eef6b7c40268ccc0fbd1da69621708a1561318dddf1539a128f /usr/share/hello/hello.txt
+verity-v6.rpm sha256:4cc9059d03fc2eef6b7c40268ccc0fbd1da69621708a1561318dddf1539a128f /usr/share/hello/a.txt
