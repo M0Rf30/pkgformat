@@ -446,8 +446,10 @@ func TestExtendedReleaseVerifiedByGPG(t *testing.T) {
 	assert.Contains(t, run("--verify", sigPath, releasePath), "GOODSIG")
 	assert.Contains(t, run("--verify", inPath), "GOODSIG")
 
-	// And gpg's own reading of the clear-signed text is our Release.
+	// And gpg's own reading of the clear-signed text is our Release. gpg 2.2
+	// prints one more line end than 2.4 after the last line, so trailing line
+	// ends are not compared.
 	plain, err := exec.Command(gpgBin, "--homedir", home, "--batch", "--decrypt", inPath).Output()
 	require.NoError(t, err)
-	assert.Equal(t, strings.TrimSuffix(string(signed.Release), "\n"), strings.TrimSuffix(string(plain), "\n"))
+	assert.Equal(t, strings.TrimRight(string(signed.Release), "\n"), strings.TrimRight(string(plain), "\n"))
 }
