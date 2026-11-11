@@ -17,8 +17,13 @@ type mtreeEntry struct {
 	mtime  int64
 	size   int64
 	sha256 [32]byte
-	link   string
-	noMode bool // regular file whose mode the /set line already gives
+	// md5 is listed before the sha256 when withMD5 is set.
+	md5     [16]byte
+	withMD5 bool
+	link    string
+	noMode  bool // regular file whose mode the /set line already gives
+	// uid and gid are written only when they differ from the 0 of the /set line.
+	uid, gid int
 }
 
 // posixMode is the permission string of a mode as the mtree format spells it:
@@ -90,20 +95,45 @@ func renderMtree(entries []mtreeEntry) []byte {
 
 	for i := range entries {
 		e := &entries[i]
-		name := "./" + mtreeEscape(e.path)
+
+		b.WriteString("./" + mtreeEscape(e.path))
+
+		fmt.Fprintf(&b, " time=%d.0", e.mtime)
+
+		if !e.noMode {
+			fmt.Fprintf(&b, " mode=%s", mtreeMode(e.mode))
+		}
+
+		if e.gid != 0 {
+			fmt.Fprintf(&b, " gid=%d", e.gid)
+		}
+
+		if e.uid != 0 {
+			fmt.Fprintf(&b, " uid=%d", e.uid)
+		}
 
 		switch e.kind {
 		case fs.ModeDir:
-			fmt.Fprintf(&b, "%s time=%d.0 mode=%s type=dir\n", name, e.mtime, mtreeMode(e.mode))
+			b.WriteString(" type=dir")
 		case fs.ModeSymlink:
-			fmt.Fprintf(&b, "%s time=%d.0 mode=%s type=link link=%s\n", name, e.mtime, mtreeMode(e.mode), mtreeEscape(e.link))
+			fmt.Fprintf(&b, " type=link link=%s", mtreeEscape(e.link))
+		case fs.ModeNamedPipe:
+			b.WriteString(" type=fifo")
+		case fs.ModeDevice | fs.ModeCharDevice:
+			b.WriteString(" type=char")
+		case fs.ModeDevice:
+			b.WriteString(" type=block")
 		default:
-			if e.noMode {
-				fmt.Fprintf(&b, "%s time=%d.0 size=%d sha256digest=%x\n", name, e.mtime, e.size, e.sha256)
-			} else {
-				fmt.Fprintf(&b, "%s time=%d.0 mode=%s size=%d sha256digest=%x\n", name, e.mtime, mtreeMode(e.mode), e.size, e.sha256)
+			fmt.Fprintf(&b, " size=%d", e.size)
+
+			if e.withMD5 {
+				fmt.Fprintf(&b, " md5digest=%x", e.md5)
 			}
+
+			fmt.Fprintf(&b, " sha256digest=%x", e.sha256)
 		}
+
+		b.WriteByte('\n')
 	}
 
 	return b.Bytes()

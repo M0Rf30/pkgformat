@@ -389,7 +389,7 @@ func TestWriteRejects(t *testing.T) {
 	t.Parallel()
 
 	file := func(p string) File { return File{Path: p, Mode: 0o644, Data: []byte("x")} }
-	dev := File{Path: "dev/null", Mode: fs.ModeDevice | fs.ModeCharDevice | 0o666}
+	dev := File{Path: "run/sock", Mode: fs.ModeSocket | 0o666}
 
 	tests := []struct {
 		name  string
@@ -408,7 +408,7 @@ func TestWriteRejects(t *testing.T) {
 		{name: "newline", files: []File{file("a\nb")}, want: ErrInvalidFile},
 		{name: "duplicate", files: []File{file("a"), file("./a")}, want: ErrInvalidFile},
 		{name: "below file", files: []File{file("a"), file("a/b")}, want: ErrInvalidFile},
-		{name: "device", files: []File{dev}, want: ErrUnsupportedFile},
+		{name: "socket", files: []File{dev}, want: ErrUnsupportedFile},
 		{name: "link without target", files: []File{{Path: "l", Mode: fs.ModeSymlink | 0o777}}, want: ErrInvalidFile},
 		{name: "compression", opts: WriteOptions{Compression: "bz2"}, want: ErrUnsupportedCompression},
 		{name: "newline in desc", edit: func(s *Spec) { s.Info.Description = "a\nb" }, want: ErrInvalidField},
