@@ -1,0 +1,9 @@
+#%SCHEMA: 676B6370
+# ADB block, size: 120, compat: 0, ver: 0
+info:
+  name: minimal
+  version: 1.0-r0
+  hashes: ab879881f519cbe3d65d091a176f4b6e5d10a879
+  arch: x86_64
+  build-time: 1700000000
+  installed-size: 0

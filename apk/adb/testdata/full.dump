@@ -1,0 +1,91 @@
+#%SCHEMA: 676B6370
+# ADB block, size: 1116, compat: 0, ver: 0
+info:
+  name: full
+  version: 1.2.3_rc1-r4
+  hashes: 64d8aa893aaee14f672c071ef959330086417f1e
+  description: Full test
+  arch: x86_64
+  license: MIT BSD-2-Clause
+  origin: fullorigin
+  maintainer: A B <a@b.c>
+  url: https://example.org
+  repo-commit: 0123456789abcdef0123456789abcdef01234567
+  build-time: 1700000000
+  installed-size: 4
+  provider-priority: 10
+  depends: # 8 items
+    - bar<2
+    - baz<=3
+    - busybox>=1.0
+    - '!conflicting'
+    - foo~1.2
+    - quux=5
+    - qux>4
+    - so:libc.musl-x86_64.so.1
+  provides: # 2 items
+    - cmd:full=1.2.3-r4
+    - virt
+  replaces: # 1 items
+    - other
+  install-if: # 2 items
+    - bar
+    - foo=1
+  recommends: # 2 items
+    - rec1
+    - rec2
+  layer: 1
+  tags: # 2 items
+    - b
+    - a
+paths: # 3 items
+  - acl:
+      mode: 0755
+      user: root
+      group: root
+  - name: usr
+    acl:
+      mode: 0755
+      user: root
+      group: root
+  - name: usr/bin
+    acl:
+      mode: 0755
+      user: root
+      group: root
+    files: # 1 items
+      - name: one
+        acl:
+          mode: 0755
+          user: root
+          group: root
+        size: 4
+        mtime: 1700000000
+        hash: 2c8b08da5ce60398e1f19af0e5dccc744df274b826abe585eaba68c525434806
+scripts:
+  trigger: |
+    #!/bin/sh
+    echo trigger
+  pre-install: |
+    #!/bin/sh
+    echo pre-install
+  post-install: |
+    #!/bin/sh
+    echo post-install
+  pre-deinstall: |
+    #!/bin/sh
+    echo pre-deinstall
+  post-deinstall: |
+    #!/bin/sh
+    echo post-deinstall
+  pre-upgrade: |
+    #!/bin/sh
+    echo pre-upgrade
+  post-upgrade: |
+    #!/bin/sh
+    echo post-upgrade
+triggers: # 2 items
+  - /usr/share/*
+  - /lib/x
+replaces-priority: 5
+# data block, size: 12
