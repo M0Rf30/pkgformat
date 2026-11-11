@@ -1,0 +1,148 @@
+##### image localhost/debtools:bookworm: apt 2.6.2 (amd64)
+== 1: first update, apt has nothing to patch
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1011 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages [3764 B]
+Fetched 4775 B in 0s (92.7 kB/s)
+Reading package lists...
+LIST-SHA256 603055be5b0441577ba7cd0392d76b988031f9b9db34f5dd13c7c4beafe36f33
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.xz
+== 2: one publication behind
+patch 2026-06-01-0200.00
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1479 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages.diff/Index [420 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0200.00.pdiff [788 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0200.00.pdiff [788 B]
+Fetched 2687 B in 0s (23.1 kB/s)
+Reading package lists...
+LIST-SHA256 f20f98816a73ab9a5acc12a3de3397eca8ae73c31ad41beb83526596d016820a
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/Index
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0200.00.gz
+== 3: three publications behind, unmerged patches: three downloads
+patch 2026-06-01-0300.00
+patch 2026-06-01-0400.00
+patch 2026-06-01-0500.00
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1479 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages.diff/Index [1266 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0300.00.pdiff [785 B]
+Get:6 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0400.00.pdiff [781 B]
+Get:7 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0500.00.pdiff [798 B]
+Get:7 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0500.00.pdiff [798 B]
+Fetched 5109 B in 0s (122 kB/s)
+Reading package lists...
+LIST-SHA256 230fff3ef65058e8e2b95b090111a1380c9275e2a978153d94e432ff1480ddc2
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/Index
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0300.00.gz
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0400.00.gz
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0500.00.gz
+== 4: three publications behind, merged patches: one download
+patch 2026-06-01-0600.00
+patch 2026-06-01-0700.00
+patch 2026-06-01-0800.00
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1479 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages.diff/Index [4756 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages T-2026-06-01-0800.00-F-2026-06-01-0600.00.pdiff [2154 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages T-2026-06-01-0800.00-F-2026-06-01-0600.00.pdiff [2154 B]
+Fetched 8389 B in 0s (201 kB/s)
+Reading package lists...
+LIST-SHA256 3bb64071f94e1929ac7b1ef50152f7bff732b6357488a7fb78d6609958597d5c
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/Index
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/T-2026-06-01-0800.00-F-2026-06-01-0600.00.gz
+OK
+##### image docker.io/library/debian:trixie-slim: apt 3.0.4 (amd64)
+== 1: first update, apt has nothing to patch
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1011 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages [3764 B]
+Fetched 4775 B in 0s (73.1 kB/s)
+Reading package lists...
+LIST-SHA256 603055be5b0441577ba7cd0392d76b988031f9b9db34f5dd13c7c4beafe36f33
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.xz
+== 2: one publication behind
+patch 2026-06-01-0200.00
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1479 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages.diff/Index [420 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0200.00.pdiff [788 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0200.00.pdiff [788 B]
+Fetched 2687 B in 0s (61.9 kB/s)
+Reading package lists...
+LIST-SHA256 f20f98816a73ab9a5acc12a3de3397eca8ae73c31ad41beb83526596d016820a
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/Index
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0200.00.gz
+== 3: three publications behind, unmerged patches: three downloads
+patch 2026-06-01-0300.00
+patch 2026-06-01-0400.00
+patch 2026-06-01-0500.00
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1479 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages.diff/Index [1266 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0300.00.pdiff [785 B]
+Get:6 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0400.00.pdiff [781 B]
+Get:7 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0500.00.pdiff [798 B]
+Get:7 http://127.0.0.1:PORT e2e/main amd64 Packages 2026-06-01-0500.00.pdiff [798 B]
+Fetched 5109 B in 0s (157 kB/s)
+Reading package lists...
+LIST-SHA256 230fff3ef65058e8e2b95b090111a1380c9275e2a978153d94e432ff1480ddc2
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/Index
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0300.00.gz
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0400.00.gz
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/2026-06-01-0500.00.gz
+== 4: three publications behind, merged patches: one download
+patch 2026-06-01-0600.00
+patch 2026-06-01-0700.00
+patch 2026-06-01-0800.00
+Ign:1 http://127.0.0.1:PORT e2e InRelease
+Get:2 http://127.0.0.1:PORT e2e Release [1479 B]
+Ign:3 http://127.0.0.1:PORT e2e Release.gpg
+Get:4 http://127.0.0.1:PORT e2e/main amd64 Packages.diff/Index [4756 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages T-2026-06-01-0800.00-F-2026-06-01-0600.00.pdiff [2154 B]
+Get:5 http://127.0.0.1:PORT e2e/main amd64 Packages T-2026-06-01-0800.00-F-2026-06-01-0600.00.pdiff [2154 B]
+Fetched 8389 B in 0s (283 kB/s)
+Reading package lists...
+LIST-SHA256 3bb64071f94e1929ac7b1ef50152f7bff732b6357488a7fb78d6609958597d5c
+--- what the server was asked for:
+GET 404 /dists/e2e/InRelease
+GET 200 /dists/e2e/Release
+GET 404 /dists/e2e/Release.gpg
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/Index
+GET 200 /dists/e2e/main/binary-amd64/Packages.diff/T-2026-06-01-0800.00-F-2026-06-01-0600.00.gz
+OK
