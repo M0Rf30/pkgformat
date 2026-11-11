@@ -22,7 +22,9 @@
 //
 // Besides the three core documents the package reads and writes comps.xml
 // ([Comps], with environments, langpacks and localized names), updateinfo.xml
-// ([Advisory], [MergeUpdateinfo]), modules.yaml, prestodelta.xml ([DeltaInfo]),
+// ([Advisory], [MergeUpdateinfo]), modules.yaml as typed modulemd v2, defaults,
+// obsoletes and translations documents ([ParseModulemd], [WriteModules];
+// libmodulemd reads what is written), prestodelta.xml ([DeltaInfo]),
 // filelists-ext.xml, the SQLite databases of schema version 10
 // ([WriteSQLite], [OpenSQLite]) and zchunk files ([NewZchunkWriter],
 // [ReadZchunkHeader], [NewZchunkReader]; the [Zchunk] compression).
