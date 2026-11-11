@@ -1,0 +1,30 @@
+Format: 1.8
+Date: Wed, 16 Apr 2025 11:50:00 +0200
+Source: hello
+Binary: hello hello-dbgsym
+Architecture: amd64
+Version: 2.10-5
+Distribution: unstable
+Urgency: medium
+Maintainer: Santiago Vila <sanvila@debian.org>
+Changed-By: Santiago Vila <sanvila@debian.org>
+Description:
+ hello      - example package based on GNU hello
+Closes: 1103293
+Changes:
+ hello (2.10-5) unstable; urgency=medium
+ .
+   * Add autopkgtest dependency on make. Closes: #1103293.
+     Thanks to Jochen Sprickerhof.
+Checksums-Sha1:
+ 92e395f3626599e912d3076044ccbf13100c4f7d 35096 hello-dbgsym_2.10-5_amd64.deb
+ dcb8bc0206e29d2869c2f3205cbc115d543618ba 5551 hello_2.10-5_amd64.buildinfo
+ c9bdd9b54053c77c85655d3c2a7d3d5c9a3ada32 52972 hello_2.10-5_amd64.deb
+Checksums-Sha256:
+ d10e77615b8cecc2a8954a6de10073998551f36d08c743908fe41430765f5cd7 35096 hello-dbgsym_2.10-5_amd64.deb
+ 5b7df85579996ccfd7be0750f1f1dfcb70b751b6ba31d556bd8f8bed0e243d47 5551 hello_2.10-5_amd64.buildinfo
+ 17be6ab55cb13a21e32c0eb8df15821832f82ac5b1fa1f84f1dd0236b202dfc1 52972 hello_2.10-5_amd64.deb
+Files:
+ 1d2d9f5060cf451aaf3503bf056fcdf0 35096 debug optional hello-dbgsym_2.10-5_amd64.deb
+ 1c1bc2496cc0061caab03f3d00630229 5551 devel optional hello_2.10-5_amd64.buildinfo
+ f2390f8db10db5231f817135b501ca2e 52972 devel optional hello_2.10-5_amd64.deb
