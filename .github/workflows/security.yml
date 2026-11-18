@@ -1,0 +1,69 @@
+name: Security
+
+# gosec runs in CI through golangci-lint and govulncheck gates every push;
+# this workflow adds the daily re-scan (new advisories land without a push),
+# the dependency license gate and secrets detection.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  govulncheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: golang/govulncheck-action@032d45514ae346b1db93c04b0c90b841c370344f # v1.1.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          go-package: ./...
+
+  licenses:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - name: Install go-licenses
+        run: go install github.com/google/go-licenses@v1.6.0
+      - name: Dependencies use Apache-2.0 compatible licenses
+        # pkgformat is Apache-2.0: forbidden and restricted (GPL, AGPL, …)
+        # third-party licenses would make it unusable for its consumers.
+        run: |
+          go-licenses check --disallowed_types=forbidden,restricted \
+            --ignore github.com/M0Rf30/pkgformat ./...
+      - name: License report
+        if: always()
+        run: go-licenses report --ignore github.com/M0Rf30/pkgformat ./... >> "$GITHUB_STEP_SUMMARY" || true
+
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: trufflesecurity/trufflehog@3bd2b5887eb0efb8fa18bfd1d296032924e4ffdc # v3.99.9
+        with:
+          path: ./
+          extra_args: --results=verified,unknown
