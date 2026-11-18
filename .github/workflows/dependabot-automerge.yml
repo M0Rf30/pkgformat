@@ -1,0 +1,60 @@
+name: Dependabot auto-merge
+
+# Squash-merges a Dependabot PR once every gating workflow has succeeded on
+# its current head commit. Runs after each gating workflow finishes; the last
+# one to complete green performs the merge. Any failure leaves the PR open.
+on:
+  workflow_run:
+    workflows: [CI, Security]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: dependabot-automerge-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      startsWith(github.event.workflow_run.head_branch, 'dependabot/')
+    steps:
+      - name: Squash-merge when every gating workflow is green
+        env:
+          # Merges made with GITHUB_TOKEN do not trigger push workflows on main;
+          # a PAT stored as the Dependabot secret AUTOMERGE_TOKEN does.
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          read -r number author state head < <(gh pr view "$BRANCH" \
+            --json number,author,state,headRefOid \
+            --jq '"\(.number) \(.author.login) \(.state) \(.headRefOid)"')
+          if [[ "$state" != "OPEN" || "$head" != "$SHA" ]]; then
+            echo "PR #${number} is ${state} at ${head}, not open at ${SHA}; nothing to do"
+            exit 0
+          fi
+          if [[ "$author" != "app/dependabot" && "$author" != "dependabot[bot]" ]]; then
+            echo "PR #${number} author is ${author}, not Dependabot"
+            exit 0
+          fi
+
+          for wf in ci.yml security.yml; do
+            conclusion=$(gh run list --workflow "$wf" --commit "$SHA" \
+              --event pull_request --limit 1 --json conclusion --jq '.[0].conclusion // "pending"')
+            if [[ "$conclusion" != "success" ]]; then
+              echo "${wf}: ${conclusion}; waiting"
+              exit 0
+            fi
+            echo "${wf}: success"
+          done
+
+          gh pr merge "$number" --squash --match-head-commit "$SHA"
