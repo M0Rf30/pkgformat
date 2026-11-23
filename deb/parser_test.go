@@ -224,6 +224,16 @@ func TestParseDebFileControlFileTooLarge(t *testing.T) {
 	require.ErrorIs(t, err, deb.ErrControlFileTooLarge)
 }
 
+func TestParseDebFileLargeMd5sums(t *testing.T) {
+	// libboost1.74-dev (Ubuntu jammy) ships a 1245920-byte md5sums.
+	line := "0123456789abcdef0123456789abcdef  usr/include/boost/some/header.hpp\n"
+	md5sums := strings.Repeat(line, 1245920/len(line)+1)
+	raw := debOf("control.tar.gz", compressWith(t, ".gz", controlTar(t, validControl, reg("./md5sums", md5sums))), "data.tar.gz", nil)
+
+	_, err := parseDeb(raw)
+	require.NoError(t, err)
+}
+
 func TestParseDebFileTooManyControlEntries(t *testing.T) {
 	entries := []tarEntry{reg("./control", validControl)}
 	for i := range 300 {

@@ -22,8 +22,10 @@ const (
 	// end lets a small compressed payload exhaust memory.
 	MaxControlArchiveSize = 64 << 20
 
-	// MaxControlFileSize caps one file of the control archive.
-	MaxControlFileSize = 1 << 20
+	// MaxControlFileSize caps one file of the control archive. md5sums grows
+	// with the file count: Ubuntu's libboost1.74-dev ships a 1.2 MiB one and
+	// the largest archive packages reach several MiB.
+	MaxControlFileSize = 32 << 20
 
 	// MaxSignatureSize caps one package signature member.
 	MaxSignatureSize = 1 << 20
