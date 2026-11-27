@@ -37,7 +37,10 @@ const maxResolveSteps = 1 << 20
 //     first alternative that can be installed, and of it the highest version
 //     that satisfies the constraint ("<<", "<=", "=", ">=", ">>"). Versions
 //     older than the installed one are not offered, and an installed package
-//     is upgraded only when a dependency needs it.
+//     is upgraded only when a dependency needs it, or when an upgrade leaves
+//     one of its own dependencies unmet ("binutils" depends on
+//     "binutils-common (= v)": a newer binutils-common takes a newer
+//     binutils along), as apt does.
 //   - A virtual package is met by a package that Provides it. A versioned
 //     dependency is met only by a versioned Provides ("foo (= 1.2)"), never
 //     by a bare one (Debian Policy 7.5). Among providers the higher Priority
@@ -62,8 +65,11 @@ const maxResolveSteps = 1 << 20
 //   - apt resolves a clash with an installed package by removing it, and a
 //     Breaks by upgrading or removing the broken one. Here the candidate is
 //     refused and the next one tried, and the clash is an error when none is
-//     left; nothing is ever removed or upgraded to make room, which is what
-//     an extractor that must leave the host's packages alone needs.
+//     left; nothing is ever removed or upgraded to make room for a
+//     Conflicts or Breaks, which is what an extractor that must leave the
+//     host's packages alone needs. An installed package whose dependency an
+//     upgrade leaves unmet is upgraded, never removed: with no newer version
+//     that fits, the upgrade is refused.
 //   - Pin priorities and apt's pkgProblemResolver scoring are not modelled,
 //     nor is the ordering of configuration (Pre-Depends loops).
 //
@@ -128,6 +134,10 @@ type goal struct {
 	seed bool
 	// emit, when set, is the package to list.
 	emit *pkg
+	// upgrade, when set, is an installed package that a selection left with
+	// group unmet: it must move to a newer version, unless group is met again
+	// by the time the goal is reached.
+	upgrade *pkg
 }
 
 // arch is the architecture the group is read for: that of the owner, the
@@ -153,6 +163,8 @@ const (
 	undoSelect undoKind = iota
 	undoEmit
 	undoUnresolved
+	undoDefer
+	undoTake
 )
 
 type undoRec struct {
@@ -182,6 +194,11 @@ type resolution struct {
 	// instKeys are the installed slots, sorted.
 	instKeys []string
 	undo     []undoRec
+	// upgrades queues the upgrade goals of installed packages a selection
+	// broke; they run, from upgradeHead on, once every other goal is solved,
+	// so that an upgraded package is listed after all it may depend on.
+	upgrades    []goal
+	upgradeHead int
 }
 
 func newResolution(c *Cache) *resolution {
@@ -257,6 +274,10 @@ func (r *resolution) rollback(mark int) {
 			r.order = r.order[:len(r.order)-1]
 		case undoUnresolved:
 			r.unresolved = r.unresolved[:len(r.unresolved)-1]
+		case undoDefer:
+			r.upgrades = r.upgrades[:len(r.upgrades)-1]
+		case undoTake:
+			r.upgradeHead--
 		}
 	}
 }
@@ -271,9 +292,20 @@ func label(p *pkg) string {
 	return p.Name + ":" + arch + " " + p.Version
 }
 
-// solve works through the goals. Choices recurse; everything else loops.
+// solve works through the goals, then the queued upgrades. Choices recurse;
+// everything else loops.
 func (r *resolution) solve(list *node) error {
-	for list != nil {
+	for {
+		if list == nil {
+			if r.upgradeHead == len(r.upgrades) {
+				return nil
+			}
+
+			list = &node{g: r.upgrades[r.upgradeHead]}
+			r.upgradeHead++
+			r.undo = append(r.undo, undoRec{kind: undoTake})
+		}
+
 		g := &list.g
 
 		switch {
@@ -281,6 +313,15 @@ func (r *resolution) solve(list *node) error {
 			r.emitted[g.emit] = true
 			r.order = append(r.order, g.emit)
 			r.undo = append(r.undo, undoRec{kind: undoEmit, p: g.emit})
+		case g.upgrade != nil:
+			if !r.upgradeNeeded(g) {
+				break
+			}
+
+			done, err := r.chooseUpgrade(g, list.next)
+			if err != nil || done {
+				return err
+			}
 		case r.groupSatisfied(g.group, g.arch(r.native), g.seed):
 		default:
 			done, err := r.choose(g, list.next)
@@ -291,8 +332,6 @@ func (r *resolution) solve(list *node) error {
 
 		list = list.next
 	}
-
-	return nil
 }
 
 // groupSatisfied reports whether an installed or selected package meets one of
@@ -459,8 +498,14 @@ func (r *resolution) install(p *pkg, g *goal, rest *node) (*node, error) {
 	}
 
 	if old != nil {
-		if err := r.checkDependents(old, p); err != nil {
+		upgrades, err := r.checkDependents(old, p)
+		if err != nil {
 			return nil, err
+		}
+
+		for _, u := range upgrades {
+			r.upgrades = append(r.upgrades, u)
+			r.undo = append(r.undo, undoRec{kind: undoDefer})
 		}
 	}
 
@@ -474,15 +519,17 @@ func (r *resolution) install(p *pkg, g *goal, rest *node) (*node, error) {
 	return list, nil
 }
 
-// checkDependents refuses a version that replaces old when it leaves a
-// dependency unmet that old met: of an installed package, or of a selected one
-// whose dependencies are all settled.
-func (r *resolution) checkDependents(old, p *pkg) error {
+// checkDependents finds the dependencies that a version replacing old leaves
+// unmet although old met them. An installed package left so is to be
+// upgraded, as apt does: one upgrade goal is returned for each. A selected
+// package whose dependencies are all settled refuses the version.
+func (r *resolution) checkDependents(old, p *pkg) ([]goal, error) {
 	affected := append([]string{old.Name}, providedNames(old)...)
 
-	check := func(q *pkg) error {
+	// broken returns the first dependency of q the replacement leaves unmet.
+	broken := func(q *pkg) (deb.Alternatives, bool) {
 		if q.slot == p.slot {
-			return nil
+			return nil, false
 		}
 
 		qArch := (&goal{owner: q}).arch(r.native)
@@ -497,35 +544,101 @@ func (r *resolution) checkDependents(old, p *pkg) error {
 					continue
 				}
 
-				return &UnsatisfiedError{
-					Package: label(q), Dependency: group.String(),
-					Reason: fmt.Sprintf("%s would replace %s", label(p), label(old)),
-				}
+				return group, true
 			}
 		}
 
-		return nil
+		return nil, false
 	}
+
+	var upgrades []goal
 
 	for _, key := range r.instKeys {
 		if _, selected := r.sel[key]; selected {
 			continue
 		}
 
-		if err := check(r.c.installed[key]); err != nil {
-			return err
+		if group, ok := broken(r.c.installed[key]); ok {
+			upgrades = append(upgrades, goal{upgrade: r.c.installed[key], group: group, owner: p})
 		}
 	}
 
 	for _, key := range r.selOrder {
 		if q := r.sel[key]; r.emitted[q] {
-			if err := check(q); err != nil {
-				return err
+			if group, ok := broken(q); ok {
+				return nil, &UnsatisfiedError{
+					Package: label(q), Dependency: group.String(),
+					Reason: fmt.Sprintf("%s would replace %s", label(p), label(old)),
+				}
 			}
 		}
 	}
 
-	return nil
+	return upgrades, nil
+}
+
+// upgradeNeeded reports whether an upgrade goal still has work: its package
+// is neither selected meanwhile nor has its dependency met again.
+func (r *resolution) upgradeNeeded(g *goal) bool {
+	q := g.upgrade
+	if _, selected := r.sel[q.slot]; selected {
+		return false
+	}
+
+	return !r.groupSatisfied(g.group, (&goal{owner: q}).arch(r.native), false)
+}
+
+// chooseUpgrade selects a newer version of an installed package that a
+// selection broke, the highest first, and solves the rest of the goals with
+// it. With none that works the selection that broke it fails.
+func (r *resolution) chooseUpgrade(g *goal, rest *node) (bool, error) {
+	q := g.upgrade
+
+	var cands []*pkg
+
+	for _, p := range r.c.slots[q.slot] {
+		if r.usable(p) {
+			cands = append(cands, p)
+		}
+	}
+
+	slices.SortFunc(cands, func(a, b *pkg) int { return deb.CompareVersions(b.Version, a.Version) })
+
+	var causes []error
+
+	for _, cand := range cands {
+		r.steps++
+		if r.steps > maxResolveSteps {
+			return false, ErrResolveLimit
+		}
+
+		mark := len(r.undo)
+
+		list, err := r.install(cand, g, rest)
+		if err == nil {
+			err = r.solve(list)
+			if err == nil {
+				return true, nil
+			}
+		}
+
+		if errors.Is(err, ErrDependencyDepth) || errors.Is(err, ErrResolveLimit) {
+			return false, err
+		}
+
+		causes = append(causes, err)
+
+		r.rollback(mark)
+	}
+
+	reason := fmt.Sprintf("%s would replace the version it needs", label(g.owner))
+	if len(cands) == 0 {
+		reason += " and no newer " + q.Name + " is available"
+	}
+
+	return false, &UnsatisfiedError{
+		Package: label(q), Dependency: g.group.String(), Reason: reason, Causes: causes,
+	}
 }
 
 // metBy reports whether the version meets one alternative of the group.

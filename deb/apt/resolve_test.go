@@ -207,6 +207,35 @@ func TestResolveInstalledVersions(t *testing.T) {
 			seeds:  []string{"lib"}, wantErr: ErrUnsatisfiable, errText: "app:amd64 1",
 		},
 		{
+			name: "an upgrade takes along an installed dependent that has a newer version",
+			index: stanza("lib", "1") + stanza("lib", "2") +
+				stanza("app", "1", "Depends: lib (= 1)") + stanza("app", "2", "Depends: lib (= 2)"),
+			status: installedStanza("lib", "1") + installedStanza("app", "1", "Depends: lib (= 1)"),
+			seeds:  []string{"lib"}, want: []string{"lib:amd64=2", "app:amd64=2"},
+		},
+		{
+			// jammy after binutils 2.38-4ubuntu2.14 replaced .12 in -updates,
+			// with .12 installed: a cross binutils takes all of binutils along.
+			name:   "a security update of binutils under a cross binutils",
+			index:  binutilsIndex("2.38-4ubuntu2") + binutilsIndex("2.38-4ubuntu2.14"),
+			status: binutilsStatus("2.38-4ubuntu2.12"),
+			seeds:  []string{"binutils-aarch64-linux-gnu"},
+			want: []string{
+				"binutils-common:amd64=2.38-4ubuntu2.14",
+				"libbinutils:amd64=2.38-4ubuntu2.14",
+				"binutils-aarch64-linux-gnu:amd64=2.38-4ubuntu2.14",
+				"binutils-x86-64-linux-gnu:amd64=2.38-4ubuntu2.14",
+				"binutils:amd64=2.38-4ubuntu2.14",
+			},
+		},
+		{
+			name: "an upgrade whose dependent's newer version does not fit is refused",
+			index: stanza("lib", "1") + stanza("lib", "2") +
+				stanza("app", "1", "Depends: lib (= 1)") + stanza("app", "2", "Depends: lib (= 1)"),
+			status: installedStanza("lib", "1") + installedStanza("app", "1", "Depends: lib (= 1)"),
+			seeds:  []string{"lib"}, wantErr: ErrUnsatisfiable, errText: "app:amd64 1",
+		},
+		{
 			name:   "an upgrade that keeps an installed dependent working goes ahead",
 			index:  stanza("lib", "1") + stanza("lib", "2"),
 			status: installedStanza("lib", "1") + installedStanza("app", "1", "Depends: lib (>= 1)"),
@@ -219,6 +248,52 @@ func TestResolveInstalledVersions(t *testing.T) {
 			seeds:  []string{"app"}, want: []string{"lib:amd64=1", "app:amd64=2"},
 		},
 	})
+}
+
+// binutilsFields are the relations of the binutils packages of Ubuntu jammy at
+// version v, which pin one another to that exact version.
+func binutilsFields(v string) map[string][]string {
+	return map[string][]string{
+		"binutils-common": {"Multi-Arch: same"},
+		"libbinutils":     {"Multi-Arch: same", "Depends: binutils-common (= " + v + ")"},
+		"binutils-x86-64-linux-gnu": {
+			"Multi-Arch: foreign", "Depends: binutils-common (= " + v + "), libbinutils (= " + v + ")",
+		},
+		"binutils": {
+			"Multi-Arch: foreign",
+			"Depends: binutils-common (= " + v + "), libbinutils (= " + v + "), binutils-x86-64-linux-gnu (= " + v + ")",
+		},
+		"binutils-aarch64-linux-gnu": {
+			"Multi-Arch: foreign", "Depends: binutils-common (= " + v + "), libbinutils (= " + v + ")",
+		},
+	}
+}
+
+var binutilsNames = []string{
+	"binutils-common", "libbinutils", "binutils-x86-64-linux-gnu", "binutils", "binutils-aarch64-linux-gnu",
+}
+
+func binutilsIndex(v string) string {
+	fields := binutilsFields(v)
+
+	var b strings.Builder
+	for _, name := range binutilsNames {
+		b.WriteString(stanza(name, v, fields[name]...))
+	}
+
+	return b.String()
+}
+
+// binutilsStatus installs the native binutils, without the cross one.
+func binutilsStatus(v string) string {
+	fields := binutilsFields(v)
+
+	var b strings.Builder
+	for _, name := range binutilsNames[:4] {
+		b.WriteString(installedStanza(name, v, fields[name]...))
+	}
+
+	return b.String()
 }
 
 func TestResolveAlternatives(t *testing.T) {

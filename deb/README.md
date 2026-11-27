@@ -117,7 +117,7 @@ level; the file size and the number of stanzas are limits
 * Package names must match `^[a-z0-9][a-z0-9+.-]+$`.
 * `Release.PackagesVariants` lists the variants a Release declares, best compression first (`.xz`, `.zst`, `.gz`, `.bz2`, `.lz4`, plain); `apt.Update` only fetches a variant whose SHA-256 the verified Release lists.
 * The apt cache keys entries by `name:arch`; architecture `all` lives under the bare name. Every version the indexes carry is kept, the highest is the candidate (`Lookup`), `Versions` lists them all.
-* `ResolveDeps` honours version constraints, alternatives, versioned and unversioned `Provides`, Pre-Depends, `Conflicts`/`Breaks` in both directions (`ConflictError`) and Multi-Arch (`foreign`, `allowed`, `same`, `:any`, `:native`, `:arch`). A dependency nothing satisfies is an `UnsatisfiedError`. Installed packages are never removed (apt would remove one a candidate conflicts with); `apt/testdata/diff` compares the result with `apt-get install -s` for a set of real packages.
+* `ResolveDeps` honours version constraints, alternatives, versioned and unversioned `Provides`, Pre-Depends, `Conflicts`/`Breaks` in both directions (`ConflictError`) and Multi-Arch (`foreign`, `allowed`, `same`, `:any`, `:native`, `:arch`). A dependency nothing satisfies is an `UnsatisfiedError`. Installed packages are never removed (apt would remove one a candidate conflicts with); an installed package whose exact-version dependency an upgrade breaks (`binutils` on `binutils-common (= v)`) is upgraded along, as apt does; `apt/testdata/diff` compares the result with `apt-get install -s` for a set of real packages.
 * A plain-http transfer that fails transiently is retried once over https.
 
 ## Not included
