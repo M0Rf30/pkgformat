@@ -70,7 +70,9 @@
 // dependency, with "name:any", "name:native" and "name:arch" as apt reads
 // them. An installed package whose version a dependency finds too old is
 // upgraded if the indexes carry a newer one, else the dependency is
-// unsatisfiable. The result is deterministic. Where it differs from apt (it
+// unsatisfiable; so is an installed package whose own dependency such an
+// upgrade leaves unmet (all of binutils follows a newer binutils-common).
+// The result is deterministic. Where it differs from apt (it
 // never removes an installed package) is listed on ResolveDeps.
 //
 // # Pins and phased updates
